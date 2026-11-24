@@ -1,0 +1,7638 @@
+{
+ "schema": "swse.architecture-census.registry/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "shard": "scripts-engine-suggestion",
+ "count": 129,
+ "files": [
+  {
+   "id": "F-110bf9ec4e",
+   "path": "scripts/engine/suggestion/ARCHETYPE_INTEGRATION_GUIDE.md",
+   "top": "scripts",
+   "ext": "md",
+   "bytes": 13183,
+   "lines": 476,
+   "sloc": null,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "evidence-or-doc",
+   "runtimeReachability": "unreferenced",
+   "referencedBy": [],
+   "referencedByCount": 0,
+   "runtimeReferrerCount": 0,
+   "markers": {
+    "fallback": 3
+   },
+   "uncheckedItems": 9,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-95296b9d1a",
+   "path": "scripts/engine/suggestion/ARCHETYPE_SUGGESTION_MAP.md",
+   "top": "scripts",
+   "ext": "md",
+   "bytes": 14071,
+   "lines": 409,
+   "sloc": null,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "evidence-or-doc",
+   "runtimeReachability": "unreferenced",
+   "referencedBy": [],
+   "referencedByCount": 0,
+   "runtimeReferrerCount": 0,
+   "uncheckedItems": 22,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-6174beaa08",
+   "path": "scripts/engine/suggestion/AdvisoryEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8951,
+   "lines": 224,
+   "sloc": 125,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 7,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "generateAdvisory",
+    "generateAdvisoryBatch"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionScorer.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-241aa74cc7",
+   "path": "scripts/engine/suggestion/AnchorRepository.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7385,
+   "lines": 250,
+   "sloc": 143,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/SuggestionStateService.js",
+    "scripts/engine/suggestion/BuildIdentityDetector.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "AnchorRepository"
+   ],
+   "classes": [
+    "AnchorRepository"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/BuildIdentityAnchor.js",
+    "scripts/engine/suggestion/PivotDetector.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 2,
+    "byClass": {
+     "actor-like": 2
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f3f192afc0",
+   "path": "scripts/engine/suggestion/ArchetypeAffinityEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 24585,
+   "lines": 773,
+   "sloc": 445,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/validateClassArchetypes.js",
+    "scripts/governance/actor-engine/actor-engine.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "loadArchetypeData",
+    "PRESTIGE_MAP",
+    "loadPrestigeMap",
+    "loadGeneralistArchetype",
+    "shouldUseGeneralistArchetype",
+    "validateArchetypes",
+    "calculateArchetypeAffinity",
+    "weightSuggestions",
+    "explainSuggestion",
+    "explainSuggestionBatch",
+    "buildAffinitySnapshot",
+    "affinityNeedsRecompute",
+    "generatePrestigeHints",
+    "exportFoundryContract",
+    "initializeActorAffinity",
+    "recalculateActorAffinity",
+    "getActorAffinity",
+    "extractCharacterState",
+    "initializeArchetypeData",
+    "ARCHETYPE_DATA"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/ArchetypeEngineHooks.js",
+    "scripts/engine/suggestion/ArchetypeSuggestionIntegration.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 2,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 3
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": true,
+   "unreachableConfidence": "unverified-name-mentioned-at-runtime",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-0e9942dfe7",
+   "path": "scripts/engine/suggestion/ArchetypeDefinitions.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3590,
+   "lines": 111,
+   "sloc": 71,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "data/class-archetypes.json",
+    "data/generic-archetypes.json",
+    "data/default-archetype-weights.json"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "DEFAULT_ARCHETYPE_WEIGHTS",
+    "getArchetypeConfig",
+    "getClassArchetypes",
+    "getArchetypeByKey",
+    "listArchetypeKeys",
+    "getArchetypeDisplayName",
+    "getArchetypeDescription",
+    "getArchetypePhilosophy",
+    "getArchetypeMentorQuote",
+    "getArchetypeFocusAttributes",
+    "getArchetypeRoleBias"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3fa5a6f572",
+   "path": "scripts/engine/suggestion/ArchetypeEngineHooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9464,
+   "lines": 291,
+   "sloc": 137,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/ArchetypeAffinityEngine.js",
+    "scripts/engine/suggestion/ArchetypeSuggestionIntegration.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "setupArchetypeEngineHooks",
+    "onCharacterLevelUp",
+    "forceAffinityRecalculation"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [
+    "once:ready",
+    "on:createActor",
+    "on:updateActor",
+    "on:closeActorSheet",
+    "call:swseAffinityUpdated",
+    "call:swsePrestigeHintsAvailable",
+    "call:swseAffinityRecalculated"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f76bb9d1fd",
+   "path": "scripts/engine/suggestion/ArchetypeEnhancedForceOptionSuggestionEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10595,
+   "lines": 329,
+   "sloc": 123,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/ForceOptionSuggestionEngine.js",
+    "scripts/engine/suggestion/suggestion-unified-tiers.js",
+    "scripts/engine/suggestion/ArchetypeSuggestionIntegration.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ArchetypeEnhancedForceOptionSuggestionEngine",
+    "suggestForceOptions",
+    "EnhancedForceOptionSuggestionEngine"
+   ],
+   "classes": [
+    "ArchetypeEnhancedForceOptionSuggestionEngine"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-bbffeef1d6",
+   "path": "scripts/engine/suggestion/ArchetypeLoader.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4539,
+   "lines": 152,
+   "sloc": 94,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/validation/archetype-validator.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "loadArchetype",
+    "loadArchetypesByClass",
+    "loadAllArchetypes",
+    "clearCache"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "governance",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 3
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-48a2ab2668",
+   "path": "scripts/engine/suggestion/ArchetypeMetadataEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8089,
+   "lines": 258,
+   "sloc": 144,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "VALID_PLAYSTYLES",
+    "ArchetypeMetadataEngine"
+   ],
+   "classes": [
+    "ArchetypeMetadataEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-7ac87c373c",
+   "path": "scripts/engine/suggestion/ArchetypeShiftTracker.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5201,
+   "lines": 156,
+   "sloc": 98,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "detectArchetypeShift",
+    "applyStabilityBonus",
+    "getAcknowledgementLines"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "actor-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9688a03bfb",
+   "path": "scripts/engine/suggestion/ArchetypeSuggestionIntegration.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 15113,
+   "lines": 449,
+   "sloc": 266,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/ArchetypeAffinityEngine.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "applyArchetypeWeighting",
+    "applySuggestionWeighting",
+    "getArchetypeExplanation",
+    "getArchetypeExplanationBatch",
+    "handleCharacterChange",
+    "handleLevelUp",
+    "enhanceSuggestionWithArchetype",
+    "enhanceSuggestionsWithArchetype",
+    "getPrestigePathRecommendations",
+    "getPrimaryArchetype",
+    "formatAffinityForDisplay"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/ArchetypeEngineHooks.js",
+    "scripts/engine/suggestion/ArchetypeEnhancedForceOptionSuggestionEngine.js",
+    "scripts/ui/ArchetypeUIComponents.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a619a50954",
+   "path": "scripts/engine/suggestion/AttributeIncreaseScorer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11588,
+   "lines": 307,
+   "sloc": 189,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/engine/abilities/AbilityEngine.js",
+    "scripts/registries/feat-registry.js",
+    "scripts/engine/progression/engine/attribute-increase-handler.js",
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/attribute-planner.js",
+    "scripts/engine/suggestion/force-rule-adapter.js",
+    "scripts/adapters/ActorAbilityBridge.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "scoreAttributeAllocations",
+    "_createHypotheticalActor",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "tests/prerequisite-ability-score-authority.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "abilities-effects",
+    "feats",
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/prerequisite-ability-score-authority.test.mjs"
+    ],
+    "transitiveCount": 53,
+    "ciTestCount": 52
+   },
+   "markers": {
+    "legacy": 2,
+    "compat": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6687e397c6",
+   "path": "scripts/engine/suggestion/AttributeIncreaseSuggestionEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10940,
+   "lines": 321,
+   "sloc": 214,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/suggestion-unified-tiers.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ATTRIBUTE_INCREASE_LEVELS",
+    "ATTRIBUTE_TIERS",
+    "ATTRIBUTE_ROLE_MAP",
+    "ATTRIBUTE_SKILL_MAP",
+    "CLASS_ATTRIBUTE_PREFS",
+    "AttributeIncreaseSuggestionEngine",
+    "default"
+   ],
+   "classes": [
+    "AttributeIncreaseSuggestionEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "deprecated": 1,
+    "legacy": 1,
+    "compat": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-7b78dd9387",
+   "path": "scripts/engine/suggestion/BackgroundSuggestionEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10970,
+   "lines": 245,
+   "sloc": 199,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/suggestion-unified-tiers.js",
+    "scripts/engine/progression/utils/class-resolution.js",
+    "scripts/apps/progression-framework/utils/skill-display.js",
+    "scripts/engine/suggestion/attribute-planner.js",
+    "scripts/engine/suggestion/prestige-path-signals.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "BackgroundSuggestionEngine",
+    "default"
+   ],
+   "classes": [
+    "BackgroundSuggestionEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-07907e9edc",
+   "path": "scripts/engine/suggestion/BuildCoherenceAnalyzer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 21261,
+   "lines": 590,
+   "sloc": 395,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/adapters/ActorAbilityBridge.js [dynamic]",
+    "scripts/adapters/ActorAbilityBridge.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "BuildCoherenceAnalyzer",
+    "default"
+   ],
+   "classes": [
+    "BuildCoherenceAnalyzer"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-dfe7fe2203",
+   "path": "scripts/engine/suggestion/BuildIdentityAnchor.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8259,
+   "lines": 235,
+   "sloc": 125,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/BuildIdentityDetector.js",
+    "scripts/engine/suggestion/AnchorRepository.js",
+    "scripts/engine/suggestion/BuildIdentityDetector.js [reexport]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "BuildIdentityAnchor"
+   ],
+   "classes": [
+    "BuildIdentityAnchor"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/ConfidenceScoring.js",
+    "scripts/engine/suggestion/OpportunityCostAnalyzer.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "scripts/engine/suggestion/SuggestionEngineHooks.js",
+    "scripts/engine/suggestion/SuggestionExplainer.js"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "compat": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-758cac8fdd",
+   "path": "scripts/engine/suggestion/BuildIdentityDetector.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9029,
+   "lines": 249,
+   "sloc": 183,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/BuildIntent.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ANCHOR_STATE",
+    "THEME_TO_ARCHETYPE",
+    "BuildIdentityDetector"
+   ],
+   "classes": [
+    "BuildIdentityDetector"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/AnchorRepository.js",
+    "scripts/engine/suggestion/BuildIdentityAnchor.js",
+    "scripts/engine/suggestion/PivotLogic.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-cd0df04ccb",
+   "path": "scripts/engine/suggestion/BuildIntent.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 35074,
+   "lines": 794,
+   "sloc": 524,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/ClassSuggestionEngine.js",
+    "scripts/engine/archetype/archetype-registry.js",
+    "scripts/engine/prestige/prestige-layer-registry.js",
+    "scripts/engine/prestige/identity-engine.js",
+    "scripts/engine/prestige/bias-tag-projection.js",
+    "scripts/engine/suggestion/BuildThemeProjection.js",
+    "scripts/engine/suggestion/PrestigeAffinityEngine.js",
+    "scripts/engine/suggestion/MilestoneComputer.js",
+    "scripts/engine/archetype/archetype-registry-integration.js",
+    "scripts/engine/suggestion/equipment-loadout-profile.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "initializePrestigeSignals",
+    "PRESTIGE_SIGNALS",
+    "initializePrestigeSignalsData",
+    "BUILD_THEMES",
+    "FEAT_THEME_SIGNALS",
+    "BuildIntent",
+    "default"
+   ],
+   "classes": [
+    "BuildIntent"
+   ],
+   "consumers": [
+    "scripts/core/phase5-init.js",
+    "scripts/engine/suggestion/BuildIdentityDetector.js",
+    "scripts/engine/suggestion/BuildThemeProjection.js",
+    "scripts/engine/suggestion/OpportunityCostAnalyzer.js",
+    "scripts/engine/suggestion/PathPreview.js",
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "scripts/engine/suggestion/equipment/store-suggestion-context.js",
+    "scripts/mentor/mentor-chat-dialog.js"
+   ],
+   "consumerCount": 9,
+   "secondarySystems": [
+    "classes",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {
+    "deprecated": 4,
+    "compat": 1,
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-25edbfc368",
+   "path": "scripts/engine/suggestion/BuildThemeProjection.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7503,
+   "lines": 212,
+   "sloc": 131,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/ClassSuggestionEngine.js",
+    "scripts/engine/suggestion/BuildIntent.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "BuildThemeProjection",
+    "default"
+   ],
+   "classes": [
+    "BuildThemeProjection"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/BuildIntent.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-287930c8c3",
+   "path": "scripts/engine/suggestion/CandidatePoolBuilder.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 13256,
+   "lines": 351,
+   "sloc": 240,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/engine/progression/feats/class-feat-registry.js",
+    "scripts/engine/progression/talents/tree-authority.js",
+    "scripts/engine/abilities/AbilityEngine.js",
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/TalentCandidateEnricher.js",
+    "scripts/engine/suggestion/suggestion-trace-controls.js",
+    "scripts/actors/derived/derived-generation.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CandidatePoolBuilder",
+    "default"
+   ],
+   "classes": [
+    "CandidatePoolBuilder"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "tests/candidate-pool-builder-derived-coherency.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "abilities-effects",
+    "actor-core",
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/candidate-pool-builder-derived-coherency.test.mjs"
+    ],
+    "transitiveCount": 53,
+    "ciTestCount": 52
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-34664b814e",
+   "path": "scripts/engine/suggestion/ClassDomainReasonEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 20479,
+   "lines": 439,
+   "sloc": 386,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "authority-or-orchestrator",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/engine/suggestion/ReasonFactory.js",
+    "scripts/engine/suggestion/shared-suggestion-utilities.js",
+    "scripts/engine/suggestion/suggestion-unified-tiers.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ClassDomainReasonEngine",
+    "default"
+   ],
+   "classes": [
+    "ClassDomainReasonEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionReasonEngine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "actor-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-263173d19a",
+   "path": "scripts/engine/suggestion/ClassSuggestionEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 84635,
+   "lines": 1821,
+   "sloc": 1359,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/suggestion-trace-controls.js",
+    "scripts/engine/progression/utils/class-suggestion-utilities.js",
+    "scripts/actors/derived/level-split.js",
+    "scripts/engine/suggestion/shared-suggestion-utilities.js",
+    "scripts/engine/suggestion/suggestion-unified-tiers.js",
+    "scripts/data/prestige-prerequisites.js",
+    "scripts/engine/progression/prerequisites/legacy-prereq-registry.js",
+    "scripts/data/talent-tree-db.js",
+    "scripts/data/talent-tree-normalizer.js",
+    "scripts/engine/prestige/identity-engine.js",
+    "scripts/engine/suggestion/prestige-delay-calculator.js",
+    "scripts/engine/suggestion/class-route-profile-engine.js",
+    "scripts/engine/suggestion/build-route-confidence-profile.js",
+    "scripts/engine/suggestion/equipment-loadout-profile.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CLASS_SUGGESTION_TIERS",
+    "PRESTIGE_BIAS",
+    "CLASS_SYNERGY_DATA",
+    "ClassSuggestionEngine",
+    "analyzeBuildDirection"
+   ],
+   "classes": [
+    "ClassSuggestionEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/BuildIntent.js",
+    "scripts/engine/suggestion/BuildThemeProjection.js",
+    "scripts/engine/suggestion/PathPreview.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "scripts/engine/suggestion/SynergyEvaluator.js"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [
+    "actor-core",
+    "classes",
+    "infrastructure",
+    "progression",
+    "talents"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {
+    "deprecated": 1,
+    "legacy": 2,
+    "compat": 2,
+    "fallback": 4
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-fd67a23f7f",
+   "path": "scripts/engine/suggestion/CommunityMetaSynergies.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 25313,
+   "lines": 660,
+   "sloc": 528,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/engine/MetaTuning.js",
+    "scripts/actors/derived/level-split.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "COMMUNITY_SYNERGIES",
+    "buildSynergyState",
+    "findActiveSynergies",
+    "getSynergyForItem",
+    "getAllSynergySuggestions",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3d7cfa0c17",
+   "path": "scripts/engine/suggestion/CompendiumResolver.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5868,
+   "lines": 160,
+   "sloc": 131,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/registries/feat-registry.js",
+    "scripts/registries/talent-registry.js",
+    "scripts/engine/registries/force-registry.js",
+    "scripts/engine/registries/classes-registry.js",
+    "scripts/engine/registries/species-registry.js",
+    "scripts/registries/background-registry.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CompendiumResolver"
+   ],
+   "classes": [
+    "CompendiumResolver"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionService.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "classes",
+    "feats",
+    "force",
+    "infrastructure",
+    "progression",
+    "species",
+    "talents"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9117c906fc",
+   "path": "scripts/engine/suggestion/ConfidenceScoring.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7269,
+   "lines": 219,
+   "sloc": 120,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/BuildIdentityAnchor.js",
+    "scripts/actors/derived/level-split.js",
+    "scripts/adapters/ActorAbilityBridge.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ConfidenceScoring"
+   ],
+   "classes": [
+    "ConfidenceScoring"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionService.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-fef6805356",
+   "path": "scripts/engine/suggestion/EvidenceCardFactory.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8700,
+   "lines": 267,
+   "sloc": 140,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/TalentCandidateEnricher.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "EvidenceCardFactory",
+    "default"
+   ],
+   "classes": [
+    "EvidenceCardFactory"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c107791503",
+   "path": "scripts/engine/suggestion/ForceOptionSuggestionEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 24869,
+   "lines": 627,
+   "sloc": 476,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/system/HouseRuleService.js",
+    "scripts/engine/force/force-power-categories.js",
+    "scripts/engine/suggestion/suggestion-unified-tiers.js",
+    "scripts/engine/suggestion/force-rule-adapter.js",
+    "scripts/engine/suggestion/force-choice-context.js",
+    "scripts/engine/suggestion/build-route-confidence-profile.js",
+    "scripts/engine/suggestion/force-power-role-metadata.js",
+    "scripts/engine/darkside/dsp-engine.js [dynamic]",
+    "scripts/engine/darkside/dsp-engine.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "FORCE_OPTION_TIERS",
+    "FORCE_OPTIONS_CATALOG",
+    "ForceOptionSuggestionEngine",
+    "default"
+   ],
+   "classes": [
+    "ForceOptionSuggestionEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/ArchetypeEnhancedForceOptionSuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "force",
+    "houserules",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "deprecated": 1,
+    "legacy": 1,
+    "compat": 1,
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-4fb7be0fad",
+   "path": "scripts/engine/suggestion/Level1SkillSuggestionEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12745,
+   "lines": 317,
+   "sloc": 283,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/shared-suggestion-utilities.js",
+    "scripts/engine/suggestion/suggestion-unified-tiers.js",
+    "scripts/utils/skill-normalization.js",
+    "scripts/engine/suggestion/attribute-planner.js",
+    "scripts/engine/suggestion/prestige-path-signals.js",
+    "scripts/engine/suggestion/skill-class-profiles.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "LEVEL1_SKILL_TIERS",
+    "Level1SkillSuggestionEngine",
+    "default"
+   ],
+   "classes": [
+    "Level1SkillSuggestionEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/ProgressionAdvisor.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "infrastructure",
+    "skills"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-1b601ba52a",
+   "path": "scripts/engine/suggestion/MentorClarificationSystem.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6965,
+   "lines": 204,
+   "sloc": 138,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "needsClarification",
+    "selectClarificationQuestion",
+    "storePlayerIntent",
+    "getPlayerIntent",
+    "applyIntentBonus"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "actor-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-37a7589c81",
+   "path": "scripts/engine/suggestion/MentorProfile.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2608,
+   "lines": 80,
+   "sloc": 29,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MentorProfile"
+   ],
+   "classes": [
+    "MentorProfile"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-33338f13f1",
+   "path": "scripts/engine/suggestion/MentorSystem.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 20730,
+   "lines": 747,
+   "sloc": 452,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/core/document-api-v13.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MentorSystem",
+    "default"
+   ],
+   "classes": [
+    "MentorSystem"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:swse:classSelected",
+    "on:swse:talentSelected",
+    "on:swse:featSelected",
+    "on:swse:levelUp:committed",
+    "on:swse:chargen:sessionCompleted",
+    "off:swse:classSelected",
+    "off:swse:talentSelected",
+    "off:swse:featSelected",
+    "off:swse:levelUp:committed",
+    "off:swse:chargen:sessionCompleted"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "actor-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 4
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-075944cae8",
+   "path": "scripts/engine/suggestion/MentorWishlistIntegration.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9768,
+   "lines": 252,
+   "sloc": 164,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/WishlistEngine.js",
+    "scripts/engine/abilities/AbilityEngine.js",
+    "scripts/engine/progression/feats/prerequisite_engine.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MentorWishlistIntegration",
+    "default"
+   ],
+   "classes": [
+    "MentorWishlistIntegration"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "abilities-effects",
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "legacy": 8
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6afbf67ddd",
+   "path": "scripts/engine/suggestion/MilestoneComputer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7025,
+   "lines": 170,
+   "sloc": 104,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/engine/progression/data/progression-data.js",
+    "scripts/engine/progression/ProgressionEngineV2.js",
+    "scripts/engine/progression/talents/talent-cadence-engine.js",
+    "scripts/engine/progression/engine/attribute-increase-handler.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MilestoneComputer",
+    "default"
+   ],
+   "classes": [
+    "MilestoneComputer"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/BuildIntent.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e3123d1e54",
+   "path": "scripts/engine/suggestion/OpportunityCostAnalyzer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 16498,
+   "lines": 482,
+   "sloc": 315,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/BuildIntent.js",
+    "scripts/engine/suggestion/BuildIdentityAnchor.js",
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/adapters/ActorAbilityBridge.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "OpportunityCostAnalyzer",
+    "default"
+   ],
+   "classes": [
+    "OpportunityCostAnalyzer"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-35db8b0a4a",
+   "path": "scripts/engine/suggestion/PathPreview.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 17244,
+   "lines": 420,
+   "sloc": 286,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "presentation",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/actors/derived/level-split.js",
+    "scripts/engine/suggestion/ClassSuggestionEngine.js",
+    "scripts/engine/suggestion/BuildIntent.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PathPreview",
+    "generatePathPreviewHtml",
+    "generateCompactPreviewHtml",
+    "default"
+   ],
+   "classes": [
+    "PathPreview"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-34d994f3ad",
+   "path": "scripts/engine/suggestion/PivotDetector.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3381,
+   "lines": 103,
+   "sloc": 51,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/PivotLogic.js",
+    "scripts/engine/suggestion/PivotStateManager.js",
+    "scripts/engine/suggestion/AnchorRepository.js",
+    "scripts/engine/suggestion/PivotLogic.js [reexport]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PivotDetector"
+   ],
+   "classes": [
+    "PivotDetector"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "scripts/engine/suggestion/SuggestionEngineHooks.js",
+    "scripts/engine/suggestion/SuggestionExplainer.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "compat": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-874fde0768",
+   "path": "scripts/engine/suggestion/PivotLogic.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7093,
+   "lines": 219,
+   "sloc": 151,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/BuildIdentityDetector.js",
+    "scripts/engine/suggestion/BuildIdentityDetector.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PIVOT_STATE",
+    "PivotLogic"
+   ],
+   "classes": [
+    "PivotLogic"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/PivotDetector.js",
+    "scripts/engine/suggestion/PivotStateManager.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6ce9c31095",
+   "path": "scripts/engine/suggestion/PivotStateManager.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5847,
+   "lines": 193,
+   "sloc": 111,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/SuggestionStateService.js",
+    "scripts/engine/suggestion/PivotLogic.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PivotStateManager"
+   ],
+   "classes": [
+    "PivotStateManager"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/PivotDetector.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9e10a62b99",
+   "path": "scripts/engine/suggestion/PlayerAnalytics.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8447,
+   "lines": 272,
+   "sloc": 170,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PlayerAnalytics"
+   ],
+   "classes": [
+    "PlayerAnalytics"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/PlayerHistoryTracker.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6919272d6c",
+   "path": "scripts/engine/suggestion/PlayerHistoryTracker.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5953,
+   "lines": 188,
+   "sloc": 116,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/SelectionRecorder.js",
+    "scripts/engine/suggestion/PlayerAnalytics.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PlayerHistoryTracker"
+   ],
+   "classes": [
+    "PlayerHistoryTracker"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "scripts/engine/suggestion/SuggestionEngineHooks.js",
+    "scripts/engine/suggestion/SuggestionService.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "compat": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-26b8d4f2e4",
+   "path": "scripts/engine/suggestion/PrestigeAffinityEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11628,
+   "lines": 294,
+   "sloc": 186,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/archetype/archetype-registry.js",
+    "scripts/engine/prestige/prestige-layer-registry.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "initializePrestigeSignals",
+    "PrestigeAffinityEngine",
+    "default"
+   ],
+   "classes": [
+    "PrestigeAffinityEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/BuildIntent.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "classes",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ce6debe3f6",
+   "path": "scripts/engine/suggestion/ProgressionAdvisor.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8557,
+   "lines": 253,
+   "sloc": 153,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/shared-suggestion-utilities.js",
+    "scripts/engine/suggestion/Level1SkillSuggestionEngine.js",
+    "scripts/engine/suggestion/attribute-planner.js",
+    "scripts/engine/suggestion/force-rule-adapter.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ProgressionAdvisor",
+    "default"
+   ],
+   "classes": [
+    "ProgressionAdvisor"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-7fadda8b3f",
+   "path": "scripts/engine/suggestion/ReasonCodeToReasonTypeMapping.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10487,
+   "lines": 283,
+   "sloc": 116,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/engine/suggestion/SuggestionV2Contract.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "REASON_CODE_TO_REASON_TYPE",
+    "mapReasonCodeToReasonType",
+    "validateMappings",
+    "getAllReasonCodes"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 5
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-625902935d",
+   "path": "scripts/engine/suggestion/ReasonFactory.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6662,
+   "lines": 202,
+   "sloc": 90,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ReasonFactory"
+   ],
+   "classes": [
+    "ReasonFactory"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/ClassDomainReasonEngine.js",
+    "scripts/engine/suggestion/SuggestionExplainer.js",
+    "scripts/engine/suggestion/SuggestionReasonEngine.js",
+    "scripts/engine/suggestion/SuggestionService.js",
+    "scripts/engine/suggestion/attribute-planner.js",
+    "scripts/utils/reason-inspector.js"
+   ],
+   "consumerCount": 6,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e5975c0a34",
+   "path": "scripts/engine/suggestion/SelectionRecorder.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7724,
+   "lines": 235,
+   "sloc": 128,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SelectionRecorder"
+   ],
+   "classes": [
+    "SelectionRecorder"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/PlayerHistoryTracker.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "actor-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-02c337a860",
+   "path": "scripts/engine/suggestion/SnapshotBuilder.INTEGRATION.md",
+   "top": "scripts",
+   "ext": "md",
+   "bytes": 6647,
+   "lines": 247,
+   "sloc": null,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "evidence-or-doc",
+   "runtimeReachability": "unreferenced",
+   "referencedBy": [],
+   "referencedByCount": 0,
+   "runtimeReferrerCount": 0,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-6281515c59",
+   "path": "scripts/engine/suggestion/SnapshotBuilder.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 15157,
+   "lines": 442,
+   "sloc": 237,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/equipment-loadout-profile.js",
+    "scripts/utils/schema-adapters.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SnapshotBuilder",
+    "buildSuggestionSnapshot",
+    "hashSuggestionSnapshot"
+   ],
+   "classes": [
+    "SnapshotBuilder"
+   ],
+   "consumers": [
+    "scripts/apps/progression-framework/shell/mentor-recommendation-controller.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "scripts/engine/suggestion/SuggestionService.js",
+    "tests/mentor-recommendation-architecture.test.mjs",
+    "tests/snapshot-builder-ability-authority.test.mjs"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/mentor-recommendation-architecture.test.mjs",
+     "tests/snapshot-builder-ability-authority.test.mjs"
+    ],
+    "transitiveCount": 52,
+    "ciTestCount": 52
+   },
+   "markers": {
+    "legacy": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-43b393f040",
+   "path": "scripts/engine/suggestion/SuggestionConfidence.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5698,
+   "lines": 151,
+   "sloc": 68,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SuggestionConfidence"
+   ],
+   "classes": [
+    "SuggestionConfidence"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "compat": 1,
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-fddc3fbe91",
+   "path": "scripts/engine/suggestion/SuggestionEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 142169,
+   "lines": 3201,
+   "sloc": 2204,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/suggestion-trace-controls.js",
+    "scripts/engine/suggestion/suggestion-route-coherence-guard.js",
+    "scripts/engine/suggestion/BuildIntent.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "scripts/engine/prestige/identity-engine.js",
+    "scripts/engine/suggestion/CommunityMetaSynergies.js",
+    "scripts/engine/abilities/AbilityEngine.js",
+    "scripts/engine/suggestion/WishlistEngine.js",
+    "scripts/engine/suggestion/suggestion-unified-tiers.js",
+    "scripts/engine/progression/talents/tree-authority.js",
+    "scripts/engine/archetype/archetype-registry.js",
+    "scripts/engine/archetype/archetype-registry-integration.js",
+    "scripts/engine/suggestion/selectReasonAtoms.js",
+    "scripts/mentor/mentor-reason-renderer.js",
+    "scripts/engine/suggestion/reason-signal-builder.js",
+    "scripts/engine/suggestion/ArchetypeMetadataEngine.js",
+    "scripts/engine/suggestion/tag-signal-engine.js",
+    "scripts/engine/suggestion/SuggestionScorer.js",
+    "scripts/engine/progression/engine/force-technique-suggestion-engine.js",
+    "scripts/engine/suggestion/AttributeIncreaseScorer.js",
+    "scripts/engine/suggestion/slot-context-detector.js",
+    "scripts/engine/suggestion/prestige-delay-calculator.js",
+    "scripts/engine/suggestion/SuggestionV2Contract.js",
+    "scripts/engine/suggestion/ReasonCodeToReasonTypeMapping.js",
+    "scripts/engine/suggestion/equipment-loadout-profile.js",
+    "scripts/engine/suggestion/build-route-confidence-profile.js",
+    "scripts/engine/suggestion/progression-choice-context.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SUGGESTION_TIERS",
+    "TIER_REASON_CODES",
+    "TIER_CONFIDENCE",
+    "TIER3_SUBPRIORITY",
+    "TIER3_MAX_BONUS",
+    "SuggestionEngine"
+   ],
+   "classes": [
+    "SuggestionEngine"
+   ],
+   "consumers": [
+    "scripts/core/phase5-init.js",
+    "scripts/engine/mentor/mentor-interaction-orchestrator.js",
+    "scripts/engine/repair/actor-repair-engine.js",
+    "scripts/engine/suggestion/OpportunityCostAnalyzer.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [
+    "abilities-effects",
+    "classes",
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "deprecated": 8,
+    "legacy": 4,
+    "compat": 10,
+    "fallback": 21
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f984130427",
+   "path": "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 38525,
+   "lines": 912,
+   "sloc": 599,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/suggestion-trace-controls.js",
+    "scripts/engine/suggestion/SuggestionService.js",
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/engine/suggestion/ClassSuggestionEngine.js",
+    "scripts/engine/suggestion/BackgroundSuggestionEngine.js",
+    "scripts/engine/suggestion/ForceOptionSuggestionEngine.js",
+    "scripts/engine/suggestion/Level1SkillSuggestionEngine.js",
+    "scripts/engine/suggestion/AttributeIncreaseSuggestionEngine.js",
+    "scripts/engine/progression/engine/species-suggestion-engine.js",
+    "scripts/engine/progression/engine/language-suggestion-engine.js",
+    "scripts/engine/progression/engine/force-secret-suggestion-engine.js",
+    "scripts/engine/progression/engine/force-technique-suggestion-engine.js",
+    "scripts/engine/progression/engine/droid-suggestion-engine.js",
+    "scripts/engine/suggestion/BuildIntent.js",
+    "scripts/engine/prestige/identity-engine.js",
+    "scripts/engine/suggestion/ProgressionAdvisor.js",
+    "scripts/engine/suggestion/CommunityMetaSynergies.js",
+    "scripts/engine/suggestion/PathPreview.js",
+    "scripts/engine/suggestion/SuggestionConfidence.js",
+    "scripts/engine/suggestion/PlayerHistoryTracker.js",
+    "scripts/engine/suggestion/BuildIdentityAnchor.js",
+    "scripts/engine/suggestion/PivotDetector.js",
+    "scripts/engine/suggestion/SuggestionExplainer.js",
+    "scripts/engine/suggestion/MentorProfile.js",
+    "scripts/engine/suggestion/SynergyEvaluator.js",
+    "scripts/engine/suggestion/BuildCoherenceAnalyzer.js",
+    "scripts/engine/suggestion/OpportunityCostAnalyzer.js",
+    "scripts/engine/suggestion/SuggestionEngineHooks.js",
+    "scripts/engine/suggestion/ArchetypeDefinitions.js",
+    "scripts/engine/suggestion/CandidatePoolBuilder.js",
+    "scripts/engine/suggestion/feat-suggestion-context.js",
+    "scripts/engine/suggestion/progression-choice-context.js",
+    "scripts/engine/suggestion/slot-context-detector.js",
+    "scripts/engine/suggestion/force-choice-context.js",
+    "scripts/engine/suggestion/SnapshotBuilder.js",
+    "scripts/engine/suggestion/equipment-loadout-profile.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SuggestionEngineCoordinator",
+    "default"
+   ],
+   "classes": [
+    "SuggestionEngineCoordinator"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/PathPreview.js",
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionService.js",
+    "scripts/infrastructure/hooks/suggestion-hooks.js",
+    "scripts/mentor/mentor-chat-dialog.js"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [
+    "classes",
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [
+    "callAll:swse:suggestions:initialized"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.suggestions"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 11
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-67ea3f859b",
+   "path": "scripts/engine/suggestion/SuggestionEngineHooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7537,
+   "lines": 189,
+   "sloc": 101,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/PlayerHistoryTracker.js",
+    "scripts/engine/suggestion/BuildIdentityAnchor.js",
+    "scripts/engine/suggestion/PivotDetector.js",
+    "scripts/engine/suggestion/SuggestionStateService.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SuggestionEngineHooks"
+   ],
+   "classes": [
+    "SuggestionEngineHooks"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:swse:feat-selected",
+    "on:swse:talent-selected",
+    "on:swse:level-up-complete",
+    "on:swse:mentor-dialog-complete",
+    "on:swse:suggestion-ignored"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b505434ff8",
+   "path": "scripts/engine/suggestion/SuggestionExplainer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 15096,
+   "lines": 393,
+   "sloc": 243,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/BuildIdentityAnchor.js",
+    "scripts/engine/suggestion/PivotDetector.js",
+    "scripts/engine/suggestion/ReasonFactory.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SuggestionExplainer"
+   ],
+   "classes": [
+    "SuggestionExplainer"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "scripts/engine/suggestion/SuggestionService.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 3,
+    "byClass": {
+     "actor-like": 3
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "compat": 1,
+    "fallback": 4
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-7f61acdbd6",
+   "path": "scripts/engine/suggestion/SuggestionReasonEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 38341,
+   "lines": 659,
+   "sloc": 592,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "authority-or-orchestrator",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/engine/suggestion/ReasonFactory.js",
+    "scripts/engine/suggestion/ClassDomainReasonEngine.js",
+    "scripts/engine/progression/utils/class-suggestion-utilities.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SuggestionReasonEngine"
+   ],
+   "classes": [
+    "SuggestionReasonEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionService.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 3,
+    "byClass": {
+     "actor-like": 3
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 8
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f71f6b600f",
+   "path": "scripts/engine/suggestion/SuggestionScorer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 56158,
+   "lines": 1284,
+   "sloc": 802,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/prestige-delay-calculator.js",
+    "scripts/engine/suggestion/AdvisoryEngine.js",
+    "scripts/engine/archetype/chain-registry.js",
+    "scripts/mentor/mentor-suggestion-bias.js",
+    "scripts/engine/mentor/mentor-dialogues.js",
+    "scripts/engine/suggestion/tag-signal-engine.js",
+    "scripts/engine/suggestion/equipment-loadout-profile.js",
+    "scripts/engine/suggestion/build-route-confidence-profile.js",
+    "scripts/engine/progression/utils/class-suggestion-utilities.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "scoreSuggestion",
+    "scoreAllCandidates",
+    "getTopSuggestions"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "compat": 2,
+    "fallback": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-38be59eb3c",
+   "path": "scripts/engine/suggestion/SuggestionService.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 51050,
+   "lines": 1214,
+   "sloc": 839,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "authority-or-orchestrator",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/ui/shell/ShellMutationGuard.js",
+    "scripts/engine/system/HouseRuleService.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "scripts/engine/suggestion/CompendiumResolver.js",
+    "scripts/core/document-api-v13.js",
+    "scripts/engine/suggestion/SuggestionExplainer.js",
+    "scripts/suggestions/suggestion-focus-map.js",
+    "scripts/engine/mentor/mentor-reason-selector.js",
+    "scripts/suggestions/reason-relevance.js",
+    "scripts/engine/suggestion/ReasonFactory.js",
+    "scripts/engine/suggestion/ConfidenceScoring.js",
+    "scripts/engine/suggestion/SnapshotBuilder.js",
+    "scripts/engine/suggestion/SuggestionReasonEngine.js",
+    "scripts/actors/derived/level-split.js",
+    "scripts/engine/suggestion/domain-registry.js",
+    "scripts/engine/progression/feats/feat-engine.js",
+    "scripts/engine/progression/engine/force-power-engine.js",
+    "scripts/engine/suggestion/PlayerHistoryTracker.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SuggestionService"
+   ],
+   "classes": [
+    "SuggestionService"
+   ],
+   "consumers": [
+    "scripts/apps/mentor-notes/mentor-notes-app.js",
+    "scripts/apps/progression-framework/debug/progression-render-stats.js",
+    "scripts/apps/progression-framework/shell/mentor-choice-reaction-router.js",
+    "scripts/apps/progression-framework/shell/mentor-recommendation-controller.js",
+    "scripts/apps/progression-framework/steps/background-step.js",
+    "scripts/apps/progression-framework/steps/class-step.js",
+    "scripts/apps/progression-framework/steps/droid-builder-step.js",
+    "scripts/apps/progression-framework/steps/feat-step.js",
+    "scripts/apps/progression-framework/steps/final-droid-configuration-step.js",
+    "scripts/apps/progression-framework/steps/force-power-step.js",
+    "scripts/apps/progression-framework/steps/force-secret-step.js",
+    "scripts/apps/progression-framework/steps/force-technique-step.js",
+    "scripts/apps/progression-framework/steps/language-step.js",
+    "scripts/apps/progression-framework/steps/medical-secret-step.js",
+    "scripts/apps/progression-framework/steps/mentor-step-integration.js",
+    "scripts/apps/progression-framework/steps/skills-step.js",
+    "scripts/apps/progression-framework/steps/species-step.js",
+    "scripts/apps/progression-framework/steps/starship-maneuver-step.js",
+    "scripts/apps/progression-framework/steps/talent-step.js",
+    "scripts/engine/progression/engine/progression-engine-instance.js",
+    "scripts/engine/progression/suggestion/suggestion-context-builder.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "scripts/infrastructure/hooks/suggestion-hooks.js",
+    "tests/mentor-recommendation-architecture.test.mjs",
+    "tests/progression-interaction-lifecycle.test.mjs",
+    "tests/progression-mentor-nonblocking.test.mjs",
+    "tests/progression-suggestion-and-render-contracts.test.mjs"
+   ],
+   "consumerCount": 27,
+   "secondarySystems": [
+    "actor-core",
+    "houserules",
+    "infrastructure",
+    "progression",
+    "ui-shell"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "actor-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/mentor-recommendation-architecture.test.mjs",
+     "tests/progression-interaction-lifecycle.test.mjs",
+     "tests/progression-mentor-nonblocking.test.mjs",
+     "tests/progression-suggestion-and-render-contracts.test.mjs"
+    ],
+    "transitiveCount": 49,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "deprecated": 3,
+    "legacy": 1,
+    "fallback": 5
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-14e39ea724",
+   "path": "scripts/engine/suggestion/SuggestionStateService.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6035,
+   "lines": 205,
+   "sloc": 103,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "authority-or-orchestrator",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/governance/actor-engine/actor-engine.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SuggestionStateService"
+   ],
+   "classes": [
+    "SuggestionStateService"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/AnchorRepository.js",
+    "scripts/engine/suggestion/PivotStateManager.js",
+    "scripts/engine/suggestion/SuggestionEngineHooks.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 4,
+    "byClass": {
+     "actor-like": 4
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-7645a9bd47",
+   "path": "scripts/engine/suggestion/SuggestionV2Contract.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 22615,
+   "lines": 416,
+   "sloc": 67,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ReasonType",
+    "assertSuggestionV2",
+    "assertReasonSignal"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/mentor/ReasonTypeToReasonAtomsMapping.js",
+    "scripts/engine/suggestion/ReasonCodeToReasonTypeMapping.js",
+    "scripts/engine/suggestion/SuggestionEngine.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e3381550c1",
+   "path": "scripts/engine/suggestion/SynergyEvaluator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 16395,
+   "lines": 543,
+   "sloc": 351,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/ClassSuggestionEngine.js",
+    "scripts/adapters/ActorAbilityBridge.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SynergyEvaluator",
+    "default"
+   ],
+   "classes": [
+    "SynergyEvaluator"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-8a58932c33",
+   "path": "scripts/engine/suggestion/TAG_INHERITANCE_GUIDE.md",
+   "top": "scripts",
+   "ext": "md",
+   "bytes": 7515,
+   "lines": 245,
+   "sloc": null,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "evidence-or-doc",
+   "runtimeReachability": "unreferenced",
+   "referencedBy": [],
+   "referencedByCount": 0,
+   "runtimeReferrerCount": 0,
+   "markers": {
+    "fallback": 2
+   },
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-7a910f0dda",
+   "path": "scripts/engine/suggestion/TalentCandidateEnricher.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4088,
+   "lines": 148,
+   "sloc": 63,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/TalentTreeTagRegistry.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "TalentCandidateEnricher",
+    "default"
+   ],
+   "classes": [
+    "TalentCandidateEnricher"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/CandidatePoolBuilder.js",
+    "scripts/engine/suggestion/EvidenceCardFactory.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {
+    "fallback": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-7467712647",
+   "path": "scripts/engine/suggestion/TalentTreeTagRegistry.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5897,
+   "lines": 200,
+   "sloc": 109,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "registry",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 7,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "TalentTreeTagRegistry",
+    "default"
+   ],
+   "classes": [
+    "TalentTreeTagRegistry"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/TalentCandidateEnricher.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {
+    "compat": 1,
+    "fallback": 7
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d07b820c8c",
+   "path": "scripts/engine/suggestion/WishlistEngine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 14397,
+   "lines": 410,
+   "sloc": 270,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "authority-or-orchestrator",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/abilities/AbilityEngine.js",
+    "scripts/engine/progression/feats/prerequisite_engine.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "WishlistEngine",
+    "default"
+   ],
+   "classes": [
+    "WishlistEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/MentorWishlistIntegration.js",
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/ui/wishlist-ui.js",
+    "scripts/utils/wishlist-helpers.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [
+    "abilities-effects",
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 2,
+    "byClass": {
+     "actor-like": 2
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "legacy": 12
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a709f941df",
+   "path": "scripts/engine/suggestion/attribute-planner.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 30347,
+   "lines": 759,
+   "sloc": 665,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/engine/suggestion/ReasonFactory.js",
+    "scripts/engine/suggestion/force-rule-adapter.js",
+    "scripts/engine/progression/utils/class-resolution.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "getConfiguredSkillAbilityMap",
+    "getSkillAbility",
+    "extractSpeciesMods",
+    "buildAttributePlanningProfile",
+    "rankAbilitiesForPlan",
+    "planPointBuyAllocation",
+    "planPooledAssignment",
+    "buildSuggestedAttributeBuilds",
+    "getAttributePlanningTelemetry",
+    "abilityBiasForecast"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/progression-framework/steps/attribute-step.js",
+    "scripts/engine/suggestion/AttributeIncreaseScorer.js",
+    "scripts/engine/suggestion/BackgroundSuggestionEngine.js",
+    "scripts/engine/suggestion/Level1SkillSuggestionEngine.js",
+    "scripts/engine/suggestion/ProgressionAdvisor.js"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "actor-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c2d82fcadd",
+   "path": "scripts/engine/suggestion/build-route-confidence-profile.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 26162,
+   "lines": 617,
+   "sloc": 557,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/suggestion/equipment-loadout-profile.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "buildRouteConfidenceProfile",
+    "scoreCandidateRouteFit",
+    "summarizeRouteConfidenceProfile",
+    "getOwnedRepeatableCount",
+    "isRepeatableCandidate"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/ClassSuggestionEngine.js",
+    "scripts/engine/suggestion/ForceOptionSuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionScorer.js",
+    "scripts/engine/suggestion/equipment/store-suggestion-context.js",
+    "scripts/engine/suggestion/equipment/workbench-modification-suggestions.js"
+   ],
+   "consumerCount": 6,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-4902db1262",
+   "path": "scripts/engine/suggestion/character-data-analysis.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 27060,
+   "lines": 632,
+   "sloc": 501,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [],
+   "classes": [
+    "MechanicsCalculator"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-1735672f86",
+   "path": "scripts/engine/suggestion/class-route-profile-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 27399,
+   "lines": 622,
+   "sloc": 548,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/engine/progression/utils/class-suggestion-utilities.js",
+    "scripts/data/class-tag-metadata.js",
+    "scripts/engine/suggestion/equipment-loadout-profile.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ClassRouteProfileEngine",
+    "default"
+   ],
+   "classes": [
+    "ClassRouteProfileEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/ClassSuggestionEngine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "classes",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-cda3c52a23",
+   "path": "scripts/engine/suggestion/domain-registry.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5629,
+   "lines": 166,
+   "sloc": 62,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "registry",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SUPPORTED_DOMAINS",
+    "UNSUPPORTED_DOMAINS",
+    "DOMAIN_ALIASES",
+    "getCanonicalDomain",
+    "isSupportedDomain",
+    "isUnsupportedDomain",
+    "classifyDomain",
+    "getSupportedDomainsList",
+    "getUnsupportedDomainsList",
+    "validateDomain"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionService.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "deprecated": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6aeb427efe",
+   "path": "scripts/engine/suggestion/equipment-loadout-profile.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 14835,
+   "lines": 374,
+   "sloc": 323,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "buildEquipmentLoadoutProfile",
+    "getEquipmentLoadoutProfile",
+    "getLoadoutTagWeight",
+    "scoreCandidateLoadoutFit",
+    "hasLoadoutCommitment",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/prestige/identity-engine.js",
+    "scripts/engine/suggestion/BuildIntent.js",
+    "scripts/engine/suggestion/ClassSuggestionEngine.js",
+    "scripts/engine/suggestion/SnapshotBuilder.js",
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "scripts/engine/suggestion/SuggestionScorer.js",
+    "scripts/engine/suggestion/build-route-confidence-profile.js",
+    "scripts/engine/suggestion/class-route-profile-engine.js",
+    "scripts/engine/suggestion/equipment/store-suggestion-context.js",
+    "scripts/engine/suggestion/suggestion-route-coherence-guard.js",
+    "scripts/engine/suggestion/tag-signal-engine.js"
+   ],
+   "consumerCount": 12,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 58,
+    "ciTestCount": 56
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d4dc9002ff",
+   "path": "scripts/engine/suggestion/equipment/armor-gear-scoring-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10742,
+   "lines": 379,
+   "sloc": 229,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/suggestion/equipment/shared-scoring-utils.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ArmorGearScoringEngine",
+    "default"
+   ],
+   "classes": [
+    "ArmorGearScoringEngine"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-703f8b6dab",
+   "path": "scripts/engine/suggestion/equipment/armor-scoring-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 13657,
+   "lines": 425,
+   "sloc": 256,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/equipment/scoring/armor-axis-a-engine.js",
+    "scripts/engine/suggestion/equipment/scoring/armor-axis-b-engine.js",
+    "scripts/engine/suggestion/equipment/scoring/armor-role-alignment-engine.js",
+    "scripts/engine/suggestion/equipment/scoring/armor-explainability-generator.js",
+    "scripts/engine/suggestion/equipment/scoring/armor-benefit-simulator.js",
+    "scripts/items/armor-data-resolver.js",
+    "scripts/engine/suggestion/equipment/store-suggestion-context.js",
+    "scripts/engine/suggestion/equipment/shared-scoring-utils.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ArmorScoringEngine",
+    "default"
+   ],
+   "classes": [
+    "ArmorScoringEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/armor-suggestions.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "equipment",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b5bb613b05",
+   "path": "scripts/engine/suggestion/equipment/armor-suggestions.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11506,
+   "lines": 392,
+   "sloc": 252,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/engine/suggestion/equipment/armor-scoring-engine.js",
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/equipment/shared-scoring-utils.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ArmorSuggestions",
+    "default"
+   ],
+   "classes": [
+    "ArmorSuggestions"
+   ],
+   "consumers": [
+    "scripts/apps/store/store-main.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-1289b25ac4",
+   "path": "scripts/engine/suggestion/equipment/asset-suggestions.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12119,
+   "lines": 302,
+   "sloc": 260,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/equipment/store-suggestion-context.js",
+    "scripts/engine/suggestion/equipment/shared-scoring-utils.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "AssetSuggestions",
+    "default"
+   ],
+   "classes": [
+    "AssetSuggestions"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 3
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-4aee3bbdc6",
+   "path": "scripts/engine/suggestion/equipment/combat-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4394,
+   "lines": 159,
+   "sloc": 84,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/suggestion/equipment/report-schema.js",
+    "scripts/engine/suggestion/gm/init.js",
+    "scripts/state/phase.js",
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/equipment/tactical-evaluator.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CombatSuggestionEngine"
+   ],
+   "classes": [
+    "CombatSuggestionEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/combat-hooks.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-99ebb85c23",
+   "path": "scripts/engine/suggestion/equipment/combat-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2360,
+   "lines": 93,
+   "sloc": 56,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/suggestion/equipment/combat-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerCombatSuggestionHooks",
+    "requestCombatEvaluation"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:combatTurnChange",
+    "on:combatRoundChange",
+    "on:combatStart",
+    "on:updateToken"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": true,
+   "unreachableConfidence": "unverified-name-mentioned-at-runtime",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e607439302",
+   "path": "scripts/engine/suggestion/equipment/equipment-use-evaluator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 16768,
+   "lines": 409,
+   "sloc": 365,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "buildEquipmentUseProfile",
+    "scoreEquipmentUseValue",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/gear-suggestions.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 4
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-7006a19aa4",
+   "path": "scripts/engine/suggestion/equipment/gear-suggestions.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 21015,
+   "lines": 551,
+   "sloc": 393,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/equipment/shared-scoring-utils.js",
+    "scripts/engine/suggestion/equipment/store-suggestion-context.js",
+    "scripts/engine/suggestion/equipment/equipment-use-evaluator.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "GearSuggestions",
+    "default"
+   ],
+   "classes": [
+    "GearSuggestions"
+   ],
+   "consumers": [
+    "scripts/apps/store/store-main.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-dd1e2e968a",
+   "path": "scripts/engine/suggestion/equipment/mentor-prose-generator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10918,
+   "lines": 348,
+   "sloc": 252,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MentorProseGenerator",
+    "default"
+   ],
+   "classes": [
+    "MentorProseGenerator"
+   ],
+   "consumers": [
+    "scripts/apps/store/store-main.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3e3a8397fe",
+   "path": "scripts/engine/suggestion/equipment/report-schema.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3308,
+   "lines": 110,
+   "sloc": 63,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "createSuggestionReport",
+    "validateSuggestionReport",
+    "getPlayerSafeView",
+    "getGMOnlyView",
+    "generateReportId"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/combat-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5560c0c324",
+   "path": "scripts/engine/suggestion/equipment/scoring/armor-axis-a-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5729,
+   "lines": 195,
+   "sloc": 111,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/items/armor-data-resolver.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ArmorAxisAEngine",
+    "default"
+   ],
+   "classes": [
+    "ArmorAxisAEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/armor-scoring-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "equipment"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-059e22d25a",
+   "path": "scripts/engine/suggestion/equipment/scoring/armor-axis-b-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6136,
+   "lines": 158,
+   "sloc": 74,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/items/armor-data-resolver.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ArmorAxisBEngine",
+    "default"
+   ],
+   "classes": [
+    "ArmorAxisBEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/armor-scoring-engine.js",
+    "tests/armor-axis-b-shield-authority.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "equipment"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/armor-axis-b-shield-authority.test.mjs"
+    ],
+    "transitiveCount": 53,
+    "ciTestCount": 52
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-cfe5f7a018",
+   "path": "scripts/engine/suggestion/equipment/scoring/armor-benefit-simulator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 22557,
+   "lines": 518,
+   "sloc": 425,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/items/armor-data-resolver.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "evaluateArmorBenefit",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/armor-scoring-engine.js",
+    "scripts/engine/suggestion/equipment/workbench-modification-suggestions.js",
+    "tests/armor-shield-acp-authority.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "equipment"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/armor-shield-acp-authority.test.mjs"
+    ],
+    "transitiveCount": 54,
+    "ciTestCount": 53
+   },
+   "markers": {
+    "fallback": 5
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f0b92a3e1f",
+   "path": "scripts/engine/suggestion/equipment/scoring/armor-explainability-generator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5166,
+   "lines": 173,
+   "sloc": 106,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ArmorExplainabilityGenerator",
+    "default"
+   ],
+   "classes": [
+    "ArmorExplainabilityGenerator"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/armor-scoring-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-603af533c1",
+   "path": "scripts/engine/suggestion/equipment/scoring/armor-role-alignment-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4054,
+   "lines": 130,
+   "sloc": 66,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/items/armor-data-resolver.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ArmorRoleAlignmentEngine",
+    "default"
+   ],
+   "classes": [
+    "ArmorRoleAlignmentEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/armor-scoring-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "equipment"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f1c824a20b",
+   "path": "scripts/engine/suggestion/equipment/scoring/axis-a-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5552,
+   "lines": 194,
+   "sloc": 107,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "AxisAEngine",
+    "default"
+   ],
+   "classes": [
+    "AxisAEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/weapon-scoring-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-440ce9b182",
+   "path": "scripts/engine/suggestion/equipment/scoring/axis-b-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9934,
+   "lines": 327,
+   "sloc": 194,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "AxisBEngine",
+    "default"
+   ],
+   "classes": [
+    "AxisBEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/weapon-scoring-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-cd04d0a9e3",
+   "path": "scripts/engine/suggestion/equipment/scoring/category-normalization-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11299,
+   "lines": 393,
+   "sloc": 238,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CategoryNormalizationEngine",
+    "default"
+   ],
+   "classes": [
+    "CategoryNormalizationEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/weapon-scoring-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-30fe1a1bb5",
+   "path": "scripts/engine/suggestion/equipment/scoring/explainability-generator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9924,
+   "lines": 305,
+   "sloc": 202,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ExplainabilityGenerator",
+    "default"
+   ],
+   "classes": [
+    "ExplainabilityGenerator"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/weapon-scoring-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-676068237a",
+   "path": "scripts/engine/suggestion/equipment/scoring/tradeoff-resolver.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8991,
+   "lines": 290,
+   "sloc": 180,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "TradeoffResolver",
+    "default"
+   ],
+   "classes": [
+    "TradeoffResolver"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/weapon-scoring-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-92db0b8e76",
+   "path": "scripts/engine/suggestion/equipment/scoring/weight-config.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10815,
+   "lines": 420,
+   "sloc": 164,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "WEIGHT_CAPS",
+    "BASE_RELEVANCE",
+    "ROLE_ALIGNMENT",
+    "AXIS_A_DAMAGE_BANDS",
+    "AXIS_A_DAMPENERS",
+    "AXIS_B_ATTRIBUTE_ALIGNMENT",
+    "AXIS_B_ACCURACY_TRAITS",
+    "AXIS_B_RANGE_COMPATIBILITY",
+    "AXIS_B_CAP",
+    "TRADEOFF_ADJUSTMENTS",
+    "PRICE_BIAS",
+    "SANITY_CHECKS",
+    "EXPLAINABILITY_MAP",
+    "TUNING_CHECKLIST",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/scoring/weighted-score-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f6e6da13f1",
+   "path": "scripts/engine/suggestion/equipment/scoring/weighted-score-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 17977,
+   "lines": 574,
+   "sloc": 393,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/engine/suggestion/equipment/scoring/weight-config.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "WeightedScoreEngine",
+    "default"
+   ],
+   "classes": [
+    "WeightedScoreEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/weapon-scoring-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "compat": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-0612997caa",
+   "path": "scripts/engine/suggestion/equipment/shared-scoring-utils.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7537,
+   "lines": 257,
+   "sloc": 128,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/suggestion/equipment/suggestion-tiers-canonical.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "clampScore",
+    "scaleNormalizedTo100",
+    "scale100ToNormalized",
+    "assignTier",
+    "getTierKey",
+    "buildPeerGroupIndex",
+    "getPeerGroup",
+    "computeCategoryAdjustment",
+    "extractDamageBands",
+    "computeDiceAverage",
+    "normalizeDamageScore",
+    "computeWeightedCombined",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/armor-gear-scoring-engine.js",
+    "scripts/engine/suggestion/equipment/armor-scoring-engine.js",
+    "scripts/engine/suggestion/equipment/armor-suggestions.js",
+    "scripts/engine/suggestion/equipment/asset-suggestions.js",
+    "scripts/engine/suggestion/equipment/gear-suggestions.js",
+    "scripts/engine/suggestion/equipment/weapon-scoring-engine.js"
+   ],
+   "consumerCount": 6,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c4950f4e4a",
+   "path": "scripts/engine/suggestion/equipment/store-suggestion-context.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 16804,
+   "lines": 412,
+   "sloc": 360,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/engine/store/ledger-service.js",
+    "scripts/engine/suggestion/equipment/weapon-investment-profile.js",
+    "scripts/engine/suggestion/BuildIntent.js",
+    "scripts/engine/suggestion/equipment-loadout-profile.js",
+    "scripts/engine/suggestion/build-route-confidence-profile.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "buildStoreSuggestionContextCacheKey",
+    "getStoreItemCost",
+    "extractStoreItemTags",
+    "buildStoreSuggestionContext",
+    "scoreStoreItemBudgetFit",
+    "scoreStoreItemContextFit",
+    "buildStoreContextExplanations",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/customization/item-customization-workbench.js",
+    "scripts/apps/store/store-main.js",
+    "scripts/engine/suggestion/equipment/armor-scoring-engine.js",
+    "scripts/engine/suggestion/equipment/asset-suggestions.js",
+    "scripts/engine/suggestion/equipment/gear-suggestions.js",
+    "scripts/engine/suggestion/equipment/weapon-scoring-engine.js",
+    "scripts/engine/suggestion/equipment/workbench-modification-suggestions.js"
+   ],
+   "consumerCount": 7,
+   "secondarySystems": [
+    "store-economy"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c5f486e523",
+   "path": "scripts/engine/suggestion/equipment/suggestion-tiers-canonical.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2004,
+   "lines": 55,
+   "sloc": 29,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SUGGESTION_TIERS",
+    "getTierFromScore",
+    "getTierKeyFromScore",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/shared-scoring-utils.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e7656f43cd",
+   "path": "scripts/engine/suggestion/equipment/tactical-evaluator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10903,
+   "lines": 377,
+   "sloc": 231,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/adapters/ActorAbilityBridge.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "TacticalEvaluator"
+   ],
+   "classes": [
+    "TacticalEvaluator"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/combat-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ab7fb7d2cd",
+   "path": "scripts/engine/suggestion/equipment/weapon-investment-profile.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7641,
+   "lines": 211,
+   "sloc": 181,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "classifyWeaponInvestmentGroup",
+    "buildWeaponInvestmentProfile",
+    "scoreWeaponInvestmentFit",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/store-suggestion-context.js",
+    "scripts/engine/suggestion/equipment/workbench-modification-suggestions.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d6d4492d3d",
+   "path": "scripts/engine/suggestion/equipment/weapon-scoring-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12261,
+   "lines": 372,
+   "sloc": 219,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/suggestion/equipment/scoring/axis-a-engine.js",
+    "scripts/engine/suggestion/equipment/scoring/axis-b-engine.js",
+    "scripts/engine/suggestion/equipment/scoring/tradeoff-resolver.js",
+    "scripts/engine/suggestion/equipment/scoring/weighted-score-engine.js",
+    "scripts/engine/suggestion/equipment/scoring/category-normalization-engine.js",
+    "scripts/engine/suggestion/equipment/scoring/explainability-generator.js",
+    "scripts/engine/suggestion/equipment/store-suggestion-context.js",
+    "scripts/engine/suggestion/equipment/shared-scoring-utils.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "WeaponScoringEngine",
+    "default"
+   ],
+   "classes": [
+    "WeaponScoringEngine"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/weapon-suggestions.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-839bbd8118",
+   "path": "scripts/engine/suggestion/equipment/weapon-suggestions.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8967,
+   "lines": 298,
+   "sloc": 192,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/engine/suggestion/equipment/weapon-scoring-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "WeaponSuggestions",
+    "default"
+   ],
+   "classes": [
+    "WeaponSuggestions"
+   ],
+   "consumers": [
+    "scripts/apps/store/store-main.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d498586a51",
+   "path": "scripts/engine/suggestion/equipment/workbench-modification-suggestions.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 13121,
+   "lines": 325,
+   "sloc": 285,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/engine/suggestion/build-route-confidence-profile.js",
+    "scripts/engine/suggestion/equipment/store-suggestion-context.js",
+    "scripts/engine/suggestion/equipment/weapon-investment-profile.js",
+    "scripts/engine/suggestion/equipment/scoring/armor-benefit-simulator.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "scoreWorkbenchModification",
+    "applyWorkbenchModificationSuggestions",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/customization/item-customization-workbench.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6cad44a1c2",
+   "path": "scripts/engine/suggestion/feat-suggestion-context.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5877,
+   "lines": 173,
+   "sloc": 141,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/engine/suggestion/slot-context-detector.js",
+    "scripts/houserules/adapters/FeatRulesAdapter.js",
+    "scripts/houserules/houserule-talent-combination.js",
+    "scripts/engine/progression/feats/class-feat-registry.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "getResolvedFeatTalentEntitlements",
+    "buildFeatSuggestionContext"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "houserules",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-851588e316",
+   "path": "scripts/engine/suggestion/force-choice-context.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5995,
+   "lines": 171,
+   "sloc": 144,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ForceChoiceContext",
+    "default"
+   ],
+   "classes": [
+    "ForceChoiceContext"
+   ],
+   "consumers": [
+    "scripts/engine/progression/engine/force-secret-suggestion-engine.js",
+    "scripts/engine/progression/engine/force-technique-suggestion-engine.js",
+    "scripts/engine/suggestion/ForceOptionSuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-579180860f",
+   "path": "scripts/engine/suggestion/force-power-role-metadata.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10953,
+   "lines": 361,
+   "sloc": 353,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "getForcePowerRoleMetadata",
+    "getForcePowerRoleTagSet"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/ForceOptionSuggestionEngine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b5bdc07a23",
+   "path": "scripts/engine/suggestion/force-rule-adapter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1933,
+   "lines": 60,
+   "sloc": 52,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "adapter",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/engine/system/HouseRuleService.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "getForceTrainingAbilityKey",
+    "getUseTheForceAbilityKey",
+    "getForceAbilityConfig",
+    "getAbilityScore",
+    "getAbilityMod",
+    "getForceAxisSnapshot"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/AttributeIncreaseScorer.js",
+    "scripts/engine/suggestion/ForceOptionSuggestionEngine.js",
+    "scripts/engine/suggestion/ProgressionAdvisor.js",
+    "scripts/engine/suggestion/attribute-planner.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [
+    "houserules"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {
+    "fallback": 4
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-8d88429f4f",
+   "path": "scripts/engine/suggestion/gm/gm-suggestion-panel.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4217,
+   "lines": 155,
+   "sloc": 101,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "presentation",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/apps/base/base-swse-appv2.js",
+    "scripts/engine/suggestion/gm/insight-bus.js",
+    "scripts/engine/suggestion/gm/insight-types.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "GMSuggestionPanel"
+   ],
+   "classes": [
+    "GMSuggestionPanel"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/gm/init.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "ui-shell"
+   ],
+   "hooks": [
+    "on:swse:gm-insights-updated",
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [
+    "templates/gm/suggestion-panel-header.hbs",
+    "templates/gm/suggestion-panel-content.hbs",
+    "templates/gm/suggestion-panel-footer.hbs"
+   ],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "todo": 1
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": true,
+   "unreachableConfidence": "unverified-name-mentioned-at-runtime",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-22906a007d",
+   "path": "scripts/engine/suggestion/gm/init.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1622,
+   "lines": 60,
+   "sloc": 29,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/suggestion/gm/insight-bus.js",
+    "scripts/engine/suggestion/gm/gm-suggestion-panel.js",
+    "scripts/core/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "initializeGMSuggestions",
+    "emitSuggestionReport",
+    "getGMInsights",
+    "openGMPanel"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/equipment/combat-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [
+    "once:ready",
+    "callAll:swse:suggestion-report-ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a01310a7e1",
+   "path": "scripts/engine/suggestion/gm/insight-bus.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3420,
+   "lines": 115,
+   "sloc": 58,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/suggestion/gm/pressure-monitor.js",
+    "scripts/engine/suggestion/gm/spotlight-monitor.js",
+    "scripts/engine/suggestion/gm/pacing-monitor.js",
+    "scripts/engine/suggestion/gm/tuning-advisor.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "InsightBus"
+   ],
+   "classes": [
+    "InsightBus"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/gm/gm-suggestion-panel.js",
+    "scripts/engine/suggestion/gm/init.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [
+    "on:swse:gm-insight-emitted",
+    "callAll:swse:gm-insights-updated",
+    "callAll:swse:gm-insights-updated"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-009ae1d680",
+   "path": "scripts/engine/suggestion/gm/insight-types.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1058,
+   "lines": 43,
+   "sloc": 29,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "INSIGHT_TYPES",
+    "INSIGHT_SEVERITY",
+    "PACING_STATES",
+    "validateInsight"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/gm/gm-suggestion-panel.js",
+    "scripts/engine/suggestion/gm/pacing-monitor.js",
+    "scripts/engine/suggestion/gm/pressure-monitor.js",
+    "scripts/engine/suggestion/gm/spotlight-monitor.js",
+    "scripts/engine/suggestion/gm/tuning-advisor.js"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-aea284cf6d",
+   "path": "scripts/engine/suggestion/gm/pacing-monitor.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3904,
+   "lines": 121,
+   "sloc": 80,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/suggestion/gm/insight-types.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PacingMonitor"
+   ],
+   "classes": [
+    "PacingMonitor"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/gm/insight-bus.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "callAll:swse:gm-insight-emitted",
+    "on:swse:suggestion-report-ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b4351ce977",
+   "path": "scripts/engine/suggestion/gm/pressure-monitor.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2646,
+   "lines": 81,
+   "sloc": 51,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/suggestion/gm/insight-types.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PressureMonitor"
+   ],
+   "classes": [
+    "PressureMonitor"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/gm/insight-bus.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "callAll:swse:gm-insight-emitted",
+    "on:swse:suggestion-report-ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-74b7c5b36a",
+   "path": "scripts/engine/suggestion/gm/spotlight-monitor.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2693,
+   "lines": 82,
+   "sloc": 51,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/suggestion/gm/insight-types.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SpotlightMonitor"
+   ],
+   "classes": [
+    "SpotlightMonitor"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/gm/insight-bus.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "callAll:swse:gm-insight-emitted",
+    "on:swse:suggestion-report-ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a01af39179",
+   "path": "scripts/engine/suggestion/gm/tuning-advisor.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4109,
+   "lines": 136,
+   "sloc": 99,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/suggestion/gm/insight-types.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "TuningAdvisor"
+   ],
+   "classes": [
+    "TuningAdvisor"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/gm/insight-bus.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "callAll:swse:gm-insight-emitted",
+    "on:swse:suggestion-report-ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-78402869c6",
+   "path": "scripts/engine/suggestion/prestige-delay-calculator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10498,
+   "lines": 340,
+   "sloc": 194,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/data/classes-db.js",
+    "scripts/adapters/ActorAbilityBridge.js",
+    "scripts/engine/progression/utils/class-suggestion-utilities.js",
+    "scripts/engine/progression/prerequisite-checker.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "calculatePrestigeDelay",
+    "projectBAB",
+    "calculatePrestigeDelayBatch",
+    "enrichBuildIntentWithPrestigeDelays"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/ClassSuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionScorer.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "classes",
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {
+    "legacy": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-fdb890ee07",
+   "path": "scripts/engine/suggestion/prestige-path-signals.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3870,
+   "lines": 126,
+   "sloc": 102,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/data/prestige-prerequisites.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "getPrestigeSignalCatalog",
+    "getSkillPrestigeTags",
+    "getFeatPrestigeTags",
+    "getTalentTreePrestigeTags",
+    "getPrestigeTargets",
+    "countPrestigeTagMatches",
+    "getMissingPrestigeSkills"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/BackgroundSuggestionEngine.js",
+    "scripts/engine/suggestion/Level1SkillSuggestionEngine.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "classes"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c9eb4f72d4",
+   "path": "scripts/engine/suggestion/progression-choice-context.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8755,
+   "lines": 217,
+   "sloc": 190,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/engine/system/HouseRuleService.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "buildProgressionChoiceContext",
+    "candidateMatchesCurrentClassBonusFeat",
+    "isAlreadyEntitled",
+    "isCoreEnablingPick",
+    "getPackagePriorityBonus",
+    "getSlotEfficiencyDelta"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "houserules"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 6
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ae256350f9",
+   "path": "scripts/engine/suggestion/reason-signal-builder.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7470,
+   "lines": 280,
+   "sloc": 207,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ReasonSignalBuilder"
+   ],
+   "classes": [
+    "ReasonSignalBuilder"
+   ],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 5
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-77fb3b7976",
+   "path": "scripts/engine/suggestion/scoring-walkthrough.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 18663,
+   "lines": 460,
+   "sloc": 359,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [],
+   "classes": [
+    "ScoringWalkthrough"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-1fe2c090c7",
+   "path": "scripts/engine/suggestion/selectReasonAtoms.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8978,
+   "lines": 257,
+   "sloc": 137,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/mentor/mentor-reason-atoms.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "selectReasonAtoms",
+    "selectJudgmentKeys",
+    "getMappedReasonCodes",
+    "validateAtomMappings"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/mentor/validate-mentor-integration.js",
+    "scripts/engine/suggestion/SuggestionEngine.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "compat": 1,
+    "fallback": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f8dd79f056",
+   "path": "scripts/engine/suggestion/shared-suggestion-utilities.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6541,
+   "lines": 197,
+   "sloc": 88,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/data/class-tag-metadata.js",
+    "scripts/utils/schema-adapters.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "extractAbilityScores",
+    "calculateAbilityModifier",
+    "extractAbilityModifiers",
+    "findHighestAbility",
+    "normalizeSkillName",
+    "hasSkill",
+    "getSkillModifier",
+    "CLASS_SYNERGY_DATA",
+    "getClassSynergy",
+    "matchesClassAbilitySynergy",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/ClassDomainReasonEngine.js",
+    "scripts/engine/suggestion/ClassSuggestionEngine.js",
+    "scripts/engine/suggestion/Level1SkillSuggestionEngine.js",
+    "scripts/engine/suggestion/ProgressionAdvisor.js",
+    "tests/consumer-batch-ability-authority.test.mjs"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [
+    "classes",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/consumer-batch-ability-authority.test.mjs"
+    ],
+    "transitiveCount": 54,
+    "ciTestCount": 53
+   },
+   "markers": {
+    "compat": 1,
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3e6145c66f",
+   "path": "scripts/engine/suggestion/skill-class-profiles.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3898,
+   "lines": 94,
+   "sloc": 89,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/utils/skill-normalization.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CORE_CLASS_SKILL_PROFILES",
+    "getCoreClassSkillProfile",
+    "collectProfileBiasSkills"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/Level1SkillSuggestionEngine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "skills"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-04e9c47aff",
+   "path": "scripts/engine/suggestion/slot-context-detector.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5001,
+   "lines": 150,
+   "sloc": 98,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/engine/progression/talents/tree-authority.js",
+    "scripts/engine/progression/engine/attribute-increase-handler.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "getActiveSlotContext",
+    "isFeatSlot",
+    "isTalentSlot",
+    "isForceTechniqueSlot",
+    "isAttributeIncreaseSlot",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "scripts/engine/suggestion/feat-suggestion-context.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-8cb2e912a4",
+   "path": "scripts/engine/suggestion/suggestion-advisory-formatter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5281,
+   "lines": 159,
+   "sloc": 82,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SuggestionAdvisoryFormatter",
+    "default"
+   ],
+   "classes": [
+    "SuggestionAdvisoryFormatter"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a9400d4671",
+   "path": "scripts/engine/suggestion/suggestion-detail-explanation.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8925,
+   "lines": 265,
+   "sloc": 235,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "buildSuggestionDetailExplanation",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/progression-framework/steps/class-step.js",
+    "scripts/apps/progression-framework/steps/feat-step.js",
+    "scripts/apps/progression-framework/steps/talent-step.js",
+    "scripts/engine/mentor/mentor-choice-line-composer.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9a220dfcd0",
+   "path": "scripts/engine/suggestion/suggestion-route-coherence-guard.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9377,
+   "lines": 280,
+   "sloc": 231,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/engine/suggestion/equipment-loadout-profile.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "applySuggestionRouteCoherenceGuard",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 53,
+    "ciTestCount": 51
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-158d80617e",
+   "path": "scripts/engine/suggestion/suggestion-settings.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1042,
+   "lines": 34,
+   "sloc": 26,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerSuggestionSettings"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [
+    "foundryvtt-swse.enableSuggestionTrace",
+    "foundryvtt-swse.enableMentorNotesPanel",
+    "foundryvtt-swse.showSuggestionDiffOnLevelUp"
+   ],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2ab783adca",
+   "path": "scripts/engine/suggestion/suggestion-trace-controls.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2090,
+   "lines": 65,
+   "sloc": 49,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "isSuggestionTraceEnabled",
+    "logSuggestionTrace",
+    "summarizeSuggestionResults"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/mentor/mentor-reason-selector.js",
+    "scripts/engine/suggestion/CandidatePoolBuilder.js",
+    "scripts/engine/suggestion/ClassSuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 55,
+    "ciTestCount": 53
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a6f8d0cf5e",
+   "path": "scripts/engine/suggestion/suggestion-unified-tiers.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7373,
+   "lines": 229,
+   "sloc": 89,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "UNIFIED_TIERS",
+    "validateUnifiedTiers",
+    "getTierBadge",
+    "getTierColor",
+    "compareTiers",
+    "getTierMetadata"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/ArchetypeEnhancedForceOptionSuggestionEngine.js",
+    "scripts/engine/suggestion/AttributeIncreaseSuggestionEngine.js",
+    "scripts/engine/suggestion/BackgroundSuggestionEngine.js",
+    "scripts/engine/suggestion/ClassDomainReasonEngine.js",
+    "scripts/engine/suggestion/ClassSuggestionEngine.js",
+    "scripts/engine/suggestion/ForceOptionSuggestionEngine.js",
+    "scripts/engine/suggestion/Level1SkillSuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionEngine.js"
+   ],
+   "consumerCount": 8,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 54,
+    "ciTestCount": 52
+   },
+   "markers": {
+    "fallback": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-44dfde3eae",
+   "path": "scripts/engine/suggestion/tag-signal-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 14127,
+   "lines": 308,
+   "sloc": 278,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/engine/force/ForceRules.js",
+    "scripts/engine/suggestion/equipment-loadout-profile.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "getCandidateTags",
+    "getBiasTagsFromMentor",
+    "getBiasTagsFromIdentity",
+    "getBiasTagsFromArchetype",
+    "buildTagBiasMap",
+    "scoreTagAlignment",
+    "scoreAttributeRealization",
+    "buildMentorBiasAliases"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/engine/suggestion/SuggestionScorer.js",
+    "tests/mentor-survey-influence-integration.test.mjs",
+    "tools/mentor-survey/calibration-report.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [
+    "force"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/mentor-survey-influence-integration.test.mjs"
+    ],
+    "transitiveCount": 53,
+    "ciTestCount": 52
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-fb17ffa866",
+   "path": "scripts/engine/suggestion/tier1-standalone-simulation.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 22694,
+   "lines": 703,
+   "sloc": 596,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [],
+   "classes": [
+    "ScoringSimulator"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-fdbb3bd614",
+   "path": "scripts/engine/suggestion/validateClassArchetypes.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3233,
+   "lines": 106,
+   "sloc": 78,
+   "primarySystem": "mentor-suggestion",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "validateClassArchetypes"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/suggestion/ArchetypeAffinityEngine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  }
+ ]
+}

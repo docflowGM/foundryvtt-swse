@@ -1,0 +1,6318 @@
+{
+ "schema": "swse.architecture-census.registry/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "shard": "scripts-domain",
+ "count": 95,
+ "files": [
+  {
+   "id": "F-1a70e3e16d",
+   "path": "scripts/domain/droids/droid-appendage-instance.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10630,
+   "lines": 229,
+   "sloc": 129,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "APPENDAGE_INSTANCE_ID_PREFIX",
+    "APPENDAGE_LOCATION_ID_PREFIX",
+    "APPENDAGE_LEDGER_KEY_SEPARATOR",
+    "isPhysicalAppendageDefinition",
+    "appendageMirrorBucket",
+    "isValidInstanceId",
+    "isValidLocationId",
+    "ledgerKeyForInstance",
+    "listLedgerInstances",
+    "instancesOfPart",
+    "findInstance",
+    "dependentsOfInstance",
+    "mintInstanceId",
+    "mintLocationId",
+    "takenIdentities",
+    "auditAppendageMirror"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/data/droid-part-schema.js",
+    "scripts/domain/droids/droid-initial-installation.js",
+    "scripts/engine/customization/droid-customization-engine.js",
+    "scripts/engine/equipment/droid-appendage-projection.js",
+    "tests/droid-appendage-instance-identity.test.mjs",
+    "tests/droid-gate-c1-appendage-instances.test.mjs",
+    "tests/droid-gate-c1-workshop-removal.test.mjs",
+    "tests/droid-gate-c3a-initial-installation.test.mjs"
+   ],
+   "consumerCount": 8,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-appendage-instance-identity.test.mjs",
+     "tests/droid-gate-c1-appendage-instances.test.mjs",
+     "tests/droid-gate-c1-workshop-removal.test.mjs",
+     "tests/droid-gate-c3a-initial-installation.test.mjs"
+    ],
+    "transitiveCount": 377,
+    "ciTestCount": 373
+   },
+   "markers": {
+    "legacy": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ec01e9f4d6",
+   "path": "scripts/domain/droids/droid-asset-owner.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5978,
+   "lines": 106,
+   "sloc": 56,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "listRecordedOwnerIds",
+    "listAcquisitionProvenanceIds",
+    "isRecordedOwnerId",
+    "resolveAssetOwner",
+    "resolveAssetOwnerId",
+    "authorizePayer",
+    "payerAuditRecord"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/customization/droid-customization-engine.js",
+    "scripts/engine/customization/tech-specialist-modification-service.js",
+    "scripts/engine/customization/vehicle-customization-engine.js",
+    "scripts/engine/upgrades/UpgradeService.js",
+    "scripts/engine/vehicles/vehicle-installation-service.js",
+    "scripts/engine/vehicles/vehicle-logistics-service.js",
+    "scripts/ui/shell/AssetBaySurfaceService.js",
+    "tests/asset-bay-ownership-hardening.test.mjs",
+    "tests/droid-asset-payer-authorization.test.mjs",
+    "tests/droid-follower-owner-wallet.test.mjs",
+    "tests/vehicle-universal-phase4e-p2-installation-ledger.test.mjs"
+   ],
+   "consumerCount": 11,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/asset-bay-ownership-hardening.test.mjs",
+     "tests/droid-asset-payer-authorization.test.mjs",
+     "tests/droid-follower-owner-wallet.test.mjs",
+     "tests/vehicle-universal-phase4e-p2-installation-ledger.test.mjs"
+    ],
+    "transitiveCount": 124,
+    "ciTestCount": 125
+   },
+   "markers": {
+    "compat": 1,
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3f9cbf6f87",
+   "path": "scripts/domain/droids/droid-build-quote.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11035,
+   "lines": 174,
+   "sloc": 126,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/data/droid-systems.js",
+    "scripts/domain/droids/droid-builder-quote-consumer.js",
+    "scripts/domain/droids/droid-component-quote-authority.js",
+    "scripts/engine/progression/droids/droid-trait-rules.js",
+    "scripts/apps/progression-framework/steps/follower-droid-chassis-applicability.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "DROID_BUILD_QUOTE_SCHEMA",
+    "normalizeDroidBuildSnapshot",
+    "quoteDroidBuild"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/progression-framework/shell/reconciliation/domain-adapters.js",
+    "scripts/apps/progression-framework/steps/droid-builder-step.js",
+    "scripts/domain/droids/droid-draft-builder.js",
+    "scripts/engine/store/store-droid-construction.js",
+    "tests/reconciliation-phase4-droid.test.mjs",
+    "tests/store-v2-droid-construction.test.mjs"
+   ],
+   "consumerCount": 6,
+   "secondarySystems": [
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/reconciliation-phase4-droid.test.mjs",
+     "tests/store-v2-droid-construction.test.mjs"
+    ],
+    "transitiveCount": 82,
+    "ciTestCount": 82
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ddd675766d",
+   "path": "scripts/domain/droids/droid-builder-quote-consumer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2965,
+   "lines": 69,
+   "sloc": 52,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/data/droid-systems.js",
+    "scripts/domain/droids/droid-component-quote-authority.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "quoteDroidBuilderSelection"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/progression-framework/steps/droid-builder-step.js",
+    "scripts/apps/progression-framework/steps/droid-builder-view-model.js",
+    "scripts/domain/droids/droid-build-quote.js",
+    "scripts/domain/droids/droid-initial-installation-service.js",
+    "tests/droid-builder-v2-quote-integration.test.mjs",
+    "tests/droid-component-prerequisites.test.mjs",
+    "tests/store-v2-droid-construction.test.mjs"
+   ],
+   "consumerCount": 7,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-builder-v2-quote-integration.test.mjs",
+     "tests/droid-component-prerequisites.test.mjs",
+     "tests/store-v2-droid-construction.test.mjs"
+    ],
+    "transitiveCount": 90,
+    "ciTestCount": 91
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a352368e30",
+   "path": "scripts/domain/droids/droid-component-operation-gate.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7710,
+   "lines": 101,
+   "sloc": 59,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/domain/droids/droid-rules-profile.js",
+    "scripts/domain/droids/droid-installed-component-resolver.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "DROID_OPERATION_STATUS",
+    "findInstalledComponent",
+    "authorizeDroidComponentOperation",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/combat/features/combat-action-eligibility.js",
+    "scripts/sheets/v2/character-like-sheet.js",
+    "scripts/sheets/v2/droid-actor-sheet.js",
+    "scripts/sheets/v2/droid-sheet/droid-component-browser.js",
+    "tests/droid-component-operation-gate.test.mjs"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-component-operation-gate.test.mjs"
+    ],
+    "transitiveCount": 7,
+    "ciTestCount": 8
+   },
+   "markers": {
+    "legacy": 1,
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-69d469117a",
+   "path": "scripts/domain/droids/droid-component-prerequisites.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7318,
+   "lines": 157,
+   "sloc": 103,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "DROID_SIZE_ORDER",
+    "evaluateDroidComponentPrerequisites"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/droids/droid-component-quote-authority.js",
+    "tests/droid-component-prerequisites.test.mjs",
+    "tests/droid-gate-c1-appendage-instances.test.mjs",
+    "tests/droid-wave2b-installation-eligibility.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-component-prerequisites.test.mjs",
+     "tests/droid-gate-c1-appendage-instances.test.mjs",
+     "tests/droid-wave2b-installation-eligibility.test.mjs"
+    ],
+    "transitiveCount": 380,
+    "ciTestCount": 375
+   },
+   "markers": {
+    "legacy": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c0e0832bd1",
+   "path": "scripts/domain/droids/droid-component-quote-authority.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12499,
+   "lines": 263,
+   "sloc": 193,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/droids/droid-component-source-review.js",
+    "scripts/domain/droids/droid-component-prerequisites.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "getDroidSizeFactors",
+    "getDroidPriceFactor",
+    "getDroidAccessoryWeightFactor",
+    "resolveDroidComponentQuote",
+    "resolveSourceReviewedDroidQuote",
+    "resolveSourceReviewedDroidQuoteStaged",
+    "resolveDroidBuilderQuote"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/progression-framework/steps/droid-builder-step.js",
+    "scripts/data/droid-part-schema.js",
+    "scripts/domain/droids/droid-build-quote.js",
+    "scripts/domain/droids/droid-builder-quote-consumer.js",
+    "scripts/engine/progression/droids/droid-trait-rules.js",
+    "tests/droid-component-prerequisites.test.mjs",
+    "tests/droid-component-quote-authority.test.mjs",
+    "tests/droid-sgd-host002-arithmetic.test.mjs",
+    "tests/droid-source-review-gate.test.mjs"
+   ],
+   "consumerCount": 9,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-component-prerequisites.test.mjs",
+     "tests/droid-component-quote-authority.test.mjs",
+     "tests/droid-sgd-host002-arithmetic.test.mjs",
+     "tests/droid-source-review-gate.test.mjs"
+    ],
+    "transitiveCount": 379,
+    "ciTestCount": 375
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c620219b78",
+   "path": "scripts/domain/droids/droid-component-source-review.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4200,
+   "lines": 98,
+   "sloc": 77,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "presentation",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/data/generated-droid-component-source-status.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "resolveDroidComponentSourceReview"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/droids/droid-component-quote-authority.js",
+    "scripts/domain/droids/droid-initial-installation-service.js",
+    "tests/droid-gate-c3a-initial-installation.test.mjs",
+    "tests/droid-source-review-gate.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-gate-c3a-initial-installation.test.mjs",
+     "tests/droid-source-review-gate.test.mjs"
+    ],
+    "transitiveCount": 381,
+    "ciTestCount": 375
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-0cb3d852a0",
+   "path": "scripts/domain/droids/droid-converted-system-reconciliation-classifier.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 16332,
+   "lines": 359,
+   "sloc": 225,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "RECONCILIATION_CLASSIFICATION",
+    "classifyStockSystemEntry",
+    "annotateWeaponCandidatesAgainstExistingItems",
+    "validateReconciliationSelection",
+    "classifyStockSystemSources"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/droids/droid-converted-system-reconciliation-service.js",
+    "scripts/sheets/v2/droid-sheet/context-builder.js",
+    "tests/droid-converted-system-reconciliation-classifier.test.mjs",
+    "tests/droid-reconciliation-intent-boundary.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-converted-system-reconciliation-classifier.test.mjs",
+     "tests/droid-reconciliation-intent-boundary.test.mjs"
+    ],
+    "transitiveCount": 3,
+    "ciTestCount": 5
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6f5519773d",
+   "path": "scripts/domain/droids/droid-converted-system-reconciliation-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 24737,
+   "lines": 499,
+   "sloc": 277,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-dynamic",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/engine/progression/utils/snapshot-manager.js",
+    "scripts/actors/droid/droid-mode-adapter.js",
+    "scripts/domain/droids/droid-installed-component-resolver.js",
+    "scripts/data/droid-part-schema.js",
+    "scripts/domain/droids/droid-converted-system-reconciliation-classifier.js",
+    "scripts/domain/droids/droid-reconciliation-revision.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "inspectReconciliation",
+    "buildReconciliationPlan",
+    "applyReconciliation",
+    "rollbackReconciliation"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/sheets/v2/droid-actor-sheet.js",
+    "tests/droid-phase4-foundry-shim.test.mjs",
+    "tests/droid-reconciliation-intent-boundary.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 2,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-phase4-foundry-shim.test.mjs",
+     "tests/droid-reconciliation-intent-boundary.test.mjs"
+    ],
+    "transitiveCount": 1,
+    "ciTestCount": 3
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a6d58479a1",
+   "path": "scripts/domain/droids/droid-draft-builder.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7695,
+   "lines": 146,
+   "sloc": 93,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-dynamic",
+   "importDepthFromIndex": 7,
+   "imports": [
+    "scripts/data/droid-systems.js",
+    "scripts/domain/droids/droid-build-quote.js",
+    "scripts/domain/droids/droid-initial-installation-service.js",
+    "scripts/engine/progression/droids/droid-trait-rules.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "normalizeAppendageId",
+    "resolveDroidSystemsSelection",
+    "buildDroidDraft"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/progression/profile/galactic-profile-compiler.js",
+    "tests/galactic-droid-draft-builder.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/galactic-droid-draft-builder.test.mjs"
+    ],
+    "transitiveCount": 54,
+    "ciTestCount": 53
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-636e85335e",
+   "path": "scripts/domain/droids/droid-initial-installation-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7263,
+   "lines": 137,
+   "sloc": 83,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/data/droid-part-schema.js",
+    "scripts/domain/droids/droid-component-source-review.js",
+    "scripts/domain/droids/droid-builder-quote-consumer.js",
+    "scripts/domain/droids/droid-initial-installation.js",
+    "scripts/apps/progression-framework/adapters/follower-mutation-planning.js",
+    "scripts/actors/droid/droid-mode-adapter.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "DroidInitialInstallationError",
+    "buildInitialDroidInstallation",
+    "requireInitialDroidInstallation",
+    "applyInitialInstallationToPlan",
+    "resolveFollowerDroidInstallation"
+   ],
+   "classes": [
+    "DroidInitialInstallationError"
+   ],
+   "consumers": [
+    "scripts/apps/follower-creator.js",
+    "scripts/apps/progression-framework/adapters/default-subtypes.js",
+    "scripts/domain/droids/droid-draft-builder.js",
+    "tests/droid-gate-c3a-initial-installation.test.mjs",
+    "tests/galactic-droid-draft-builder.test.mjs"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [
+    "actor-core",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-gate-c3a-initial-installation.test.mjs",
+     "tests/galactic-droid-draft-builder.test.mjs"
+    ],
+    "transitiveCount": 60,
+    "ciTestCount": 60
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e5da5986eb",
+   "path": "scripts/domain/droids/droid-initial-installation.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 17680,
+   "lines": 307,
+   "sloc": 216,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/domain/droids/droid-appendage-instance.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "stableInstanceId",
+    "projectInitialInstallation"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/droids/droid-initial-installation-service.js",
+    "tests/droid-gate-c3a-initial-installation.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-gate-c3a-initial-installation.test.mjs"
+    ],
+    "transitiveCount": 61,
+    "ciTestCount": 60
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-09397b4ae5",
+   "path": "scripts/domain/droids/droid-installation-drift-revision.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3811,
+   "lines": 90,
+   "sloc": 35,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "test-only-import",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/actors/droid/droid-mode-adapter.js",
+    "scripts/domain/droids/droid-revision-hash.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "DRIFT_REPAIR_SCHEMA_VERSION",
+    "buildDroidInstallationDriftRevision"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/droids/droid-installation-reconciler.js",
+    "tests/droid-installation-drift-repair-intent-boundary.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "actor-core"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-installation-drift-repair-intent-boundary.test.mjs"
+    ],
+    "transitiveCount": 1,
+    "ciTestCount": 2
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": true,
+   "unreachableConfidence": "unverified-name-mentioned-at-runtime",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e6f10af6d7",
+   "path": "scripts/domain/droids/droid-installation-eligibility.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4516,
+   "lines": 81,
+   "sloc": 35,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ELIGIBILITY",
+    "unresolvedHostRequirement",
+    "evaluateInstallationEligibility"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/customization/droid-customization-engine.js",
+    "tests/droid-wave2b-installation-eligibility.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-wave2b-installation-eligibility.test.mjs"
+    ],
+    "transitiveCount": 38,
+    "ciTestCount": 39
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-253f4d7b28",
+   "path": "scripts/domain/droids/droid-installation-postcondition.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2371,
+   "lines": 45,
+   "sloc": 30,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "verifyDroidLedgerMatchesIntent",
+    "verifyItemsDeleted"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/customization/droid-customization-engine.js",
+    "tests/droid-customization-postcondition.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-customization-postcondition.test.mjs"
+    ],
+    "transitiveCount": 38,
+    "ciTestCount": 39
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-40592659b8",
+   "path": "scripts/domain/droids/droid-installation-reconciler.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 22958,
+   "lines": 493,
+   "sloc": 275,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "test-only-import",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/actors/droid/droid-mode-adapter.js",
+    "scripts/domain/droids/droid-installed-component-resolver.js",
+    "scripts/data/droid-part-schema.js",
+    "scripts/domain/droids/droid-installation-drift-revision.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/engine/progression/utils/snapshot-manager.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "diagnoseDroidInstallationDrift",
+    "DROID_INSTALLATION_DRIFT_ISSUE",
+    "DROID_DRIFT_REPAIR_STRATEGY",
+    "buildDroidDriftIssueId",
+    "normalizeDriftRepairIntent",
+    "validateDriftRepairSelection",
+    "deriveRepairItemIds",
+    "inspectDroidInstallationDrift",
+    "repairDroidInstallationDrift"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/debug/droid-authority-diagnostics.js",
+    "tests/droid-installation-drift-repair-intent-boundary.test.mjs",
+    "tests/droid-installation-reconciler.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-installation-drift-repair-intent-boundary.test.mjs",
+     "tests/droid-installation-reconciler.test.mjs"
+    ],
+    "transitiveCount": 0,
+    "ciTestCount": 2
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-de7fa3b436",
+   "path": "scripts/domain/droids/droid-installed-component-resolver.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 22659,
+   "lines": 526,
+   "sloc": 325,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "resolveInstalledDroidComponents",
+    "DROID_COMPONENT_SOURCE_KIND",
+    "DROID_SYSTEMS_SOURCE_FIELDS"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/data/droid-part-schema.js",
+    "scripts/debug/droid-authority-diagnostics.js",
+    "scripts/domain/droids/droid-component-operation-gate.js",
+    "scripts/domain/droids/droid-converted-system-reconciliation-service.js",
+    "scripts/domain/droids/droid-installation-reconciler.js",
+    "scripts/domain/droids/droid-part-schema.js",
+    "scripts/domain/droids/droid-statblock-conversion-service.js",
+    "scripts/engine/customization/droid-customization-engine.js",
+    "scripts/engine/effects/modifiers/ModifierEngine.js",
+    "scripts/engine/equipment/droid-appendage-projection.js",
+    "scripts/engine/equipment/equipment-state-reader.js",
+    "scripts/sheets/v2/droid-sheet/context-builder.js",
+    "scripts/sheets/v2/droid-sheet/droid-component-browser.js",
+    "scripts/sheets/v2/droid-sheet/droid-systems-resolver.js",
+    "tests/droid-component-operation-gate.test.mjs",
+    "tests/droid-gate-c1-appendage-instances.test.mjs",
+    "tests/droid-installed-component-resolver.test.mjs",
+    "tests/equipment-e2a-droid-appendage-projection.test.mjs",
+    "tests/equipment-e2b-i3b-universal-integrity.test.mjs",
+    "tests/equipment-e3a2-physical-occupancy.test.mjs",
+    "tests/equipment-e3a3-weapon-grip-integration.test.mjs"
+   ],
+   "consumerCount": 21,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-component-operation-gate.test.mjs",
+     "tests/droid-gate-c1-appendage-instances.test.mjs",
+     "tests/droid-installed-component-resolver.test.mjs",
+     "tests/equipment-e2a-droid-appendage-projection.test.mjs",
+     "tests/equipment-e2b-i3b-universal-integrity.test.mjs",
+     "tests/equipment-e3a2-physical-occupancy.test.mjs",
+     "tests/equipment-e3a3-weapon-grip-integration.test.mjs"
+    ],
+    "transitiveCount": 384,
+    "ciTestCount": 383
+   },
+   "markers": {
+    "legacy": 10,
+    "compat": 1,
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-dfc3ba0b6c",
+   "path": "scripts/domain/droids/droid-item-classification.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4410,
+   "lines": 110,
+   "sloc": 41,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "isIntegratedWeaponItem",
+    "isIntegratedEquipmentItem",
+    "isWeaponizedProjectedPart",
+    "partitionWeaponizedParts",
+    "matchesDroidPartTypeHint"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/sheets/v2/character-like-sheet.js",
+    "scripts/sheets/v2/droid-sheet/droid-systems-resolver.js",
+    "tests/droid-item-classification.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-item-classification.test.mjs"
+    ],
+    "transitiveCount": 7,
+    "ciTestCount": 8
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-716344cb0a",
+   "path": "scripts/domain/droids/droid-part-schema.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 51370,
+   "lines": 963,
+   "sloc": 829,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/data/droid-systems.js",
+    "scripts/domain/droids/droid-installed-component-resolver.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "DROID_PART_CATEGORIES",
+    "DROID_REQUIRED_PARTS",
+    "DROID_PART_DEFINITIONS",
+    "DROID_PART_DEFINITION_MAP",
+    "getDroidPartDefinition",
+    "getDroidPartsBySlot",
+    "normalizeDroidSystemIdentityKey",
+    "resolveDroidSystemIdentity",
+    "collectActorDroidSystemIdentities",
+    "collectActorDroidSystemParts",
+    "actorMeetsDroidSystemRequirement",
+    "normalizeDroidPartSource",
+    "isDroidPartWeapon",
+    "getSelfDestructDamage",
+    "resolveDroidPartPrerequisites",
+    "resolveProcessorSlots",
+    "resolveAppendageSlots",
+    "collectDroidPartEffectsFromActor",
+    "makeDroidPartUseChatHtml"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/data/prerequisite-checker.js",
+    "tests/droid-prerequisite-evidence.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-prerequisite-evidence.test.mjs"
+    ],
+    "transitiveCount": 371,
+    "ciTestCount": 364
+   },
+   "markers": {
+    "legacy": 1,
+    "compat": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2231e2dc7b",
+   "path": "scripts/domain/droids/droid-reconciliation-revision.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3543,
+   "lines": 82,
+   "sloc": 41,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-dynamic",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/actors/droid/droid-mode-adapter.js",
+    "scripts/domain/droids/droid-revision-hash.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "buildDroidReconciliationRevision"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/droids/droid-converted-system-reconciliation-service.js",
+    "tests/droid-reconciliation-intent-boundary.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "actor-core"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-reconciliation-intent-boundary.test.mjs"
+    ],
+    "transitiveCount": 2,
+    "ciTestCount": 3
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-84a7164778",
+   "path": "scripts/domain/droids/droid-revision-hash.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2161,
+   "lines": 62,
+   "sloc": 24,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-dynamic",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "stableStringify",
+    "fnv1aHash",
+    "hashRevisionFields"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/droids/droid-installation-drift-revision.js",
+    "scripts/domain/droids/droid-reconciliation-revision.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 5,
+    "ciTestCount": 5
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-15fb2cc825",
+   "path": "scripts/domain/droids/droid-rules-profile.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4463,
+   "lines": 89,
+   "sloc": 48,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/actors/droid/droid-mode-adapter.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "resolveDroidRulesProfile",
+    "followsDroidRules",
+    "componentMayContributeDroidModifiers"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/customization/customization-bay-app.js",
+    "scripts/domain/droids/droid-component-operation-gate.js",
+    "scripts/engine/combat/features/combat-action-eligibility.js",
+    "scripts/engine/customization/droid-customization-engine.js",
+    "scripts/engine/effects/modifiers/ModifierEngine.js",
+    "scripts/engine/equipment/equipment-state-coordinator.js",
+    "scripts/engine/equipment/equipment-state-reader.js",
+    "scripts/engine/upgrades/UpgradeService.js",
+    "tests/droid-rules-profile.test.mjs",
+    "tests/equipment-droid-draw-authority.test.mjs"
+   ],
+   "consumerCount": 10,
+   "secondarySystems": [
+    "actor-core"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-rules-profile.test.mjs",
+     "tests/equipment-droid-draw-authority.test.mjs"
+    ],
+    "transitiveCount": 362,
+    "ciTestCount": 356
+   },
+   "markers": {
+    "legacy": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c04744d8fb",
+   "path": "scripts/domain/droids/droid-statblock-conversion-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 16221,
+   "lines": 321,
+   "sloc": 181,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-dynamic",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/engine/progression/utils/snapshot-manager.js",
+    "scripts/actors/droid/droid-mode-adapter.js",
+    "scripts/domain/droids/droid-installed-component-resolver.js",
+    "scripts/data/droid-part-schema.js",
+    "scripts/actors/derived/derived-calculator.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "inspectConversion",
+    "convertToPlayableDerived",
+    "rollbackConversion"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/sheets/v2/droid-actor-sheet.js",
+    "tests/droid-phase4-foundry-shim.test.mjs",
+    "tests/droid-reconciliation-intent-boundary.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 2,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-phase4-foundry-shim.test.mjs",
+     "tests/droid-reconciliation-intent-boundary.test.mjs"
+    ],
+    "transitiveCount": 1,
+    "ciTestCount": 3
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3c028154e6",
+   "path": "scripts/domain/droids/stock-droid-comparison-utility.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9862,
+   "lines": 345,
+   "sloc": 228,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "StockDroidComparisonUtility",
+    "default"
+   ],
+   "classes": [
+    "StockDroidComparisonUtility"
+   ],
+   "consumers": [
+    "scripts/apps/stock-droid-comparison-dialog.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-87dc4c8523",
+   "path": "scripts/domain/droids/stock-droid-converter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11611,
+   "lines": 378,
+   "sloc": 256,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/data/droid-systems.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "StockDroidConverter",
+    "default"
+   ],
+   "classes": [
+    "StockDroidConverter"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2cb611d0b7",
+   "path": "scripts/domain/droids/stock-droid-damage-formula.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5131,
+   "lines": 115,
+   "sloc": 40,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "parseDamageFormula",
+    "stepDieSides",
+    "buildStockDroidDamageFormula"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/combat/combat-roll-math.js",
+    "tests/stock-droid-damage-formula.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/stock-droid-damage-formula.test.mjs"
+    ],
+    "transitiveCount": 361,
+    "ciTestCount": 354
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-411092eff3",
+   "path": "scripts/domain/droids/stock-droid-normalizer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 16510,
+   "lines": 421,
+   "sloc": 367,
+   "primarySystem": "droids",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "StockDroidNormalizer",
+    "default"
+   ],
+   "classes": [
+    "StockDroidNormalizer"
+   ],
+   "consumers": [
+    "scripts/apps/stock-droid-import-wizard.js",
+    "scripts/engine/droids/droid-factory.js",
+    "scripts/engine/import/stock-droid-importer-engine.js",
+    "tests/droid-factory-stock-contract.test.mjs",
+    "tools/generate-stock-droid-certification.mjs"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/droid-factory-stock-contract.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "legacy": 1,
+    "compat": 2,
+    "fallback": 8
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-0b8a065399",
+   "path": "scripts/domain/followers/follower-house-rules.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7443,
+   "lines": 157,
+   "sloc": 96,
+   "primarySystem": "npc-followers",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/crew/follower-talent-config.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "FOLLOWER_MAX_SETTING",
+    "FOLLOWER_SHARE_SETTING",
+    "FOLLOWER_CAP_CHOICES",
+    "DEFAULT_FOLLOWER_CAP",
+    "RECRUITING_TALENTS",
+    "ARMOR_LADDER",
+    "followerCapLimit",
+    "isCappedRecruitingSlot",
+    "evaluateFollowerCap",
+    "canAddRecruitingSlot",
+    "ownedRecruitingTalentNames",
+    "armorLadderGrants",
+    "sharedBenefitSet",
+    "effectiveFollowerGrantConfig",
+    "planSharedBenefitReconcile"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/follower-creator.js",
+    "scripts/apps/follower-manager.js",
+    "scripts/apps/progression-framework/steps/follower-steps/follower-feat-step.js",
+    "scripts/infrastructure/hooks/follower-hooks.js",
+    "scripts/infrastructure/hooks/follower-house-rule-settings.js",
+    "tests/follower-house-rules.test.mjs"
+   ],
+   "consumerCount": 6,
+   "secondarySystems": [
+    "vehicles"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/follower-house-rules.test.mjs"
+    ],
+    "transitiveCount": 59,
+    "ciTestCount": 58
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c865a8bc4c",
+   "path": "scripts/domain/followers/follower-slot-occupancy.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12330,
+   "lines": 310,
+   "sloc": 95,
+   "primarySystem": "npc-followers",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "resolveFollowerSlotActorId",
+    "isFollowerSlotOccupied",
+    "FOLLOWER_CONVERSION_RESERVATION_TTL_MS",
+    "resolveFollowerSlotReservation",
+    "isFollowerSlotReservationExpired",
+    "isFollowerSlotReserved",
+    "buildFollowerSlotReservation",
+    "clearFollowerSlotReservation",
+    "finalizeReservedFollowerSlot",
+    "TARGET_CONVERSION_RESERVATION_FLAG_PATH",
+    "TARGET_CONVERSION_RESERVATION_DELETION_PATH",
+    "TARGET_CONVERSION_RESERVATION_PROTECTED_FLAG_PATH",
+    "resolveTargetConversionReservation",
+    "isTargetConversionReservationExpired",
+    "isTargetConversionReserved",
+    "buildTargetConversionReservation"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/follower-creator.js",
+    "scripts/apps/minion-creator.js",
+    "scripts/apps/progression-framework/adapters/follower-session-seeder.js",
+    "scripts/apps/progression-framework/progression-entry.js",
+    "scripts/engine/crew/ally-assignment-service.js",
+    "scripts/engine/crew/follower-slot-service.js",
+    "scripts/governance/snapshot/snapshot-restoration-plan.js",
+    "scripts/infrastructure/hooks/follower-hooks.js",
+    "scripts/patches/follower-orphan-transfer-hotfix.js",
+    "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+    "scripts/sheets/v2/character-like-sheet.js",
+    "scripts/sheets/v2/context/PanelContextBuilder.js",
+    "scripts/ui/shell/AlliesSurfaceService.js",
+    "tests/follower-slot-occupancy-alignment.test.mjs",
+    "tests/follower-slot-reservation.test.mjs",
+    "tests/gm-existing-npc-allies-assignment.test.mjs"
+   ],
+   "consumerCount": 16,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/follower-slot-occupancy-alignment.test.mjs",
+     "tests/follower-slot-reservation.test.mjs",
+     "tests/gm-existing-npc-allies-assignment.test.mjs"
+    ],
+    "transitiveCount": 359,
+    "ciTestCount": 354
+   },
+   "markers": {
+    "legacy": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-85b1cf2301",
+   "path": "scripts/domain/followers/follower-talent-detach-plan.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3431,
+   "lines": 82,
+   "sloc": 34,
+   "primarySystem": "npc-followers",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/utils/flags/swse-flags.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "computeGrantedItemIdsForTalent",
+    "buildOwnerRegistryDetachPatch",
+    "buildSlotRemovalPatch"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/infrastructure/hooks/follower-hooks.js",
+    "tests/follower-talent-detach-plan.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/follower-talent-detach-plan.test.mjs"
+    ],
+    "transitiveCount": 59,
+    "ciTestCount": 58
+   },
+   "markers": {
+    "compat": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-80a1dc9348",
+   "path": "scripts/domain/vehicles/custom-vehicle-construction-project.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6484,
+   "lines": 101,
+   "sloc": 69,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-dynamic",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-source-digest.js",
+    "scripts/domain/vehicles/custom-vehicle-construction.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PROJECT_SCHEMA",
+    "PROJECT_STATUS",
+    "sealProject",
+    "isValidProject",
+    "readProjects",
+    "makePendingProject",
+    "fundProject",
+    "describeProject",
+    "logProjectDays",
+    "recordProjectCheck",
+    "gmCompleteProject"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/vehicles/custom-vehicle-construction-service.js",
+    "tests/vehicle-universal-phase4e-p12-construction-service.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p12-construction-service.test.mjs"
+    ],
+    "transitiveCount": 54,
+    "ciTestCount": 53
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-36511f46b6",
+   "path": "scripts/domain/vehicles/custom-vehicle-construction.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 17239,
+   "lines": 277,
+   "sloc": 187,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-source-digest.js",
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/domain/vehicles/vehicle-modification-rules.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CONSTRUCTION_SCHEMA",
+    "REFLEX_SIZE_MODIFIER",
+    "DAMAGE_THRESHOLD_SIZE_MODIFIER",
+    "abilityModifier",
+    "CERTIFIED_FRAME_STATUSES",
+    "isCertifiedFrame",
+    "previewFrame",
+    "designTime",
+    "DEFAULT_CONSTRUCTION_RULES",
+    "verifyConstructionRecord",
+    "DESIGN_STATUS",
+    "verifyConstructionAuthority",
+    "validateDesign",
+    "buildConstructionRecord",
+    "buildCustomVehicleActorData"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/custom-vehicle-construction-project.js",
+    "scripts/domain/vehicles/custom-vehicle-effective.js",
+    "scripts/engine/vehicles/custom-vehicle-construction-service.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js",
+    "tests/vehicle-universal-phase4e-p12-construction-service.test.mjs",
+    "tests/vehicle-universal-phase4e-p20-p6b3-custom-and-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p7-custom-construction.test.mjs",
+    "tests/vehicle-universal-phase4e-v2-rendering.test.mjs",
+    "tests/vehicle-universal-phase4e-v2-schema-integration.test.mjs"
+   ],
+   "consumerCount": 9,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p12-construction-service.test.mjs",
+     "tests/vehicle-universal-phase4e-p20-p6b3-custom-and-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p7-custom-construction.test.mjs",
+     "tests/vehicle-universal-phase4e-v2-rendering.test.mjs",
+     "tests/vehicle-universal-phase4e-v2-schema-integration.test.mjs"
+    ],
+    "transitiveCount": 361,
+    "ciTestCount": 358
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b8dc25e575",
+   "path": "scripts/domain/vehicles/custom-vehicle-effective.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3036,
+   "lines": 47,
+   "sloc": 27,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "data/canonical/vehicles/construction/stock-frames.json",
+    "scripts/domain/vehicles/custom-vehicle-construction.js",
+    "scripts/domain/vehicles/vehicle-installation-ledger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "constructionSourceKey",
+    "resolveConstructionEffectiveSource"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-published-derived.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 365,
+    "ciTestCount": 357
+   },
+   "markers": {
+    "compat": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d887beea0b",
+   "path": "scripts/domain/vehicles/universal-vehicle-pack-registry.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3142,
+   "lines": 37,
+   "sloc": 28,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "registry",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "UNIVERSAL_VEHICLE_PACKS",
+    "UNIVERSAL_VEHICLE_PACK_NAMES",
+    "VEHICLE_PACK_CATEGORIES",
+    "getUniversalVehiclePack",
+    "getUniversalVehiclePackForCategory",
+    "isUniversalVehiclePack",
+    "getUniversalVehicleCategoryCount"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+    "scripts/apps/store/store-shared.js",
+    "scripts/core/vehicle-pack-data-loader.js",
+    "scripts/data/vehicle-category-registry.js",
+    "scripts/domain/vehicles/vehicle-phase4d-runtime-audit.js",
+    "scripts/domain/vehicles/vehicle-source-identity.js",
+    "scripts/engine/store/store-constants.js",
+    "scripts/engine/store/store-taxonomy.js",
+    "tests/release-package-manifest.test.mjs",
+    "tests/store-v2-s8-query.test.mjs",
+    "tests/vehicle-universal-phase4c-runtime-consumers.test.mjs",
+    "tests/vehicle-universal-phase4d-runtime-audit.test.mjs",
+    "tools/build-universal-vehicle-pack-sources.mjs",
+    "tools/check-system-manifest.mjs",
+    "tools/release/build-packs.mjs"
+   ],
+   "consumerCount": 15,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/release-package-manifest.test.mjs",
+     "tests/store-v2-s8-query.test.mjs",
+     "tests/vehicle-universal-phase4c-runtime-consumers.test.mjs",
+     "tests/vehicle-universal-phase4d-runtime-audit.test.mjs"
+    ],
+    "transitiveCount": 396,
+    "ciTestCount": 392
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-8fb5f7222a",
+   "path": "scripts/domain/vehicles/vehicle-ammunition-ledger.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 20199,
+   "lines": 264,
+   "sloc": 163,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-launcher-capacity.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "LEDGER_SCHEMA",
+    "LEDGER_FLAG",
+    "LAUNCHER_DESIGNATIONS",
+    "AMMO_REASONS",
+    "launcherDesignationOf",
+    "matchPrintedPayload",
+    "resolveLauncherFamily",
+    "initialLedger",
+    "INITIAL_AMMUNITION",
+    "purchasedInitialLedger",
+    "initialStockLedger",
+    "planStockPurchase",
+    "planGmGrant",
+    "validateLedger",
+    "AFTERMARKET_AMMO_FLAG",
+    "aftermarketFamily",
+    "emptyAftermarketLedger",
+    "validateAftermarketLedger",
+    "planPurchase",
+    "planLaunch",
+    "planRefund",
+    "planGmReload",
+    "planGmAllocation",
+    "launchUnits"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/domain/vehicles/vehicle-stock-ammo-config.js",
+    "scripts/domain/vehicles/vehicle-stock-weapon-groups.js",
+    "scripts/domain/vehicles/vehicle-stock-weapon-items.js",
+    "scripts/domain/vehicles/vehicle-weapon-damage.js",
+    "scripts/engine/vehicles/vehicle-ammunition-service.js",
+    "scripts/engine/vehicles/vehicle-ammunition-shop.js",
+    "scripts/engine/vehicles/vehicle-installation-service.js",
+    "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+    "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+    "tests/vehicle-universal-phase4e-p50-initial-ammunition-policy.test.mjs",
+    "tests/vehicle-universal-phase4e-p51-party-fund-ammunition.test.mjs",
+    "tests/vehicle-universal-phase4e-p52-ammunition-shortcuts.test.mjs",
+    "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs",
+    "tests/vehicle-universal-phase4e-p55-stock-payload-reconciliation.test.mjs",
+    "tools/audits/vehicles/build-vehicle-evidence-verification.mjs"
+   ],
+   "consumerCount": 16,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+     "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+     "tests/vehicle-universal-phase4e-p50-initial-ammunition-policy.test.mjs",
+     "tests/vehicle-universal-phase4e-p51-party-fund-ammunition.test.mjs",
+     "tests/vehicle-universal-phase4e-p52-ammunition-shortcuts.test.mjs",
+     "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs",
+     "tests/vehicle-universal-phase4e-p55-stock-payload-reconciliation.test.mjs"
+    ],
+    "transitiveCount": 384,
+    "ciTestCount": 383
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-cedf9e7f99",
+   "path": "scripts/domain/vehicles/vehicle-attack-preflight.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8281,
+   "lines": 116,
+   "sloc": 77,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-attack-provenance.js",
+    "scripts/domain/vehicles/vehicle-stock-attack-authority.js",
+    "scripts/domain/vehicles/vehicle-evidence-runtime-gate.js",
+    "scripts/domain/vehicles/vehicle-firing-arc-geometry.js",
+    "scripts/domain/vehicles/vehicle-stock-arc-policy.js",
+    "scripts/domain/vehicles/vehicle-weapon-battery.js",
+    "scripts/domain/vehicles/vehicle-encounter-scale.js",
+    "scripts/domain/vehicles/vehicle-weapon-damage.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "classifyVehicleAttackPreflight",
+    "authorizeVehicleAttackBeforeCosts"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/combat/rolls/attacks.js",
+    "tests/phase2c-vehicle-stock-vs-custom-gate.test.mjs",
+    "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+    "tests/vehicle-universal-phase4e-p4d-attack-gate.test.mjs"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c-vehicle-stock-vs-custom-gate.test.mjs",
+     "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+     "tests/vehicle-universal-phase4e-p4d-attack-gate.test.mjs"
+    ],
+    "transitiveCount": 359,
+    "ciTestCount": 355
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9489ec4be3",
+   "path": "scripts/domain/vehicles/vehicle-attack-provenance.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6391,
+   "lines": 99,
+   "sloc": 74,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-source-identity.js",
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/domain/vehicles/vehicle-modification-effects.js",
+    "scripts/domain/vehicles/vehicle-weapon-damage.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "classifyInstalledVehicleWeapon"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/combat/rolls/attacks.js",
+    "scripts/domain/vehicles/vehicle-attack-preflight.js",
+    "tests/phase2c-vehicle-stock-vs-custom-gate.test.mjs",
+    "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+    "tests/vehicle-universal-phase4e-p23-weapon-integrity.test.mjs",
+    "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+    "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+    "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+    "tests/vehicle-universal-phase4e-p4d-attack-gate.test.mjs",
+    "tests/vehicle-universal-phase4e-p5-source-authority.test.mjs"
+   ],
+   "consumerCount": 12,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c-vehicle-stock-vs-custom-gate.test.mjs",
+     "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+     "tests/vehicle-universal-phase4e-p23-weapon-integrity.test.mjs",
+     "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+     "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+     "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+     "tests/vehicle-universal-phase4e-p4d-attack-gate.test.mjs",
+     "tests/vehicle-universal-phase4e-p5-source-authority.test.mjs"
+    ],
+    "transitiveCount": 354,
+    "ciTestCount": 356
+   },
+   "markers": {
+    "legacy": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e2c27a69ff",
+   "path": "scripts/domain/vehicles/vehicle-battery-aid.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4558,
+   "lines": 71,
+   "sloc": 38,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-weapon-battery.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "BATTERY_AID_FLAG",
+    "AID_REASONS",
+    "planBatteryAid",
+    "resolveBatteryAid",
+    "buildAidRecord",
+    "readPendingAid",
+    "aidLedgerEntry"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/combat/vehicle-attack-math.js",
+    "scripts/engine/vehicles/vehicle-battery-aid-service.js",
+    "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ec728fbe2e",
+   "path": "scripts/domain/vehicles/vehicle-capital-penalty.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2916,
+   "lines": 46,
+   "sloc": 19,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CAPITAL_SHIP_TARGETING_PENALTY",
+    "sizeRank",
+    "isCapitalShipSize",
+    "capitalShipAttackPenalty"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/combat/vehicle-attack-math.js",
+    "scripts/engine/vehicles/vehicle-mine-service.js",
+    "tests/vehicle-universal-phase4e-p24-capital-and-pilot.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p24-capital-and-pilot.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-77bef50d91",
+   "path": "scripts/domain/vehicles/vehicle-compendium-index.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 740,
+   "lines": 18,
+   "sloc": 12,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "getVehicleCompendiumIndexEntries"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/core/vehicle-pack-data-loader.js",
+    "scripts/domain/vehicles/vehicle-phase4d-runtime-audit.js",
+    "tests/vehicle-universal-phase4c-runtime-consumers.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4c-runtime-consumers.test.mjs"
+    ],
+    "transitiveCount": 364,
+    "ciTestCount": 357
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3c359bebde",
+   "path": "scripts/domain/vehicles/vehicle-cp22-source-catalog.generated.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 121952,
+   "lines": 3695,
+   "sloc": 3684,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "registry",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CP22_SOTG_REFERENCE_CATALOG"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-cp22-source-view.js",
+    "scripts/domain/vehicles/vehicle-cp23-pack-provenance-probe.js",
+    "scripts/domain/vehicles/vehicle-cp23c4-gm-observation-ledger.js",
+    "tests/phase2c_cp22_source_view_readonly.test.mjs",
+    "tests/phase2c_cp23_pack_reconciliation.test.mjs",
+    "tests/phase2c_cp23b_isolated_proposals.test.mjs",
+    "tests/phase2c_cp23c4_gm_observation_ledger.test.mjs",
+    "tools/audits/vehicles/build_sotg_cp23_reconciliation.mjs",
+    "tools/audits/vehicles/build_sotg_cp23b_proposals.mjs"
+   ],
+   "consumerCount": 9,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c_cp22_source_view_readonly.test.mjs",
+     "tests/phase2c_cp23_pack_reconciliation.test.mjs",
+     "tests/phase2c_cp23b_isolated_proposals.test.mjs",
+     "tests/phase2c_cp23c4_gm_observation_ledger.test.mjs"
+    ],
+    "transitiveCount": 365,
+    "ciTestCount": 361
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-928af3bf11",
+   "path": "scripts/domain/vehicles/vehicle-cp22-source-view.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5914,
+   "lines": 120,
+   "sloc": 97,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "presentation",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-cp22-source-catalog.generated.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "resolveCP21ApprovedPublicationReference",
+    "inspectCP21LegacyPackCandidate"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-cp23c4-gm-observation-ledger.js",
+    "scripts/domain/vehicles/vehicle-evidence-authority.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 367,
+    "ciTestCount": 359
+   },
+   "markers": {
+    "legacy": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-230aa4b8f8",
+   "path": "scripts/domain/vehicles/vehicle-cp23-pack-provenance-probe.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3477,
+   "lines": 70,
+   "sloc": 57,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "test-only-import",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-cp22-source-catalog.generated.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "probeCP23LegacyPackImport",
+    "observeCP23ImportedVehicle"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/vehicle-import-wizard.js",
+    "tests/phase2c_cp23_pack_reconciliation.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c_cp23_pack_reconciliation.test.mjs"
+    ],
+    "transitiveCount": 0,
+    "ciTestCount": 1
+   },
+   "markers": {
+    "legacy": 2
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-11604df7ea",
+   "path": "scripts/domain/vehicles/vehicle-cp23c-source-integrity.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5247,
+   "lines": 118,
+   "sloc": 97,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CP23C_RECEIPT_STATE",
+    "canonicalCP23CJson",
+    "draftCP23CSnapshot",
+    "evaluateCP23CDraftParity"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-cp23c2-installation-preflight.js",
+    "scripts/domain/vehicles/vehicle-evidence-authority.js",
+    "tests/phase2c_cp23c_source_draft_integrity.test.mjs",
+    "tools/audits/vehicles/build_sotg_cp23c_integrity_anchors.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c_cp23c_source_draft_integrity.test.mjs"
+    ],
+    "transitiveCount": 368,
+    "ciTestCount": 361
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9df763b2b3",
+   "path": "scripts/domain/vehicles/vehicle-cp23c2-installation-preflight.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6690,
+   "lines": 146,
+   "sloc": 122,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-cp23c-source-integrity.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CP23C2_STATUS",
+    "assessCP23C2ConfigurationParity",
+    "inspectCP23C2NativeInstallCandidate"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-cp23c4b-world-binding.js",
+    "scripts/domain/vehicles/vehicle-evidence-authority.js",
+    "tests/phase2c_cp23c2_install_readiness.test.mjs",
+    "tests/phase2c_cp23c4b_world_identity.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c_cp23c2_install_readiness.test.mjs",
+     "tests/phase2c_cp23c4b_world_identity.test.mjs"
+    ],
+    "transitiveCount": 366,
+    "ciTestCount": 360
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ea9fff0130",
+   "path": "scripts/domain/vehicles/vehicle-cp23c4-gm-observation-ledger.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9106,
+   "lines": 184,
+   "sloc": 155,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "authority-or-orchestrator",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 1,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-cp22-source-view.js",
+    "scripts/domain/vehicles/vehicle-cp22-source-catalog.generated.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CP23C4_NAMESPACE",
+    "CP23C4_KEY",
+    "CP23C4_SCHEMA",
+    "emptyCP23C4Ledger",
+    "validateCP23C4Ledger",
+    "registerCP23C4ObservationSetting",
+    "readCP23C4ObservationLedger",
+    "recordCP23C4UnverifiedImport"
+   ],
+   "classes": [],
+   "consumers": [
+    "index.js",
+    "scripts/apps/vehicle-import-wizard.js",
+    "scripts/domain/vehicles/vehicle-evidence-authority.js",
+    "tests/phase2c_cp23c4_gm_observation_ledger.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [
+    "null.(expr)"
+   ],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "game.settings": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c_cp23c4_gm_observation_ledger.test.mjs"
+    ],
+    "transitiveCount": 366,
+    "ciTestCount": 359
+   },
+   "markers": {
+    "legacy": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5ba7d7f2c1",
+   "path": "scripts/domain/vehicles/vehicle-cp23c4b-source-anchors.generated.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 26166,
+   "lines": 895,
+   "sloc": 890,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CP23C4B_WORLD_ANCHORS"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-cp23c4b-world-binding.js",
+    "scripts/domain/vehicles/vehicle-cp23c4c-import-boundary.js",
+    "tests/phase2c_cp23c4b_world_identity.test.mjs",
+    "tests/phase2c_cp23c4c_import_boundary.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c_cp23c4b_world_identity.test.mjs",
+     "tests/phase2c_cp23c4c_import_boundary.test.mjs"
+    ],
+    "transitiveCount": 367,
+    "ciTestCount": 361
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ce6d5f905b",
+   "path": "scripts/domain/vehicles/vehicle-cp23c4b-world-binding.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7121,
+   "lines": 159,
+   "sloc": 127,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 6,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-cp23c4b-source-anchors.generated.js",
+    "scripts/domain/vehicles/vehicle-cp23c2-installation-preflight.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CP23C4B_SOURCE_PACK",
+    "CP23C4B_STATUS",
+    "inspectCP23C4BWorldInstallationCandidate",
+    "verifyCP23C4BClaimedReceipt"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-evidence-authority.js",
+    "tests/phase2c_cp23c4b_world_identity.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c_cp23c4b_world_identity.test.mjs"
+    ],
+    "transitiveCount": 366,
+    "ciTestCount": 359
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d80a103945",
+   "path": "scripts/domain/vehicles/vehicle-cp23c4c-import-boundary.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4542,
+   "lines": 99,
+   "sloc": 69,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-cp23c4b-source-anchors.generated.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CP23C4C_BLOCKED_SOURCE_PACKS",
+    "classifyCP23C4CSourceImport",
+    "assertCP23C4CNoStagedSourceImport",
+    "inspectCP23C4CNormalizationLoss"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-evidence-authority.js",
+    "scripts/engine/import/vehicle-import-engine.js",
+    "tests/phase2c_cp23c4c_import_boundary.test.mjs",
+    "tests/vehicle-universal-phase4c-import-source.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c_cp23c4c_import_boundary.test.mjs",
+     "tests/vehicle-universal-phase4c-import-source.test.mjs"
+    ],
+    "transitiveCount": 366,
+    "ciTestCount": 360
+   },
+   "markers": {
+    "legacy": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-69a3e46ff9",
+   "path": "scripts/domain/vehicles/vehicle-cp9b-runtime-pack-verifier.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2884,
+   "lines": 52,
+   "sloc": 46,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "test-only-import",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PILOT_SOURCE_DOCUMENTS",
+    "verifyPilotVehiclePacksAtRuntime"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-cp9c-actor-provenance-probe.js",
+    "tests/phase2c_cp9b_runtime_pack_probe.test.mjs",
+    "tests/phase2c_cp9c_actor_provenance_probe.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c_cp9b_runtime_pack_probe.test.mjs",
+     "tests/phase2c_cp9c_actor_provenance_probe.test.mjs"
+    ],
+    "transitiveCount": 0,
+    "ciTestCount": 2
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-4f831f572c",
+   "path": "scripts/domain/vehicles/vehicle-cp9c-actor-provenance-probe.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3910,
+   "lines": 72,
+   "sloc": 58,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "test-only-import",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-cp9b-runtime-pack-verifier.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "probeControlledVehicleImport"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/vehicle-import-wizard.js",
+    "tests/phase2c_cp9c_actor_provenance_probe.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c_cp9c_actor_provenance_probe.test.mjs"
+    ],
+    "transitiveCount": 0,
+    "ciTestCount": 1
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-0da011fc9a",
+   "path": "scripts/domain/vehicles/vehicle-crew-station-evidence.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3115,
+   "lines": 52,
+   "sloc": 41,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/crew/vehicle-crew-actor-authority.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "resolveVehicleCrewStationEvidence"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/combat/rolls/attacks.js",
+    "tests/phase2c_cp8_crew_station_evidence.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c_cp8_crew_station_evidence.test.mjs"
+    ],
+    "transitiveCount": 361,
+    "ciTestCount": 354
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3a0f200643",
+   "path": "scripts/domain/vehicles/vehicle-encounter-scale.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3518,
+   "lines": 48,
+   "sloc": 21,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ENCOUNTER_SCALE",
+    "resolveEncounterScale",
+    "resolveAreaAtScale"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-attack-preflight.js",
+    "scripts/engine/combat/vehicle-attack-range.js",
+    "scripts/engine/vehicles/vehicle-mine-service.js",
+    "tests/vehicle-universal-phase4e-p29-starship-scale-area.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p29-starship-scale-area.test.mjs"
+    ],
+    "transitiveCount": 362,
+    "ciTestCount": 355
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-bf097c8129",
+   "path": "scripts/domain/vehicles/vehicle-errata-migration.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 17753,
+   "lines": 231,
+   "sloc": 171,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "migration",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-source-digest.js",
+    "scripts/domain/vehicles/vehicle-runtime-contract.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ERRATA_MIGRATION_VERSION",
+    "SOTG_ERRATA_AMENDMENT",
+    "errataEntryFor",
+    "applyErrataToRecord",
+    "planErrataMigration",
+    "migrationFingerprint",
+    "verifyMigratedState",
+    "verifyRestoredState",
+    "restoreDeletions",
+    "planManualRestore",
+    "verifyManualRestoreState"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/vehicles/vehicle-errata-migration-service.js",
+    "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs",
+    "tools/build-universal-vehicle-canonical.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs"
+    ],
+    "transitiveCount": 1,
+    "ciTestCount": 2
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-098dead99c",
+   "path": "scripts/domain/vehicles/vehicle-evidence-authority.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10487,
+   "lines": 163,
+   "sloc": 118,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-cp22-source-view.js [reexport]",
+    "scripts/domain/vehicles/vehicle-cp23c-source-integrity.js [reexport]",
+    "scripts/domain/vehicles/vehicle-cp23c2-installation-preflight.js [reexport]",
+    "scripts/domain/vehicles/vehicle-cp23c4-gm-observation-ledger.js [reexport]",
+    "scripts/domain/vehicles/vehicle-cp23c4b-world-binding.js [reexport]",
+    "scripts/domain/vehicles/vehicle-cp23c4c-import-boundary.js [reexport]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "EVIDENCE_STATES",
+    "validateEvidenceClaim",
+    "assessSourceCompleteness",
+    "decideArcDependentAttack",
+    "decideConflictedAttackValue",
+    "assessStrictMechanicalCertification",
+    "validateSupplementalCensus"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/vehicle-import-wizard.js",
+    "scripts/domain/vehicles/vehicle-evidence-import.js",
+    "scripts/domain/vehicles/vehicle-evidence-runtime-gate.js",
+    "tests/phase2c-vehicle-runtime-integration.test.mjs",
+    "tests/phase2c_cp22_source_view_readonly.test.mjs",
+    "tools/audits/vehicles/phase2c-authority-policy.mjs"
+   ],
+   "consumerCount": 6,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c-vehicle-runtime-integration.test.mjs",
+     "tests/phase2c_cp22_source_view_readonly.test.mjs"
+    ],
+    "transitiveCount": 364,
+    "ciTestCount": 358
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-4c9d9f2019",
+   "path": "scripts/domain/vehicles/vehicle-evidence-import.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2217,
+   "lines": 47,
+   "sloc": 33,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "test-only-import",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-evidence-authority.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "formatVehicleAttackSummary",
+    "numericVehicleAttackBonus",
+    "resolvePrintedShieldEvidence"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/import/vehicle-weapon-import-normalizer.js",
+    "tests/phase2c-vehicle-runtime-integration.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c-vehicle-runtime-integration.test.mjs"
+    ],
+    "transitiveCount": 0,
+    "ciTestCount": 1
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-760206dacf",
+   "path": "scripts/domain/vehicles/vehicle-evidence-runtime-gate.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4604,
+   "lines": 93,
+   "sloc": 72,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-evidence-authority.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "authorizeVehicleArcEvidence",
+    "authorizeVehicleConflictEvidence",
+    "VEHICLE_EVIDENCE_RECEIPT_FLAG"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-attack-preflight.js",
+    "tests/phase2c-vehicle-runtime-integration.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c-vehicle-runtime-integration.test.mjs"
+    ],
+    "transitiveCount": 363,
+    "ciTestCount": 356
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-7417d0fa4c",
+   "path": "scripts/domain/vehicles/vehicle-fire-mode.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3557,
+   "lines": 46,
+   "sloc": 28,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/combat/autofire-rules.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "FIRE_MODE_REASONS",
+    "requestedVehicleFireMode",
+    "resolveVehicleFireMode",
+    "FIRE_MODE_FLAG",
+    "MODE_REASONS",
+    "readPersistedFireMode"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/combat/rolls/attacks.js",
+    "scripts/engine/vehicles/vehicle-fire-mode-service.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-weapon-ops.js",
+    "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [
+    "combat"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-8bc07aecce",
+   "path": "scripts/domain/vehicles/vehicle-firing-arc-geometry.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1504,
+   "lines": 28,
+   "sloc": 21,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "VEHICLE_FIRING_ARCS",
+    "isTargetWithinVehicleArc"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-attack-preflight.js",
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-shipyard-actions.js",
+    "tests/phase2c-vehicle-runtime-integration.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c-vehicle-runtime-integration.test.mjs"
+    ],
+    "transitiveCount": 389,
+    "ciTestCount": 382
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e5fb7a8f69",
+   "path": "scripts/domain/vehicles/vehicle-guided-projectile.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4868,
+   "lines": 65,
+   "sloc": 36,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PROJECTILE",
+    "PROJECTILE_FLAG",
+    "PROJECTILE_STATE",
+    "PROJECTILE_REASONS",
+    "shouldCreateProjectile",
+    "createProjectile",
+    "planFollowUp",
+    "resolveFollowUp",
+    "interceptProjectile"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/combat/rolls/attacks.js",
+    "scripts/engine/vehicles/vehicle-projectile-service.js",
+    "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-510b1dd1a9",
+   "path": "scripts/domain/vehicles/vehicle-installation-job.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3657,
+   "lines": 59,
+   "sloc": 36,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-modification-rules.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "JOB_STATUS",
+    "startInstallationJob",
+    "recordInstallationCheck",
+    "beginInstallationRetry"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-installation-jobs.js",
+    "tests/vehicle-universal-phase4e-p8-install-procedure.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p8-install-procedure.test.mjs"
+    ],
+    "transitiveCount": 104,
+    "ciTestCount": 102
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2d1d1a2e30",
+   "path": "scripts/domain/vehicles/vehicle-installation-jobs.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12489,
+   "lines": 206,
+   "sloc": 152,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-source-digest.js",
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/domain/vehicles/vehicle-installation-job.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "VEHICLE_INSTALLATION_JOBS_FLAG",
+    "VEHICLE_INSTALLATION_JOBS_FLAG_PATH",
+    "JOB_SCHEMA",
+    "ACTIVE_JOB_STATUSES",
+    "sealJob",
+    "isValidJob",
+    "readJobs",
+    "reservedEpFromJobs",
+    "describeJob",
+    "planJobStart",
+    "planLogWorkDays",
+    "planJobCheck",
+    "planJobRetry",
+    "planGmCompleteJob",
+    "planGmInstantInstall"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/vehicles/vehicle-installation-service.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js",
+    "tests/vehicle-universal-phase4e-p11-shipyard-ui.test.mjs",
+    "tests/vehicle-universal-phase4e-p2-installation-ledger.test.mjs",
+    "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+    "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+    "tests/vehicle-universal-phase4e-p9-installation-jobs.test.mjs"
+   ],
+   "consumerCount": 8,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p11-shipyard-ui.test.mjs",
+     "tests/vehicle-universal-phase4e-p2-installation-ledger.test.mjs",
+     "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+     "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+     "tests/vehicle-universal-phase4e-p9-installation-jobs.test.mjs"
+    ],
+    "transitiveCount": 98,
+    "ciTestCount": 101
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-41630224fc",
+   "path": "scripts/domain/vehicles/vehicle-installation-ledger.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 20702,
+   "lines": 322,
+   "sloc": 224,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-source-digest.js",
+    "scripts/domain/vehicles/vehicle-firing-arc-geometry.js",
+    "scripts/domain/vehicles/vehicle-modification-effects.js",
+    "scripts/domain/vehicles/vehicle-ammunition-ledger.js",
+    "scripts/domain/vehicles/vehicle-stock-ammo-config.js",
+    "scripts/domain/vehicles/vehicle-stock-battery-config.js",
+    "scripts/domain/vehicles/vehicle-modification-rules.js",
+    "scripts/domain/vehicles/vehicle-logistics.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "VEHICLE_INSTALLATION_FLAG",
+    "VEHICLE_INSTALLATION_FLAG_PATH",
+    "evaluateSizeRestriction",
+    "DEFAULT_VEHICLE_INSTALLATION_RULES",
+    "sealLedgerEntry",
+    "isValidLedgerEntry",
+    "readCertifiedInstallations",
+    "summarizeInstallations",
+    "WEAPON_OPERATOR_ROLES",
+    "weaponMountBasis",
+    "resolveWeaponOption",
+    "planVehicleInstallation",
+    "planVehicleUninstall",
+    "VEHICLE_INSTALLATION_JOBS_FLAG",
+    "VEHICLE_DESIGN_PROJECTS_FLAG",
+    "authorizeFlagWrite",
+    "authorizeLedgerWrite",
+    "clearLedgerWrite",
+    "isLedgerUpdateAllowed"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+    "scripts/domain/vehicles/custom-vehicle-construction.js",
+    "scripts/domain/vehicles/custom-vehicle-effective.js",
+    "scripts/domain/vehicles/vehicle-attack-provenance.js",
+    "scripts/domain/vehicles/vehicle-installation-jobs.js",
+    "scripts/domain/vehicles/vehicle-published-derived.js",
+    "scripts/domain/vehicles/vehicle-runtime-contract.js",
+    "scripts/domain/vehicles/vehicle-weapon-damage.js",
+    "scripts/engine/store/resale-service.js",
+    "scripts/engine/vehicles/custom-vehicle-construction-service.js",
+    "scripts/engine/vehicles/vehicle-ammunition-service.js",
+    "scripts/engine/vehicles/vehicle-installation-service.js",
+    "scripts/engine/vehicles/vehicle-logistics-service.js",
+    "scripts/engine/vehicles/vehicle-stock-ammo-config-service.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-shipyard-actions.js",
+    "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
+    "tests/vehicle-universal-phase4e-p11-shipyard-ui.test.mjs",
+    "tests/vehicle-universal-phase4e-p12-construction-service.test.mjs",
+    "tests/vehicle-universal-phase4e-p14-operational-effects.test.mjs",
+    "tests/vehicle-universal-phase4e-p15-component-census.test.mjs",
+    "tests/vehicle-universal-phase4e-p17-operating-context.test.mjs",
+    "tests/vehicle-universal-phase4e-p18-p6b1-effects.test.mjs",
+    "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+    "tests/vehicle-universal-phase4e-p2-installation-ledger.test.mjs",
+    "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+    "tests/vehicle-universal-phase4e-p23-weapon-integrity.test.mjs",
+    "tests/vehicle-universal-phase4e-p24-capital-and-pilot.test.mjs",
+    "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+    "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+    "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+    "tests/vehicle-universal-phase4e-p42-startup-and-operator.test.mjs",
+    "tests/vehicle-universal-phase4e-p4d-attack-gate.test.mjs",
+    "tests/vehicle-universal-phase4e-p5-combat-chain.test.mjs",
+    "tests/vehicle-universal-phase4e-p5-installation-transaction.test.mjs",
+    "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs",
+    "tests/vehicle-universal-phase4e-p8-install-procedure.test.mjs",
+    "tests/vehicle-universal-phase4e-p9-installation-jobs.test.mjs",
+    "tests/vehicle-universal-phase4e-v2-schema-integration.test.mjs"
+   ],
+   "consumerCount": 41,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
+     "tests/vehicle-universal-phase4e-p11-shipyard-ui.test.mjs",
+     "tests/vehicle-universal-phase4e-p12-construction-service.test.mjs",
+     "tests/vehicle-universal-phase4e-p14-operational-effects.test.mjs",
+     "tests/vehicle-universal-phase4e-p15-component-census.test.mjs",
+     "tests/vehicle-universal-phase4e-p17-operating-context.test.mjs",
+     "tests/vehicle-universal-phase4e-p18-p6b1-effects.test.mjs",
+     "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+     "tests/vehicle-universal-phase4e-p2-installation-ledger.test.mjs",
+     "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+     "tests/vehicle-universal-phase4e-p23-weapon-integrity.test.mjs",
+     "tests/vehicle-universal-phase4e-p24-capital-and-pilot.test.mjs",
+     "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+     "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+     "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+     "tests/vehicle-universal-phase4e-p42-startup-and-operator.test.mjs",
+     "tests/vehicle-universal-phase4e-p4d-attack-gate.test.mjs",
+     "tests/vehicle-universal-phase4e-p5-combat-chain.test.mjs",
+     "tests/vehicle-universal-phase4e-p5-installation-transaction.test.mjs",
+     "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs",
+     "tests/vehicle-universal-phase4e-p8-install-procedure.test.mjs",
+     "tests/vehicle-universal-phase4e-p9-installation-jobs.test.mjs",
+     "tests/vehicle-universal-phase4e-v2-schema-integration.test.mjs"
+    ],
+    "transitiveCount": 364,
+    "ciTestCount": 381
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a4dd5b1e41",
+   "path": "scripts/domain/vehicles/vehicle-installed-weapon-items.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3915,
+   "lines": 67,
+   "sloc": 41,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-modification-effects.js",
+    "scripts/domain/vehicles/vehicle-weapon-damage.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "INSTALLED_WEAPON_FLAG",
+    "buildInstalledWeaponItemData",
+    "managedItemMatches",
+    "planInstalledWeaponItemSync"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/vehicles/vehicle-installation-service.js",
+    "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+    "tests/vehicle-universal-phase4e-p23-weapon-integrity.test.mjs",
+    "tests/vehicle-universal-phase4e-p24-capital-and-pilot.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+     "tests/vehicle-universal-phase4e-p23-weapon-integrity.test.mjs",
+     "tests/vehicle-universal-phase4e-p24-capital-and-pilot.test.mjs"
+    ],
+    "transitiveCount": 100,
+    "ciTestCount": 100
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e66481e150",
+   "path": "scripts/domain/vehicles/vehicle-interdiction-field.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3939,
+   "lines": 59,
+   "sloc": 35,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "FIELD_SQUARES",
+    "FIELD_SCHEMA",
+    "INTERDICTION_FLAG",
+    "FIELD_REASONS",
+    "tokenCells",
+    "fieldCoversToken",
+    "areaBox",
+    "validateArea",
+    "buildField",
+    "isValidField",
+    "INTERDICTED_FLAG",
+    "isHyperdriveInterdicted"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/vehicles/vehicle-interdiction-service.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-publication-view-model.js",
+    "tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs"
+    ],
+    "transitiveCount": 361,
+    "ciTestCount": 354
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b957cd4a81",
+   "path": "scripts/domain/vehicles/vehicle-ion-bomb.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2943,
+   "lines": 41,
+   "sloc": 23,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ION_BOMB_ATTACK_PENALTY",
+    "ION_BOMB_DAMAGE",
+    "ION_BOMB_RADIUS_SQUARES",
+    "ION_BOMB_RACK_CAPACITY",
+    "BOMB_REASONS",
+    "squareDistance",
+    "footprintDistance",
+    "tokenInBlast"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/vehicles/vehicle-ion-bomb-service.js",
+    "tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs"
+    ],
+    "transitiveCount": 35,
+    "ciTestCount": 36
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-776e6bf686",
+   "path": "scripts/domain/vehicles/vehicle-launcher-capacity.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3301,
+   "lines": 47,
+   "sloc": 22,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "LAUNCHER_CAPACITY",
+    "launcherStandardCapacity",
+    "launcherAcceptsAmmunition"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-ammunition-ledger.js",
+    "scripts/domain/vehicles/vehicle-modification-effects.js",
+    "scripts/domain/vehicles/vehicle-stock-ammo-config.js",
+    "tests/vehicle-universal-phase4e-p22-launcher-capacity.test.mjs",
+    "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+    "tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs",
+    "tools/audits/vehicles/build-vehicle-evidence-verification.mjs"
+   ],
+   "consumerCount": 7,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p22-launcher-capacity.test.mjs",
+     "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+     "tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs"
+    ],
+    "transitiveCount": 388,
+    "ciTestCount": 383
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c727989d7f",
+   "path": "scripts/domain/vehicles/vehicle-legacy-modifier-gate.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1213,
+   "lines": 21,
+   "sloc": 8,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-runtime-contract.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "legacyInstalledSystemsMayModify"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/effects/modifiers/ModifierEngine.js",
+    "tests/vehicle-legacy-modifier-gate.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-legacy-modifier-gate.test.mjs"
+    ],
+    "transitiveCount": 361,
+    "ciTestCount": 354
+   },
+   "markers": {
+    "legacy": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d7206a8f01",
+   "path": "scripts/domain/vehicles/vehicle-logistics.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 14371,
+   "lines": 169,
+   "sloc": 110,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "FUEL_BASE_PRICE",
+    "FUEL_PRICE_BY_SIZE",
+    "fuelPricePerDay",
+    "FUEL_EVENTS",
+    "FUEL_DAYS_PER_EVENT",
+    "CONSUMABLES_CREDITS_PER_PERSON_DAY",
+    "DOCKING_REFERENCE",
+    "MAINTENANCE_RULE",
+    "SIMPLIFIED_UPKEEP",
+    "maintenanceReferenceCost",
+    "LOGISTICS_FLAG",
+    "LOGISTICS_SCHEMA",
+    "LOGISTICS_REASONS",
+    "newFuelEventId",
+    "nextEventTime",
+    "fuelEventTime",
+    "emptyLogistics",
+    "validateLogistics",
+    "consumablesMaxDays",
+    "livingOccupants",
+    "consumablesCost",
+    "planFuelPurchase",
+    "planSuppliesPurchase",
+    "applyFuel",
+    "applySupplies",
+    "planFuelConsumption",
+    "deliveryAllowed",
+    "markDelivered"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/engine/vehicles/vehicle-logistics-service.js",
+    "scripts/sheets/v2/vehicle-actor-sheet.js",
+    "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs"
+    ],
+    "transitiveCount": 388,
+    "ciTestCount": 381
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ccd8b1d269",
+   "path": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 33454,
+   "lines": 373,
+   "sloc": 275,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-runtime-contract.js",
+    "scripts/domain/vehicles/vehicle-modification-rules.js",
+    "scripts/domain/vehicles/vehicle-launcher-capacity.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "POINT_DEFENSE_BASE_WEAPONS",
+    "composeWeaponDamage",
+    "effectiveWeaponDamage",
+    "EFFECTS",
+    "IMPLEMENTED_EFFECT_IDS",
+    "hasEffect",
+    "effectInstallability",
+    "computeEffectiveStatistics"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-attack-provenance.js",
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/domain/vehicles/vehicle-installed-weapon-items.js",
+    "scripts/domain/vehicles/vehicle-published-derived.js",
+    "scripts/domain/vehicles/vehicle-runtime-contract.js",
+    "scripts/domain/vehicles/vehicle-weapon-damage.js",
+    "scripts/engine/vehicles/vehicle-ammunition-shop.js",
+    "scripts/engine/vehicles/vehicle-installation-service.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-shipyard-actions.js",
+    "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
+    "tests/vehicle-universal-phase4e-p15-component-census.test.mjs",
+    "tests/vehicle-universal-phase4e-p18-p6b1-effects.test.mjs",
+    "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+    "tests/vehicle-universal-phase4e-p20-p6b3-custom-and-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+    "tests/vehicle-universal-phase4e-p22-launcher-capacity.test.mjs",
+    "tests/vehicle-universal-phase4e-p24-capital-and-pilot.test.mjs",
+    "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p32-weapon-ecosystem-readiness.test.mjs",
+    "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+    "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+    "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+    "tests/vehicle-universal-phase4e-p6-modification-rules.test.mjs",
+    "tools/audits/vehicles/build-p6a-component-census.mjs",
+    "tools/audits/vehicles/build-sotg-modification-evidence.mjs",
+    "tools/audits/vehicles/build-vehicle-100-percent-analysis.mjs",
+    "tools/audits/vehicles/build-weapon-ecosystem-readiness.mjs"
+   ],
+   "consumerCount": 28,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
+     "tests/vehicle-universal-phase4e-p15-component-census.test.mjs",
+     "tests/vehicle-universal-phase4e-p18-p6b1-effects.test.mjs",
+     "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+     "tests/vehicle-universal-phase4e-p20-p6b3-custom-and-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+     "tests/vehicle-universal-phase4e-p22-launcher-capacity.test.mjs",
+     "tests/vehicle-universal-phase4e-p24-capital-and-pilot.test.mjs",
+     "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p32-weapon-ecosystem-readiness.test.mjs",
+     "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+     "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+     "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+     "tests/vehicle-universal-phase4e-p6-modification-rules.test.mjs"
+    ],
+    "transitiveCount": 375,
+    "ciTestCount": 381
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d2a4622a46",
+   "path": "scripts/domain/vehicles/vehicle-modification-factory.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7424,
+   "lines": 236,
+   "sloc": 183,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-system-definitions.js",
+    "scripts/domain/vehicles/vehicle-slot-governance.js",
+    "scripts/engine/store/ledger-service.js",
+    "scripts/utils/logger.js",
+    "scripts/utils/credit-normalization.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "VehicleModificationFactory"
+   ],
+   "classes": [
+    "VehicleModificationFactory"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure",
+    "store-economy"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f2a1500870",
+   "path": "scripts/domain/vehicles/vehicle-modification-rules.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11023,
+   "lines": 205,
+   "sloc": 130,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SIZE_COST_MODIFIER",
+    "MIN_WORK_FORCE",
+    "SHORTFALL_PER_POINT",
+    "BASE_INSTALL_DC",
+    "CREW_QUALITY",
+    "costModifierForSize",
+    "minimumWorkForce",
+    "systemCost",
+    "nonstandardAssessment",
+    "quoteInstallation",
+    "installationCheckOutcome",
+    "quoteRemoval",
+    "cargoTonsForEmplacementPoints",
+    "makeUnusedEmplacementResolver",
+    "VEHICLE_UNIT_POLICY",
+    "cargoToKilograms",
+    "consumablesToDays"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/custom-vehicle-construction.js",
+    "scripts/domain/vehicles/vehicle-installation-job.js",
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/domain/vehicles/vehicle-modification-effects.js",
+    "scripts/engine/vehicles/vehicle-installation-service.js",
+    "scripts/engine/vehicles/vehicle-logistics-service.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js",
+    "scripts/ui/shell/construction-designer-ui.js",
+    "tests/vehicle-universal-phase4e-p6-modification-rules.test.mjs",
+    "tests/vehicle-universal-phase4e-p7-custom-construction.test.mjs",
+    "tests/vehicle-universal-phase4e-p8-install-procedure.test.mjs",
+    "tests/vehicle-universal-phase4e-v2-schema-integration.test.mjs"
+   ],
+   "consumerCount": 12,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p6-modification-rules.test.mjs",
+     "tests/vehicle-universal-phase4e-p7-custom-construction.test.mjs",
+     "tests/vehicle-universal-phase4e-p8-install-procedure.test.mjs",
+     "tests/vehicle-universal-phase4e-v2-schema-integration.test.mjs"
+    ],
+    "transitiveCount": 385,
+    "ciTestCount": 381
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-8173d5ccd0",
+   "path": "scripts/domain/vehicles/vehicle-operating-context.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10155,
+   "lines": 154,
+   "sloc": 102,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-published-derived.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "VEHICLE_ENVIRONMENT",
+    "VEHICLE_ENVIRONMENT_FLAG_PATH",
+    "readVehicleEnvironment",
+    "planEnvironmentChange",
+    "vehicleSizeModifier",
+    "vehicleSkillEquipmentBonus",
+    "vehiclePilotCheck",
+    "assignedPilotEntry",
+    "decidePilotRoller"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/combat/swse-combat.js",
+    "scripts/engine/vehicles/vehicle-ion-bomb-service.js",
+    "scripts/engine/vehicles/vehicle-operating-context-service.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js",
+    "tests/vehicle-universal-phase4e-p17-operating-context.test.mjs",
+    "tests/vehicle-universal-phase4e-p18-p6b1-effects.test.mjs",
+    "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+    "tests/vehicle-universal-phase4e-p20-p6b3-custom-and-weapons.test.mjs"
+   ],
+   "consumerCount": 8,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p17-operating-context.test.mjs",
+     "tests/vehicle-universal-phase4e-p18-p6b1-effects.test.mjs",
+     "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+     "tests/vehicle-universal-phase4e-p20-p6b3-custom-and-weapons.test.mjs"
+    ],
+    "transitiveCount": 36,
+    "ciTestCount": 40
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-77653295f4",
+   "path": "scripts/domain/vehicles/vehicle-phase4d-runtime-audit.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11045,
+   "lines": 198,
+   "sloc": 170,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 1,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-compendium-index.js",
+    "scripts/domain/vehicles/universal-vehicle-pack-registry.js",
+    "scripts/core/vehicle-pack-data-loader.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "VEHICLE_4D_EXPECTED_COUNT",
+    "VEHICLE_4D_REQUIRED_GENERATION",
+    "auditUniversalVehicleActor",
+    "auditUniversalVehicleRuntime",
+    "openUniversalVehicleSampleSheet"
+   ],
+   "classes": [],
+   "consumers": [
+    "index.js",
+    "scripts/domain/vehicles/vehicle-phase4d-scratch-import.js",
+    "tests/vehicle-universal-phase4d-runtime-audit.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4d-runtime-audit.test.mjs"
+    ],
+    "transitiveCount": 1,
+    "ciTestCount": 2
+   },
+   "markers": {
+    "legacy": 1,
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6336ca08ea",
+   "path": "scripts/domain/vehicles/vehicle-phase4d-scratch-import.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5324,
+   "lines": 111,
+   "sloc": 93,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 1,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-phase4d-runtime-audit.js",
+    "scripts/core/vehicle-pack-data-loader.js [dynamic]",
+    "scripts/engine/import/vehicle-import-engine.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "assessUniversalVehicleWorldImport",
+    "runUniversalVehicleScratchImport"
+   ],
+   "classes": [],
+   "consumers": [
+    "index.js",
+    "tests/vehicle-universal-phase4d-scratch-import.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "actor-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4d-scratch-import.test.mjs"
+    ],
+    "transitiveCount": 0,
+    "ciTestCount": 1
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-26ac931949",
+   "path": "scripts/domain/vehicles/vehicle-postcondition.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2277,
+   "lines": 44,
+   "sloc": 29,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "canonicalize",
+    "canonicalEqual",
+    "verifyStoredPaths",
+    "verifyEmbeddedItemFlag"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/customization/tech-specialist-modification-service.js",
+    "scripts/engine/customization/vehicle-customization-engine.js",
+    "scripts/engine/vehicles/vehicle-installation-service.js",
+    "scripts/engine/vehicles/vehicle-logistics-service.js",
+    "tests/vehicle-postcondition.test.mjs",
+    "tests/vehicle-universal-phase4e-p2-installation-ledger.test.mjs"
+   ],
+   "consumerCount": 6,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-postcondition.test.mjs",
+     "tests/vehicle-universal-phase4e-p2-installation-ledger.test.mjs"
+    ],
+    "transitiveCount": 121,
+    "ciTestCount": 120
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-94a6f5180c",
+   "path": "scripts/domain/vehicles/vehicle-published-derived.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8671,
+   "lines": 165,
+   "sloc": 107,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-source-identity.js",
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/domain/vehicles/vehicle-modification-effects.js",
+    "scripts/domain/vehicles/custom-vehicle-effective.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "getVerifiedPublishedRecord",
+    "claimsPublishedSource",
+    "getPublishedDerivedBase",
+    "getPublishedVehicleInitiative",
+    "summarizeMovement",
+    "getEffectiveVehicleSource",
+    "getEffectiveVehicleDerived",
+    "getEffectiveVehicleInitiative",
+    "getEffectiveRechargeShieldsAmount"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/actors/v2/vehicle-derived-builder.js",
+    "scripts/combat/swse-combat.js",
+    "scripts/domain/vehicles/vehicle-operating-context.js",
+    "scripts/engine/combat/SWSEInitiative.js",
+    "scripts/engine/combat/vehicle-attack-math.js",
+    "scripts/engine/vehicles/vehicle-logistics-service.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js",
+    "tests/vehicle-universal-phase4e-p14-operational-effects.test.mjs",
+    "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs",
+    "tests/vehicle-universal-phase4e-p17-operating-context.test.mjs",
+    "tests/vehicle-universal-phase4e-p18-p6b1-effects.test.mjs",
+    "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+    "tests/vehicle-universal-phase4e-p20-p6b3-custom-and-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p4a-derived.test.mjs",
+    "tests/vehicle-universal-phase4e-p5-source-authority.test.mjs"
+   ],
+   "consumerCount": 16,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p14-operational-effects.test.mjs",
+     "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs",
+     "tests/vehicle-universal-phase4e-p17-operating-context.test.mjs",
+     "tests/vehicle-universal-phase4e-p18-p6b1-effects.test.mjs",
+     "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+     "tests/vehicle-universal-phase4e-p20-p6b3-custom-and-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p4a-derived.test.mjs",
+     "tests/vehicle-universal-phase4e-p5-source-authority.test.mjs"
+    ],
+    "transitiveCount": 357,
+    "ciTestCount": 357
+   },
+   "markers": {
+    "compat": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ae979276f1",
+   "path": "scripts/domain/vehicles/vehicle-runtime-contract.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 17790,
+   "lines": 356,
+   "sloc": 278,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-source-identity.js",
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/domain/vehicles/vehicle-modification-effects.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "classifyVehicleActorSource",
+    "getVehiclePublishedFieldState",
+    "classifyVehicleActorRuntime",
+    "getVehicleRuntimeProjection"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+    "scripts/apps/store/store-checkout.js",
+    "scripts/domain/vehicles/vehicle-errata-migration.js",
+    "scripts/domain/vehicles/vehicle-legacy-modifier-gate.js",
+    "scripts/domain/vehicles/vehicle-modification-effects.js",
+    "scripts/engine/customization/vehicle-customization-engine.js",
+    "scripts/engine/vehicles/vehicle-factory.js",
+    "scripts/engine/vehicles/vehicle-installation-service.js",
+    "scripts/sheets/v2/vehicle-actor-sheet.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-publication-view-model.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js",
+    "tests/vehicle-legacy-modifier-gate.test.mjs",
+    "tests/vehicle-universal-phase4e-p0-consumers.test.mjs",
+    "tests/vehicle-universal-phase4e-p0-lifecycle.test.mjs",
+    "tests/vehicle-universal-phase4e-p0-source-digest.test.mjs",
+    "tests/vehicle-universal-phase4e-p1-sheet-view-model.test.mjs",
+    "tests/vehicle-universal-phase4e-p12-construction-service.test.mjs",
+    "tests/vehicle-universal-phase4e-p14-operational-effects.test.mjs",
+    "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs",
+    "tests/vehicle-universal-phase4e-p2-installation-ledger.test.mjs",
+    "tests/vehicle-universal-phase4e-p5-acquisition-assetbay.test.mjs",
+    "tests/vehicle-universal-phase4e-p5-source-authority.test.mjs",
+    "tests/vehicle-universal-phase4e-p6-update-guard.test.mjs",
+    "tests/vehicle-universal-phase4e-p7-custom-construction.test.mjs"
+   ],
+   "consumerCount": 25,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-legacy-modifier-gate.test.mjs",
+     "tests/vehicle-universal-phase4e-p0-consumers.test.mjs",
+     "tests/vehicle-universal-phase4e-p0-lifecycle.test.mjs",
+     "tests/vehicle-universal-phase4e-p0-source-digest.test.mjs",
+     "tests/vehicle-universal-phase4e-p1-sheet-view-model.test.mjs",
+     "tests/vehicle-universal-phase4e-p12-construction-service.test.mjs",
+     "tests/vehicle-universal-phase4e-p14-operational-effects.test.mjs",
+     "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs",
+     "tests/vehicle-universal-phase4e-p2-installation-ledger.test.mjs",
+     "tests/vehicle-universal-phase4e-p5-acquisition-assetbay.test.mjs",
+     "tests/vehicle-universal-phase4e-p5-source-authority.test.mjs",
+     "tests/vehicle-universal-phase4e-p6-update-guard.test.mjs",
+     "tests/vehicle-universal-phase4e-p7-custom-construction.test.mjs"
+    ],
+    "transitiveCount": 376,
+    "ciTestCount": 381
+   },
+   "markers": {
+    "legacy": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b155338f0f",
+   "path": "scripts/domain/vehicles/vehicle-slot-governance.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4426,
+   "lines": 166,
+   "sloc": 105,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-system-definitions.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "VehicleSlotGovernanceEngine"
+   ],
+   "classes": [
+    "VehicleSlotGovernanceEngine"
+   ],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-modification-factory.js",
+    "scripts/engine/customization/vehicle-customization-engine.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 35,
+    "ciTestCount": 35
+   },
+   "markers": {
+    "compat": 8
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-fb63adec90",
+   "path": "scripts/domain/vehicles/vehicle-source-digest.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2851,
+   "lines": 66,
+   "sloc": 55,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "sha256Utf8",
+    "digestUniversalVehicleSource"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/custom-vehicle-construction-project.js",
+    "scripts/domain/vehicles/custom-vehicle-construction.js",
+    "scripts/domain/vehicles/vehicle-errata-migration.js",
+    "scripts/domain/vehicles/vehicle-installation-jobs.js",
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/domain/vehicles/vehicle-source-identity.js",
+    "tests/vehicle-universal-phase4e-p0-source-digest.test.mjs",
+    "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs",
+    "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs",
+    "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+    "tests/vehicle-universal-phase4e-p50-initial-ammunition-policy.test.mjs",
+    "tests/vehicle-universal-phase4e-p51-party-fund-ammunition.test.mjs",
+    "tests/vehicle-universal-phase4e-p52-ammunition-shortcuts.test.mjs",
+    "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs"
+   ],
+   "consumerCount": 14,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p0-source-digest.test.mjs",
+     "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs",
+     "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs",
+     "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+     "tests/vehicle-universal-phase4e-p50-initial-ammunition-policy.test.mjs",
+     "tests/vehicle-universal-phase4e-p51-party-fund-ammunition.test.mjs",
+     "tests/vehicle-universal-phase4e-p52-ammunition-shortcuts.test.mjs",
+     "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs"
+    ],
+    "transitiveCount": 381,
+    "ciTestCount": 381
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2381bcd9f5",
+   "path": "scripts/domain/vehicles/vehicle-source-identity.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7881,
+   "lines": 154,
+   "sloc": 107,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/domain/vehicles/universal-vehicle-pack-registry.js",
+    "scripts/domain/vehicles/vehicle-source-digest.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SOURCE_SCHEMA",
+    "claimsPublishedSource",
+    "collectSourceIdentityErrors",
+    "getVerifiedPublishedRecord",
+    "authorizeProvenanceMigration",
+    "clearProvenanceMigration",
+    "checkProvenanceUpdate"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+    "scripts/domain/vehicles/vehicle-attack-provenance.js",
+    "scripts/domain/vehicles/vehicle-published-derived.js",
+    "scripts/domain/vehicles/vehicle-runtime-contract.js",
+    "scripts/domain/vehicles/vehicle-stock-ammo-readiness.js",
+    "scripts/domain/vehicles/vehicle-weapon-damage.js",
+    "scripts/engine/combat/damage-vulnerability-authority.js",
+    "scripts/engine/vehicles/vehicle-errata-migration-service.js",
+    "scripts/engine/vehicles/vehicle-stock-ammo-config-service.js",
+    "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs",
+    "tests/vehicle-universal-phase4e-p5-source-authority.test.mjs",
+    "tests/vehicle-universal-phase4e-p6-update-guard.test.mjs",
+    "tests/vehicle-universal-phase4e-p7-custom-construction.test.mjs"
+   ],
+   "consumerCount": 13,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs",
+     "tests/vehicle-universal-phase4e-p5-source-authority.test.mjs",
+     "tests/vehicle-universal-phase4e-p6-update-guard.test.mjs",
+     "tests/vehicle-universal-phase4e-p7-custom-construction.test.mjs"
+    ],
+    "transitiveCount": 385,
+    "ciTestCount": 381
+   },
+   "markers": {
+    "legacy": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-db68a92c02",
+   "path": "scripts/domain/vehicles/vehicle-space-mine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7418,
+   "lines": 95,
+   "sloc": 61,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MINE_STEALTH_BONUS",
+    "MINE_SCHEMA",
+    "MINE_FLAG",
+    "MINE_TYPES",
+    "MINE_REASONS",
+    "mineDamageFormula",
+    "squareOfToken",
+    "tokenOccupies",
+    "buildMine",
+    "isValidMine",
+    "movementWaypointsOf",
+    "pathCells",
+    "footprintCovers",
+    "moveEntersSquare"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/vehicles/vehicle-ion-bomb-service.js",
+    "scripts/engine/vehicles/vehicle-mine-service.js",
+    "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs",
+    "tests/vehicle-universal-phase4e-p47-scene-state-corrections.test.mjs",
+    "tests/vehicle-universal-phase4e-p48-mine-detection.test.mjs"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs",
+     "tests/vehicle-universal-phase4e-p47-scene-state-corrections.test.mjs",
+     "tests/vehicle-universal-phase4e-p48-mine-detection.test.mjs"
+    ],
+    "transitiveCount": 36,
+    "ciTestCount": 39
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b8290f54fd",
+   "path": "scripts/domain/vehicles/vehicle-stock-ammo-config.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9268,
+   "lines": 122,
+   "sloc": 90,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-ammunition-ledger.js",
+    "scripts/domain/vehicles/vehicle-launcher-capacity.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "STOCK_AMMO_CONFIG_FLAG",
+    "STOCK_AMMO_CONFIG_SCHEMA",
+    "READINESS",
+    "AMMO_LIFTABLE",
+    "CONFIG_REASONS",
+    "isGmConfigurable",
+    "describeNeeds",
+    "planStockAmmoConfig",
+    "validateStockAmmoConfig",
+    "familyFromConfig",
+    "readStockAmmoConfigs"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/domain/vehicles/vehicle-stock-ammo-readiness.js",
+    "scripts/domain/vehicles/vehicle-stock-weapon-groups.js",
+    "scripts/domain/vehicles/vehicle-weapon-damage.js",
+    "scripts/engine/vehicles/vehicle-installation-service.js",
+    "scripts/engine/vehicles/vehicle-stock-ammo-config-service.js",
+    "tests/vehicle-universal-phase4e-p43-gm-configured-launchers.test.mjs"
+   ],
+   "consumerCount": 7,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p43-gm-configured-launchers.test.mjs"
+    ],
+    "transitiveCount": 390,
+    "ciTestCount": 383
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d8ffc8d43d",
+   "path": "scripts/domain/vehicles/vehicle-stock-ammo-readiness.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2144,
+   "lines": 31,
+   "sloc": 26,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-source-identity.js",
+    "scripts/domain/vehicles/vehicle-stock-weapon-groups.js",
+    "scripts/domain/vehicles/vehicle-stock-ammo-config.js",
+    "scripts/domain/vehicles/vehicle-stock-battery-config.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "stockAmmoReadinessRows",
+    "stockBatteryReadinessRows"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/vehicles/vehicle-stock-ammo-config-service.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-weapon-ops.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 35,
+    "ciTestCount": 35
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d8949e68c8",
+   "path": "scripts/domain/vehicles/vehicle-stock-arc-policy.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1440,
+   "lines": 23,
+   "sloc": 7,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "STOCK_ARC_POLICY",
+    "STOCK_ARC_POLICY_SETTING",
+    "getStockSilentArcPolicy"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-attack-preflight.js",
+    "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs"
+    ],
+    "transitiveCount": 362,
+    "ciTestCount": 355
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-317506e842",
+   "path": "scripts/domain/vehicles/vehicle-stock-attack-authority.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2305,
+   "lines": 38,
+   "sloc": 16,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-weapon-damage.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "TRUSTED_STOCK_WEAPON_GROUP_COUNT",
+    "resolveTrustedStockAttackGroup"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/combat/rolls/attacks.js",
+    "scripts/domain/vehicles/vehicle-attack-preflight.js",
+    "tests/phase2c-vehicle-stock-vs-custom-gate.test.mjs",
+    "tests/phase2c_cp22_source_view_readonly.test.mjs",
+    "tests/phase2c_cp23_pack_reconciliation.test.mjs",
+    "tests/phase2c_cp23b_isolated_proposals.test.mjs",
+    "tests/phase2c_cp23c2_install_readiness.test.mjs",
+    "tests/phase2c_cp23c3_native_source_stage.test.mjs",
+    "tests/phase2c_cp23c4_gm_observation_ledger.test.mjs",
+    "tests/phase2c_cp23c4b_world_identity.test.mjs",
+    "tests/phase2c_cp23c4c_import_boundary.test.mjs",
+    "tests/phase2c_cp23c_source_draft_integrity.test.mjs",
+    "tests/phase2c_cp8_crew_station_evidence.test.mjs",
+    "tests/vehicle-universal-phase4e-p20-p6b3-custom-and-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs"
+   ],
+   "consumerCount": 15,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/phase2c-vehicle-stock-vs-custom-gate.test.mjs",
+     "tests/phase2c_cp22_source_view_readonly.test.mjs",
+     "tests/phase2c_cp23_pack_reconciliation.test.mjs",
+     "tests/phase2c_cp23b_isolated_proposals.test.mjs",
+     "tests/phase2c_cp23c2_install_readiness.test.mjs",
+     "tests/phase2c_cp23c3_native_source_stage.test.mjs",
+     "tests/phase2c_cp23c4_gm_observation_ledger.test.mjs",
+     "tests/phase2c_cp23c4b_world_identity.test.mjs",
+     "tests/phase2c_cp23c4c_import_boundary.test.mjs",
+     "tests/phase2c_cp23c_source_draft_integrity.test.mjs",
+     "tests/phase2c_cp8_crew_station_evidence.test.mjs",
+     "tests/vehicle-universal-phase4e-p20-p6b3-custom-and-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 365
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-888586d62b",
+   "path": "scripts/domain/vehicles/vehicle-stock-battery-config.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3458,
+   "lines": 39,
+   "sloc": 25,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-weapon-battery.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "STOCK_BATTERY_CONFIG_FLAG",
+    "STOCK_BATTERY_CONFIG_SCHEMA",
+    "BATTERY_CONFIG_REASONS",
+    "isBatteryConfigurable",
+    "planStockBatteryConfig",
+    "validateStockBatteryConfig",
+    "readStockBatteryConfigs"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/domain/vehicles/vehicle-stock-ammo-readiness.js",
+    "scripts/domain/vehicles/vehicle-stock-weapon-groups.js",
+    "scripts/domain/vehicles/vehicle-weapon-damage.js",
+    "scripts/engine/vehicles/vehicle-installation-service.js",
+    "scripts/engine/vehicles/vehicle-stock-ammo-config-service.js",
+    "tests/vehicle-universal-phase4e-p46-gm-certified-batteries.test.mjs"
+   ],
+   "consumerCount": 7,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p46-gm-certified-batteries.test.mjs"
+    ],
+    "transitiveCount": 390,
+    "ciTestCount": 383
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-23689104bf",
+   "path": "scripts/domain/vehicles/vehicle-stock-weapon-groups.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 33025,
+   "lines": 392,
+   "sloc": 235,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-stock-battery-config.js",
+    "scripts/domain/vehicles/vehicle-stock-ammo-config.js",
+    "scripts/domain/vehicles/vehicle-weapon-battery.js",
+    "scripts/domain/vehicles/vehicle-ammunition-ledger.js",
+    "scripts/domain/vehicles/vehicle-weapon-range.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "stockItemName",
+    "stockMountKey",
+    "extractOrdinaryArea",
+    "evidenceReasons",
+    "parseOperatorText",
+    "parseStockFiringGroup",
+    "determineStockArc",
+    "explainPrintedAttackTotal",
+    "checkSizeDependentAdjustments",
+    "assessStockWeaponGroups"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-stock-ammo-readiness.js",
+    "scripts/domain/vehicles/vehicle-stock-weapon-items.js",
+    "scripts/domain/vehicles/vehicle-weapon-damage.js",
+    "scripts/engine/vehicles/vehicle-stock-ammo-config-service.js",
+    "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+    "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+    "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs",
+    "tests/vehicle-universal-phase4e-p29-starship-scale-area.test.mjs",
+    "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+    "tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs",
+    "tests/vehicle-universal-phase4e-p36-area-miss-damage.test.mjs",
+    "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs",
+    "tests/vehicle-universal-phase4e-p39-operator-model.test.mjs",
+    "tests/vehicle-universal-phase4e-p42-startup-and-operator.test.mjs",
+    "tests/vehicle-universal-phase4e-p43-gm-configured-launchers.test.mjs",
+    "tests/vehicle-universal-phase4e-p46-gm-certified-batteries.test.mjs",
+    "tests/vehicle-universal-phase4e-p50-initial-ammunition-policy.test.mjs",
+    "tests/vehicle-universal-phase4e-p51-party-fund-ammunition.test.mjs",
+    "tests/vehicle-universal-phase4e-p52-ammunition-shortcuts.test.mjs",
+    "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs",
+    "tests/vehicle-universal-phase4e-p55-stock-payload-reconciliation.test.mjs",
+    "tests/vehicle-universal-phase4e-p58-tractor-notation.test.mjs",
+    "tools/audits/vehicles/build-stock-weapon-coverage.mjs",
+    "tools/audits/vehicles/build-vehicle-100-percent-analysis.mjs"
+   ],
+   "consumerCount": 25,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+     "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+     "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs",
+     "tests/vehicle-universal-phase4e-p29-starship-scale-area.test.mjs",
+     "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+     "tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs",
+     "tests/vehicle-universal-phase4e-p36-area-miss-damage.test.mjs",
+     "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs",
+     "tests/vehicle-universal-phase4e-p39-operator-model.test.mjs",
+     "tests/vehicle-universal-phase4e-p42-startup-and-operator.test.mjs",
+     "tests/vehicle-universal-phase4e-p43-gm-configured-launchers.test.mjs",
+     "tests/vehicle-universal-phase4e-p46-gm-certified-batteries.test.mjs",
+     "tests/vehicle-universal-phase4e-p50-initial-ammunition-policy.test.mjs",
+     "tests/vehicle-universal-phase4e-p51-party-fund-ammunition.test.mjs",
+     "tests/vehicle-universal-phase4e-p52-ammunition-shortcuts.test.mjs",
+     "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs",
+     "tests/vehicle-universal-phase4e-p55-stock-payload-reconciliation.test.mjs",
+     "tests/vehicle-universal-phase4e-p58-tractor-notation.test.mjs"
+    ],
+    "transitiveCount": 357,
+    "ciTestCount": 368
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-1a99709df3",
+   "path": "scripts/domain/vehicles/vehicle-stock-weapon-items.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6527,
+   "lines": 92,
+   "sloc": 60,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-weapon-damage.js",
+    "scripts/domain/vehicles/vehicle-stock-weapon-groups.js",
+    "scripts/domain/vehicles/vehicle-ammunition-ledger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "INITIAL_AMMO_ISSUED_FLAG",
+    "issuedKeyOf",
+    "buildStockWeaponItemData",
+    "managedStockItemMatches",
+    "executableModesOf",
+    "planStockWeaponItemSync"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/vehicles/vehicle-installation-service.js",
+    "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+    "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs",
+    "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+    "tests/vehicle-universal-phase4e-p42-startup-and-operator.test.mjs",
+    "tests/vehicle-universal-phase4e-p46-gm-certified-batteries.test.mjs",
+    "tests/vehicle-universal-phase4e-p50-initial-ammunition-policy.test.mjs",
+    "tests/vehicle-universal-phase4e-p51-party-fund-ammunition.test.mjs",
+    "tests/vehicle-universal-phase4e-p52-ammunition-shortcuts.test.mjs",
+    "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs"
+   ],
+   "consumerCount": 10,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+     "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs",
+     "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+     "tests/vehicle-universal-phase4e-p42-startup-and-operator.test.mjs",
+     "tests/vehicle-universal-phase4e-p46-gm-certified-batteries.test.mjs",
+     "tests/vehicle-universal-phase4e-p50-initial-ammunition-policy.test.mjs",
+     "tests/vehicle-universal-phase4e-p51-party-fund-ammunition.test.mjs",
+     "tests/vehicle-universal-phase4e-p52-ammunition-shortcuts.test.mjs",
+     "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs"
+    ],
+    "transitiveCount": 95,
+    "ciTestCount": 101
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e73136857a",
+   "path": "scripts/domain/vehicles/vehicle-store-eligibility.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6883,
+   "lines": 132,
+   "sloc": 94,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "getPublishedVehiclePrices",
+    "evaluateVehiclePurchase",
+    "buildCanonicalVehicleCostRecord",
+    "evaluateVehicleMerchantPurchase",
+    "buildVehicleCatalogListing"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/store/store-checkout.js",
+    "scripts/engine/store/cost-registry.js",
+    "tests/vehicle-universal-phase4e-p3-store-eligibility.test.mjs",
+    "tests/vehicle-universal-phase4e-p5-store-transaction.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p3-store-eligibility.test.mjs",
+     "tests/vehicle-universal-phase4e-p5-store-transaction.test.mjs"
+    ],
+    "transitiveCount": 363,
+    "ciTestCount": 357
+   },
+   "markers": {
+    "legacy": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5bc4b8ec2d",
+   "path": "scripts/domain/vehicles/vehicle-system-definitions.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4512,
+   "lines": 174,
+   "sloc": 122,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "VEHICLE_SYSTEM_DEFINITIONS",
+    "getVehicleSystemDefinition",
+    "isVehicleSystemCompatible",
+    "getVehicleSystemsBySlot"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-modification-factory.js",
+    "scripts/domain/vehicles/vehicle-slot-governance.js",
+    "scripts/engine/customization/vehicle-customization-engine.js",
+    "scripts/engine/effects/modifiers/ModifierEngine.js",
+    "tests/vehicle-postcondition.test.mjs"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-postcondition.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "compat": 13
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f2e4f970ae",
+   "path": "scripts/domain/vehicles/vehicle-weapon-battery.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11095,
+   "lines": 157,
+   "sloc": 80,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "BATTERY_MAX_WEAPONS",
+    "BATTERY_ASSIST_PER_ADDITIONAL_GUNNER",
+    "BATTERY_MARGIN_STEP",
+    "BATTERY_AID_DEFENSE",
+    "BATTERY_AID_BONUS_PER_TWO_WEAPONS",
+    "BATTERY_REASONS",
+    "batteryAssistanceBonus",
+    "batteryMarginHits",
+    "expandBatteryDamage",
+    "batteryAidsBattery",
+    "resolveBatteryAttackTotal",
+    "resolveBatteryWeapons",
+    "establishPublishedBattery",
+    "establishIndependentBatteryWeapon"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/combat/rolls/attacks.js",
+    "scripts/domain/vehicles/vehicle-attack-preflight.js",
+    "scripts/domain/vehicles/vehicle-battery-aid.js",
+    "scripts/domain/vehicles/vehicle-stock-battery-config.js",
+    "scripts/domain/vehicles/vehicle-stock-weapon-groups.js",
+    "scripts/domain/vehicles/vehicle-weapon-damage.js",
+    "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+    "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs"
+   ],
+   "consumerCount": 8,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+     "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs"
+    ],
+    "transitiveCount": 389,
+    "ciTestCount": 383
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ce8e0d921f",
+   "path": "scripts/domain/vehicles/vehicle-weapon-damage.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 16822,
+   "lines": 218,
+   "sloc": 135,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/domain/vehicles/vehicle-stock-ammo-config.js",
+    "scripts/domain/vehicles/vehicle-stock-battery-config.js",
+    "scripts/engine/combat/vehicle-weapon-damage-parser.js",
+    "scripts/domain/vehicles/vehicle-source-identity.js",
+    "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "scripts/domain/vehicles/vehicle-modification-effects.js",
+    "scripts/domain/vehicles/vehicle-stock-weapon-groups.js",
+    "scripts/domain/vehicles/vehicle-weapon-battery.js",
+    "scripts/domain/vehicles/vehicle-ammunition-ledger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "AUTOFIRE_SWITCH_BOTH_WAYS",
+    "INSTALLED_WEAPON_FLAG",
+    "STOCK_WEAPON_FLAG",
+    "isInstalledVehicleWeaponItem",
+    "isShipyardManagedWeaponItem",
+    "isStockVehicleWeaponItem",
+    "isVehicleManagedWeaponItem",
+    "hasManagedWeaponFlag",
+    "resolveCertifiedInstalledWeapon",
+    "resolveStockWeapon",
+    "resolveVehicleWeaponAuthority",
+    "resolveVehicleWeaponDamage",
+    "publishedVehicleGrappleBonus"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+    "scripts/combat/rolls/attacks.js",
+    "scripts/combat/rolls/damage.js",
+    "scripts/combat/rolls/enhanced-rolls.js",
+    "scripts/combat/systems/enhanced-combat-system.js",
+    "scripts/combat/systems/grappling-system.js",
+    "scripts/domain/vehicles/vehicle-attack-preflight.js",
+    "scripts/domain/vehicles/vehicle-attack-provenance.js",
+    "scripts/domain/vehicles/vehicle-installed-weapon-items.js",
+    "scripts/domain/vehicles/vehicle-stock-attack-authority.js",
+    "scripts/domain/vehicles/vehicle-stock-weapon-items.js",
+    "scripts/engine/combat/combat-roll-math.js",
+    "scripts/engine/combat/ui/CombatUIAdapter.js",
+    "scripts/engine/combat/vehicle-attack-math.js",
+    "scripts/engine/combat/vehicle-attack-range.js",
+    "scripts/engine/vehicles/vehicle-ammunition-service.js",
+    "scripts/engine/vehicles/vehicle-ammunition-shop.js",
+    "scripts/engine/vehicles/vehicle-battery-aid-service.js",
+    "scripts/engine/vehicles/vehicle-fire-mode-service.js",
+    "scripts/engine/vehicles/vehicle-ion-bomb-service.js",
+    "scripts/engine/vehicles/vehicle-mine-service.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-systems-browser.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-weapon-ops.js",
+    "tests/architecture-combat-authority.test.mjs",
+    "tests/vehicle-universal-phase4e-p23-weapon-integrity.test.mjs",
+    "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+    "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+    "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs",
+    "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+    "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+    "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+    "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+    "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs",
+    "tests/vehicle-universal-phase4e-p40-tractor-beam.test.mjs",
+    "tests/vehicle-universal-phase4e-p41-shieldbuster.test.mjs",
+    "tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs",
+    "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs",
+    "tests/vehicle-universal-phase4e-p46-gm-certified-batteries.test.mjs",
+    "tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs"
+   ],
+   "consumerCount": 41,
+   "secondarySystems": [
+    "combat"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/architecture-combat-authority.test.mjs",
+     "tests/vehicle-universal-phase4e-p23-weapon-integrity.test.mjs",
+     "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+     "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+     "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs",
+     "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+     "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+     "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+     "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+     "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs",
+     "tests/vehicle-universal-phase4e-p40-tractor-beam.test.mjs",
+     "tests/vehicle-universal-phase4e-p41-shieldbuster.test.mjs",
+     "tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs",
+     "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs",
+     "tests/vehicle-universal-phase4e-p46-gm-certified-batteries.test.mjs",
+     "tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs"
+    ],
+    "transitiveCount": 356,
+    "ciTestCount": 366
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-44ceeb62f4",
+   "path": "scripts/domain/vehicles/vehicle-weapon-range.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7677,
+   "lines": 129,
+   "sloc": 77,
+   "primarySystem": "vehicles",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "RANGE_REASONS",
+    "RANGE_BANDS",
+    "rangeSlugFromPrintedDesignation",
+    "measureSquaresBetweenTokens",
+    "bandForDistance",
+    "resolveVehicleRange"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/domain/vehicles/vehicle-stock-weapon-groups.js",
+    "scripts/engine/combat/vehicle-attack-range.js",
+    "tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs"
+    ],
+    "transitiveCount": 375,
+    "ciTestCount": 368
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  }
+ ]
+}

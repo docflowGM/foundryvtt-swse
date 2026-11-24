@@ -1,0 +1,4719 @@
+{
+ "schema": "swse.architecture-census.registry/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "shard": "scripts-holonet",
+ "count": 75,
+ "files": [
+  {
+   "id": "F-3add7483e8",
+   "path": "scripts/holonet/BADGE_INTEGRATION_GUIDE.md",
+   "top": "scripts",
+   "ext": "md",
+   "bytes": 7772,
+   "lines": 252,
+   "sloc": null,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "evidence-or-doc",
+   "runtimeReachability": "unreferenced",
+   "referencedBy": [],
+   "referencedByCount": 0,
+   "runtimeReferrerCount": 0,
+   "markers": {
+    "compat": 1
+   },
+   "uncheckedItems": 8,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-656fdd441d",
+   "path": "scripts/holonet/README.md",
+   "top": "scripts",
+   "ext": "md",
+   "bytes": 11659,
+   "lines": 277,
+   "sloc": null,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "evidence-or-doc",
+   "runtimeReachability": "unreferenced",
+   "referencedBy": [],
+   "referencedByCount": 0,
+   "runtimeReferrerCount": 0,
+   "markers": {
+    "legacy": 1,
+    "compat": 5
+   },
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-0a1872e0e5",
+   "path": "scripts/holonet/contracts/enums.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5785,
+   "lines": 190,
+   "sloc": 157,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "RECORD_TYPE",
+    "INTENT_TYPE",
+    "DELIVERY_STATE",
+    "LIFECYCLE_STATE",
+    "RECIPIENT_TYPE",
+    "PERSONA_TYPE",
+    "SURFACE_TYPE",
+    "SOURCE_FAMILY",
+    "AUDIENCE_TYPE"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/apps/customization/item-customization-workbench.js",
+    "scripts/apps/gm-datapad.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/holonet-boundaries.js",
+    "scripts/holonet/contracts/holonet-delivery-state.js",
+    "scripts/holonet/contracts/holonet-event.js",
+    "scripts/holonet/contracts/holonet-intent-registry.js",
+    "scripts/holonet/contracts/holonet-message.js",
+    "scripts/holonet/contracts/holonet-notification.js",
+    "scripts/holonet/contracts/holonet-projection-surface.js",
+    "scripts/holonet/contracts/holonet-recipient.js",
+    "scripts/holonet/contracts/holonet-record.js",
+    "scripts/holonet/contracts/holonet-request.js",
+    "scripts/holonet/contracts/index.js",
+    "scripts/holonet/contracts/record-factory.js",
+    "scripts/holonet/emitters/approvals-emitter.js",
+    "scripts/holonet/emitters/droid-emitter.js",
+    "scripts/holonet/emitters/follower-emitter.js",
+    "scripts/holonet/emitters/healing-emitter.js",
+    "scripts/holonet/emitters/home-feed-task-emitter.js",
+    "scripts/holonet/emitters/progression-emitter.js",
+    "scripts/holonet/emitters/ship-emitter.js",
+    "scripts/holonet/emitters/store-emitter.js",
+    "scripts/holonet/emitters/store-state-emitter.js",
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/holonet-manager.js",
+    "scripts/holonet/holonet-source-registry.js",
+    "scripts/holonet/sources/approvals-source.js",
+    "scripts/holonet/sources/bulletin-source.js",
+    "scripts/holonet/sources/droid-source.js",
+    "scripts/holonet/sources/follower-source.js",
+    "scripts/holonet/sources/healing-source.js",
+    "scripts/holonet/sources/mentor-source.js",
+    "scripts/holonet/sources/messenger-source.js",
+    "scripts/holonet/sources/progression-source.js",
+    "scripts/holonet/sources/ship-source.js",
+    "scripts/holonet/sources/store-source.js",
+    "scripts/holonet/sources/system-source.js",
+    "scripts/holonet/subsystems/holonet-delivery-router.js",
+    "scripts/holonet/subsystems/holonet-feed-service.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "scripts/holonet/subsystems/holonet-notice-center-service.js",
+    "scripts/holonet/subsystems/holonet-projection-router.js",
+    "scripts/holonet/subsystems/holonews-auto-publisher.js",
+    "scripts/holonet/subsystems/messenger-maintenance-service.js",
+    "scripts/holonet/subsystems/messenger-notification-bridge.js",
+    "scripts/ui/shell/HomeSurfaceService.js",
+    "scripts/ui/shell/gm/GMBulletinSurfaceService.js",
+    "scripts/ui/shell/gm/GMDashboardSurfaceService.js",
+    "scripts/ui/shell/gm/GMTradeConsoleSurfaceService.js",
+    "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs"
+   ],
+   "consumerCount": 52,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2a01da8849",
+   "path": "scripts/holonet/contracts/holonet-audience.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1211,
+   "lines": 49,
+   "sloc": 35,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetAudience"
+   ],
+   "classes": [
+    "HolonetAudience"
+   ],
+   "consumers": [
+    "scripts/apps/customization/item-customization-workbench.js",
+    "scripts/apps/gm-datapad.js",
+    "scripts/holonet/contracts/index.js",
+    "scripts/holonet/emitters/approvals-emitter.js",
+    "scripts/holonet/emitters/droid-emitter.js",
+    "scripts/holonet/emitters/follower-emitter.js",
+    "scripts/holonet/emitters/healing-emitter.js",
+    "scripts/holonet/emitters/home-feed-task-emitter.js",
+    "scripts/holonet/emitters/progression-emitter.js",
+    "scripts/holonet/emitters/ship-emitter.js",
+    "scripts/holonet/emitters/store-emitter.js",
+    "scripts/holonet/emitters/store-state-emitter.js",
+    "scripts/holonet/holonet-manager.js",
+    "scripts/holonet/sources/approvals-source.js",
+    "scripts/holonet/sources/bulletin-source.js",
+    "scripts/holonet/sources/droid-source.js",
+    "scripts/holonet/sources/follower-source.js",
+    "scripts/holonet/sources/healing-source.js",
+    "scripts/holonet/sources/mentor-source.js",
+    "scripts/holonet/sources/progression-source.js",
+    "scripts/holonet/sources/ship-source.js",
+    "scripts/holonet/sources/store-source.js",
+    "scripts/holonet/sources/system-source.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "scripts/holonet/subsystems/holonews-auto-publisher.js",
+    "scripts/holonet/subsystems/messenger-notification-bridge.js",
+    "scripts/ui/shell/gm/GMBulletinSurfaceService.js"
+   ],
+   "consumerCount": 28,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3ccaed17ab",
+   "path": "scripts/holonet/contracts/holonet-boundaries.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2658,
+   "lines": 82,
+   "sloc": 63,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HOLONET_SPHERE",
+    "getHolonetSphere",
+    "isBulletinRecord",
+    "isMessengerRecord",
+    "normalizeBulletinRecord",
+    "normalizeMessengerRecord",
+    "assertHolonetBoundary"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/sources/bulletin-source.js",
+    "scripts/holonet/sources/messenger-source.js",
+    "tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs",
+    "tests/gm-holonet-phase8c-bulletin-handoffs.test.mjs"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs",
+     "tests/gm-holonet-phase8c-bulletin-handoffs.test.mjs"
+    ],
+    "transitiveCount": 359,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-fc99d028a5",
+   "path": "scripts/holonet/contracts/holonet-delivery-state.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 820,
+   "lines": 32,
+   "sloc": 23,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetDeliveryState"
+   ],
+   "classes": [
+    "HolonetDeliveryState"
+   ],
+   "consumers": [
+    "scripts/holonet/contracts/index.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ac27e3aa21",
+   "path": "scripts/holonet/contracts/holonet-event.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 640,
+   "lines": 28,
+   "sloc": 21,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/contracts/holonet-record.js",
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetEvent"
+   ],
+   "classes": [
+    "HolonetEvent"
+   ],
+   "consumers": [
+    "scripts/holonet/contracts/index.js",
+    "scripts/holonet/contracts/record-factory.js",
+    "scripts/holonet/sources/bulletin-source.js",
+    "scripts/holonet/sources/mentor-source.js",
+    "scripts/holonet/sources/progression-source.js",
+    "scripts/holonet/sources/system-source.js"
+   ],
+   "consumerCount": 6,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6233a8c0ff",
+   "path": "scripts/holonet/contracts/holonet-intent-registry.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 21926,
+   "lines": 655,
+   "sloc": 601,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "registry",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetIntentRegistry"
+   ],
+   "classes": [
+    "HolonetIntentRegistry"
+   ],
+   "consumers": [
+    "scripts/holonet/contracts/index.js",
+    "scripts/holonet/services/holonet-badge-service.js",
+    "scripts/holonet/subsystems/holonet-projection-router.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "fallback": 4
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-4a2f25e45f",
+   "path": "scripts/holonet/contracts/holonet-message.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 644,
+   "lines": 28,
+   "sloc": 21,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/contracts/holonet-record.js",
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetMessage"
+   ],
+   "classes": [
+    "HolonetMessage"
+   ],
+   "consumers": [
+    "scripts/holonet/contracts/index.js",
+    "scripts/holonet/contracts/record-factory.js",
+    "scripts/holonet/holonet-manager.js",
+    "scripts/holonet/sources/messenger-source.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-47b5c4e56a",
+   "path": "scripts/holonet/contracts/holonet-notification.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 775,
+   "lines": 32,
+   "sloc": 25,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/contracts/holonet-record.js",
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetNotification"
+   ],
+   "classes": [
+    "HolonetNotification"
+   ],
+   "consumers": [
+    "scripts/apps/customization/item-customization-workbench.js",
+    "scripts/holonet/contracts/index.js",
+    "scripts/holonet/contracts/record-factory.js",
+    "scripts/holonet/emitters/home-feed-task-emitter.js",
+    "scripts/holonet/holonet-manager.js",
+    "scripts/holonet/sources/droid-source.js",
+    "scripts/holonet/sources/follower-source.js",
+    "scripts/holonet/sources/healing-source.js",
+    "scripts/holonet/sources/ship-source.js",
+    "scripts/holonet/sources/store-source.js",
+    "scripts/holonet/sources/system-source.js",
+    "scripts/holonet/subsystems/messenger-notification-bridge.js"
+   ],
+   "consumerCount": 12,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-7fb170cffc",
+   "path": "scripts/holonet/contracts/holonet-projection-surface.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 768,
+   "lines": 30,
+   "sloc": 21,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetProjectionSurface"
+   ],
+   "classes": [
+    "HolonetProjectionSurface"
+   ],
+   "consumers": [
+    "scripts/apps/customization/item-customization-workbench.js",
+    "scripts/holonet/contracts/index.js",
+    "scripts/holonet/emitters/home-feed-task-emitter.js",
+    "scripts/holonet/subsystems/holonet-projection-router.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a19720a794",
+   "path": "scripts/holonet/contracts/holonet-recipient.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3907,
+   "lines": 134,
+   "sloc": 93,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetRecipient"
+   ],
+   "classes": [
+    "HolonetRecipient"
+   ],
+   "consumers": [
+    "scripts/apps/customization/item-customization-workbench.js",
+    "scripts/holonet/contracts/index.js",
+    "scripts/holonet/emitters/home-feed-task-emitter.js",
+    "scripts/holonet/holonet-manager.js",
+    "scripts/holonet/subsystems/holonet-delivery-router.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js"
+   ],
+   "consumerCount": 6,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-41deee5d63",
+   "path": "scripts/holonet/contracts/holonet-record.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3804,
+   "lines": 120,
+   "sloc": 103,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetRecord"
+   ],
+   "classes": [
+    "HolonetRecord"
+   ],
+   "consumers": [
+    "scripts/holonet/contracts/holonet-event.js",
+    "scripts/holonet/contracts/holonet-message.js",
+    "scripts/holonet/contracts/holonet-notification.js",
+    "scripts/holonet/contracts/holonet-request.js",
+    "scripts/holonet/contracts/index.js",
+    "scripts/holonet/contracts/record-factory.js",
+    "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs"
+   ],
+   "consumerCount": 7,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a32a57e935",
+   "path": "scripts/holonet/contracts/holonet-request.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1565,
+   "lines": 56,
+   "sloc": 47,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/contracts/holonet-record.js",
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetRequest"
+   ],
+   "classes": [
+    "HolonetRequest"
+   ],
+   "consumers": [
+    "scripts/holonet/contracts/index.js",
+    "scripts/holonet/contracts/record-factory.js",
+    "scripts/holonet/sources/approvals-source.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b7eab8bdb8",
+   "path": "scripts/holonet/contracts/holonet-sender.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1132,
+   "lines": 52,
+   "sloc": 36,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetSender"
+   ],
+   "classes": [
+    "HolonetSender"
+   ],
+   "consumers": [
+    "scripts/apps/customization/item-customization-workbench.js",
+    "scripts/holonet/contracts/index.js",
+    "scripts/holonet/emitters/home-feed-task-emitter.js",
+    "scripts/holonet/holonet-manager.js",
+    "scripts/holonet/sources/approvals-source.js",
+    "scripts/holonet/sources/bulletin-source.js",
+    "scripts/holonet/sources/droid-source.js",
+    "scripts/holonet/sources/follower-source.js",
+    "scripts/holonet/sources/healing-source.js",
+    "scripts/holonet/sources/mentor-source.js",
+    "scripts/holonet/sources/messenger-source.js",
+    "scripts/holonet/sources/progression-source.js",
+    "scripts/holonet/sources/ship-source.js",
+    "scripts/holonet/sources/store-source.js",
+    "scripts/holonet/sources/system-source.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "scripts/holonet/subsystems/messenger-notification-bridge.js"
+   ],
+   "consumerCount": 18,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6c2d660106",
+   "path": "scripts/holonet/contracts/holonet-thread.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1254,
+   "lines": 50,
+   "sloc": 34,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetThread"
+   ],
+   "classes": [
+    "HolonetThread"
+   ],
+   "consumers": [
+    "scripts/holonet/contracts/index.js",
+    "scripts/holonet/contracts/record-factory.js",
+    "scripts/holonet/sources/messenger-source.js",
+    "scripts/holonet/subsystems/holonet-thread-service.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9b525da992",
+   "path": "scripts/holonet/contracts/index.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 954,
+   "lines": 20,
+   "sloc": 14,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/holonet/contracts/enums.js [reexport]",
+    "scripts/holonet/contracts/holonet-record.js [reexport]",
+    "scripts/holonet/contracts/holonet-message.js [reexport]",
+    "scripts/holonet/contracts/holonet-event.js [reexport]",
+    "scripts/holonet/contracts/holonet-notification.js [reexport]",
+    "scripts/holonet/contracts/holonet-request.js [reexport]",
+    "scripts/holonet/contracts/holonet-thread.js [reexport]",
+    "scripts/holonet/contracts/holonet-recipient.js [reexport]",
+    "scripts/holonet/contracts/holonet-sender.js [reexport]",
+    "scripts/holonet/contracts/holonet-projection-surface.js [reexport]",
+    "scripts/holonet/contracts/holonet-delivery-state.js [reexport]",
+    "scripts/holonet/contracts/holonet-intent-registry.js [reexport]",
+    "scripts/holonet/contracts/holonet-audience.js [reexport]",
+    "scripts/holonet/contracts/record-factory.js [reexport]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [],
+   "classes": [],
+   "consumers": [
+    "scripts/holonet/index.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": true,
+   "unreachableConfidence": "unverified-name-mentioned-at-runtime",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a524d2d548",
+   "path": "scripts/holonet/contracts/record-factory.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1117,
+   "lines": 33,
+   "sloc": 30,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-record.js",
+    "scripts/holonet/contracts/holonet-message.js",
+    "scripts/holonet/contracts/holonet-event.js",
+    "scripts/holonet/contracts/holonet-notification.js",
+    "scripts/holonet/contracts/holonet-request.js",
+    "scripts/holonet/contracts/holonet-thread.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "hydrateHolonetRecord",
+    "hydrateHolonetThread"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/holonet/contracts/index.js",
+    "scripts/holonet/subsystems/holonet-socket-service.js",
+    "scripts/holonet/subsystems/holonet-storage.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-4e18bdf604",
+   "path": "scripts/holonet/data/holonews-seed-events.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 22566,
+   "lines": 482,
+   "sloc": 418,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HOLONEWS_ATOM_POOL_SIZE",
+    "HOLONEWS_SYNTHETIC_STORY_COUNT",
+    "HOLONEWS_PLANET_ATOMS",
+    "HOLONEWS_SYSTEM_ATOMS",
+    "HOLONEWS_SOURCE_ATOMS",
+    "HOLONEWS_STORY_LEAD_ATOMS",
+    "HOLONEWS_STORY_DETAIL_ATOMS",
+    "HOLONEWS_SEED_EVENTS",
+    "HolonewsGenerator"
+   ],
+   "classes": [
+    "HolonewsGenerator"
+   ],
+   "consumers": [
+    "scripts/apps/gm-datapad.js",
+    "scripts/holonet/subsystems/holonews-auto-publisher.js",
+    "scripts/ui/shell/gm/GMBulletinSurfaceService.js",
+    "scripts/ui/shell/gm/controllers/GMBulletinSurfaceController.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 2,
+    "ciTestCount": 2
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d7f0988c45",
+   "path": "scripts/holonet/emitters/approvals-emitter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6729,
+   "lines": 170,
+   "sloc": 143,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-emission-service.js",
+    "scripts/holonet/holonet-preferences.js",
+    "scripts/holonet/sources/approvals-source.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ApprovalsEmitter"
+   ],
+   "classes": [
+    "ApprovalsEmitter"
+   ],
+   "consumers": [
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "on:swseApprovalResolved"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-0f3f178f83",
+   "path": "scripts/holonet/emitters/droid-emitter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4379,
+   "lines": 134,
+   "sloc": 95,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-emission-service.js",
+    "scripts/holonet/holonet-preferences.js",
+    "scripts/holonet/sources/droid-source.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "DroidEmitter"
+   ],
+   "classes": [
+    "DroidEmitter"
+   ],
+   "consumers": [
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "on:updateActor"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-94798aa815",
+   "path": "scripts/holonet/emitters/follower-emitter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9898,
+   "lines": 291,
+   "sloc": 193,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-emission-service.js",
+    "scripts/holonet/holonet-preferences.js",
+    "scripts/holonet/sources/follower-source.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "FollowerEmitter"
+   ],
+   "classes": [
+    "FollowerEmitter"
+   ],
+   "consumers": [
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "on:swseProgressionLevelUp",
+    "on:createActor",
+    "on:updateActor"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e6811c9432",
+   "path": "scripts/holonet/emitters/healing-emitter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9685,
+   "lines": 244,
+   "sloc": 207,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-emission-service.js",
+    "scripts/holonet/holonet-preferences.js",
+    "scripts/holonet/sources/healing-source.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HealingEmitter"
+   ],
+   "classes": [
+    "HealingEmitter"
+   ],
+   "consumers": [
+    "scripts/holonet/integration/holonet-init.js",
+    "scripts/holonet/subsystems/gm-healing-trigger.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [
+    "on:restCompleted",
+    "on:swseGmCombatRecoveryCompleted"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 10,
+    "ciTestCount": 10
+   },
+   "markers": {
+    "fallback": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2cecd024d7",
+   "path": "scripts/holonet/emitters/home-feed-task-emitter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 13153,
+   "lines": 299,
+   "sloc": 265,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-dynamic",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/contracts/holonet-notification.js",
+    "scripts/holonet/contracts/holonet-recipient.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/holonet-projection-surface.js",
+    "scripts/holonet/contracts/enums.js",
+    "scripts/engine/mentor/mentor-resolver.js",
+    "scripts/engine/mentor/mentor-dialogues.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HomeFeedTaskEmitter"
+   ],
+   "classes": [
+    "HomeFeedTaskEmitter"
+   ],
+   "consumers": [
+    "scripts/holonet/index.js",
+    "scripts/ui/shell/HomeSurfaceService.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "mentor-suggestion"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 4,
+    "ciTestCount": 4
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-bfa2ba7856",
+   "path": "scripts/holonet/emitters/progression-emitter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2496,
+   "lines": 70,
+   "sloc": 49,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-emission-service.js",
+    "scripts/holonet/holonet-preferences.js",
+    "scripts/holonet/sources/progression-source.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ProgressionEmitter"
+   ],
+   "classes": [
+    "ProgressionEmitter"
+   ],
+   "consumers": [
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "on:swseProgressionLevelUp"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-edfe6602c1",
+   "path": "scripts/holonet/emitters/ship-emitter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10113,
+   "lines": 278,
+   "sloc": 203,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-emission-service.js",
+    "scripts/holonet/holonet-preferences.js",
+    "scripts/holonet/sources/ship-source.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ShipEmitter"
+   ],
+   "classes": [
+    "ShipEmitter"
+   ],
+   "consumers": [
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "on:updateActor"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-33c0027a7d",
+   "path": "scripts/holonet/emitters/store-emitter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5902,
+   "lines": 165,
+   "sloc": 134,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-emission-service.js",
+    "scripts/holonet/holonet-preferences.js",
+    "scripts/holonet/sources/store-source.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "StoreEmitter"
+   ],
+   "classes": [
+    "StoreEmitter"
+   ],
+   "consumers": [
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "on:swseStoreTransactionComplete",
+    "on:swseCustomPurchaseApproved",
+    "on:swseCustomPurchaseDenied"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f81ef4fcee",
+   "path": "scripts/holonet/emitters/store-state-emitter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4767,
+   "lines": 151,
+   "sloc": 103,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-emission-service.js",
+    "scripts/holonet/holonet-preferences.js",
+    "scripts/holonet/sources/store-source.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "StoreStateEmitter"
+   ],
+   "classes": [
+    "StoreStateEmitter"
+   ],
+   "consumers": [
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "on:swseStoreStateChanged",
+    "on:swseStorePriceChanged"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-4ff45efd67",
+   "path": "scripts/holonet/holonet-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 14631,
+   "lines": 354,
+   "sloc": 224,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-storage.js",
+    "scripts/holonet/subsystems/holonet-delivery-router.js",
+    "scripts/holonet/subsystems/holonet-projection-router.js",
+    "scripts/holonet/subsystems/holonet-notification-service.js",
+    "scripts/holonet/subsystems/messenger-notification-bridge.js",
+    "scripts/holonet/subsystems/messenger-maintenance-service.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js",
+    "scripts/holonet/subsystems/holonet-decryption-service.js",
+    "scripts/holonet/subsystems/holonet-feed-service.js",
+    "scripts/holonet/subsystems/holonet-socket-service.js",
+    "scripts/holonet/subsystems/holonet-bus.js",
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-boundaries.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetEngine"
+   ],
+   "classes": [
+    "HolonetEngine"
+   ],
+   "consumers": [
+    "scripts/apps/customization/item-customization-workbench.js",
+    "scripts/apps/gm-datapad.js",
+    "scripts/holonet/emitters/home-feed-task-emitter.js",
+    "scripts/holonet/holonet-manager.js",
+    "scripts/holonet/index.js",
+    "scripts/holonet/integration/holonet-init.js",
+    "scripts/holonet/subsystems/holonet-emission-service.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js",
+    "scripts/holonet/subsystems/holonet-notice-center-service.js",
+    "scripts/holonet/subsystems/holonet-socket-service.js",
+    "scripts/holonet/subsystems/holonet-thread-service.js",
+    "scripts/holonet/subsystems/holonews-auto-publisher.js",
+    "scripts/holonet/subsystems/messenger-notification-bridge.js",
+    "scripts/ui/chat/chat-interaction-bridge.js",
+    "scripts/ui/shell/HomeSurfaceService.js",
+    "scripts/ui/shell/ShellHost.js",
+    "scripts/ui/shell/gm/controllers/GMBulletinSurfaceController.js",
+    "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs",
+    "tests/gm-holonet-phase8c-bulletin-handoffs.test.mjs"
+   ],
+   "consumerCount": 19,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs",
+     "tests/gm-holonet-phase8c-bulletin-handoffs.test.mjs"
+    ],
+    "transitiveCount": 359,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "compat": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-0d1283eee3",
+   "path": "scripts/holonet/holonet-manager.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 13525,
+   "lines": 375,
+   "sloc": 215,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/subsystems/holonet-bus.js",
+    "scripts/holonet/subsystems/holonet-emission-service.js",
+    "scripts/holonet/contracts/holonet-recipient.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/holonet-message.js",
+    "scripts/holonet/contracts/holonet-notification.js",
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/sources/system-source.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetManager"
+   ],
+   "classes": [
+    "HolonetManager"
+   ],
+   "consumers": [
+    "scripts/holonet/index.js",
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-714c0074ab",
+   "path": "scripts/holonet/holonet-preferences.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2113,
+   "lines": 83,
+   "sloc": 65,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetPreferences"
+   ],
+   "classes": [
+    "HolonetPreferences"
+   ],
+   "consumers": [
+    "scripts/holonet/emitters/approvals-emitter.js",
+    "scripts/holonet/emitters/droid-emitter.js",
+    "scripts/holonet/emitters/follower-emitter.js",
+    "scripts/holonet/emitters/healing-emitter.js",
+    "scripts/holonet/emitters/progression-emitter.js",
+    "scripts/holonet/emitters/ship-emitter.js",
+    "scripts/holonet/emitters/store-emitter.js",
+    "scripts/holonet/emitters/store-state-emitter.js",
+    "scripts/holonet/index.js",
+    "scripts/holonet/integration/holonet-init.js",
+    "scripts/holonet/subsystems/holonet-emission-service.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "scripts/holonet/subsystems/holonet-notification-service.js"
+   ],
+   "consumerCount": 13,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [
+    "null.(expr)",
+    "null.(expr)"
+   ],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 2,
+    "byClass": {
+     "game.settings": 2
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3affd7b7fe",
+   "path": "scripts/holonet/holonet-source-registry.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3713,
+   "lines": 121,
+   "sloc": 60,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "registry",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetSourceRegistry"
+   ],
+   "classes": [
+    "HolonetSourceRegistry"
+   ],
+   "consumers": [
+    "scripts/holonet/index.js",
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-08724c93f6",
+   "path": "scripts/holonet/index.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1685,
+   "lines": 28,
+   "sloc": 18,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/holonet/holonet-engine.js [reexport]",
+    "scripts/holonet/holonet-manager.js [reexport]",
+    "scripts/holonet/holonet-preferences.js [reexport]",
+    "scripts/holonet/holonet-source-registry.js [reexport]",
+    "scripts/holonet/subsystems/holonet-storage.js [reexport]",
+    "scripts/holonet/subsystems/holonet-delivery-router.js [reexport]",
+    "scripts/holonet/subsystems/holonet-projection-router.js [reexport]",
+    "scripts/holonet/subsystems/holonet-thread-service.js [reexport]",
+    "scripts/holonet/subsystems/holonet-notification-service.js [reexport]",
+    "scripts/holonet/subsystems/holonet-feed-service.js [reexport]",
+    "scripts/holonet/subsystems/holonet-socket-service.js [reexport]",
+    "scripts/holonet/subsystems/holonet-messenger-service.js [reexport]",
+    "scripts/holonet/subsystems/holonet-intel-service.js [reexport]",
+    "scripts/holonet/subsystems/holonet-decryption-service.js [reexport]",
+    "scripts/holonet/emitters/home-feed-task-emitter.js [reexport]",
+    "scripts/holonet/subsystems/messenger-notification-bridge.js [reexport]",
+    "scripts/holonet/subsystems/messenger-maintenance-service.js [reexport]",
+    "scripts/holonet/contracts/index.js [reexport]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": true,
+   "unreachableConfidence": "unverified-name-mentioned-at-runtime",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ca0fa1e972",
+   "path": "scripts/holonet/integration/holonet-init.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10684,
+   "lines": 307,
+   "sloc": 260,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 1,
+   "imports": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/holonet-manager.js",
+    "scripts/holonet/holonet-preferences.js",
+    "scripts/holonet/holonet-source-registry.js",
+    "scripts/holonet/subsystems/holonet-state-service.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js",
+    "scripts/holonet/subsystems/holonet-decryption-service.js",
+    "scripts/holonet/sources/mentor-source.js",
+    "scripts/holonet/sources/store-source.js",
+    "scripts/holonet/sources/approvals-source.js",
+    "scripts/holonet/sources/progression-source.js",
+    "scripts/holonet/sources/bulletin-source.js",
+    "scripts/holonet/sources/messenger-source.js",
+    "scripts/holonet/sources/system-source.js",
+    "scripts/holonet/emitters/progression-emitter.js",
+    "scripts/holonet/emitters/approvals-emitter.js",
+    "scripts/holonet/emitters/store-emitter.js",
+    "scripts/holonet/emitters/healing-emitter.js",
+    "scripts/holonet/emitters/ship-emitter.js",
+    "scripts/holonet/emitters/droid-emitter.js",
+    "scripts/holonet/emitters/follower-emitter.js",
+    "scripts/holonet/emitters/store-state-emitter.js",
+    "scripts/holonet/sources/healing-source.js",
+    "scripts/holonet/sources/ship-source.js",
+    "scripts/holonet/sources/droid-source.js",
+    "scripts/holonet/sources/follower-source.js",
+    "scripts/holonet/subsystems/holonews-auto-publisher.js",
+    "scripts/holonet/subsystems/bulletin-contact-registry.js",
+    "scripts/holonet/subsystems/holonews-atom-policy.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerHolonetSettings",
+    "registerHolonetSources",
+    "initializeHolonet"
+   ],
+   "classes": [],
+   "consumers": [
+    "index.js",
+    "scripts/core/settings.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [
+    "callAll:swseStoreStateChanged",
+    "callAll:swseStorePriceChanged",
+    "on:swse:setting-changed"
+   ],
+   "settingsRegistered": [
+    "foundryvtt-swse.holonet_records",
+    "foundryvtt-swse.holonet_threads",
+    "foundryvtt-swse.holonet_player_state",
+    "foundryvtt-swse.holonet_party_state",
+    "foundryvtt-swse.holonetCustomPersonas",
+    "foundryvtt-swse.holonetRequireCreditTransferApproval",
+    "foundryvtt-swse.holonetCreditTransfersEnabled",
+    "foundryvtt-swse.holonetItemTradesEnabled",
+    "foundryvtt-swse.holonetRequireItemTradeApproval",
+    "foundryvtt-swse.holonetAssetTradesEnabled",
+    "foundryvtt-swse.holonetRequireAssetTradeApproval",
+    "foundryvtt-swse.holonetPartyFundEnabled",
+    "foundryvtt-swse.holonetPartyFundBalance",
+    "foundryvtt-swse.holonetPartyFundDefaultCutPercent",
+    "foundryvtt-swse.holonetPartyFundLedger",
+    "foundryvtt-swse.holonewsAutoPublisherPolicy",
+    "foundryvtt-swse.holonetBulletinContacts",
+    "foundryvtt-swse.holonewsAtomPolicy",
+    "foundryvtt-swse.gmCombatRecoveryLog",
+    "foundryvtt-swse.gmApprovalHistory"
+   ],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.holonet"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-fdbc3fcb09",
+   "path": "scripts/holonet/scripts/core/first-run-experience.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4711,
+   "lines": 180,
+   "sloc": 119,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/core/tooltip-discovery.js",
+    "scripts/apps/base/base-swse-appv2.js",
+    "scripts/utils/settings-helper.js",
+    "scripts/engine/system/HouseRuleService.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "resetWelcome",
+    "initializeFirstRunExperience",
+    "registerFirstRunSettings",
+    "registerFirstRunConsoleHelpers"
+   ],
+   "classes": [
+    "WelcomeDialog"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "houserules",
+    "infrastructure",
+    "ui-shell"
+   ],
+   "hooks": [
+    "once:canvasReady"
+   ],
+   "settingsRegistered": [
+    "null.(expr)"
+   ],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.SWSEFirstRun"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [
+    "templates/dialogs/welcome-dialog.hbs"
+   ],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": true,
+   "unreachableConfidence": "unverified-name-mentioned-at-runtime",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9c1042f73f",
+   "path": "scripts/holonet/scripts/core/init.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4656,
+   "lines": 128,
+   "sloc": 91,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/hook-investigator.js",
+    "scripts/core/logger.js",
+    "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+    "scripts/core/sidebar-sentinel-trace.js",
+    "scripts/core/sidebar-icon-comparison.js",
+    "scripts/core/sidebar-icon-class-audit.js"
+   ],
+   "unresolvedImports": [
+    "/systems/foundryvtt-swse/scripts/core/sidebar-structure-diagnostics.js"
+   ],
+   "dynamicImportPatterns": [],
+   "exports": [],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "classes",
+    "governance",
+    "infrastructure"
+   ],
+   "hooks": [
+    "once:init",
+    "once:init",
+    "once:init"
+   ],
+   "settingsRegistered": [
+    "foundryvtt-swse.maxTemplatesPerItem",
+    "foundryvtt-swse.enableEnhancedMassiveDamage"
+   ],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 6,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "deprecated": 1
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-72ca10c59a",
+   "path": "scripts/holonet/scripts/core/sidebar-structure-diagnostics.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3953,
+   "lines": 110,
+   "sloc": 92,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "initSidebarStructureDiagnostics"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [
+    "once:ready",
+    "on:renderSidebar",
+    "on:sidebarCollapse"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SWSE_SIDEBAR_STRUCTURE"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-59eccbf2fd",
+   "path": "scripts/holonet/scripts/scene-controls/init.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 240,
+   "lines": 8,
+   "sloc": 1,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/scene-controls/init.js [reexport]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "ui-shell"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "deprecated": 1,
+    "legacy": 1,
+    "compat": 1
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-355dbbb5c9",
+   "path": "scripts/holonet/services/holonet-badge-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4976,
+   "lines": 209,
+   "sloc": 147,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/holonet/contracts/holonet-intent-registry.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetBadgeService"
+   ],
+   "classes": [
+    "HolonetBadgeService"
+   ],
+   "consumers": [
+    "scripts/holonet/ui/holonet-badge-renderer.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 3
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-73adff5aa9",
+   "path": "scripts/holonet/sources/approvals-source.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2241,
+   "lines": 73,
+   "sloc": 46,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-request.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-audience.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ApprovalsSource"
+   ],
+   "classes": [
+    "ApprovalsSource"
+   ],
+   "consumers": [
+    "scripts/holonet/emitters/approvals-emitter.js",
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ed7903c4af",
+   "path": "scripts/holonet/sources/bulletin-source.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2178,
+   "lines": 68,
+   "sloc": 58,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-event.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/holonet-boundaries.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "BulletinSource"
+   ],
+   "classes": [
+    "BulletinSource"
+   ],
+   "consumers": [
+    "scripts/apps/gm-datapad.js",
+    "scripts/holonet/integration/holonet-init.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js",
+    "scripts/holonet/subsystems/holonews-auto-publisher.js",
+    "scripts/ui/shell/gm/GMBulletinSurfaceService.js"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f8ab027c28",
+   "path": "scripts/holonet/sources/droid-source.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4184,
+   "lines": 136,
+   "sloc": 91,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-notification.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-audience.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "DroidSource"
+   ],
+   "classes": [
+    "DroidSource"
+   ],
+   "consumers": [
+    "scripts/holonet/emitters/droid-emitter.js",
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-647f347de5",
+   "path": "scripts/holonet/sources/follower-source.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4468,
+   "lines": 142,
+   "sloc": 97,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-notification.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-audience.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "FollowerSource"
+   ],
+   "classes": [
+    "FollowerSource"
+   ],
+   "consumers": [
+    "scripts/holonet/emitters/follower-emitter.js",
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b2e3c4536b",
+   "path": "scripts/holonet/sources/healing-source.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3799,
+   "lines": 117,
+   "sloc": 78,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-notification.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-audience.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HealingSource"
+   ],
+   "classes": [
+    "HealingSource"
+   ],
+   "consumers": [
+    "scripts/holonet/emitters/healing-emitter.js",
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 10,
+    "ciTestCount": 10
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b10e2537be",
+   "path": "scripts/holonet/sources/mentor-source.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1273,
+   "lines": 45,
+   "sloc": 23,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-event.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-audience.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MentorSource"
+   ],
+   "classes": [
+    "MentorSource"
+   ],
+   "consumers": [
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ea153820f3",
+   "path": "scripts/holonet/sources/messenger-source.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1679,
+   "lines": 59,
+   "sloc": 36,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-message.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-thread.js",
+    "scripts/holonet/contracts/holonet-boundaries.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MessengerSource"
+   ],
+   "classes": [
+    "MessengerSource"
+   ],
+   "consumers": [
+    "scripts/holonet/integration/holonet-init.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e6552f8a9b",
+   "path": "scripts/holonet/sources/progression-source.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2231,
+   "lines": 75,
+   "sloc": 48,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-event.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-audience.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ProgressionSource"
+   ],
+   "classes": [
+    "ProgressionSource"
+   ],
+   "consumers": [
+    "scripts/holonet/emitters/progression-emitter.js",
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-fa3104182e",
+   "path": "scripts/holonet/sources/ship-source.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10205,
+   "lines": 310,
+   "sloc": 217,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-notification.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-audience.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ShipSource"
+   ],
+   "classes": [
+    "ShipSource"
+   ],
+   "consumers": [
+    "scripts/holonet/emitters/ship-emitter.js",
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f963ebfca0",
+   "path": "scripts/holonet/sources/store-source.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5455,
+   "lines": 191,
+   "sloc": 125,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-notification.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-audience.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "StoreSource"
+   ],
+   "classes": [
+    "StoreSource"
+   ],
+   "consumers": [
+    "scripts/holonet/emitters/store-emitter.js",
+    "scripts/holonet/emitters/store-state-emitter.js",
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5ecbe5c39b",
+   "path": "scripts/holonet/sources/system-source.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2228,
+   "lines": 84,
+   "sloc": 54,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-notification.js",
+    "scripts/holonet/contracts/holonet-event.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-audience.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SystemSource"
+   ],
+   "classes": [
+    "SystemSource"
+   ],
+   "consumers": [
+    "scripts/holonet/holonet-manager.js",
+    "scripts/holonet/integration/holonet-init.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-df9b663e73",
+   "path": "scripts/holonet/subsystems/bulletin-contact-registry.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5913,
+   "lines": 180,
+   "sloc": 157,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "registry",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "BulletinContactRegistry"
+   ],
+   "classes": [
+    "BulletinContactRegistry"
+   ],
+   "consumers": [
+    "scripts/apps/gm-datapad.js",
+    "scripts/holonet/integration/holonet-init.js",
+    "scripts/ui/shell/gm/GMBulletinSurfaceService.js",
+    "scripts/ui/shell/gm/controllers/GMBulletinSurfaceController.js",
+    "scripts/ui/shell/gm/utils/gm-contact-actorizer-service.js"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 3,
+    "byClass": {
+     "game.settings": 3
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 2,
+    "ciTestCount": 2
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-7af3b95578",
+   "path": "scripts/holonet/subsystems/gm-combat-recovery-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 67987,
+   "lines": 1512,
+   "sloc": 1389,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "authority-or-orchestrator",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/holonet/subsystems/gm-healing-trigger.js",
+    "scripts/engine/combat/SecondWindEngine.js",
+    "scripts/houserules/adapters/HealingRules.js",
+    "scripts/houserules/houserule-status-effects.js",
+    "scripts/engine/poison/poison-engine.js",
+    "scripts/engine/poison/poison-registry.js",
+    "scripts/ui/shell/gm/utils/gm-party-roster-service.js",
+    "scripts/houserules/houserule-recovery.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "GMCombatRecoveryService"
+   ],
+   "classes": [
+    "GMCombatRecoveryService"
+   ],
+   "consumers": [
+    "scripts/ui/shell/gm/GMBulletinSurfaceService.js",
+    "scripts/ui/shell/gm/GMCampaignContextService.js",
+    "scripts/ui/shell/gm/GMHealingSurfaceService.js",
+    "scripts/ui/shell/gm/controllers/GMBulletinSurfaceController.js",
+    "scripts/ui/shell/gm/controllers/GMHealingSurfaceController.js",
+    "scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js",
+    "tests/gm-phase7-correction-pass.test.mjs",
+    "tests/gm-phase7-pre-broadcast-integrity.test.mjs"
+   ],
+   "consumerCount": 8,
+   "secondarySystems": [
+    "actor-core",
+    "combat",
+    "houserules",
+    "infrastructure",
+    "ui-shell"
+   ],
+   "hooks": [
+    "callAll:swseGmCombatRecoveryCompleted",
+    "callAll:swseGmCombatRecoveryCompleted",
+    "callAll:swseGmCombatRecoveryCompleted",
+    "callAll:swseGmCombatRecoveryCompleted",
+    "callAll:restCompleted",
+    "callAll:swseGmCombatRecoveryCompleted",
+    "callAll:swseGmCombatRecoveryCompleted",
+    "callAll:swseGmCombatRecoveryCompleted"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "game.settings": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 34,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/gm-phase7-correction-pass.test.mjs",
+     "tests/gm-phase7-pre-broadcast-integrity.test.mjs"
+    ],
+    "transitiveCount": 8,
+    "ciTestCount": 10
+   },
+   "markers": {
+    "legacy": 1,
+    "compat": 1,
+    "fallback": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2a94f918f9",
+   "path": "scripts/holonet/subsystems/gm-healing-trigger.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6835,
+   "lines": 189,
+   "sloc": 121,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/holonet/emitters/healing-emitter.js",
+    "scripts/ui/shell/gm/utils/gm-party-roster-service.js",
+    "scripts/engine/implants/ImplantEffectRules.js",
+    "scripts/houserules/houserule-recovery.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "GMHealingTrigger"
+   ],
+   "classes": [
+    "GMHealingTrigger"
+   ],
+   "consumers": [
+    "scripts/apps/gm-datapad.js",
+    "scripts/holonet/subsystems/gm-combat-recovery-service.js",
+    "scripts/ui/shell/gm/GMCampaignContextService.js",
+    "scripts/ui/shell/gm/GMDashboardSurfaceService.js",
+    "scripts/ui/shell/gm/controllers/GMHealingSurfaceController.js",
+    "tests/gm-phase7-correction-pass.test.mjs"
+   ],
+   "consumerCount": 6,
+   "secondarySystems": [
+    "actor-core",
+    "customization",
+    "houserules",
+    "ui-shell"
+   ],
+   "hooks": [
+    "callAll:restCompleted"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/gm-phase7-correction-pass.test.mjs"
+    ],
+    "transitiveCount": 9,
+    "ciTestCount": 10
+   },
+   "markers": {
+    "legacy": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2c3c742c28",
+   "path": "scripts/holonet/subsystems/holonet-bus.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2381,
+   "lines": 76,
+   "sloc": 24,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-socket-service.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetBus"
+   ],
+   "classes": [
+    "HolonetBus"
+   ],
+   "consumers": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/holonet-manager.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [
+    "callAll:**",
+    "callAll:swseHolonetUpdated",
+    "on:**",
+    "off:**"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "legacy": 1,
+    "compat": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5f064f785d",
+   "path": "scripts/holonet/subsystems/holonet-decryption-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 42220,
+   "lines": 947,
+   "sloc": 888,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetDecryptionService"
+   ],
+   "classes": [
+    "HolonetDecryptionService"
+   ],
+   "consumers": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/index.js",
+    "scripts/holonet/integration/holonet-init.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "scripts/ui/shell/gm/GMIntelSurfaceService.js",
+    "scripts/ui/shell/gm/GMInteractionRepairService.js",
+    "scripts/ui/shell/gm/controllers/GMIntelSurfaceController.js"
+   ],
+   "consumerCount": 8,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "fallback": 10
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f46d777521",
+   "path": "scripts/holonet/subsystems/holonet-delivery-router.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3282,
+   "lines": 99,
+   "sloc": 76,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-recipient.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetDeliveryRouter"
+   ],
+   "classes": [
+    "HolonetDeliveryRouter"
+   ],
+   "consumers": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/index.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "scripts/holonet/subsystems/holonet-notice-center-service.js",
+    "scripts/holonet/subsystems/messenger-notification-bridge.js",
+    "scripts/ui/chat/chat-interaction-bridge.js",
+    "scripts/ui/shell/ShellHost.js"
+   ],
+   "consumerCount": 8,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-017e6a7136",
+   "path": "scripts/holonet/subsystems/holonet-emission-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6837,
+   "lines": 181,
+   "sloc": 91,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/holonet-preferences.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetEmissionService"
+   ],
+   "classes": [
+    "HolonetEmissionService"
+   ],
+   "consumers": [
+    "scripts/holonet/emitters/approvals-emitter.js",
+    "scripts/holonet/emitters/droid-emitter.js",
+    "scripts/holonet/emitters/follower-emitter.js",
+    "scripts/holonet/emitters/healing-emitter.js",
+    "scripts/holonet/emitters/progression-emitter.js",
+    "scripts/holonet/emitters/ship-emitter.js",
+    "scripts/holonet/emitters/store-emitter.js",
+    "scripts/holonet/emitters/store-state-emitter.js",
+    "scripts/holonet/holonet-manager.js"
+   ],
+   "consumerCount": 9,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 10,
+    "ciTestCount": 10
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-709329e5ab",
+   "path": "scripts/holonet/subsystems/holonet-entity-directory-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5895,
+   "lines": 182,
+   "sloc": 149,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 5,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-state-service.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetEntityDirectoryService"
+   ],
+   "classes": [
+    "HolonetEntityDirectoryService"
+   ],
+   "consumers": [
+    "scripts/ui/holonet/HolonetComposerAssist.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 4,
+    "ciTestCount": 4
+   },
+   "markers": {
+    "deprecated": 1,
+    "legacy": 1,
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9fa1ee6812",
+   "path": "scripts/holonet/subsystems/holonet-feed-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3341,
+   "lines": 101,
+   "sloc": 57,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/subsystems/holonet-storage.js",
+    "scripts/holonet/subsystems/holonet-projection-router.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetFeedService"
+   ],
+   "classes": [
+    "HolonetFeedService"
+   ],
+   "consumers": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/index.js",
+    "scripts/ui/shell/HomeSurfaceService.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5956864209",
+   "path": "scripts/holonet/subsystems/holonet-gm-authority.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1959,
+   "lines": 41,
+   "sloc": 9,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetGmAuthority"
+   ],
+   "classes": [
+    "HolonetGmAuthority"
+   ],
+   "consumers": [
+    "scripts/holonet/subsystems/holonet-socket-service.js",
+    "scripts/holonet/subsystems/holonews-auto-publisher.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "compat": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-07dcd22411",
+   "path": "scripts/holonet/subsystems/holonet-intel-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 61958,
+   "lines": 1328,
+   "sloc": 1127,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "authority-or-orchestrator",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-storage.js",
+    "scripts/holonet/contracts/holonet-message.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/subsystems/holonet-delivery-router.js",
+    "scripts/holonet/subsystems/holonet-socket-service.js",
+    "scripts/holonet/sources/bulletin-source.js",
+    "scripts/holonet/subsystems/holonet-decryption-service.js",
+    "scripts/holonet/contracts/enums.js",
+    "scripts/engine/store/transaction-engine.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js [dynamic]",
+    "scripts/holonet/subsystems/holonet-messenger-service.js [dynamic]",
+    "scripts/holonet/holonet-engine.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "INTEL_METADATA_KEY",
+    "INTEL_KIND",
+    "INTEL_CLASSIFICATION",
+    "INTEL_STATUS",
+    "INTEL_PERSISTENCE",
+    "INTEL_REVEAL_STATE",
+    "INTEL_LOCKBOX_STATUS",
+    "HolonetIntelService"
+   ],
+   "classes": [
+    "HolonetIntelService"
+   ],
+   "consumers": [
+    "scripts/apps/gm-datapad.js",
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/index.js",
+    "scripts/holonet/integration/holonet-init.js",
+    "scripts/holonet/subsystems/holonet-socket-service.js",
+    "scripts/ui/shell/AlliesSurfaceService.js",
+    "scripts/ui/shell/AtlasSurfaceService.js",
+    "scripts/ui/shell/TransmissionDecryptionSurfaceController.js",
+    "scripts/ui/shell/TransmissionDecryptionSurfaceService.js",
+    "scripts/ui/shell/gm/FactionIntelBridgeService.js",
+    "scripts/ui/shell/gm/GMBulletinSurfaceService.js",
+    "scripts/ui/shell/gm/GMCampaignContextService.js",
+    "scripts/ui/shell/gm/GMFactionRelationshipSurfaceService.js",
+    "scripts/ui/shell/gm/GMIntelSurfaceService.js",
+    "scripts/ui/shell/gm/GMInteractionRepairService.js",
+    "scripts/ui/shell/gm/GMJobBoardSurfaceService.js",
+    "scripts/ui/shell/gm/GMLocationsSurfaceService.js",
+    "scripts/ui/shell/gm/LocationIntelBridgeService.js",
+    "scripts/ui/shell/gm/controllers/GMIntelSurfaceController.js",
+    "tests/gm-campaign-context-parity.test.mjs",
+    "tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs",
+    "tests/gm-holonet-phase8c-bulletin-handoffs.test.mjs",
+    "tests/gm-intel-ecosystem-view-model.test.mjs",
+    "tests/gm-intel-location-fact-identity.test.mjs",
+    "tests/gm-phase7-pre-broadcast-integrity.test.mjs"
+   ],
+   "consumerCount": 25,
+   "secondarySystems": [
+    "actor-core",
+    "store-economy"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 3,
+    "byClass": {
+     "actor-like": 1,
+     "ActorEngine": 2
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 2,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/gm-campaign-context-parity.test.mjs",
+     "tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs",
+     "tests/gm-holonet-phase8c-bulletin-handoffs.test.mjs",
+     "tests/gm-intel-ecosystem-view-model.test.mjs",
+     "tests/gm-intel-location-fact-identity.test.mjs",
+     "tests/gm-phase7-pre-broadcast-integrity.test.mjs"
+    ],
+    "transitiveCount": 355,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "fallback": 11
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b8a6943fdc",
+   "path": "scripts/holonet/subsystems/holonet-markup-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2101,
+   "lines": 66,
+   "sloc": 50,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetMarkupService"
+   ],
+   "classes": [
+    "HolonetMarkupService"
+   ],
+   "consumers": [
+    "scripts/apps/gm-datapad.js",
+    "scripts/holonet/subsystems/holonet-notice-center-service.js",
+    "scripts/ui/shell/HomeSurfaceService.js",
+    "scripts/ui/shell/gm/GMBulletinSurfaceService.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-0b6a66ef92",
+   "path": "scripts/holonet/subsystems/holonet-messenger-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 384135,
+   "lines": 7594,
+   "sloc": 7055,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "authority-or-orchestrator",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js",
+    "scripts/engine/store/transaction-engine.js",
+    "scripts/engine/store/acquisition-service.js",
+    "scripts/engine/assets/AssetGrantService.js",
+    "scripts/holonet/subsystems/holonet-storage.js",
+    "scripts/holonet/subsystems/holonet-thread-service.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/holonet-recipient.js",
+    "scripts/holonet/subsystems/holonet-delivery-router.js",
+    "scripts/holonet/sources/messenger-source.js",
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/subsystems/holonet-socket-service.js",
+    "scripts/holonet/holonet-preferences.js",
+    "scripts/holonet/subsystems/holonet-notice-center-service.js",
+    "scripts/engine/progression/xp-engine.js",
+    "scripts/allies/faction-registry-service.js",
+    "scripts/games/game-session-store.js",
+    "scripts/games/game-session-materializer.js",
+    "scripts/games/game-notification-service.js",
+    "scripts/holonet/subsystems/messenger-notification-bridge.js",
+    "scripts/holonet/subsystems/messenger-maintenance-service.js",
+    "scripts/holonet/subsystems/holonet-decryption-service.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PartyFundAccess",
+    "HolonetMessengerService"
+   ],
+   "classes": [
+    "HolonetMessengerService"
+   ],
+   "consumers": [
+    "scripts/apps/gm-datapad.js",
+    "scripts/engine/vehicles/vehicle-ammunition-purchase-service.js",
+    "scripts/games/game-holonet-bridge.js",
+    "scripts/games/game-notification-service.js",
+    "scripts/holonet/holonet-manager.js",
+    "scripts/holonet/index.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js",
+    "scripts/holonet/subsystems/holonet-socket-service.js",
+    "scripts/ui/chat/chat-interaction-bridge.js",
+    "scripts/ui/shell/GamesSurfaceService.js",
+    "scripts/ui/shell/MessengerSurfaceController.js",
+    "scripts/ui/shell/MessengerSurfaceService.js",
+    "scripts/ui/shell/gm/GMBulletinSurfaceService.js",
+    "scripts/ui/shell/gm/controllers/GMBulletinSurfaceController.js",
+    "scripts/ui/shell/gm/controllers/GMJobBoardSurfaceController.js",
+    "scripts/ui/shell/gm/controllers/GMTradeConsoleSurfaceController.js",
+    "tests/gm-job-source-location-identity.test.mjs",
+    "tests/ti4c0-g16-holonet-credit-evidence.test.mjs",
+    "tests/ti4c0-g26-party-fund-integrity.test.mjs"
+   ],
+   "consumerCount": 19,
+   "secondarySystems": [
+    "actor-core",
+    "games",
+    "infrastructure",
+    "npc-followers",
+    "progression",
+    "store-economy",
+    "ui-shell"
+   ],
+   "hooks": [
+    "callAll:swseHolonetUpdated",
+    "callAll:swseHolonetUpdated",
+    "callAll:swseHolonetUpdated",
+    "callAll:swseHolonetUpdated",
+    "callAll:swseHolonetUpdated"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 15,
+    "byClass": {
+     "game.settings": 4,
+     "actor-like": 1,
+     "ActorEngine": 9,
+     "in-memory": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 13,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/gm-job-source-location-identity.test.mjs",
+     "tests/ti4c0-g16-holonet-credit-evidence.test.mjs",
+     "tests/ti4c0-g26-party-fund-integrity.test.mjs"
+    ],
+    "transitiveCount": 358,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "legacy": 1,
+    "fallback": 24
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9c1cd3b05d",
+   "path": "scripts/holonet/subsystems/holonet-notice-center-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6249,
+   "lines": 158,
+   "sloc": 126,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-storage.js",
+    "scripts/holonet/subsystems/holonet-delivery-router.js",
+    "scripts/holonet/subsystems/holonet-markup-service.js",
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/subsystems/messenger-notification-bridge.js",
+    "scripts/holonet/holonet-engine.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetNoticeCenterService"
+   ],
+   "classes": [
+    "HolonetNoticeCenterService"
+   ],
+   "consumers": [
+    "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "scripts/ui/shell/HomeSurfaceService.js",
+    "scripts/ui/shell/ShellHost.js",
+    "scripts/ui/shell/ShellSurfaceRegistry.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-688eddedc5",
+   "path": "scripts/holonet/subsystems/holonet-notification-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1243,
+   "lines": 54,
+   "sloc": 36,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/holonet-preferences.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetNotificationService"
+   ],
+   "classes": [
+    "HolonetNotificationService"
+   ],
+   "consumers": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/index.js",
+    "scripts/holonet/subsystems/messenger-notification-bridge.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-edcb203e46",
+   "path": "scripts/holonet/subsystems/holonet-projection-router.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6213,
+   "lines": 202,
+   "sloc": 132,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/contracts/holonet-intent-registry.js",
+    "scripts/holonet/contracts/holonet-projection-surface.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetProjectionRouter"
+   ],
+   "classes": [
+    "HolonetProjectionRouter"
+   ],
+   "consumers": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/index.js",
+    "scripts/holonet/subsystems/holonet-feed-service.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5989c5010d",
+   "path": "scripts/holonet/subsystems/holonet-socket-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12510,
+   "lines": 298,
+   "sloc": 232,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/contracts/record-factory.js",
+    "scripts/holonet/subsystems/holonet-gm-authority.js",
+    "scripts/holonet/holonet-engine.js [dynamic]",
+    "scripts/holonet/subsystems/holonet-messenger-service.js [dynamic]",
+    "scripts/games/games/pazaak/pazaak-engine.js [dynamic]",
+    "scripts/games/games/pazaak/pazaak-engine.js [dynamic]",
+    "scripts/games/games/pazaak/pazaak-engine.js [dynamic]",
+    "scripts/games/games/sabacc/sabacc-engine.js [dynamic]",
+    "scripts/games/games/sabacc/sabacc-engine.js [dynamic]",
+    "scripts/games/games/dejarik/dejarik-engine.js [dynamic]",
+    "scripts/games/games/dejarik/dejarik-engine.js [dynamic]",
+    "scripts/games/games/hintaro/hintaro-engine.js [dynamic]",
+    "scripts/games/games/hintaro/hintaro-engine.js [dynamic]",
+    "scripts/holonet/subsystems/holonet-intel-service.js [dynamic]",
+    "scripts/holonet/subsystems/holonet-intel-service.js [dynamic]",
+    "scripts/holonet/subsystems/holonet-intel-service.js [dynamic]",
+    "scripts/holonet/subsystems/holonet-intel-service.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetSocketService"
+   ],
+   "classes": [
+    "HolonetSocketService"
+   ],
+   "consumers": [
+    "scripts/games/game-notification-service.js",
+    "scripts/games/games/dejarik/dejarik-engine.js",
+    "scripts/games/games/hintaro/hintaro-engine.js",
+    "scripts/games/games/pazaak/pazaak-engine.js",
+    "scripts/games/games/sabacc/sabacc-engine.js",
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/index.js",
+    "scripts/holonet/subsystems/holonet-bus.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "scripts/holonet/subsystems/holonet-state-service.js",
+    "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs"
+   ],
+   "consumerCount": 12,
+   "secondarySystems": [
+    "games"
+   ],
+   "hooks": [
+    "callAll:swseHolonetUpdated",
+    "callAll:swseHolonet:*"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [
+    "(expr)"
+   ],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "legacy": 1,
+    "compat": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2e4d0dca81",
+   "path": "scripts/holonet/subsystems/holonet-state-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2264,
+   "lines": 77,
+   "sloc": 62,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "authority-or-orchestrator",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-socket-service.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetStateService"
+   ],
+   "classes": [
+    "HolonetStateService"
+   ],
+   "consumers": [
+    "scripts/holonet/integration/holonet-init.js",
+    "scripts/holonet/subsystems/holonet-entity-directory-service.js",
+    "scripts/ui/shell/HomeSurfaceService.js",
+    "scripts/ui/shell/gm/GMBulletinSurfaceService.js",
+    "scripts/ui/shell/gm/GMCampaignContextService.js",
+    "scripts/ui/shell/gm/GMDashboardSurfaceService.js",
+    "scripts/ui/shell/gm/controllers/GMBulletinSurfaceController.js"
+   ],
+   "consumerCount": 7,
+   "secondarySystems": [],
+   "hooks": [
+    "callAll:swseHolonet:stateUpdated",
+    "callAll:swseHolonetUpdated"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 2,
+    "byClass": {
+     "game.settings": 2
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 13,
+    "ciTestCount": 13
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-45abde28e4",
+   "path": "scripts/holonet/subsystems/holonet-storage.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 23206,
+   "lines": 656,
+   "sloc": 443,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/contracts/record-factory.js",
+    "scripts/ui/shell/ShellMutationGuard.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetStorage"
+   ],
+   "classes": [
+    "HolonetStorage"
+   ],
+   "consumers": [
+    "scripts/apps/gm-datapad.js",
+    "scripts/chat/holonet-chat-card.js",
+    "scripts/games/game-notification-service.js",
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/index.js",
+    "scripts/holonet/subsystems/holonet-feed-service.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "scripts/holonet/subsystems/holonet-notice-center-service.js",
+    "scripts/holonet/subsystems/holonet-thread-service.js",
+    "scripts/holonet/subsystems/holonews-auto-publisher.js",
+    "scripts/holonet/subsystems/messenger-maintenance-service.js",
+    "scripts/holonet/subsystems/messenger-notification-bridge.js",
+    "scripts/ui/shell/gm/GMBulletinSurfaceService.js",
+    "scripts/ui/shell/gm/GMCampaignContextService.js",
+    "scripts/ui/shell/gm/GMDashboardSurfaceService.js",
+    "scripts/ui/shell/gm/GMFactionRelationshipSurfaceService.js",
+    "scripts/ui/shell/gm/GMIntelSurfaceService.js",
+    "scripts/ui/shell/gm/GMJobBoardSurfaceService.js",
+    "scripts/ui/shell/gm/GMLocationsSurfaceService.js",
+    "scripts/ui/shell/gm/GMTradeConsoleSurfaceService.js",
+    "scripts/ui/shell/gm/controllers/GMBulletinSurfaceController.js",
+    "tests/gm-campaign-attention-items.test.mjs",
+    "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs",
+    "tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs",
+    "tests/gm-holonet-phase8c-bulletin-handoffs.test.mjs",
+    "tests/gm-phase7-pre-broadcast-integrity.test.mjs",
+    "tests/ti4c0-g16-holonet-credit-evidence.test.mjs"
+   ],
+   "consumerCount": 28,
+   "secondarySystems": [
+    "ui-shell"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 14,
+    "byClass": {
+     "game.settings": 14
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/gm-campaign-attention-items.test.mjs",
+     "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs",
+     "tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs",
+     "tests/gm-holonet-phase8c-bulletin-handoffs.test.mjs",
+     "tests/gm-phase7-pre-broadcast-integrity.test.mjs",
+     "tests/ti4c0-g16-holonet-credit-evidence.test.mjs"
+    ],
+    "transitiveCount": 355,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5d2a03c2aa",
+   "path": "scripts/holonet/subsystems/holonet-thread-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5188,
+   "lines": 135,
+   "sloc": 90,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/holonet/contracts/holonet-thread.js",
+    "scripts/holonet/subsystems/holonet-storage.js",
+    "scripts/holonet/holonet-engine.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetThreadService"
+   ],
+   "classes": [
+    "HolonetThreadService"
+   ],
+   "consumers": [
+    "scripts/holonet/index.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [
+    "callAll:swseHolonet:threadUpdated",
+    "callAll:swseHolonetUpdated"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b91e52da00",
+   "path": "scripts/holonet/subsystems/holonews-atom-policy.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3150,
+   "lines": 99,
+   "sloc": 82,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonewsAtomPolicy"
+   ],
+   "classes": [
+    "HolonewsAtomPolicy"
+   ],
+   "consumers": [
+    "scripts/apps/gm-datapad.js",
+    "scripts/holonet/integration/holonet-init.js",
+    "scripts/holonet/subsystems/holonews-auto-publisher.js",
+    "scripts/ui/shell/gm/GMBulletinSurfaceService.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 2,
+    "byClass": {
+     "game.settings": 2
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 2,
+    "ciTestCount": 2
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9652ca6232",
+   "path": "scripts/holonet/subsystems/holonews-auto-publisher.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11651,
+   "lines": 315,
+   "sloc": 257,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/subsystems/holonet-storage.js",
+    "scripts/holonet/sources/bulletin-source.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/data/holonews-seed-events.js",
+    "scripts/holonet/subsystems/holonews-atom-policy.js",
+    "scripts/holonet/subsystems/holonet-gm-authority.js",
+    "scripts/ui/shell/ShellMutationGuard.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonewsAutoPublisher"
+   ],
+   "classes": [
+    "HolonewsAutoPublisher"
+   ],
+   "consumers": [
+    "scripts/apps/gm-datapad.js",
+    "scripts/holonet/integration/holonet-init.js",
+    "scripts/ui/shell/gm/GMBulletinSurfaceService.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "ui-shell"
+   ],
+   "hooks": [
+    "once:closeWorld",
+    "callAll:swseHolonews:autoPublished"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "game.settings": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 2,
+    "ciTestCount": 2
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6bcd220206",
+   "path": "scripts/holonet/subsystems/messenger-maintenance-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 15787,
+   "lines": 370,
+   "sloc": 317,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/subsystems/holonet-storage.js",
+    "scripts/holonet/subsystems/messenger-notification-bridge.js",
+    "scripts/holonet/contracts/enums.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MessengerMaintenanceService"
+   ],
+   "classes": [
+    "MessengerMaintenanceService"
+   ],
+   "consumers": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/index.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "tests/ti4c0-g16-holonet-credit-evidence.test.mjs"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [],
+   "hooks": [
+    "callAll:swseHolonetUpdated",
+    "callAll:swseHolonetUpdated"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/ti4c0-g16-holonet-credit-evidence.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-56fc02f80e",
+   "path": "scripts/holonet/subsystems/messenger-notification-bridge.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7114,
+   "lines": 171,
+   "sloc": 147,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "adapter",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/holonet/contracts/holonet-notification.js",
+    "scripts/holonet/contracts/holonet-audience.js",
+    "scripts/holonet/contracts/holonet-sender.js",
+    "scripts/holonet/contracts/enums.js",
+    "scripts/holonet/subsystems/holonet-delivery-router.js",
+    "scripts/holonet/subsystems/holonet-notification-service.js",
+    "scripts/holonet/subsystems/holonet-storage.js",
+    "scripts/holonet/holonet-engine.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MessengerNotificationBridge"
+   ],
+   "classes": [
+    "MessengerNotificationBridge"
+   ],
+   "consumers": [
+    "scripts/holonet/holonet-engine.js",
+    "scripts/holonet/index.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "scripts/holonet/subsystems/holonet-notice-center-service.js",
+    "scripts/holonet/subsystems/messenger-maintenance-service.js"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-54bf701386",
+   "path": "scripts/holonet/ui/holonet-badge-renderer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3053,
+   "lines": 103,
+   "sloc": 49,
+   "primarySystem": "holonet",
+   "domainBasis": "path-rule",
+   "role": "presentation",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/holonet/services/holonet-badge-service.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HolonetBadgeRenderer"
+   ],
+   "classes": [
+    "HolonetBadgeRenderer"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  }
+ ]
+}

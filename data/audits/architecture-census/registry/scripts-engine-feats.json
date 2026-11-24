@@ -1,0 +1,5786 @@
+{
+ "schema": "swse.architecture-census.registry/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "shard": "scripts-engine-feats",
+ "count": 94,
+ "files": [
+  {
+   "id": "F-85af58d475",
+   "path": "scripts/engine/feats/ability-meta-schema-default-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4264,
+   "lines": 122,
+   "sloc": 111,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerAbilityMetaSchemaDefaultHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 2,
+    "byClass": {
+     "ActorEngine": 1,
+     "item-or-doc-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b5868b5b4b",
+   "path": "scripts/engine/feats/action-speed-feat-resolver.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3975,
+   "lines": 119,
+   "sloc": 103,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ActionSpeedFeatResolver",
+    "default"
+   ],
+   "classes": [
+    "ActionSpeedFeatResolver"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ea19e74798",
+   "path": "scripts/engine/feats/action-speed-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7788,
+   "lines": 197,
+   "sloc": 175,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/combat/utils/combat-actions-mapper.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerActionSpeedRuntimePatches",
+    "resolveActionCost",
+    "resolveActionComposition",
+    "getActionSpeedMutations",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/equipment/equipment-state-coordinator.js",
+    "scripts/engine/inventory/InventoryEngine.js",
+    "scripts/sheets/v2/character-sheet/concept-context.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.feats"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-512a9e2f72",
+   "path": "scripts/engine/feats/area-explosives-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11258,
+   "lines": 304,
+   "sloc": 283,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerAreaExplosivesFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e0f2707229",
+   "path": "scripts/engine/feats/area-explosives-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 14062,
+   "lines": 323,
+   "sloc": 290,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerAreaExplosivesRuntimePatches",
+    "resolveAutofireShapeMutations",
+    "resolveAreaTemplateMutations",
+    "resolveAreaDamageRiders",
+    "resolveAutofireTargetDefenseRiders",
+    "resolveGrenadeDamageRiders",
+    "getSpecialAreaAttackActions",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.feats"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c4d0bff1e0",
+   "path": "scripts/engine/feats/attack-negation-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4066,
+   "lines": 105,
+   "sloc": 93,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerAttackNegationFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5152bdf0b0",
+   "path": "scripts/engine/feats/attack-negation-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5722,
+   "lines": 144,
+   "sloc": 127,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerAttackNegationRuntimePatches",
+    "collectSelectedAttackNegationPenalties",
+    "resolveAttackNegationPenalty",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.feats"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-86d4bee3d8",
+   "path": "scripts/engine/feats/attack-options-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5784,
+   "lines": 167,
+   "sloc": 151,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerAttackOptionsFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f8398c88fb",
+   "path": "scripts/engine/feats/combat-feat-damage-rule-resolver.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10093,
+   "lines": 257,
+   "sloc": 223,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/actors/derived/level-split.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CombatFeatDamageRuleResolver",
+    "default"
+   ],
+   "classes": [
+    "CombatFeatDamageRuleResolver"
+   ],
+   "consumers": [
+    "scripts/engine/feats/combat-feat-damage-runtime-patches.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "actor-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-433ab33bad",
+   "path": "scripts/engine/feats/combat-feat-damage-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4855,
+   "lines": 111,
+   "sloc": 98,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/engine/feats/combat-feat-damage-rule-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerCombatFeatDamageRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createChatMessage"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ab12983e35",
+   "path": "scripts/engine/feats/combat-feat-runtime-support.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9990,
+   "lines": 251,
+   "sloc": 219,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerCombatFeatRuntimeSupport",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SWSE",
+    "globalThis.SWSE.CombatFeatRuntimeSupport"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2dc583043c",
+   "path": "scripts/engine/feats/combat-mobility-power-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5474,
+   "lines": 143,
+   "sloc": 127,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerCombatMobilityPowerFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9fd12257d4",
+   "path": "scripts/engine/feats/combat-mobility-power-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7731,
+   "lines": 187,
+   "sloc": 166,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerCombatMobilityPowerRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-8e0f349dfa",
+   "path": "scripts/engine/feats/condition-track-feat-actions.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12169,
+   "lines": 338,
+   "sloc": 287,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 1,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/engine/feats/meta-resource-feat-resolver.js",
+    "scripts/engine/combat/action/action-engine-v2.js",
+    "scripts/engine/combat/action/action-economy-persistence.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ConditionTrackFeatActions",
+    "default"
+   ],
+   "classes": [
+    "ConditionTrackFeatActions"
+   ],
+   "consumers": [
+    "index.js",
+    "scripts/combat/combat-automation.js",
+    "scripts/combat/combat-integration.js",
+    "scripts/components/condition-track.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [
+    "actor-core",
+    "combat"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 3,
+    "byClass": {
+     "actor-like": 3
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 4,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c51acdb426",
+   "path": "scripts/engine/feats/condition-track-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7223,
+   "lines": 184,
+   "sloc": 159,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerConditionTrackFeatNormalizationHooks",
+    "normalizeConditionTrackFeat",
+    "rulesForConditionTrackFeat",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "legacy": 1
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-1905edc9e4",
+   "path": "scripts/engine/feats/core-attack-option-action-economy.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 13486,
+   "lines": 375,
+   "sloc": 337,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/combat/action/action-economy-consumption.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "getCoreAttackOptionEconomy",
+    "auditCoreAttackOptionEconomy",
+    "attackStandardCoveredByCharge",
+    "prepareCoreAttackOptionRollContext",
+    "spendCoreAttackOptionCosts",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/combat/multi-attack.js",
+    "scripts/combat/rolls/attacks.js",
+    "scripts/rolls/roll-config.js",
+    "scripts/sheets/v2/actor-sheet-base.js",
+    "tests/attack-dialog-profile-context-convergence.test.mjs"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [
+    "combat"
+   ],
+   "hooks": [
+    "callAll:swse.coreAttackOptionCostsSpent"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/attack-dialog-profile-context-convergence.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2efa2843ce",
+   "path": "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11672,
+   "lines": 383,
+   "sloc": 356,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerCoreAttackOptionNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-76a9dc7f14",
+   "path": "scripts/engine/feats/core-attack-option-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7603,
+   "lines": 190,
+   "sloc": 165,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/equipment/combat-readiness.js",
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/items/weapon-branch-resolver.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerCoreAttackOptionRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "combat",
+    "equipment"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6d082e19ed",
+   "path": "scripts/engine/feats/core-combat-reaction-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6138,
+   "lines": 191,
+   "sloc": 170,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerCoreCombatReactionNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2c74355871",
+   "path": "scripts/engine/feats/core-combat-reaction-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 17237,
+   "lines": 448,
+   "sloc": 401,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/core/document-api-v13.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CoreCombatReactionFeatActions",
+    "registerCoreCombatReactionRuntimePatches",
+    "default"
+   ],
+   "classes": [
+    "CoreCombatReactionFeatActions"
+   ],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [
+    "callAll:swse.cleaveUsed",
+    "callAll:swse.frighteningCleaveAvailable",
+    "callAll:swse.targetDroppedToZero",
+    "callAll:swse.targetDropped",
+    "callAll:swse.cleaveAvailable",
+    "on:updateActor",
+    "on:swse.damageApplied",
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SWSE",
+    "globalThis.SWSE.CoreCombatReactionFeatActions",
+    "game.swse.CoreCombatReactionFeatActions"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-0f9d706476",
+   "path": "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6417,
+   "lines": 172,
+   "sloc": 155,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerDamageThresholdFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-bf911296f2",
+   "path": "scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10955,
+   "lines": 320,
+   "sloc": 294,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerDefenseAvoidanceFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-bff28143da",
+   "path": "scripts/engine/feats/defense-avoidance-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9375,
+   "lines": 239,
+   "sloc": 215,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerDefenseAvoidanceRuntimePatches",
+    "getSelectableAttackAdvisories",
+    "resolveTumbleDefenseRiders",
+    "resolveMovingTargetRiders",
+    "resolveFightDefensivelyRiders",
+    "getDefenseAbilitySubstitutionAdvisories",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.feats"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f1606ccf2e",
+   "path": "scripts/engine/feats/defense-feat-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3161,
+   "lines": 77,
+   "sloc": 67,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/effects/modifiers/ModifierEngine.js",
+    "scripts/engine/effects/modifiers/ModifierTypes.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerDefenseFeatRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "abilities-effects",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-8346bbfcb3",
+   "path": "scripts/engine/feats/droid-combat-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 17743,
+   "lines": 475,
+   "sloc": 442,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerDroidCombatFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-184568615a",
+   "path": "scripts/engine/feats/droid-combat-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 23820,
+   "lines": 551,
+   "sloc": 507,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/engine/combat/effective-weapon-quality-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerDroidCombatRuntimePatches",
+    "getAimActionRiders",
+    "getUnarmedHitRiders",
+    "getDroidSpecialAttackActions",
+    "getAimingAccuracyDamageRiders",
+    "getDroidMovementRiders",
+    "getDroidShieldRiders",
+    "getDroidSensorActions",
+    "getDroidSkillSwapActions",
+    "getDroidThresholdRiders",
+    "getLeaderOfDroidsPolicy",
+    "getDroidFocusBonuses",
+    "getDistractingDroidActions",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.feats"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9ba15d5168",
+   "path": "scripts/engine/feats/dual-weapon-mastery-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3408,
+   "lines": 87,
+   "sloc": 73,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerDualWeaponMasteryNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c4231623c4",
+   "path": "scripts/engine/feats/dual-wield-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1332,
+   "lines": 27,
+   "sloc": 21,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/engine/combat/dual-wield-combat-shape-resolver.js",
+    "scripts/engine/combat/combined-full-attack-planner.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerDualWieldRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "combat"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SWSE",
+    "globalThis.SWSE.DualWieldCombatShapeResolver",
+    "globalThis.SWSE.CombinedFullAttackPlanner"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-7bdbf4fd7e",
+   "path": "scripts/engine/feats/encounter-use-tracker.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4670,
+   "lines": 144,
+   "sloc": 67,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "EncounterUseTracker",
+    "default"
+   ],
+   "classes": [
+    "EncounterUseTracker"
+   ],
+   "consumers": [
+    "scripts/engine/feats/galaxy-intrigue-combat-runtime-patches.js",
+    "scripts/engine/feats/legacy-clone-combat-runtime-patches.js",
+    "scripts/engine/feats/meta-resource-feat-resolver.js",
+    "scripts/engine/feats/return-fire-runtime-patches.js",
+    "scripts/engine/feats/skill-feat-runtime-patches.js",
+    "scripts/engine/feats/starship-vehicle-runtime-patches.js",
+    "scripts/engine/feats/unknown-regions-combat-runtime-patches.js",
+    "scripts/engine/skills/skill-feat-resolver.js",
+    "scripts/infrastructure/hooks/combat-hooks.js"
+   ],
+   "consumerCount": 9,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 2,
+    "byClass": {
+     "actor-like": 2
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e12c229f83",
+   "path": "scripts/engine/feats/feat-action-listeners.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12722,
+   "lines": 337,
+   "sloc": 221,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/engine/feats/meta-resource-feat-resolver.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/engine/combat/ConditionTrackRules.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "FeatActionListeners"
+   ],
+   "classes": [
+    "FeatActionListeners"
+   ],
+   "consumers": [
+    "scripts/infrastructure/hooks/init-hooks.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:swse.coupDeGrace",
+    "on:swse.damage-before",
+    "on:swse.grappleManeuver"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "actor-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 3,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "legacy": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-49d252b561",
+   "path": "scripts/engine/feats/force-point-feat-actions.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11878,
+   "lines": 247,
+   "sloc": 211,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/engine/feats/force-point-feat-rules.js",
+    "scripts/core/document-api-v13.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ForcePointFeatActions",
+    "registerForcePointFeatActions",
+    "default"
+   ],
+   "classes": [
+    "ForcePointFeatActions"
+   ],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SWSE",
+    "globalThis.SWSE.ForcePointFeatActions",
+    "game.swse.ForcePointFeatActions"
+   ],
+   "stateWrites": {
+    "total": 2,
+    "byClass": {
+     "actor-like": 2
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 2,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "legacy": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2eda473f48",
+   "path": "scripts/engine/feats/force-point-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8163,
+   "lines": 199,
+   "sloc": 172,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerForcePointFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-bab117d5e9",
+   "path": "scripts/engine/feats/force-point-feat-rules.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9546,
+   "lines": 247,
+   "sloc": 211,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/darkside/dsp-engine.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ForcePointFeatRules",
+    "default"
+   ],
+   "classes": [
+    "ForcePointFeatRules"
+   ],
+   "consumers": [
+    "scripts/engine/feats/force-point-feat-actions.js",
+    "scripts/engine/feats/force-point-service-runtime-patches.js",
+    "scripts/engine/feats/force-training-entitlement-runtime-patches.js",
+    "scripts/engine/force/force-points-service.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [
+    "force"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e880ce63b1",
+   "path": "scripts/engine/feats/force-point-service-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2755,
+   "lines": 75,
+   "sloc": 61,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/force/force-points-service.js",
+    "scripts/engine/feats/force-point-feat-rules.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerForcePointServiceRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "force"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SWSE",
+    "globalThis.SWSE.ForcePointServiceRuntime"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ed8457438f",
+   "path": "scripts/engine/feats/force-scoundrel-combat-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7593,
+   "lines": 210,
+   "sloc": 191,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerForceScoundrelCombatFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-824152a859",
+   "path": "scripts/engine/feats/force-scoundrel-combat-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12899,
+   "lines": 289,
+   "sloc": 259,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerForceScoundrelCombatRuntimePatches",
+    "resolveAngledThrowCoverOverride",
+    "getAutofireDamageRiders",
+    "getSoftCoverMissRiders",
+    "getMissRerollResources",
+    "getRapidStrikeHitRiders",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.feats"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-123dfcbf4d",
+   "path": "scripts/engine/feats/force-training-entitlement-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7286,
+   "lines": 162,
+   "sloc": 134,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/progression/feats/feat-grant-entitlement-resolver.js",
+    "scripts/engine/feats/force-point-feat-rules.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerForceTrainingEntitlementRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SWSE",
+    "globalThis.SWSE.ForceTrainingEntitlementRuntime"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "legacy": 1,
+    "compat": 1,
+    "fallback": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-7fa80ed9c3",
+   "path": "scripts/engine/feats/galaxy-intrigue-combat-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8725,
+   "lines": 241,
+   "sloc": 219,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerGalaxyIntrigueCombatFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-8b92ffb5b9",
+   "path": "scripts/engine/feats/galaxy-intrigue-combat-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 15546,
+   "lines": 378,
+   "sloc": 347,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/engine/feats/encounter-use-tracker.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerGalaxyIntrigueCombatRuntimePatches",
+    "getAttackOfOpportunityDamageRiders",
+    "getChargeAttackRiders",
+    "spendChargeAttackRider",
+    "getSpecialRangedAttackActions",
+    "getDefenseReactionResources",
+    "spendDefenseReactionResource",
+    "getCoverRiders",
+    "getCoupDeGraceRiders",
+    "getAllyReactionRiders",
+    "spendAllyReactionRider",
+    "getWeaponHandlingRiders",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.feats"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-572247e3ca",
+   "path": "scripts/engine/feats/grapple-expanded-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5589,
+   "lines": 144,
+   "sloc": 123,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/combat/damage-system.js",
+    "scripts/engine/combat/grapple-state-engine.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/core/document-api-v13.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerGrappleExpandedRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [
+    "callAll:swse.boneCrusherApplied"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SWSE",
+    "globalThis.SWSE.GrappleExpandedRuntime",
+    "game.swse.GrappleExpandedRuntime"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-63f4e1ab03",
+   "path": "scripts/engine/feats/grapple-feat-actions.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 16900,
+   "lines": 393,
+   "sloc": 328,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/combat/systems/grappling-system.js",
+    "scripts/engine/combat/grapple-state-engine.js",
+    "scripts/combat/rolls/attacks.js",
+    "scripts/engine/roll-engine.js",
+    "scripts/engine/combat/unarmed-attack-helper.js",
+    "scripts/engine/combat/damage-packet-builder.js",
+    "scripts/combat/damage-system.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/core/document-api-v13.js",
+    "scripts/engine/feats/grapple-rules-reader.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "GrappleFeatActions",
+    "registerGrappleFeatActions",
+    "default"
+   ],
+   "classes": [
+    "GrappleFeatActions"
+   ],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "combat",
+    "infrastructure",
+    "rolls"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SWSE",
+    "globalThis.SWSE.GrappleFeatActions",
+    "game.swse.GrappleFeatActions"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5d56785a87",
+   "path": "scripts/engine/feats/grapple-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11069,
+   "lines": 296,
+   "sloc": 248,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "rulesForFeat",
+    "registerGrappleFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js",
+    "tests/grab-back-bare-item-normalization.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/grab-back-bare-item-normalization.test.mjs"
+    ],
+    "transitiveCount": 0,
+    "ciTestCount": 1
+   },
+   "markers": {
+    "legacy": 1,
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-7a0d281918",
+   "path": "scripts/engine/feats/grapple-rules-reader.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1595,
+   "lines": 41,
+   "sloc": 29,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "normalizeFeatName",
+    "actorHasFeat",
+    "actorGrappleRules",
+    "findGrappleRule"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/combat/unarmed-attack-helper.js",
+    "scripts/engine/feats/grapple-feat-actions.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 364,
+    "ciTestCount": 356
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-797056c805",
+   "path": "scripts/engine/feats/grapple-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 14245,
+   "lines": 339,
+   "sloc": 304,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/combat/systems/grappling-system.js",
+    "scripts/engine/combat/grapple-state-engine.js",
+    "scripts/engine/combat/grapple-legality-engine.js",
+    "scripts/governance/actor-engine/actor-engine.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerGrappleRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "combat"
+   ],
+   "hooks": [
+    "callAll:swse.grappleManeuver"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ChatMessage": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 1,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-8d2b5abc7c",
+   "path": "scripts/engine/feats/legacy-clone-combat-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6934,
+   "lines": 184,
+   "sloc": 165,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerLegacyCloneCombatFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-dc41afcbad",
+   "path": "scripts/engine/feats/legacy-clone-combat-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9927,
+   "lines": 244,
+   "sloc": 221,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/engine/feats/encounter-use-tracker.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerLegacyCloneCombatRuntimePatches",
+    "getAdvisoryCombatModifiers",
+    "getDamageOutcomeChoices",
+    "getActionEconomyOverrides",
+    "getConditionTrackInterrupts",
+    "spendConditionTrackInterrupt",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.feats"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a912b68d26",
+   "path": "scripts/engine/feats/legacy-weapon-proficiency-alias.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1712,
+   "lines": 32,
+   "sloc": 19,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CANONICAL_WEAPON_PROFICIENCY_ID",
+    "LEGACY_WEAPON_PROFICIENCY_LABELS",
+    "legacyWeaponProficiencyChoice",
+    "applyLegacyWeaponProficiencyChoice"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/registries/feat-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 377,
+    "ciTestCount": 369
+   },
+   "markers": {
+    "compat": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-30dbef2217",
+   "path": "scripts/engine/feats/martial-arts-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5439,
+   "lines": 141,
+   "sloc": 122,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerMartialArtsFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-98b199f02b",
+   "path": "scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3499,
+   "lines": 98,
+   "sloc": 85,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerMeleeCloseCombatFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f0e40a5f46",
+   "path": "scripts/engine/feats/meta-resource-feat-resolver.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 49900,
+   "lines": 1097,
+   "sloc": 857,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/engine/feats/encounter-use-tracker.js",
+    "scripts/engine/customization/modification-v2-runtime/modification-effects.js",
+    "scripts/utils/item-classification.js",
+    "scripts/engine/combat/attack-outcome-resolver.js",
+    "scripts/engine/combat/attack-roll-diagnostics.js",
+    "scripts/engine/combat/full-attack-message-state.js",
+    "scripts/engine/combat/full-attack-card-renderer.js",
+    "scripts/engine/combat/reactions/attack-event-authority.js [dynamic]",
+    "scripts/engine/roll-engine.js [dynamic]",
+    "scripts/governance/actor-engine/actor-engine.js [dynamic]",
+    "scripts/governance/actor-engine/actor-engine.js [dynamic]",
+    "scripts/core/document-api-v13.js [dynamic]",
+    "scripts/engine/roll-engine.js [dynamic]",
+    "scripts/governance/actor-engine/actor-engine.js [dynamic]",
+    "scripts/governance/actor-engine/actor-engine.js [dynamic]",
+    "scripts/governance/actor-engine/actor-engine.js [dynamic]",
+    "scripts/chat/swse-chat.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MetaResourceFeatResolver",
+    "default"
+   ],
+   "classes": [
+    "MetaResourceFeatResolver"
+   ],
+   "consumers": [
+    "scripts/actors/derived/derived-calculator.js",
+    "scripts/apps/dialogs/forceful-recovery-picker.js",
+    "scripts/combat/rolls/attacks.js",
+    "scripts/combat/rolls/enhanced-rolls.js",
+    "scripts/combat/systems/grappling-system.js",
+    "scripts/data/force-points.js",
+    "scripts/engine/HP/hp-accounting.js",
+    "scripts/engine/combat/damage-resolution-engine.js",
+    "scripts/engine/customization/upgrade-eligibility-engine.js",
+    "scripts/engine/effects/adapters/resource-action-adapter.js",
+    "scripts/engine/feats/condition-track-feat-actions.js",
+    "scripts/engine/feats/feat-action-listeners.js",
+    "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+    "scripts/engine/feats/skill-feat-runtime-patches.js",
+    "scripts/engine/force/force-points-service.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/sheets/v2/character-like-sheet.js",
+    "scripts/sheets/v2/character-sheet/concept-context.js",
+    "scripts/ui/chat/chat-interaction-bridge.js",
+    "tests/grab-grapple-resistance-channel-split.test.mjs",
+    "tests/modification-v2-convergence.test.mjs"
+   ],
+   "consumerCount": 21,
+   "secondarySystems": [
+    "actor-core",
+    "chat",
+    "combat",
+    "customization",
+    "equipment",
+    "infrastructure",
+    "rolls"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 4,
+    "byClass": {
+     "chat-message": 2,
+     "ActorEngine": 1,
+     "actor-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 9,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/grab-grapple-resistance-channel-split.test.mjs",
+     "tests/modification-v2-convergence.test.mjs"
+    ],
+    "transitiveCount": 359,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "legacy": 1,
+    "compat": 4,
+    "fallback": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c407e25917",
+   "path": "scripts/engine/feats/mobility-positioning-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9402,
+   "lines": 245,
+   "sloc": 226,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerMobilityPositioningFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f53e81d634",
+   "path": "scripts/engine/feats/mobility-positioning-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 16625,
+   "lines": 389,
+   "sloc": 346,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerMobilityPositioningRuntimePatches",
+    "resolveRunningAttackRiders",
+    "resolveWithdrawRiders",
+    "resolveAimRangedAttackRiders",
+    "resolveAttackOfOpportunityReplacementRiders",
+    "getSelectableAttackAdvisories",
+    "resolvePostHitAdvisoryRiders",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.feats"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-cde351de48",
+   "path": "scripts/engine/feats/pistoleer-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2677,
+   "lines": 79,
+   "sloc": 71,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerPistoleerNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-8772f7e145",
+   "path": "scripts/engine/feats/pistoleer-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5810,
+   "lines": 146,
+   "sloc": 121,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/engine/combat/effective-weapon-quality-resolver.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerPistoleerRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "combat"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-181de17661",
+   "path": "scripts/engine/feats/rage-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2918,
+   "lines": 96,
+   "sloc": 82,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerRageFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-041187d2e5",
+   "path": "scripts/engine/feats/ranged-combat-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5185,
+   "lines": 141,
+   "sloc": 126,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerRangedCombatFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-42d2a5454d",
+   "path": "scripts/engine/feats/rebellion-combat-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7499,
+   "lines": 197,
+   "sloc": 177,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerRebellionCombatFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c93b6706b8",
+   "path": "scripts/engine/feats/rebellion-combat-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 13377,
+   "lines": 311,
+   "sloc": 275,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/utils/logger.js",
+    "scripts/engine/effects/modifiers/ModifierTypes.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerRebellionCombatRuntimePatches",
+    "collectPointBlankRiderModifiers",
+    "getActionEconomyRiders",
+    "getRunningAttackRiders",
+    "getDropTargetRiders",
+    "getDamageOutcomeAdjacencyRiders",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "abilities-effects",
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.feats"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3393ed80e6",
+   "path": "scripts/engine/feats/rebellion-species-skill-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 15698,
+   "lines": 390,
+   "sloc": 357,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerRebellionSpeciesSkillFeatNormalizationHooks",
+    "normalizeRebellionSpeciesSkillFeat",
+    "rulesForRebellionSpeciesSkillFeat",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9d76195038",
+   "path": "scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8890,
+   "lines": 226,
+   "sloc": 201,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/skills/skill-feat-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "RebellionSpeciesSkillFeatRuntime",
+    "registerRebellionSpeciesSkillFeatRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/rolls/skills.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure",
+    "skills"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.skills"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-80729f1b3e",
+   "path": "scripts/engine/feats/register-feat-runtime.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11423,
+   "lines": 180,
+   "sloc": 94,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/feats/grapple-feat-actions.js",
+    "scripts/engine/feats/grapple-runtime-patches.js",
+    "scripts/engine/feats/grapple-expanded-runtime-patches.js",
+    "scripts/engine/feats/grapple-feat-normalization-hooks.js",
+    "scripts/engine/feats/force-point-feat-normalization-hooks.js",
+    "scripts/engine/feats/force-point-feat-actions.js",
+    "scripts/engine/feats/force-training-entitlement-runtime-patches.js",
+    "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+    "scripts/engine/feats/droid-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/droid-combat-runtime-patches.js",
+    "scripts/engine/combat/droid-combat-action-adapter.js",
+    "scripts/engine/feats/riflemaster-normalization-hooks.js",
+    "scripts/engine/feats/riflemaster-runtime-patches.js",
+    "scripts/engine/feats/pistoleer-normalization-hooks.js",
+    "scripts/engine/feats/pistoleer-runtime-patches.js",
+    "scripts/engine/feats/sniper-normalization-hooks.js",
+    "scripts/engine/feats/sniper-runtime-patches.js",
+    "scripts/engine/feats/dual-weapon-mastery-normalization-hooks.js",
+    "scripts/engine/feats/dual-wield-runtime-patches.js",
+    "scripts/engine/feats/core-combat-reaction-normalization-hooks.js",
+    "scripts/engine/feats/core-combat-reaction-runtime-patches.js",
+    "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+    "scripts/engine/feats/core-attack-option-runtime-patches.js",
+    "scripts/engine/feats/rage-feat-normalization-hooks.js",
+    "scripts/engine/feats/area-explosives-feat-normalization-hooks.js",
+    "scripts/engine/feats/mobility-positioning-feat-normalization-hooks.js",
+    "scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js",
+    "scripts/engine/feats/attack-options-feat-normalization-hooks.js",
+    "scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/ranged-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js",
+    "scripts/engine/feats/species-origin-feat-normalization-hooks.js",
+    "scripts/engine/feats/combat-feat-damage-runtime-patches.js",
+    "scripts/engine/feats/defense-feat-runtime-patches.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerFeatRuntime"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/infrastructure/hooks/init-hooks.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "combat",
+    "infrastructure",
+    "progression"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-bdbb4e8931",
+   "path": "scripts/engine/feats/relentless-attack-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6734,
+   "lines": 148,
+   "sloc": 121,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/utils/logger.js",
+    "scripts/engine/effects/modifiers/ModifierTypes.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerRelentlessAttackRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "abilities-effects",
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-137385cd48",
+   "path": "scripts/engine/feats/remaining-weapon-armor-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11566,
+   "lines": 290,
+   "sloc": 258,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/apps/choices/feat-choice-dialog.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerRemainingWeaponArmorFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 2,
+    "byClass": {
+     "ActorEngine": 2
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 2,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-82e80012e1",
+   "path": "scripts/engine/feats/return-fire-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7436,
+   "lines": 186,
+   "sloc": 167,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/apps/choices/feat-choice-dialog.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerReturnFireFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-82ac80129f",
+   "path": "scripts/engine/feats/return-fire-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7561,
+   "lines": 199,
+   "sloc": 175,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/engine/feats/encounter-use-tracker.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerReturnFireRuntimePatches",
+    "getReturnFireReactions",
+    "spendReturnFire",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.feats"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b5f37f5472",
+   "path": "scripts/engine/feats/riflemaster-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4206,
+   "lines": 103,
+   "sloc": 80,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerRiflemasterNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-088666f80e",
+   "path": "scripts/engine/feats/riflemaster-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5361,
+   "lines": 135,
+   "sloc": 114,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/engine/combat/effective-weapon-quality-resolver.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerRiflemasterRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "combat"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2002f41211",
+   "path": "scripts/engine/feats/second-wind-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6724,
+   "lines": 197,
+   "sloc": 174,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerSecondWindFeatNormalizationHooks",
+    "normalizeSecondWindFeat",
+    "rulesForSecondWindFeat",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-1869408011",
+   "path": "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 17765,
+   "lines": 358,
+   "sloc": 321,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/engine/feats/meta-resource-feat-resolver.js",
+    "scripts/engine/combat/SecondWindRules.js",
+    "scripts/utils/logger.js",
+    "scripts/apps/dialogs/forceful-recovery-picker.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SecondWindRiderRuntime",
+    "registerSecondWindRiderRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "combat",
+    "force",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.combat"
+   ],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "actor-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a6f62ccea9",
+   "path": "scripts/engine/feats/skill-feat-expanded-addendum-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9037,
+   "lines": 228,
+   "sloc": 210,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerExpandedSkillFeatAddendumNormalizationHooks",
+    "normalizeExpandedSkillFeatAddendum",
+    "rulesForExpandedSkillFeatAddendum",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6d0596fea7",
+   "path": "scripts/engine/feats/skill-feat-expanded-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 27420,
+   "lines": 742,
+   "sloc": 699,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerExpandedSkillFeatNormalizationHooks",
+    "normalizeExpandedSkillFeat",
+    "rulesForExpandedSkillFeat",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "legacy": 3
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-69f7d53198",
+   "path": "scripts/engine/feats/skill-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12328,
+   "lines": 366,
+   "sloc": 338,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerSkillFeatNormalizationHooks",
+    "normalizeSkillFeat",
+    "rulesForFeat",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5bc80b1cc0",
+   "path": "scripts/engine/feats/skill-feat-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 20232,
+   "lines": 479,
+   "sloc": 427,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/skills/skill-feat-resolver.js",
+    "scripts/engine/skills/skill-feat-rule-resolver.js",
+    "scripts/engine/feats/encounter-use-tracker.js",
+    "scripts/engine/feats/meta-resource-feat-resolver.js",
+    "scripts/utils/logger.js",
+    "scripts/utils/schema-adapters.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SkillFeatRuntime",
+    "registerSkillFeatRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/combat/damage-packet-builder.js",
+    "tests/talent-feats-ability-authority.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "infrastructure",
+    "skills"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.skills"
+   ],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "actor-like": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/talent-feats-ability-authority.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "legacy": 1,
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d36d6210e0",
+   "path": "scripts/engine/feats/sniper-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1926,
+   "lines": 58,
+   "sloc": 50,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerSniperNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ac1331eb32",
+   "path": "scripts/engine/feats/sniper-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4590,
+   "lines": 134,
+   "sloc": 113,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerSniperRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "combat"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9bdf94fe86",
+   "path": "scripts/engine/feats/species-origin-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8103,
+   "lines": 139,
+   "sloc": 127,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerSpeciesOriginFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/feats/register-feat-runtime.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-cd593b1e19",
+   "path": "scripts/engine/feats/sport-hunter-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4290,
+   "lines": 112,
+   "sloc": 104,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerSportHunterNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-57d5fdf0fd",
+   "path": "scripts/engine/feats/sport-hunter-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7491,
+   "lines": 164,
+   "sloc": 146,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerSportHunterRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-24c96eaf10",
+   "path": "scripts/engine/feats/starship-vehicle-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5126,
+   "lines": 131,
+   "sloc": 119,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerStarshipVehicleFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-de6e02cc4e",
+   "path": "scripts/engine/feats/starship-vehicle-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7709,
+   "lines": 182,
+   "sloc": 161,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/engine/feats/encounter-use-tracker.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerStarshipVehicleRuntimePatches",
+    "getVehicleWeaponProficiencyOverrides",
+    "actorHasVehicleWeaponProficiencyOverride",
+    "getVehicleWeaponAttackRerolls",
+    "spendVehicleWeaponAttackReroll",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.feats"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5b07b73942",
+   "path": "scripts/engine/feats/team-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10133,
+   "lines": 287,
+   "sloc": 271,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerTeamFeatNormalizationHooks",
+    "normalizeTeamFeat",
+    "rulesForTeamFeat",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d30f84cb05",
+   "path": "scripts/engine/feats/team-feat-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6946,
+   "lines": 183,
+   "sloc": 161,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/engine/skills/skill-feat-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "TeamFeatRuntime",
+    "registerTeamFeatRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/rolls/skills.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure",
+    "skills"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.skills"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ab31cb1cd0",
+   "path": "scripts/engine/feats/unarmed-style-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12898,
+   "lines": 395,
+   "sloc": 372,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerUnarmedStyleFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b4b9a8f62b",
+   "path": "scripts/engine/feats/unknown-regions-combat-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 13410,
+   "lines": 171,
+   "sloc": 156,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/apps/choices/feat-choice-dialog.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerUnknownRegionsCombatFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-774a880f1a",
+   "path": "scripts/engine/feats/unknown-regions-combat-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11752,
+   "lines": 105,
+   "sloc": 88,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/engine/feats/encounter-use-tracker.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerUnknownRegionsCombatRuntimePatches",
+    "getReactionMovementResources",
+    "spendReactionMovementResource",
+    "getSpecialCombatActions",
+    "getCleaveRiders",
+    "getGrabGrappleReactionRiders",
+    "getAttackOfOpportunityHitRiders",
+    "getVehicleWeaponAttackRiders",
+    "getForcePointAttackRiders",
+    "getChargeSkillRiders",
+    "getMountedChargeRiders",
+    "getOptionalRuleCombatActions",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "game.swse.feats"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 3
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-382d9fd68a",
+   "path": "scripts/engine/feats/unknown-regions-weapon-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6886,
+   "lines": 190,
+   "sloc": 171,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerUnknownRegionsWeaponFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d23f5f2d91",
+   "path": "scripts/engine/feats/weapon-armor-rider-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7586,
+   "lines": 210,
+   "sloc": 190,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerWeaponArmorRiderNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-22830f0fc9",
+   "path": "scripts/engine/feats/weapon-armor-rider-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8232,
+   "lines": 151,
+   "sloc": 130,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerWeaponArmorRiderRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-66d9cf661f",
+   "path": "scripts/engine/feats/weapon-autofire-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7884,
+   "lines": 200,
+   "sloc": 181,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerWeaponAutofireFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-169f5240c5",
+   "path": "scripts/engine/feats/weapon-autofire-rider-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4961,
+   "lines": 129,
+   "sloc": 113,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerWeaponAutofireRiderRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f8c9cd9383",
+   "path": "scripts/engine/feats/weapon-critical-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5024,
+   "lines": 125,
+   "sloc": 110,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerWeaponCriticalFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-dfdc79e6ea",
+   "path": "scripts/engine/feats/weapon-foundation-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7966,
+   "lines": 213,
+   "sloc": 186,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerWeaponFoundationFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 2,
+    "byClass": {
+     "actor-like": 1,
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-94fc1f2ed7",
+   "path": "scripts/engine/feats/weapon-leftover-feat-normalization-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9671,
+   "lines": 242,
+   "sloc": 215,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/apps/choices/feat-choice-dialog.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerWeaponLeftoverFeatNormalizationHooks",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:createItem",
+    "on:updateItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2b8ca5b1a3",
+   "path": "scripts/engine/feats/weapon-miss-rider-runtime-patches.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4137,
+   "lines": 92,
+   "sloc": 79,
+   "primarySystem": "feats",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "registerWeaponMissRiderRuntimePatches",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "combat",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  }
+ ]
+}

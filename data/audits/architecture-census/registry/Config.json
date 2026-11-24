@@ -1,0 +1,42 @@
+{
+ "schema": "swse.architecture-census.registry/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "shard": "Config",
+ "count": 2,
+ "files": [
+  {
+   "id": "F-1c1e9d40d2",
+   "path": "Config/license.json",
+   "top": "Config",
+   "ext": "json",
+   "bytes": 836,
+   "lines": 7,
+   "sloc": null,
+   "primarySystem": "settings-config",
+   "domainBasis": "fallback",
+   "role": "data",
+   "runtimeReachability": "unreferenced",
+   "referencedBy": [],
+   "referencedByCount": 0,
+   "runtimeReferrerCount": 0,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-e46d2827f6",
+   "path": "Config/options.json",
+   "top": "Config",
+   "ext": "json",
+   "bytes": 600,
+   "lines": 27,
+   "sloc": null,
+   "primarySystem": "settings-config",
+   "domainBasis": "fallback",
+   "role": "data",
+   "runtimeReachability": "unreferenced",
+   "referencedBy": [],
+   "referencedByCount": 0,
+   "runtimeReferrerCount": 0,
+   "verification": "reference-traced"
+  }
+ ]
+}

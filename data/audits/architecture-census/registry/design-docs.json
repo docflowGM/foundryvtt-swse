@@ -1,0 +1,26 @@
+{
+ "schema": "swse.architecture-census.registry/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "shard": "design-docs",
+ "count": 1,
+ "files": [
+  {
+   "id": "F-51086ac4e3",
+   "path": "design-docs/droid-chassis-builder-hosting.md",
+   "top": "design-docs",
+   "ext": "md",
+   "bytes": 1335,
+   "lines": 26,
+   "sloc": null,
+   "primarySystem": "droids",
+   "domainBasis": "keyword",
+   "directoryDomain": "documentation",
+   "role": "evidence-or-doc",
+   "runtimeReachability": "unreferenced",
+   "referencedBy": [],
+   "referencedByCount": 0,
+   "runtimeReferrerCount": 0,
+   "verification": "reference-traced"
+  }
+ ]
+}
