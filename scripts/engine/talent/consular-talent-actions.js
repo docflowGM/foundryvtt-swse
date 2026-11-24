@@ -215,7 +215,9 @@ export class ConsularTalentActions {
   /**
    * WatchCircle Initiate transfer: subtract 1 NORMAL point from the actor, add 1 to the ally. Not a spend (printed text), but the two
    * writes are one event: exactly one point leaves and exactly one arrives. Failure handling re-reads the ally rather than assuming:
-   *  - subtract fails: nothing changed;
+   *  - no ally actor: refused before any debit;
+   *  - subtract fails and the actor's total is unchanged: nothing changed; subtract throws but the total DID drop (ack lost): the debit
+   *    stands and the transfer continues;
    *  - ally gain throws and the ally's total did NOT rise: the actor's point is returned (exact, +1);
    *  - ally gain throws but the ally's total DID rise (write applied, acknowledgement lost): the transfer stands, no compensation,
    *    so a point is never duplicated.
@@ -223,9 +225,18 @@ export class ConsularTalentActions {
    * transfer landing; that rare case is left for GM adjudication rather than guessed.
    */
   static async _transferWatchCircleForcePoint(actor, allyActor) {
-    const allyBefore = allyActor ? SchemaAdapters.getForcePoints(allyActor) : null;
-    await this._spendNormalForcePoint(actor, 'watchcircle-initiate-normal-fp');
-    if (!allyActor) return null; // no ally document: the GM applies the gain manually (stated on the card)
+    // Fail closed BEFORE any debit: with no resolvable ally actor the point would leave with nothing to receive it and no durable
+    // pending grant to reconcile it later.
+    if (!allyActor) throw new Error('WatchCircle Initiate needs a resolvable ally actor to receive the Force Point; no point was subtracted.');
+    const allyBefore = SchemaAdapters.getForcePoints(allyActor);
+    const sourceBefore = SchemaAdapters.getForcePoints(actor);
+    try {
+      await this._spendNormalForcePoint(actor, 'watchcircle-initiate-normal-fp');
+    } catch (err) {
+      // The subtraction may have been applied before the error surfaced (acknowledgement lost): re-read the authoritative total.
+      // Unchanged => nothing happened, report the failure. Reduced => the debit stands and the transfer continues.
+      if (SchemaAdapters.getForcePoints(actor) >= sourceBefore) throw err;
+    }
     try {
       return await this._grantNormalForcePoint(allyActor, 1, 'watchcircle-initiate-grant-fp');
     } catch (err) {
@@ -737,6 +748,9 @@ export class ConsularTalentActions {
     }
     const ally = await promptToken(actor, 'WatchCircle Initiate', { relation: 'ally', fallbackLabel: 'ally', note: 'Choose one ally within line of sight to receive 1 Force Point if your DC 15 Use the Force check succeeds.' });
     if (!ally) return null;
+    // Refuse BEFORE Farseeing is consumed or any check is rolled when the transfer could not complete.
+    if (!ally.actor) { ui?.notifications?.warn?.('WatchCircle Initiate needs a resolvable ally actor to receive the Force Point.'); return null; }
+    if (SchemaAdapters.getForcePoints(actor) <= 0) { ui?.notifications?.warn?.('WatchCircle Initiate requires 1 normal Force Point; temporary/bonus Force Points cannot be used.'); return null; }
     const farseeing = this._findReadyFarseeing(actor);
     if (!farseeing) throw new Error('A ready use of Farseeing is required.');
     const modResult = await showRollModifiersDialog({ title: 'WatchCircle Initiate — DC 15 Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });

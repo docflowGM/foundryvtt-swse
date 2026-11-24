@@ -46,9 +46,20 @@ try {
   { const a = mkA('src', 3), al = mkA('ally', 1); injectOnAlly('throw-after-apply'); const r = await Cls._transferWatchCircleForcePoint(a, al);
     assert.equal(a.system.forcePoints.value, 2, 'transfer stands: NOT restored'); assert.equal(al.system.forcePoints.value, 2, 'no duplicate gain'); assert.equal(r.acknowledgementLost, true); ok('ally write applied but acknowledgement lost: transfer stands, no duplication'); }
   { const a = mkA('src', 0), al = mkA('ally', 1); injectOnAlly('ok'); await assert.rejects(() => Cls._transferWatchCircleForcePoint(a, al), /normal Force Point/); assert.equal(al.system.forcePoints.value, 1); ok('no normal point: nothing moves'); }
-  { const a = mkA('src', 3); injectOnAlly('ok'); assert.equal(await Cls._transferWatchCircleForcePoint(a, null), null); assert.equal(a.system.forcePoints.value, 2); ok('no ally document: only the subtraction; the GM applies the gain (stated on the card)'); }
+  { const a = mkA('src', 3); injectOnAlly('ok'); await assert.rejects(() => Cls._transferWatchCircleForcePoint(a, null), /resolvable ally actor/); assert.equal(a.system.forcePoints.value, 3); ok('no ally actor: refused BEFORE any debit (no point leaves with nothing to receive it)'); }
+  { // the SOURCE write applies and then throws: the debit stands and the ally still receives its point (no one-sided loss)
+    const a = mkA('src', 3), al = mkA('ally', 1); injectOnAlly('ok'); const real = ActorEngine.updateActor; let thrown = false;
+    ActorEngine.updateActor = async (actor, update) => { const r = await real(actor, update); if (actor.id === 'src' && !thrown) { thrown = true; throw new Error('ack lost on source'); } return r; };
+    const r = await Cls._transferWatchCircleForcePoint(a, al); ActorEngine.updateActor = real;
+    assert.equal(a.system.forcePoints.value, 2); assert.equal(al.system.forcePoints.value, 2); assert.equal(r.granted, 1); ok('source write applied but acknowledgement lost: debit stands and the ally is credited exactly once'); }
+  { // the SOURCE write fails before applying: nothing moves
+    const a = mkA('src', 3), al = mkA('ally', 1); const real = ActorEngine.updateActor;
+    ActorEngine.updateActor = async (actor, update) => { if (actor.id === 'src') throw new Error('source write failed'); return real(actor, update); };
+    await assert.rejects(() => Cls._transferWatchCircleForcePoint(a, al), /source write failed/); ActorEngine.updateActor = real;
+    assert.equal(a.system.forcePoints.value, 3); assert.equal(al.system.forcePoints.value, 1); ok('source write fails before applying: nothing moves'); }
   { const src = readFileSync(new URL('../scripts/engine/talent/consular-talent-actions.js', import.meta.url), 'utf8');
     const i = src.indexOf('static async promptWatchCircleInitiate'); const body = src.slice(i, src.indexOf('static async promptAcrobaticRecovery', i));
-    assert.ok(body.indexOf('showRollModifiersDialog') < body.indexOf('_spendReadyFarseeing'), 'Farseeing is consumed only after the roll dialog is confirmed'); ok('cancelling the roll dialog no longer consumes Farseeing'); }
+    assert.ok(body.indexOf('showRollModifiersDialog') < body.indexOf('_spendReadyFarseeing'), 'Farseeing is consumed only after the roll dialog is confirmed');
+    assert.ok(body.indexOf('resolvable ally actor') < body.indexOf('_findReadyFarseeing'), 'a missing ally is refused before Farseeing/roll'); ok('cancelling the roll dialog no longer consumes Farseeing'); }
 } finally { Object.assign(ActorEngine, saved); }
 console.log(`class-force-v2-watchcircle-exemption: ${n} checks passed`);
