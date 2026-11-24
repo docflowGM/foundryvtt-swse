@@ -3,6 +3,7 @@
  * A GM confirms LOS; target player owns the eventual resource-spend
  * consequence. All operations use existing V2 authorities.
  */
+import {shouldAutoPromptTemptationChoice} from '/systems/foundryvtt-swse/scripts/engine/progression/utils/temptation-choice-routing.js';
 import {createTemptationActorSerializer} from '/systems/foundryvtt-swse/scripts/engine/progression/utils/temptation-actor-serializer.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
@@ -79,7 +80,13 @@ export class SithLordTemptationService {
     if(!sith?.id||!target?.id)throw new Error('Temptation requires Sith Lord and enemy Actors');
     if(globalThis.game?.user?.isGM!==true)
       throw new Error('GM must confirm Temptation target and line of sight');
-    return locked(sith,async()=>{
+    // Two stages, never nested (slices 6AC/6AD re-derived): stage 1 holds only the CASTER's turn (authority, action payment, roll);
+    // stage 2 holds only the TARGET's turn (fresh plan + write), so two Sith Lords marking each other cannot deadlock and two marks on
+    // one target cannot overwrite each other. The exact combat turn is captured before any async step and re-verified before the write.
+    const turnSnapshot=c=>({id:c?.id??null,round:c?.round??null,turn:c?.turn??null,
+      combatantId:c?.combatant?.id??null});
+    const sameTurn=(a,b)=>a.id===b.id&&a.round===b.round&&a.turn===b.turn&&a.combatantId===b.combatantId;
+    const stage1=await locked(sith,async()=>{
       if(!apexClassFeatureAccess(sith,'sith_lord').allowed)
         throw new Error('Sith Lord class features are unavailable at current Dark Side Score');
       if(!combat?.id||globalThis.game?.combat?.id!==combat.id||!isCurrentTurn(sith,combat))
@@ -87,6 +94,7 @@ export class SithLordTemptationService {
       if(!confirmedLineOfSight)throw new Error('GM line-of-sight confirmation required');
       const will=targetWill(target);
       if(will===null)throw new Error('Target Will Defense is not verified');
+      const turnAtAction=turnSnapshot(combat);
       // Pay action BEFORE the skill check. A failed check consumes the
       // standard action and installs no pending target effect.
       const paid=await ActionEconomyConsumption.spend(sith,'standard',{
@@ -95,20 +103,31 @@ export class SithLordTemptationService {
       },{notify:true});
       if(paid?.committed!==true||paid?.engineResult?.allowed===false)
         throw new Error('Temptation standard action was not committed');
-      let rolled=false;
       try{
         const roll=await rollSkill(sith,'persuasion',{
           skillUse:{key:'sith-lord-temptation',label:'Temptation'},
         });
         if(!roll||!Number.isFinite(Number(roll.total)))
           throw new Error('Temptation Persuasion roll was not completed');
-        rolled=true;
+        return {will,turnAtAction,total:Number(roll.total)};
+      }catch(error){
+        // Never refund a valid rolled skill failure; here the roll itself did not complete, so the action is returned.
+        const rollback=await paid.rollback?.();
+        if(rollback!==true)throw new Error('Temptation action INDETERMINATE: '+error.message);
+        throw error;
+      }
+    });
+    return locked(target,async()=>{
+      try{
+        // The mark is stamped from the CURRENT combat state, so it must be the very turn the action was taken on.
+        if(!sameTurn(stage1.turnAtAction,turnSnapshot(combat)))
+          throw new Error('combat turn advanced during the Temptation roll');
         const plan=planTemptationMark({
-          caster:sith,target,combat,checkTotal:Number(roll.total),
-          willDefense:will,confirmedLineOfSight:true
+          caster:sith,target,combat,checkTotal:stage1.total,
+          willDefense:stage1.will,confirmedLineOfSight:true
         });
         if(plan.reason==='persuasion-failed')return {
-          success:true,applied:false,checkTotal:Number(roll.total),willDefense:will
+          success:true,applied:false,checkTotal:stage1.total,willDefense:stage1.will
         };
         if(!plan.allowed)throw new Error('Temptation mark rejected: '+plan.reason);
         if(!isCurrentTurn(sith,combat)||!apexClassFeatureAccess(sith,'sith_lord').allowed)
@@ -116,15 +135,11 @@ export class SithLordTemptationService {
         await ActorEngine.applyMutationPlan(target,{
           set:plan.updates
         },{source:'SithLordTemptationService.activate',transactional:true});
-        return {success:true,applied:true,checkTotal:Number(roll.total),
-          willDefense:will,targetActorId:actorIdentity(target),encounterId:combat.id};
+        return {success:true,applied:true,checkTotal:stage1.total,
+          willDefense:stage1.will,targetActorId:actorIdentity(target),encounterId:combat.id};
       }catch(error){
-        // Never refund a valid rolled skill failure. If mutation after a
-        // successful check failed, the status requires GM reconciliation.
-        if(rolled)throw new Error('Temptation post-roll outcome requires GM review: '+error.message);
-        const rollback=await paid.rollback?.();
-        if(rollback!==true)throw new Error('Temptation action INDETERMINATE: '+error.message);
-        throw error;
+        // The skill check already happened and is never refunded: the outcome needs GM reconciliation.
+        throw new Error('Temptation post-roll outcome requires GM review: '+error.message);
       }
     });
   }
@@ -271,6 +286,9 @@ export class SithLordTemptationService {
       ...Array.from(globalThis.canvas?.tokens?.placeables??[]).map(t=>t.actor).filter(Boolean),
     ];
     for(const target of new Map(actors.filter(x=>x?.id).map(x=>[actorIdentity(x),x])).values()){
+      // Read-only prefilter (slice 6AB): world actors with nothing to expire never take a lock; the authoritative plan is still
+      // recomputed from fresh state inside the actor's turn.
+      if(!expireTemptationEntries(target,combat,{encounterEnd,nextTurn}).changed)continue;
       try{
         // The plan is computed INSIDE the actor's turn from fresh state, so a queued expiry never overwrites a newer write.
         await locked(target,async()=>{
@@ -300,8 +318,15 @@ export function registerSithLordTemptationHooks(){
    const report=await SithLordTemptationService.consumeSpendReceipt(event);
    // The consequence is now stored durably on the target as pending-target-choice; acknowledging the
    // trigger does not wait on the prompt.
-   if(report?.handled)void SithLordTemptationService.resolvePending(event.actor).catch(error=>
-     globalThis.ui?.notifications?.error?.('Temptation consequence pending GM review: '+error.message));
+   if(!report?.handled)return;
+   // Slice 6AE: the consequence belongs to the AFFECTED actor. A GM who happened to perform the spend must not be prompted to choose
+   // for a connected player-owner; the durable pending choice stays on the actor for that owner (or an explicit GM review).
+   if(shouldAutoPromptTemptationChoice(event.actor,{user:globalThis.game?.user,users:globalThis.game?.users})){
+     void SithLordTemptationService.resolvePending(event.actor).catch(error=>
+       globalThis.ui?.notifications?.error?.('Temptation consequence pending GM review: '+error.message));
+   }else{
+     globalThis.ui?.notifications?.info?.('Temptation consequence recorded; awaiting target-owner or GM review');
+   }
  };
  // Each resource has its own ledger and outbox; Destiny is never treated as a Force Point.
  registerSpendTriggerConsumer('force',deliver);
