@@ -13,11 +13,14 @@ const RETIRED_FILES = [
   'scripts/talents/DarkSidePowers.js', 'scripts/talents/dark-side-powers-init.js',
   'scripts/engine/talent/dark-side-devotee-mechanics.js', 'scripts/talents/dark-side-devotee-macros.js', 'scripts/talents/dark-side-devotee-init.js',
   'scripts/engine/talent/light-side-talent-mechanics.js', 'scripts/talents/light-side-talent-macros.js', 'scripts/talents/light-side-init.js',
-  'scripts/engine/talent/dark-side-talent-mechanics.js', 'scripts/talents/dark-side-talent-macros.js', 'scripts/talents/dark-side-init.js'
+  'scripts/engine/talent/dark-side-talent-mechanics.js', 'scripts/talents/dark-side-talent-macros.js', 'scripts/talents/dark-side-init.js',
+  // non-Force macro wrappers (owner-approved sweep, 2026-11-24)
+  'scripts/talents/noble-talent-macros.js', 'scripts/talents/scoundrel-talent-macros.js', 'scripts/talents/scout-talent-macros.js',
+  'scripts/talents/soldier-talent-macros.js', 'scripts/talents/prestige-talent-macros.js'
 ];
 {
   for (const f of RETIRED_FILES) assert.ok(!existsSync(join(root, f)), `${f} must stay retired`);
-  ok('the 11 legacy Dark/Light Side execution, macro and initializer files stay deleted');
+  ok('the 16 retired legacy files (11 Dark/Light Side + 5 non-Force macro wrappers) stay deleted');
 }
 {
   const names = RETIRED_FILES.map((f) => f.split('/').pop().replace(/\.js$/, ''));
