@@ -42,12 +42,12 @@ const RETIRED_FILES = [
   ok('the legacy window.SWSE.talents.darkSidePowers / swiftPower macro globals are not installed');
 }
 {
-  const eng = readFileSync(join(root, 'scripts/engine/talent/talent-effect-engine.js'), 'utf8');
-  const RETIRED_PLANNERS = ['ChannelAggression', 'ChannelAnger', 'CripplingStrike', 'DarkSideTalisman', 'EndChannelAnger', 'SwiftPower', 'DarkSideSavant', 'WrathOfDarkSide', 'Direct', 'ConsularsWisdom', 'ExposingStrike', 'DarkRetaliation', 'SkilledAdvisor', 'ApprenticeBoon', 'RenewVision', 'AdeptNegotiator', 'DarkHealing', 'ImprovedDarkHealing', 'DarkHealingField', 'WickedStrike', 'DrainForce', 'RemoveCripplingStrike', 'DestroyDarkSideTalisman', 'SithTalisman', 'DestroySithTalisman', 'ClearSithAlchemicalBonus', 'SetStolenFormTalent', 'CreateSithAlchemicalWeapon', 'ActivateSithAlchemicalBonus'];
-  for (const name of RETIRED_PLANNERS) assert.doesNotMatch(eng, new RegExp(`static\\s+async\\s+build${name}Plan\\s*\\(`), `build${name}Plan stays retired`);
-  assert.doesNotMatch(eng, /forcePoints/, 'the still-loaded TalentEffectEngine writes no Force Point balance');
-  assert.match(eng, /export class TalentEffectEngine/, 'the still-loaded engine itself is NOT deleted wholesale');
-  ok('29 dead Force Point / Dark-Light planners are gone from TalentEffectEngine; the loaded engine and its active planners remain');
+  // The planner engine and its compatibility shims are gone (batches 2-3 of the dead talent-engine chain).
+  assert.ok(!existsSync(join(root, 'scripts/engine/talent/talent-effect-engine.js')), 'TalentEffectEngine stays deleted (no empty facade)');
+  const hits = [];
+  for (const f of [...walk(join(root, 'scripts')), join(root, 'index.js')]) { const src = readFileSync(f, 'utf8'); if (/TalentEffectEngine|talent-effect-engine|installTalentEffectDamageCompatibility|applyPostDamageEffects/.test(src)) hits.push(relative(root, f)); }
+  assert.deepEqual(hits.filter((h) => !h.endsWith('damage-talent-contributions.js') && !h.endsWith('actor-engine.js')), [], `production code still references the retired talent engine: ${hits.join(', ')}`);
+  ok('TalentEffectEngine, its damage call and its runtime hotfix shim stay deleted (no production reference)');
 }
 {
   // Published content is untouched: the talents themselves remain canonical Items.

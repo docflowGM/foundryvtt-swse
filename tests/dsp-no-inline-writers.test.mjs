@@ -85,8 +85,7 @@ assert.deepEqual(
 // caught by name, not just by the aggregate empty-array assertion above.
 const mustNotTrip = [
   'utils/force-points.js',
-  'components/force-suite.js',
-  'engine/talent/talent-effect-engine.js'
+  'components/force-suite.js'
 ];
 for (const relPath of mustNotTrip) {
   const src = await readFile(path.join(scriptsRoot, relPath), 'utf8');
