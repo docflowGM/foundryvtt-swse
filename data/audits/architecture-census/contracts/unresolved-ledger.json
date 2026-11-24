@@ -1,0 +1,7 @@
+{
+ "schema": "swse.v2-contract.unresolved-ledger/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "generator": "tools/architecture-census/assemble-contracts.mjs",
+ "counts": {},
+ "items": []
+}

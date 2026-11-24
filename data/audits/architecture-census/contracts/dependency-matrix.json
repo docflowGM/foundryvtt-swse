@@ -1,0 +1,3209 @@
+{
+ "schema": "swse.v2-contract.dependency-matrix/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "generator": "tools/architecture-census/assemble-contracts.mjs",
+ "proposedLayers": {
+  "infrastructure": 0,
+  "settings-config": 0,
+  "data-registries": 0,
+  "chat": 0,
+  "governance": 0,
+  "actor-core": 1,
+  "abilities-effects": 1,
+  "rolls": 1,
+  "classes": 2,
+  "species": 2,
+  "skills": 2,
+  "feats": 2,
+  "talents": 2,
+  "force": 2,
+  "combat": 2,
+  "equipment": 2,
+  "customization": 2,
+  "store-economy": 2,
+  "vehicles": 2,
+  "droids": 2,
+  "npc-followers": 2,
+  "houserules": 2,
+  "progression": 3,
+  "mentor-suggestion": 3,
+  "galactic-profiles": 3,
+  "holonet": 3,
+  "games": 3,
+  "ui-shell": 4,
+  "migration": 5,
+  "compat-patches": 5
+ },
+ "note": "Layers are PROPOSED (A-P1). Edge counts are runtime import edges between primary domains.",
+ "rows": [
+  {
+   "from": "progression",
+   "to": "infrastructure",
+   "edges": 225,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "infrastructure",
+   "edges": 119,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "combat",
+   "to": "equipment",
+   "edges": 103,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "ui-shell",
+   "to": "holonet",
+   "edges": 88,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "feats",
+   "to": "infrastructure",
+   "edges": 86,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "infrastructure",
+   "edges": 77,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "progression",
+   "to": "mentor-suggestion",
+   "edges": 66,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "feats",
+   "to": "actor-core",
+   "edges": 62,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "progression",
+   "to": "actor-core",
+   "edges": 60,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "combat",
+   "to": "infrastructure",
+   "edges": 58,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "combat",
+   "to": "actor-core",
+   "edges": 57,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "combat",
+   "edges": 56,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "feats",
+   "to": "combat",
+   "edges": 53,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "actor-core",
+   "to": "infrastructure",
+   "edges": 39,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "equipment",
+   "edges": 39,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "combat",
+   "to": "vehicles",
+   "edges": 36,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "progression",
+   "to": "force",
+   "edges": 36,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "combat",
+   "to": "abilities-effects",
+   "edges": 35,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "vehicles",
+   "to": "combat",
+   "edges": 35,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "governance",
+   "to": "infrastructure",
+   "edges": 34,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "infrastructure",
+   "edges": 33,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "force",
+   "to": "infrastructure",
+   "edges": 33,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "progression",
+   "edges": 33,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "progression",
+   "edges": 33,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "actor-core",
+   "edges": 32,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "vehicles",
+   "to": "actor-core",
+   "edges": 32,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "progression",
+   "to": "talents",
+   "edges": 31,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "infrastructure",
+   "to": "ui-shell",
+   "edges": 30,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "progression",
+   "to": "classes",
+   "edges": 28,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "force",
+   "to": "actor-core",
+   "edges": 26,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "progression",
+   "to": "abilities-effects",
+   "edges": 26,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "actor-core",
+   "to": "ui-shell",
+   "edges": 25,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "progression",
+   "to": "species",
+   "edges": 25,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "npc-followers",
+   "edges": 25,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "store-economy",
+   "edges": 25,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "houserules",
+   "to": "infrastructure",
+   "edges": 24,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "store-economy",
+   "to": "infrastructure",
+   "edges": 24,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "progression",
+   "to": "houserules",
+   "edges": 23,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "infrastructure",
+   "to": "actor-core",
+   "edges": 22,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 1,
+   "kind": "upward"
+  },
+  {
+   "from": "ui-shell",
+   "to": "games",
+   "edges": 22,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "actor-core",
+   "to": "combat",
+   "edges": 21,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "combat",
+   "to": "rolls",
+   "edges": 21,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "npc-followers",
+   "to": "actor-core",
+   "edges": 20,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "rolls",
+   "to": "combat",
+   "edges": 20,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "ui-shell",
+   "to": "galactic-profiles",
+   "edges": 20,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "actor-core",
+   "to": "progression",
+   "edges": 19,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "actor-core",
+   "to": "governance",
+   "edges": 18,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "talents",
+   "to": "infrastructure",
+   "edges": 18,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "customization",
+   "to": "actor-core",
+   "edges": 17,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "droids",
+   "to": "actor-core",
+   "edges": 17,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "infrastructure",
+   "to": "combat",
+   "edges": 17,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "progression",
+   "to": "ui-shell",
+   "edges": 17,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "rolls",
+   "to": "infrastructure",
+   "edges": 17,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "talents",
+   "to": "ui-shell",
+   "edges": 17,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "ui-shell",
+   "to": "skills",
+   "edges": 17,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "infrastructure",
+   "to": "talents",
+   "edges": 16,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "progression",
+   "to": "feats",
+   "edges": 16,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "customization",
+   "to": "infrastructure",
+   "edges": 15,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "droids",
+   "to": "infrastructure",
+   "edges": 15,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "npc-followers",
+   "to": "infrastructure",
+   "edges": 15,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "progression",
+   "to": "data-registries",
+   "edges": 15,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "talents",
+   "to": "actor-core",
+   "edges": 15,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "force",
+   "edges": 15,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "vehicles",
+   "to": "infrastructure",
+   "edges": 15,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "combat",
+   "to": "chat",
+   "edges": 14,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "combat",
+   "to": "feats",
+   "edges": 14,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "customization",
+   "to": "store-economy",
+   "edges": 14,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "talents",
+   "to": "force",
+   "edges": 14,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "ui-shell",
+   "to": "customization",
+   "edges": 14,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "compat-patches",
+   "to": "combat",
+   "edges": 13,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "compat-patches",
+   "to": "progression",
+   "edges": 13,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "customization",
+   "to": "droids",
+   "edges": 13,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "customization",
+   "to": "equipment",
+   "edges": 13,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "classes",
+   "edges": 13,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "skills",
+   "to": "infrastructure",
+   "edges": 13,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "store-economy",
+   "to": "vehicles",
+   "edges": 13,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "actor-core",
+   "edges": 12,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "combat",
+   "to": "progression",
+   "edges": 12,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "holonet",
+   "to": "games",
+   "edges": 12,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "infrastructure",
+   "to": "progression",
+   "edges": 12,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "progression",
+   "to": "droids",
+   "edges": 12,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "rolls",
+   "to": "chat",
+   "edges": 12,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "talents",
+   "to": "rolls",
+   "edges": 12,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "talents",
+   "edges": 12,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "actor-core",
+   "to": "customization",
+   "edges": 11,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "actor-core",
+   "to": "vehicles",
+   "edges": 11,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "combat",
+   "to": "houserules",
+   "edges": 11,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "combat",
+   "to": "ui-shell",
+   "edges": 11,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "equipment",
+   "to": "actor-core",
+   "edges": 11,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "equipment",
+   "to": "combat",
+   "edges": 11,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "governance",
+   "to": "actor-core",
+   "edges": 11,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 1,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "feats",
+   "edges": 11,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "force",
+   "edges": 11,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "ui-shell",
+   "edges": 11,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "progression",
+   "to": "npc-followers",
+   "edges": 11,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "store-economy",
+   "to": "ui-shell",
+   "edges": 11,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "ui-shell",
+   "to": "vehicles",
+   "edges": 11,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "combat",
+   "edges": 10,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "compat-patches",
+   "to": "actor-core",
+   "edges": 10,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "compat-patches",
+   "to": "infrastructure",
+   "edges": 10,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "customization",
+   "to": "ui-shell",
+   "edges": 10,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "force",
+   "to": "combat",
+   "edges": 10,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "force",
+   "to": "ui-shell",
+   "edges": 10,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "npc-followers",
+   "to": "ui-shell",
+   "edges": 10,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "store-economy",
+   "to": "progression",
+   "edges": 10,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "vehicles",
+   "to": "store-economy",
+   "edges": 10,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "actor-core",
+   "to": "abilities-effects",
+   "edges": 9,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "combat",
+   "to": "force",
+   "edges": 9,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "data-registries",
+   "to": "progression",
+   "edges": 9,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "equipment",
+   "to": "ui-shell",
+   "edges": 9,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "force",
+   "to": "progression",
+   "edges": 9,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "holonet",
+   "to": "infrastructure",
+   "edges": 9,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "houserules",
+   "to": "combat",
+   "edges": 9,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "infrastructure",
+   "to": "mentor-suggestion",
+   "edges": 9,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "force",
+   "edges": 9,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "rolls",
+   "to": "equipment",
+   "edges": 9,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "talents",
+   "to": "progression",
+   "edges": 9,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "ui-shell",
+   "to": "feats",
+   "edges": 9,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "vehicles",
+   "to": "ui-shell",
+   "edges": 9,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "compat-patches",
+   "to": "npc-followers",
+   "edges": 8,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "customization",
+   "to": "mentor-suggestion",
+   "edges": 8,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "data-registries",
+   "to": "infrastructure",
+   "edges": 8,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "droids",
+   "to": "progression",
+   "edges": 8,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "equipment",
+   "to": "droids",
+   "edges": 8,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "equipment",
+   "to": "infrastructure",
+   "edges": 8,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "games",
+   "to": "holonet",
+   "edges": 8,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "infrastructure",
+   "to": "houserules",
+   "edges": 8,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "actor-core",
+   "edges": 8,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "species",
+   "to": "infrastructure",
+   "edges": 8,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "talents",
+   "to": "chat",
+   "edges": 8,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "talents",
+   "to": "equipment",
+   "edges": 8,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "ui-shell",
+   "to": "abilities-effects",
+   "edges": 8,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "houserules",
+   "edges": 8,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "equipment",
+   "edges": 7,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "actor-core",
+   "to": "force",
+   "edges": 7,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "combat",
+   "to": "customization",
+   "edges": 7,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "customization",
+   "to": "holonet",
+   "edges": 7,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "dev-tooling",
+   "to": "infrastructure",
+   "edges": 7,
+   "proposedLayerTo": 0,
+   "kind": "unlayered"
+  },
+  {
+   "from": "holonet",
+   "to": "ui-shell",
+   "edges": 7,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "houserules",
+   "to": "actor-core",
+   "edges": 7,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "houserules",
+   "to": "ui-shell",
+   "edges": 7,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "equipment",
+   "edges": 7,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "governance",
+   "edges": 7,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "migration",
+   "to": "actor-core",
+   "edges": 7,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "migration",
+   "to": "infrastructure",
+   "edges": 7,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "npc-followers",
+   "to": "progression",
+   "edges": 7,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "progression",
+   "to": "store-economy",
+   "edges": 7,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "progression",
+   "to": "vehicles",
+   "edges": 7,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "skills",
+   "to": "progression",
+   "edges": 7,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "ui-shell",
+   "to": "governance",
+   "edges": 7,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "species",
+   "edges": 7,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "vehicles",
+   "to": "rolls",
+   "edges": 7,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "actor-core",
+   "to": "feats",
+   "edges": 6,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "actor-core",
+   "to": "species",
+   "edges": 6,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "classes",
+   "to": "mentor-suggestion",
+   "edges": 6,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "combat",
+   "to": "talents",
+   "edges": 6,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "equipment",
+   "to": "customization",
+   "edges": 6,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "force",
+   "to": "rolls",
+   "edges": 6,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "galactic-profiles",
+   "to": "infrastructure",
+   "edges": 6,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "galactic-profiles",
+   "to": "npc-followers",
+   "edges": 6,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "infrastructure",
+   "to": "classes",
+   "edges": 6,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "vehicles",
+   "edges": 6,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "houserules",
+   "edges": 6,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "rolls",
+   "to": "actor-core",
+   "edges": 6,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "store-economy",
+   "to": "actor-core",
+   "edges": 6,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "store-economy",
+   "to": "equipment",
+   "edges": 6,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "store-economy",
+   "to": "mentor-suggestion",
+   "edges": 6,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "ui-shell",
+   "to": "droids",
+   "edges": 6,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "species",
+   "edges": 5,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "classes",
+   "to": "infrastructure",
+   "edges": 5,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "compat-patches",
+   "to": "equipment",
+   "edges": 5,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "compat-patches",
+   "to": "ui-shell",
+   "edges": 5,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 4,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "customization",
+   "to": "vehicles",
+   "edges": 5,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "documentation",
+   "to": "progression",
+   "edges": 5,
+   "proposedLayerTo": 3,
+   "kind": "unlayered"
+  },
+  {
+   "from": "feats",
+   "to": "equipment",
+   "edges": 5,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "force",
+   "to": "abilities-effects",
+   "edges": 5,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "holonet",
+   "to": "actor-core",
+   "edges": 5,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "holonet",
+   "to": "houserules",
+   "edges": 5,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "abilities-effects",
+   "edges": 5,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "equipment",
+   "edges": 5,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "rolls",
+   "to": "abilities-effects",
+   "edges": 5,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "talents",
+   "to": "combat",
+   "edges": 5,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "ui-shell",
+   "to": "dev-tooling",
+   "edges": 5,
+   "proposedLayerFrom": 4,
+   "kind": "unlayered"
+  },
+  {
+   "from": "actor-core",
+   "to": "equipment",
+   "edges": 4,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "actor-core",
+   "to": "npc-followers",
+   "edges": 4,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "actor-core",
+   "to": "skills",
+   "edges": 4,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "combat",
+   "to": "droids",
+   "edges": 4,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "data-registries",
+   "to": "talents",
+   "edges": 4,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "equipment",
+   "to": "species",
+   "edges": 4,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "feats",
+   "to": "abilities-effects",
+   "edges": 4,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "feats",
+   "to": "skills",
+   "edges": 4,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "force",
+   "to": "feats",
+   "edges": 4,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "force",
+   "to": "houserules",
+   "edges": 4,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "games",
+   "to": "store-economy",
+   "edges": 4,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "governance",
+   "to": "abilities-effects",
+   "edges": 4,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 1,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "npc-followers",
+   "edges": 4,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "talents",
+   "edges": 4,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "npc-followers",
+   "to": "feats",
+   "edges": 4,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "npc-followers",
+   "to": "vehicles",
+   "edges": 4,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "rolls",
+   "to": "feats",
+   "edges": 4,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "rolls",
+   "to": "skills",
+   "edges": 4,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "skills",
+   "to": "abilities-effects",
+   "edges": 4,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "skills",
+   "to": "rolls",
+   "edges": 4,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "mentor-suggestion",
+   "edges": 4,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "droids",
+   "edges": 3,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "force",
+   "edges": 3,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "combat",
+   "to": "species",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "compat-patches",
+   "to": "species",
+   "edges": 3,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "compat-patches",
+   "to": "vehicles",
+   "edges": 3,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "customization",
+   "to": "rolls",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "dev-tooling",
+   "to": "droids",
+   "edges": 3,
+   "proposedLayerTo": 2,
+   "kind": "unlayered"
+  },
+  {
+   "from": "droids",
+   "to": "ui-shell",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "equipment",
+   "to": "feats",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "equipment",
+   "to": "force",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "feats",
+   "to": "force",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "feats",
+   "to": "progression",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "feats",
+   "to": "rolls",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "force",
+   "to": "chat",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "holonet",
+   "to": "combat",
+   "edges": 3,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "holonet",
+   "to": "store-economy",
+   "edges": 3,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "houserules",
+   "to": "skills",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "infrastructure",
+   "to": "customization",
+   "edges": 3,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "dev-tooling",
+   "edges": 3,
+   "proposedLayerFrom": 0,
+   "kind": "unlayered"
+  },
+  {
+   "from": "infrastructure",
+   "to": "rolls",
+   "edges": 3,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 1,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "species",
+   "edges": 3,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "store-economy",
+   "edges": 3,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "feats",
+   "edges": 3,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "npc-followers",
+   "to": "combat",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "progression",
+   "to": "settings-config",
+   "edges": 3,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "progression",
+   "to": "skills",
+   "edges": 3,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "skills",
+   "to": "actor-core",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "skills",
+   "to": "chat",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "skills",
+   "to": "classes",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "skills",
+   "to": "combat",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "species",
+   "to": "actor-core",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "species",
+   "to": "combat",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "store-economy",
+   "to": "droids",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "store-economy",
+   "to": "houserules",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "ui-shell",
+   "to": "rolls",
+   "edges": 3,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "vehicles",
+   "to": "npc-followers",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "vehicles",
+   "to": "progression",
+   "edges": 3,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "progression",
+   "edges": 2,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "vehicles",
+   "edges": 2,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "actor-core",
+   "to": "classes",
+   "edges": 2,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "actor-core",
+   "to": "houserules",
+   "edges": 2,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "actor-core",
+   "to": "store-economy",
+   "edges": 2,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "chat",
+   "to": "combat",
+   "edges": 2,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "chat",
+   "to": "infrastructure",
+   "edges": 2,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "chat",
+   "to": "rolls",
+   "edges": 2,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 1,
+   "kind": "upward"
+  },
+  {
+   "from": "combat",
+   "to": "governance",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "compat-patches",
+   "to": "data-registries",
+   "edges": 2,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "compat-patches",
+   "to": "rolls",
+   "edges": 2,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "compat-patches",
+   "to": "talents",
+   "edges": 2,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "data-registries",
+   "to": "classes",
+   "edges": 2,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "data-registries",
+   "to": "force",
+   "edges": 2,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "dev-tooling",
+   "to": "actor-core",
+   "edges": 2,
+   "proposedLayerTo": 1,
+   "kind": "unlayered"
+  },
+  {
+   "from": "dev-tooling",
+   "to": "progression",
+   "edges": 2,
+   "proposedLayerTo": 3,
+   "kind": "unlayered"
+  },
+  {
+   "from": "dev-tooling",
+   "to": "talents",
+   "edges": 2,
+   "proposedLayerTo": 2,
+   "kind": "unlayered"
+  },
+  {
+   "from": "documentation",
+   "to": "classes",
+   "edges": 2,
+   "proposedLayerTo": 2,
+   "kind": "unlayered"
+  },
+  {
+   "from": "documentation",
+   "to": "testing",
+   "edges": 2,
+   "kind": "unlayered"
+  },
+  {
+   "from": "droids",
+   "to": "combat",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "droids",
+   "to": "equipment",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "equipment",
+   "to": "abilities-effects",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "equipment",
+   "to": "data-registries",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "equipment",
+   "to": "dev-tooling",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "kind": "unlayered"
+  },
+  {
+   "from": "equipment",
+   "to": "settings-config",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "feats",
+   "to": "data-registries",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "force",
+   "to": "equipment",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "force",
+   "to": "store-economy",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "force",
+   "to": "talents",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "galactic-profiles",
+   "to": "droids",
+   "edges": 2,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "galactic-profiles",
+   "to": "holonet",
+   "edges": 2,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "governance",
+   "to": "houserules",
+   "edges": 2,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "governance",
+   "to": "mentor-suggestion",
+   "edges": 2,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "governance",
+   "to": "ui-shell",
+   "edges": 2,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "holonet",
+   "to": "mentor-suggestion",
+   "edges": 2,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "infrastructure",
+   "to": "abilities-effects",
+   "edges": 2,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 1,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "chat",
+   "edges": 2,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "infrastructure",
+   "to": "games",
+   "edges": 2,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "holonet",
+   "edges": 2,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "settings-config",
+   "edges": 2,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "skills",
+   "edges": 2,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "migration",
+   "to": "houserules",
+   "edges": 2,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "migration",
+   "to": "progression",
+   "edges": 2,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "npc-followers",
+   "to": "skills",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "npc-followers",
+   "to": "species",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "progression",
+   "to": "equipment",
+   "edges": 2,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "progression",
+   "to": "governance",
+   "edges": 2,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "rolls",
+   "to": "force",
+   "edges": 2,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "rolls",
+   "to": "progression",
+   "edges": 2,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "rolls",
+   "to": "species",
+   "edges": 2,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "rolls",
+   "to": "ui-shell",
+   "edges": 2,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "species",
+   "to": "progression",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "species",
+   "to": "ui-shell",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "store-economy",
+   "to": "combat",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "store-economy",
+   "to": "customization",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "store-economy",
+   "to": "testing",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "kind": "unlayered"
+  },
+  {
+   "from": "talents",
+   "to": "data-registries",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "talents",
+   "to": "npc-followers",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "talents",
+   "to": "settings-config",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "chat",
+   "edges": 2,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "vehicles",
+   "to": "abilities-effects",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "vehicles",
+   "to": "chat",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "vehicles",
+   "to": "droids",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "vehicles",
+   "to": "houserules",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "vehicles",
+   "to": "settings-config",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "vehicles",
+   "to": "skills",
+   "edges": 2,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "chat",
+   "edges": 1,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "classes",
+   "edges": 1,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "data-registries",
+   "edges": 1,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "feats",
+   "edges": 1,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "houserules",
+   "edges": 1,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "rolls",
+   "edges": 1,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "abilities-effects",
+   "to": "ui-shell",
+   "edges": 1,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "actor-core",
+   "to": "galactic-profiles",
+   "edges": 1,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "actor-core",
+   "to": "mentor-suggestion",
+   "edges": 1,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "actor-core",
+   "to": "rolls",
+   "edges": 1,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "chat",
+   "to": "holonet",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "classes",
+   "to": "force",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "classes",
+   "to": "houserules",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "classes",
+   "to": "progression",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "classes",
+   "to": "talents",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "combat",
+   "to": "settings-config",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "compat-patches",
+   "to": "abilities-effects",
+   "edges": 1,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "compat-patches",
+   "to": "chat",
+   "edges": 1,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "compat-patches",
+   "to": "droids",
+   "edges": 1,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "compat-patches",
+   "to": "store-economy",
+   "edges": 1,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "customization",
+   "to": "combat",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "customization",
+   "to": "data-registries",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "customization",
+   "to": "feats",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "data-registries",
+   "to": "droids",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "data-registries",
+   "to": "feats",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "data-registries",
+   "to": "houserules",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "data-registries",
+   "to": "skills",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "dev-tooling",
+   "to": "classes",
+   "edges": 1,
+   "proposedLayerTo": 2,
+   "kind": "unlayered"
+  },
+  {
+   "from": "dev-tooling",
+   "to": "data-registries",
+   "edges": 1,
+   "proposedLayerTo": 0,
+   "kind": "unlayered"
+  },
+  {
+   "from": "dev-tooling",
+   "to": "feats",
+   "edges": 1,
+   "proposedLayerTo": 2,
+   "kind": "unlayered"
+  },
+  {
+   "from": "dev-tooling",
+   "to": "governance",
+   "edges": 1,
+   "proposedLayerTo": 0,
+   "kind": "unlayered"
+  },
+  {
+   "from": "dev-tooling",
+   "to": "mentor-suggestion",
+   "edges": 1,
+   "proposedLayerTo": 3,
+   "kind": "unlayered"
+  },
+  {
+   "from": "dev-tooling",
+   "to": "skills",
+   "edges": 1,
+   "proposedLayerTo": 2,
+   "kind": "unlayered"
+  },
+  {
+   "from": "dev-tooling",
+   "to": "species",
+   "edges": 1,
+   "proposedLayerTo": 2,
+   "kind": "unlayered"
+  },
+  {
+   "from": "dev-tooling",
+   "to": "vehicles",
+   "edges": 1,
+   "proposedLayerTo": 2,
+   "kind": "unlayered"
+  },
+  {
+   "from": "droids",
+   "to": "abilities-effects",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "feats",
+   "to": "chat",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "feats",
+   "to": "customization",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "feats",
+   "to": "ui-shell",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "force",
+   "to": "classes",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "force",
+   "to": "settings-config",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "galactic-profiles",
+   "to": "progression",
+   "edges": 1,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "games",
+   "to": "progression",
+   "edges": 1,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "governance",
+   "to": "combat",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "governance",
+   "to": "data-registries",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "governance",
+   "to": "dev-tooling",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "kind": "unlayered"
+  },
+  {
+   "from": "governance",
+   "to": "npc-followers",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "holonet",
+   "to": "classes",
+   "edges": 1,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "holonet",
+   "to": "customization",
+   "edges": 1,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "holonet",
+   "to": "governance",
+   "edges": 1,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "holonet",
+   "to": "npc-followers",
+   "edges": 1,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "holonet",
+   "to": "progression",
+   "edges": 1,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 3,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "houserules",
+   "to": "classes",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "houserules",
+   "to": "feats",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "houserules",
+   "to": "force",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "houserules",
+   "to": "progression",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "houserules",
+   "to": "rolls",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "houserules",
+   "to": "species",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "houserules",
+   "to": "talents",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "infrastructure",
+   "to": "droids",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "galactic-profiles",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "migration",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 5,
+   "kind": "upward"
+  },
+  {
+   "from": "infrastructure",
+   "to": "skills",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "governance",
+   "edges": 1,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "species",
+   "edges": 1,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "mentor-suggestion",
+   "to": "store-economy",
+   "edges": 1,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "migration",
+   "to": "data-registries",
+   "edges": 1,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "migration",
+   "to": "force",
+   "edges": 1,
+   "proposedLayerFrom": 5,
+   "proposedLayerTo": 2,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "npc-followers",
+   "to": "chat",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "npc-followers",
+   "to": "droids",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "npc-followers",
+   "to": "rolls",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "progression",
+   "to": "dev-tooling",
+   "edges": 1,
+   "proposedLayerFrom": 3,
+   "kind": "unlayered"
+  },
+  {
+   "from": "progression",
+   "to": "rolls",
+   "edges": 1,
+   "proposedLayerFrom": 3,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "rolls",
+   "to": "customization",
+   "edges": 1,
+   "proposedLayerFrom": 1,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "settings-config",
+   "to": "houserules",
+   "edges": 1,
+   "proposedLayerFrom": 0,
+   "proposedLayerTo": 2,
+   "kind": "upward"
+  },
+  {
+   "from": "skills",
+   "to": "equipment",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "skills",
+   "to": "feats",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "skills",
+   "to": "force",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "skills",
+   "to": "houserules",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "skills",
+   "to": "talents",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "skills",
+   "to": "ui-shell",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 4,
+   "kind": "upward"
+  },
+  {
+   "from": "species",
+   "to": "abilities-effects",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "species",
+   "to": "equipment",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "species",
+   "to": "rolls",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "store-economy",
+   "to": "governance",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "talents",
+   "to": "abilities-effects",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 1,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "talents",
+   "to": "compat-patches",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 5,
+   "kind": "upward"
+  },
+  {
+   "from": "talents",
+   "to": "governance",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "ui-shell",
+   "to": "settings-config",
+   "edges": 1,
+   "proposedLayerFrom": 4,
+   "proposedLayerTo": 0,
+   "kind": "downward-or-same"
+  },
+  {
+   "from": "vehicles",
+   "to": "equipment",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "vehicles",
+   "to": "force",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 2,
+   "kind": "peer"
+  },
+  {
+   "from": "vehicles",
+   "to": "holonet",
+   "edges": 1,
+   "proposedLayerFrom": 2,
+   "proposedLayerTo": 3,
+   "kind": "upward"
+  }
+ ]
+}

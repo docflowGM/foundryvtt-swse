@@ -1,0 +1,152 @@
+{
+ "schema": "swse.v2-contract.traceability/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "generator": "tools/architecture-census/assemble-contracts.mjs",
+ "levelA": [
+  {
+   "requirement": "A-01",
+   "statement": "Single source of truth. One fact has one canonical owner; others reference, cache presentation, or derive — never co-own.",
+   "source": "ARCHITECTURE §I; campaign-domain-contracts §1; OSI",
+   "status": "APPROVED",
+   "probe": "(domain contracts)",
+   "observed": "Multi-domain mechanical definitions found for 14 responsibilities (`mechanical-authority-census.json`) — Phase 2"
+  },
+  {
+   "requirement": "A-02",
+   "statement": "Mutation gate. Actor state and owned-item state change only through `ActorEngine` (`scripts/governance/actor-engine/actor-engine.js`). Exceptions: world documents not owned by an actor, Foundry-only operations, each with a code comment.",
+   "source": "ARCHITECTURE §II/§VI; ENGINE-ARCH §2; progression-architecture; OSI",
+   "status": "APPROVED · **CONFLICT**",
+   "probe": "`P-A02`",
+   "observed": "**331** direct document-write sites in **120** live modules (155 `setFlag`, 48 `unsetFlag`, 35 `update`, 19 `create`, 19 `delete`, …). Highest: talents 72, combat 25, equipment 24, mentor 24, npc-followers 23, force 23"
+  },
+  {
+   "requirement": "A-03",
+   "statement": "Derived state ownership. `actor.system.derived` is computed by the V2 actor classes / derived calculators and read-only elsewhere.",
+   "source": "ARCHITECTURE §II",
+   "status": "APPROVED · **CONFLICT** (path)",
+   "probe": "`P-A03`",
+   "observed": "4 assignments outside `scripts/actors/**` (`scripts/engine/progression/xp-engine.js` ×2, `actor-engine.js` ×2)"
+  },
+  {
+   "requirement": "A-04",
+   "statement": "Presentation separation. Sheets, apps and templates render prepared data and emit intents; they do not compute rules or mutate documents.",
+   "source": "ARCHITECTURE §II/§VI; OSI",
+   "status": "APPROVED · **CONFLICT**",
+   "probe": "`P-A04`",
+   "observed": "54 direct writes in 26 live presentation modules (largest: `scripts/items/swse-item-sheet.js` 19, `scripts/apps/minion-manager.js` 8)"
+  },
+  {
+   "requirement": "A-05",
+   "statement": "Gameplay chat output goes through `scripts/chat/swse-chat.js`.",
+   "source": "ARCHITECTURE §II/§VI",
+   "status": "APPROVED · **CONFLICT**",
+   "probe": "`P-A05`",
+   "observed": "43 `ChatMessage.create` sites in 23 live modules"
+  },
+  {
+   "requirement": "A-06",
+   "statement": "Settings rule. House-rule reads in engines go through `HouseRuleService`.",
+   "source": "ENGINE-ARCH §3",
+   "status": "APPROVED · **CONFLICT**",
+   "probe": "`P-A06`",
+   "observed": "8 live `game.settings.get` sites in 6 engine modules"
+  },
+  {
+   "requirement": "A-07",
+   "statement": "Dependency direction. Engines do not import UI; dependencies flow downward; no cycles.",
+   "source": "ENGINE-ARCH §4/§5",
+   "status": "APPROVED · **CONFLICT**",
+   "probe": "`P-A07-*`",
+   "observed": "45 engine→UI import edges in 36 live engine modules; 9 static cycles (52 files); 31 domains in one SCC"
+  },
+  {
+   "requirement": "A-08",
+   "statement": "No mutation during render or in read-only/prepare phases; no recursive engine invocation; deterministic order.",
+   "source": "ARCHITECTURE §III",
+   "status": "APPROVED · **CONFLICT**",
+   "probe": "`P-A08`",
+   "observed": "1 lexical site: `scripts/apps/store/store-main.js:1437` `_onRender → this.actor.setFlag`"
+  },
+  {
+   "requirement": "A-09",
+   "statement": "Clean cutover. Legacy V1 systems stay retired; no compatibility shims, runtime monkey-patches, crosswalks or parallel authorities; old paths are rerouted then removed.",
+   "source": "ARCHITECTURE §VIII; progression-architecture (\"no runtime patching\"); E3-A4 OA-1; OSI",
+   "status": "APPROVED · **CONFLICT**",
+   "probe": "`P-A09`",
+   "observed": "17 live hotfix modules (`scripts/patches/**`, 3,939 SLOC); **20 prototype monkey-patches** (e.g. `TalentStep.prototype.*` in `telekinetic-prodigy-runtime-patches.js` and `custom-talent-tree-progression-overlay.js`; `SWSEItemSheet.prototype._onRender`); 64 live modules marked deprecated"
+  },
+  {
+   "requirement": "A-10",
+   "statement": "Credits. `TransactionEngine` (`scripts/engine/store/transaction-engine.js`) is the single source of truth for credit movement; no parallel ledgers; a trade is atomic — any failure fails the whole trade.",
+   "source": "OSI; combat-authority-map (\"Credits, purchases → TransactionEngine\")",
+   "status": "APPROVED · **CONFLICT** (candidate)",
+   "probe": "`P-A10`",
+   "observed": "15 credit-payload sites in 11 live modules outside TransactionEngine, incl. `scripts/engine/store/ledger-service.js:149,211`, `summary-step.js:1786`, `character-like-sheet.js:6087`, `progression-event-processor.js:409`"
+  },
+  {
+   "requirement": "A-11",
+   "statement": "Rules authority. Claude implements; it does not adjudicate ambiguous rules. Unresolved mechanics are `DEFERRED_RULES_REVIEW` in `docs/audits/swse-rules-decisions-pending.md`.",
+   "source": "CLAUDE.md",
+   "status": "APPROVED",
+   "probe": "—",
+   "observed": "Not probed; contracts cite the register"
+  },
+  {
+   "requirement": "A-12",
+   "statement": "Automation authority. The system executes rules from verified state and supplied context; unknown is not false; GM adjudicates circumstances.",
+   "source": "swse-automation-authority",
+   "status": "APPROVED",
+   "probe": "—",
+   "observed": "Not probed statically"
+  },
+  {
+   "requirement": "A-13",
+   "statement": "Certification separation. `FOUNDRY_TESTED` only from a live Foundry V13 run; offline tests and CI are not runtime acceptance.",
+   "source": "CLAUDE.md §6; step1 runbook",
+   "status": "APPROVED",
+   "probe": "—",
+   "observed": "Phases 0–2 make no live claim; step1 runbook is **NOT EXECUTED**"
+  },
+  {
+   "requirement": "A-14",
+   "statement": "Unified actor shell. character, droid, npc and vehicle actors use the unified V2 shell (`SWSEV2CharacterSheet` direction); no new standalone actor sheets; Holopad/Shell Host replaces older floating UIs.",
+   "source": "OSI",
+   "status": "APPROVED · **CONFLICT** (candidate)",
+   "probe": "`P-A14`",
+   "observed": "`index.js:175-199` registers `SWSEV2NpcSheet`, `SWSEV2DroidSheet`, `SWSEV2VehicleSheet` separately; whether they are thin subclasses of the shared shell is checked in Phase 2"
+  },
+  {
+   "requirement": "A-15",
+   "statement": "Progression authority. Chargen/level-up route through `ProgressionShell` / `ChargenShell` / `LevelupShell`; temporary choices live in session/draft state; finalization commits once through `ProgressionFinalizer` → `ActorEngine.applyMutationPlan`.",
+   "source": "OSI; progression-architecture",
+   "status": "APPROVED",
+   "probe": "`P-A15-A17`",
+   "observed": "All named authorities exist and are reachable"
+  },
+  {
+   "requirement": "A-16",
+   "statement": "Caching discipline. Cache display/derived work only, each with an explicit invalidation key; never cache permissions, credits, HP truth, roll/damage results or live documents.",
+   "source": "OSI",
+   "status": "APPROVED",
+   "probe": "`P-A16`",
+   "observed": "19 cache-holding live modules; 2 with no visible invalidation (`talent-step.js`, `sentinel-source-mapper.js`)"
+  },
+  {
+   "requirement": "A-17",
+   "statement": "Customization authority. `ItemCustomizationWorkbench`, `CustomizationWorkflow`, `UpgradeSlotEngine`, `UpgradeService`, `CustomizationBayApp`, droid/vehicle customization engines, lightsaber workbench. Old per-item modification apps stay retired.",
+   "source": "OSI",
+   "status": "APPROVED",
+   "probe": "`P-A15-A17`",
+   "observed": "All named authorities exist and are reachable"
+  },
+  {
+   "requirement": "A-18",
+   "statement": "Rules exclusions the implementation must respect (no D&D crit confirmation; lightsabers ignore DR by default; weapon damage adds ½ heroic level unless excluded; Force powers do not add ½ level by default; droids cannot benefit from organic resting; Nonheroic is not a player class).",
+   "source": "OSI",
+   "status": "APPROVED",
+   "probe": "—",
+   "observed": "Verified per domain in Phase 2 where code paths exist"
+  }
+ ],
+ "domainRequirements": []
+}

@@ -1,0 +1,26 @@
+{
+ "schema": "swse.v2-contract.index/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "generator": "tools/architecture-census/assemble-contracts.mjs",
+ "levelA": [
+  "A-01",
+  "A-02",
+  "A-03",
+  "A-04",
+  "A-05",
+  "A-06",
+  "A-07",
+  "A-08",
+  "A-09",
+  "A-10",
+  "A-11",
+  "A-12",
+  "A-13",
+  "A-14",
+  "A-15",
+  "A-16",
+  "A-17",
+  "A-18"
+ ],
+ "contracts": []
+}
