@@ -26,7 +26,8 @@ globalThis.Hooks = {
   callAll: (name, ...args) => Promise.all((hookHandlers[name] ?? []).map((fn) => fn(...args)))
 };
 
-const live = { id: 'combat-1', started: true, round: 2, turn: 1, combatant: { id: 'cb-sith', actor: null } };
+const ORDER = [{ id: 'cb-tgt' }, { id: 'cb-sith' }, { id: 'cb-sith2' }];
+const live = { id: 'combat-1', started: true, round: 2, turn: 1, turns: ORDER, combatant: { id: 'cb-sith', actor: null } };
 globalThis.game = Object.assign(globalThis.game ?? {}, {
   user: { isGM: true }, combat: live, actors: [], time: { worldTime: 0 }, ready: false
 });
@@ -69,10 +70,20 @@ const makeTarget = (id = 'target-1', { owner = true } = {}) => {
   return a;
 };
 let req = 0;
-const spend = (actor) => { live.combatant = { id: `cb-${actor.id}`, actor }; return ActorEngine.spendForcePoints(actor, 1, { useKind: 'roll-bonus', rollDomain: 'skill.acrobatics', requestId: `r${++req}` }); };
+// The acting recipient takes their turn BEFORE the source in the (mutable) initiative order; ids, not indexes, decide the window.
+let WHERE = 'before';   // before | after | at | no-order : where the acting recipient sits relative to the source (cb-sith)
+const actAs = (actor) => {
+  const id = `cb-${actor.id}`;
+  if (WHERE === 'at') { live.combatant = { id: 'cb-sith', actor }; live.turns = ORDER; live.turn = 1; return; }
+  live.combatant = { id, actor };
+  if (WHERE === 'no-order') { live.turns = undefined; live.turn = 0; return; }
+  live.turns = WHERE === 'after' ? [...ORDER, { id }] : [{ id }, ...ORDER];
+  live.turn = WHERE === 'after' ? ORDER.length : 0;
+};
+const spend = (actor) => { actAs(actor); return ActorEngine.spendForcePoints(actor, 1, { useKind: 'roll-bonus', rollDomain: 'skill.acrobatics', requestId: `r${++req}` }); };
 const dledger = (a) => a.flags?.swse?.destinyPointLedger?.receipts ?? [];
 let dreq = 0;
-const dspend = (actor, amount = 1) => { live.combatant = { id: `cb-${actor.id}`, actor }; return ActorEngine.spendDestinyPoints(actor, amount, { requestId: `d${++dreq}` }); };
+const dspend = (actor, amount = 1) => { actAs(actor); return ActorEngine.spendDestinyPoints(actor, amount, { requestId: `d${++dreq}` }); };
 let n = 0;
 const ok = (label) => { n += 1; console.log(`  [${n}] ${label} OK`); };
 
@@ -226,9 +237,9 @@ try {
     const r1 = await spend(t); await ActorEngine.finalizeForcePointSpend(t, r1);
     assert.equal(EVENTS(t).length, 2, 'two active sources => two target-owned choices for ONE spend');
     assert.deepEqual(new Set(EVENTS(t).map((e) => e.receiptId)), new Set([r1.receiptId]));
-    live.round = 3;
+    live.round = 3; live.turn = 0; live.combatant = { id: 'cb-tgt', actor: null };      // next round, the recipient acts before the source
     const r2 = await spend(t); await ActorEngine.finalizeForcePointSpend(t, r2);
-    live.round = 2;
+    live.round = 2; live.turn = 1; live.combatant = { id: 'cb-sith', actor: null };
     assert.equal(EVENTS(t).length, 4);
     ok('overlapping marks: one choice per active source per spend; no cross-receipt dedupe');
   }
@@ -276,7 +287,7 @@ try {
     targetActorId: t.id, encounterId: live.id, createdRound: 2, createdTurn: 5, checkTotal: 30, willDefense: 10, state: 'active', ...over
   }]);
   const bareTarget = (id) => { const t = makeTarget(id); setPath(t, TEMPT, []); return t; };
-  const setClock = (round, turn) => { live.round = round; live.turn = turn; };
+  const setClock = (round, turn) => { live.round = round; live.turn = turn; live.combatant = { id: ORDER[turn]?.id ?? 'cb-x', actor: null }; };
 
   // 13. valid spend -> listener fails -> mark expires -> recovery creates exactly one pending choice.
   {
@@ -324,21 +335,23 @@ try {
     const a = makeTarget('c16a'); expireMarks(a);
     const ra = await spend(a); await ActorEngine.finalizeForcePointSpend(a, ra);
     assert.equal(EVENTS(a).length, 0, 'spend after expiration never qualifies');
-    const b = makeTarget('c16b'); setClock(3, 5);                // round createdRound+1 and turn >= createdTurn: window closed
+    const b = makeTarget('c16b'); live.round = 3; WHERE = 'after';   // next round, the recipient acts AFTER the source: window closed
     const rb = await spend(b); await ActorEngine.finalizeForcePointSpend(b, rb);
-    setClock(2, 1);
+    live.round = 2; WHERE = 'before';
     assert.equal(EVENTS(b).length, 0, "spend once the source's next turn has begun never qualifies");
     ok('C4: spend after expiry, or after the window closed, never qualifies');
   }
 
   // 17. same-round / next-round / initiative-order boundaries (createdRound 2, createdTurn 5).
   {
-    const cases = [[2, 0, 1], [2, 5, 1], [2, 9, 1], [3, 4, 1], [3, 5, 0], [3, 9, 0], [4, 0, 0], [1, 9, 0]];
-    for (const [round, turn, expected] of cases) {
-      const t = makeTarget(`c17-${round}-${turn}`);
-      setClock(round, turn);
+    // Identity-based window (slice 6V): the source's creation POSITION (createdTurn 5) is never compared; round + order decide.
+    const cases = [[2, 'before', 1], [2, 'at', 1], [2, 'after', 1], [3, 'before', 1], [3, 'at', 0], [3, 'after', 0], [3, 'no-order', 0], [4, 'before', 0], [1, 'before', 0]];
+    for (const [round, where, expected] of cases) {
+      const t = makeTarget(`c17-${round}-${where}`);
+      live.round = round; WHERE = where;
       const r = await spend(t); await ActorEngine.finalizeForcePointSpend(t, r);
-      assert.equal(EVENTS(t).length, expected, `round ${round} turn ${turn} => ${expected ? 'qualifies' : 'does not qualify'}`);
+      assert.equal(EVENTS(t).length, expected, `round ${round}, recipient ${where} the source => ${expected ? 'qualifies' : 'does not qualify'}`);
+      live.round = 2; WHERE = 'before';
     }
     setClock(2, 1);
     ok('C5: round/turn/initiative-order boundary: window closes exactly when the source\'s next turn begins');
@@ -547,8 +560,8 @@ try {
     const b = makeTarget('d5b'); expireMarks(b);
     const rb = await dspend(b); await ActorEngine.finalizeDestinyPointSpend(b, rb);
     assert.equal(EVENTS(b).length, 0, 'a Destiny spend after expiry never qualifies');
-    const c = makeTarget('d5c'); setClock(3, 5);
-    const rc = await dspend(c); await ActorEngine.finalizeDestinyPointSpend(c, rc); setClock(2, 1);
+    const c = makeTarget('d5c'); live.round = 3; WHERE = 'after';
+    const rc = await dspend(c); await ActorEngine.finalizeDestinyPointSpend(c, rc); live.round = 2; WHERE = 'before';
     assert.equal(EVENTS(c).length, 0, "a Destiny spend once the source's next turn began never qualifies");
     ok('D5: Destiny negatives: before-mark, after-expiry and after-window spends never qualify');
   }

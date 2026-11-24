@@ -60,19 +60,49 @@ export function planTemptationMark({caster,target,combat,checkTotal,willDefense,
  * Marks that qualify a resource spend made NOW (the printed window). Even if the GM's cleanup hook has not run yet, the
  * pending effect cannot extend past the source Sith Lord's NEXT turn.
  */
+/**
+ * Printed duration: until the source Sith Lord next begins a turn. Foundry's combat.turn is a POSITION in a mutable
+ * initiative order, not an identity, so the creation position is never compared. In the creation round the mark stays open; in
+ * the NEXT round it is open only while the current combatant is not the source and sits BEFORE the source in the order given
+ * by `snapshot.order` (ids of combat.turns at that moment). A missing/inconsistent order, a missing source combatant, or an
+ * unidentified current combatant fails closed (no consequence is manufactured past a window that cannot be verified). The GM's
+ * combatTurn cleanup hook remains the persisted expiry. (Slice 6V re-derived on the spend-time evidence model.)
+ */
+export function temptationWindowOpenAt(mark,snapshot){
+  if(!mark||!snapshot||!Number.isSafeInteger(mark.createdRound)||!Number.isSafeInteger(snapshot.round))return false;
+  const round=snapshot.round;
+  if(round<mark.createdRound||round>mark.createdRound+1)return false;
+  if(round===mark.createdRound)return true;
+  const currentId=String(snapshot.combatantId??'');
+  if(!currentId||!mark.sourceCombatantId||currentId===String(mark.sourceCombatantId))return false;
+  const order=Array.isArray(snapshot.order)?snapshot.order.map(String):null;
+  if(!order)return false;
+  const sourceIndex=order.indexOf(String(mark.sourceCombatantId));
+  const currentIndex=order.indexOf(currentId);
+  if(sourceIndex<0||currentIndex<0)return false;
+  if(Number.isSafeInteger(snapshot.turn)&&snapshot.turn!==currentIndex)return false;
+  return currentIndex<sourceIndex;
+}
+function combatOrderIds(combat){
+  const turns=Array.isArray(combat?.turns)?combat.turns:Array.isArray(combat?.turns?.contents)?combat.turns.contents:null;
+  return turns?turns.map(c=>String(c?.id??'')):null;
+}
+function snapshotOf(combat){
+  return {round:Number(combat.round),turn:Number.isSafeInteger(combat.turn)?combat.turn:null,
+    combatantId:combat.combatant?.id?String(combat.combatant.id):null,order:combatOrderIds(combat)};
+}
 export function temptationMarksActiveAt(target,combat){
   if(!hasCurrentCombat(combat))return [];
+  const snap=snapshotOf(combat);
   return currentTemptations(target).filter(x=>
     x.state==='active'&&x.targetActorId===actorIdentity(target)
     &&x.encounterId===combat.id
-    && combat.round>=x.createdRound && combat.round<=x.createdRound+1
-    && !(combat.round===x.createdRound+1&&combat.turn>=x.createdTurn));
+    && temptationWindowOpenAt(x,snap));
 }
 
 /** The window rule evaluated against a recorded spend-time snapshot (no live state, no mutable flags). */
 function markWindowHolds(mark,evidence){
-  return evidence.round>=mark.createdRound&&evidence.round<=mark.createdRound+1
-    &&!(evidence.round===mark.createdRound+1&&Number.isSafeInteger(evidence.turn)&&evidence.turn>=mark.createdTurn);
+  return temptationWindowOpenAt(mark,evidence);
 }
 
 /**
@@ -85,6 +115,7 @@ export function temptationSpendEvidence(target,combat){
     version:1,combatId:String(combat.id),round:combat.round,
     turn:Number.isSafeInteger(combat.turn)?combat.turn:null,
     combatantId:combat.combatant?.id?String(combat.combatant.id):null,
+    order:combatOrderIds(combat),
     marks:temptationMarksActiveAt(target,combat).map(m=>({
       id:m.id,sourceActorId:m.sourceActorId,sourceCombatantId:m.sourceCombatantId,
       encounterId:m.encounterId,createdRound:m.createdRound,createdTurn:m.createdTurn,
