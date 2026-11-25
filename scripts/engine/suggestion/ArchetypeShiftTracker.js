@@ -6,6 +6,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Detect if archetype has shifted from previously stored value
@@ -28,12 +29,12 @@ export async function detectArchetypeShift(actor, newArchetypeId, newConfidence 
     // Store new archetype info
     // @mutation-exception: metadata
     // Track archetype shifts for UI change detection
-    await actor.setFlag('foundryvtt-swse', 'previousArchetype', {
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'previousArchetype', {
       id: newArchetypeId,
       confidence: newConfidence,
       level: currentLevel,
       timestamp: Date.now()
-    });
+    }, { recalc: false });
 
     // Determine if shift occurred
     const shifted = previousId && previousId !== newArchetypeId;

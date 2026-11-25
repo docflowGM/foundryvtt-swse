@@ -7,6 +7,7 @@
  */
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const MODULE_ID = 'foundryvtt-swse';
 const REGISTRY_SETTING = 'gmFactionRegistry';
@@ -992,7 +993,7 @@ export class FactionRegistryService {
   static async saveActorRelationships(actor, relationships = []) {
     if (!actor?.setFlag) throw new Error('Actor relationship update requires a valid actor.');
     const normalized = safeArray(relationships).map(record => this._normalizeActorRelationship(record));
-    await actor.setFlag(MODULE_ID, ACTOR_RELATIONSHIPS_FLAG, normalized);
+    await ActorEngine.updateActorFlags(actor, MODULE_ID, ACTOR_RELATIONSHIPS_FLAG, normalized, { recalc: false });
     Hooks.callAll('swseActorFactionRelationshipsUpdated', { actor, relationships: normalized });
     return normalized;
   }
@@ -1251,7 +1252,7 @@ export class FactionRegistryService {
       history: safeArray(existing?.history).slice(-MAX_HISTORY)
     };
     const next = existing ? records.map(entry => entry.id === existing.id ? record : entry) : [...records, record];
-    await actor.setFlag(MODULE_ID, LEGACY_FACTIONS_FLAG, next);
+    await ActorEngine.updateActorFlags(actor, MODULE_ID, LEGACY_FACTIONS_FLAG, next, { recalc: false });
     Hooks.callAll('swseActorFactionRelationshipsUpdated', { actor, relationships: this.getActorRelationships(actor), suggestion: record });
     return record;
   }
@@ -1331,7 +1332,7 @@ export class FactionRegistryService {
         { id: randomId(), at: nowIso(), type: 'suggestion-approved', source: 'gm', reason: cleanText(merged.approvalNote || '') }
       ].slice(-MAX_HISTORY)
     });
-    await actor.setFlag(MODULE_ID, LEGACY_FACTIONS_FLAG, records.filter(entry => entry.id !== suggestion.id));
+    await ActorEngine.updateActorFlags(actor, MODULE_ID, LEGACY_FACTIONS_FLAG, records.filter(entry => entry.id !== suggestion.id), { recalc: false });
     Hooks.callAll('swseActorFactionRelationshipsUpdated', { actor, relationships: this.getActorRelationships(actor), approvedSuggestion: suggestion });
     return relationship;
   }
@@ -1352,7 +1353,7 @@ export class FactionRegistryService {
         { id: randomId(), at: nowIso(), type: 'suggestion-rejected', source: 'gm', reason: cleanText(reason) }
       ].slice(-MAX_HISTORY)
     };
-    await actor.setFlag(MODULE_ID, LEGACY_FACTIONS_FLAG, records.map(entry => entry.id === suggestion.id ? rejected : entry));
+    await ActorEngine.updateActorFlags(actor, MODULE_ID, LEGACY_FACTIONS_FLAG, records.map(entry => entry.id === suggestion.id ? rejected : entry), { recalc: false });
     Hooks.callAll('swseActorFactionRelationshipsUpdated', { actor, relationships: this.getActorRelationships(actor), rejectedSuggestion: rejected });
     return rejected;
   }

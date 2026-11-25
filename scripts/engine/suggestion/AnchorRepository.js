@@ -22,6 +22,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SuggestionStateService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionStateService.js";
 import { ANCHOR_STATE } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIdentityDetector.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class AnchorRepository {
   /**
@@ -133,7 +134,7 @@ export class AnchorRepository {
 
       // @mutation-exception: metadata
       // Cache anchor points for suggestion resolution (internal engine state)
-      await actor.setFlag('foundryvtt-swse', 'suggestionEngine', currentState);
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'suggestionEngine', currentState, { recalc: false });
 
       // Also update in-memory state for consistency
       if (actor.system.suggestionEngine.anchors) {
@@ -236,7 +237,7 @@ export class AnchorRepository {
 
       // @mutation-exception: metadata
       // Record anchor resolution history (internal engine state)
-      await actor.setFlag('foundryvtt-swse', 'suggestionEngine', currentState);
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'suggestionEngine', currentState, { recalc: false });
 
       SWSELogger.log(`[AnchorRepository] Anchor history recorded`, {
         actor: actor.name,

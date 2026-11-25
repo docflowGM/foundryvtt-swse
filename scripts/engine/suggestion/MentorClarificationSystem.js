@@ -10,6 +10,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const CLARIFICATION_QUESTIONS = {
   ranged_vs_melee: {
@@ -143,7 +144,7 @@ export async function storePlayerIntent(actor, responseIntent) {
     };
     // @mutation-exception: metadata
     // Store player's stated build intent (UI state for mentor advice filtering)
-    await actor.setFlag('foundryvtt-swse', 'playerIntent', flags);
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'playerIntent', flags, { recalc: false });
     SWSELogger.log(`[MentorClarificationSystem] Stored intent: ${responseIntent}`);
   } catch (err) {
     SWSELogger.error('[MentorClarificationSystem] Failed to store intent:', err);

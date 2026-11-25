@@ -22,6 +22,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const MAX_RECENT_SIZE = 15;
 
@@ -37,11 +38,7 @@ async function _persistHistory(actor) {
     // Persist to actor flags for durability across reloads
     // @mutation-exception: metadata
     // Store selection history for suggestion caching (session state)
-    await actor.setFlag(
-      'foundryvtt-swse',
-      'suggestionEngine.history.recent',
-      actor.system.suggestionEngine.history.recent
-    );
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'suggestionEngine.history.recent', actor.system.suggestionEngine.history.recent, { recalc: false });
   } catch (err) {
     SWSELogger.error('[SelectionRecorder] Failed to persist history:', err);
   }

@@ -31,6 +31,7 @@
  */
 
 import { swseLogger } from '../../../utils/logger.js';
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * PHASE 4: write-behind autosave debounce window. Long enough to collapse
@@ -282,7 +283,7 @@ export class SessionStorage {
         return true;
       }
 
-      await actor.setFlag('foundryvtt-swse', flagPath, sessionData);
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', flagPath, sessionData, { recalc: false });
 
       swseLogger.debug('[SessionStorage] Session saved', {
         actorId: actor.id,
@@ -326,7 +327,7 @@ export class SessionStorage {
         completedAt: new Date().toISOString(),
         source: 'progression-finalization'
       };
-      await actor.setFlag?.('foundryvtt-swse', `progression.${mode}.completed`, marker);
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', `progression.${mode}.completed`, marker, { recalc: false });
       swseLogger.debug('[SessionStorage] Session marked complete', {
         actorId: actor.id,
         mode,
@@ -513,9 +514,9 @@ export class SessionStorage {
 
       try {
         if (typeof actor.unsetFlag === 'function') {
-          await actor.unsetFlag('foundryvtt-swse', `progression.${mode}.session`);
+          await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', `progression.${mode}.session`, { recalc: false });
         } else {
-          await actor.setFlag('foundryvtt-swse', `progression.${mode}.session`, null);
+          await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', `progression.${mode}.session`, null, { recalc: false });
         }
 
         swseLogger.debug('[SessionStorage] Session cleared', {

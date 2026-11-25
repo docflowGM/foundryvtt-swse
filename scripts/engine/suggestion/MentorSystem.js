@@ -1,6 +1,7 @@
 // scripts/engine/MentorSystem.js
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * MentorSystem - Async, fault-tolerant narrative guidance system
@@ -520,7 +521,7 @@ export class MentorSystem {
     // Store for future use
     // @mutation-exception: metadata
     // Store active mentor selection (UI state)
-    await this.actor.setFlag('foundryvtt-swse', 'mentor', this.mentorId);
+    await ActorEngine.updateActorFlags(this.actor, 'foundryvtt-swse', 'mentor', this.mentorId, { recalc: false });
 
     swseLogger.log(`[MENTOR] Determined mentor: ${this.mentorId}`);
   }

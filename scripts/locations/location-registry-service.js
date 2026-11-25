@@ -9,6 +9,7 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { LOCATION_LIBRARY_BIOMES, LOCATION_LIBRARY_SEEDS, buildLocationLibraryRecords, filterLocationLibrarySeeds, getLocationLibrarySeed } from '/systems/foundryvtt-swse/scripts/locations/location-library-seeds.js';
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const MODULE_ID = 'foundryvtt-swse';
 const REGISTRY_SETTING = 'gmLocationRegistry';
@@ -802,7 +803,7 @@ export class LocationRegistryService {
     if (!actor?.setFlag) return null;
     const current = this.getActorAtlasState(actor);
     const next = normalizeActorLocationState({ ...current, ...patch, lastUpdated: nowIso() });
-    await actor.setFlag(MODULE_ID, ATLAS_ACTOR_FLAG, next);
+    await ActorEngine.updateActorFlags(actor, MODULE_ID, ATLAS_ACTOR_FLAG, next, { recalc: false });
     return next;
   }
 
@@ -823,7 +824,7 @@ export class LocationRegistryService {
     const playerNotes = { ...current.playerNotes };
     if (patch.playerNotes !== undefined) playerNotes[id] = text(patch.playerNotes);
     const next = normalizeActorLocationState({ ...current, pins: [...pins], reviewed: [...reviewed], archived: [...archived], playerNotes });
-    await actor.setFlag(MODULE_ID, ATLAS_ACTOR_FLAG, next);
+    await ActorEngine.updateActorFlags(actor, MODULE_ID, ATLAS_ACTOR_FLAG, next, { recalc: false });
     return next;
   }
 
@@ -837,7 +838,7 @@ export class LocationRegistryService {
     const list = new Set(splitList(revealedFacts[location.id]));
     list.add(fact.id);
     revealedFacts[location.id] = [...list];
-    await actor.setFlag(MODULE_ID, ATLAS_ACTOR_FLAG, normalizeActorLocationState({ ...current, revealedFacts }));
+    await ActorEngine.updateActorFlags(actor, MODULE_ID, ATLAS_ACTOR_FLAG, normalizeActorLocationState({ ...current, revealedFacts }), { recalc: false });
     return fact;
   }
 
@@ -877,7 +878,7 @@ export class LocationRegistryService {
       ? leadDiscoveries.map(entry => entry.id === existing.id ? discovery : entry)
       : [...leadDiscoveries, discovery];
     const next = normalizeActorLocationState({ ...current, leadDiscoveries: nextDiscoveries.slice(-MAX_HISTORY), lastUpdated: nowIso() });
-    await actor.setFlag(MODULE_ID, ATLAS_ACTOR_FLAG, next);
+    await ActorEngine.updateActorFlags(actor, MODULE_ID, ATLAS_ACTOR_FLAG, next, { recalc: false });
     return discovery;
   }
 
@@ -914,7 +915,7 @@ export class LocationRegistryService {
       return resolved;
     });
     if (!resolved) return null;
-    await actor.setFlag(MODULE_ID, ATLAS_ACTOR_FLAG, normalizeActorLocationState({ ...current, leadDiscoveries: nextDiscoveries, lastUpdated: nowIso() }));
+    await ActorEngine.updateActorFlags(actor, MODULE_ID, ATLAS_ACTOR_FLAG, normalizeActorLocationState({ ...current, leadDiscoveries: nextDiscoveries, lastUpdated: nowIso() }), { recalc: false });
     return resolved;
   }
 
