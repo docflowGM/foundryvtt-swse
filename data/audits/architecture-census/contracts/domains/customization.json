@@ -1,0 +1,615 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-CUS",
+  "domain": "customization",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "All OSI customization authorities exist and are reachable. Paid customization commits through TransactionEngine for the workbench, UpgradeService (CommandBus), droid/vehicle engines, Tech Specialist and modification-v2 (gated by TX-14); lightsaber construction is the exception (ActorEngine transactional plan, see F-STO-002). Conformance gaps: the old per-item SWSEUpgradeApp survives as an item-sheet fallback (legacy B); two live installed-upgrade representations (TX-02 design gap) with inconsistent removal refunds (owner/rules question); dormant CustomizationWorkflow write engines; raw flag writes in lightsaber flows; a multi-client token-light hook; 13 unreachable wrappers/legacy engines; a 3.8k-line workbench.",
+  "responsibilities": [
+    {
+      "id": "R-CUS-01",
+      "responsibility": "Single item customization surface",
+      "owner": {
+        "path": "scripts/apps/customization/item-customization-workbench.js",
+        "symbol": "ItemCustomizationWorkbench"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/apps/customization/item-customization-workbench.js:3719",
+        "scripts/items/swse-item-sheet.js:2197"
+      ],
+      "tests": [
+        "tests/modification-v2-convergence.test.mjs"
+      ],
+      "notes": "APPROVED: OSI / A-17"
+    },
+    {
+      "id": "R-CUS-02",
+      "responsibility": "Paid item customization commit",
+      "owner": {
+        "path": "scripts/apps/customization/item-customization-workbench.js",
+        "symbol": "_applyCurrentItem"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/apps/customization/item-customization-workbench.js:3719"
+      ],
+      "tests": [
+        "tests/ti2-commerce-integrity.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-CUS-03",
+      "responsibility": "Upgrade install/remove via CommandBus",
+      "owner": {
+        "path": "scripts/engine/upgrades/UpgradeService.js",
+        "symbol": "UpgradeService.applyUpgrade/removeUpgrade"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/upgrades/UpgradeService.js:685",
+        "scripts/engine/upgrades/UpgradeService.js:757",
+        "scripts/engine/core/CommandBus.js:106"
+      ],
+      "tests": [
+        "tests/ti2-commerce-integrity.test.mjs"
+      ],
+      "notes": "CONFLICT: second representation F-CUS-002"
+    },
+    {
+      "id": "R-CUS-04",
+      "responsibility": "Customization state read model",
+      "owner": {
+        "path": "scripts/engine/customization/customization-workflow.js",
+        "symbol": "CustomizationWorkflow"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/engine/customization/customization-workflow.js:194",
+        "scripts/engine/upgrades/UpgradeService.js:45"
+      ],
+      "tests": [
+        "tests/weapon-phase-5d-i-d-b3-upgrades.test.mjs"
+      ],
+      "notes": "write methods dormant F-CUS-003"
+    },
+    {
+      "id": "R-CUS-05",
+      "responsibility": "Droid and vehicle customization",
+      "owner": {
+        "path": "scripts/engine/customization/droid-customization-engine.js",
+        "symbol": "DroidCustomizationEngine"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/customization/droid-customization-engine.js:725",
+        "scripts/engine/customization/vehicle-customization-engine.js:305"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-CUS-06",
+      "responsibility": "Lightsaber construction",
+      "owner": {
+        "path": "scripts/engine/crafting/lightsaber-construction-engine.js",
+        "symbol": "LightsaberConstructionEngine.attemptConstruction"
+      },
+      "status": [
+        "APPROVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/crafting/lightsaber-construction-engine.js:617",
+        "scripts/engine/crafting/lightsaber-construction-engine.js:634",
+        "scripts/engine/crafting/lightsaber-construction-engine.js:652"
+      ],
+      "tests": [],
+      "notes": "charges outside TE (F-STO-002)"
+    },
+    {
+      "id": "R-CUS-07",
+      "responsibility": "Tech Specialist modifications",
+      "owner": {
+        "path": "scripts/engine/customization/tech-specialist-modification-service.js",
+        "symbol": "TechSpecialistModificationService"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/customization/tech-specialist-modification-service.js:747"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-CUS-08",
+      "responsibility": "Modification-v2 installation",
+      "owner": {
+        "path": "scripts/engine/customization/modification-v2-runtime/modification-install-service.js",
+        "symbol": "modification-install-service"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/customization/modification-v2-runtime/modification-install-service.js:269"
+      ],
+      "tests": [
+        "tests/modification-v2-convergence.test.mjs"
+      ],
+      "notes": "TX-14 certification gate"
+    },
+    {
+      "id": "R-CUS-09",
+      "responsibility": "Lightsaber token light sync",
+      "owner": {
+        "path": "scripts/utils/lightsaber-light-sync.js",
+        "symbol": "LightsaberLightSync"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/utils/lightsaber-light-sync.js:186",
+        "scripts/utils/lightsaber-light-sync.js:215"
+      ],
+      "tests": [],
+      "notes": "F-CUS-005"
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "openItemCustomization",
+      "path": "scripts/apps/customization/item-customization-router.js",
+      "line": 1,
+      "consumers": 12,
+      "contract": "open the single workbench"
+    },
+    {
+      "symbol": "DroidCustomizationEngine",
+      "path": "scripts/engine/customization/droid-customization-engine.js",
+      "line": 1,
+      "consumers": 12,
+      "contract": "droid systems via TE"
+    },
+    {
+      "symbol": "UpgradeService",
+      "path": "scripts/engine/upgrades/UpgradeService.js",
+      "line": 1,
+      "consumers": 11,
+      "contract": "upgrade install/remove"
+    },
+    {
+      "symbol": "ImplantEffectRules",
+      "path": "scripts/engine/implants/ImplantEffectRules.js",
+      "line": 1,
+      "consumers": 9,
+      "contract": "implant effects"
+    },
+    {
+      "symbol": "modification-install-service",
+      "path": "scripts/engine/customization/modification-v2-runtime/modification-install-service.js",
+      "line": 269,
+      "consumers": 6,
+      "contract": "gated V2 install via TE"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "TransactionEngine",
+      "LedgerService (validation/preview only)",
+      "ActorEngine",
+      "equipment readers"
+    ],
+    "prohibited": [
+      "credit writes outside TE (A-10)",
+      "reviving old per-item modification apps (A-17)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/crafting/lightsaber-construction-engine.js",
+        "to": "ActorEngine.applyMutationPlan (credits)",
+        "evidence": "scripts/engine/crafting/lightsaber-construction-engine.js:617"
+      },
+      {
+        "from": "scripts/items/swse-item-sheet.js",
+        "to": "scripts/apps/upgrade-app.js",
+        "evidence": "scripts/items/swse-item-sheet.js:2208"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-CUS-1",
+      "boundary": "Customization <-> TransactionEngine",
+      "interface": "each paid customization = one TE transaction with item change + charge",
+      "status": [
+        "APPROVED",
+        "OBSERVED",
+        "CONFLICT"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-CUS-01",
+      "existingSource": "docs/audits/transaction-integrity/tx-remediation-ledger.md TX-01 item 9 (D3)",
+      "claim": "UpgradeService vehicle branch charges nothing",
+      "observed": "vehicle branch refuses install and removal",
+      "evidence": [
+        "scripts/engine/upgrades/UpgradeService.js:645",
+        "scripts/engine/upgrades/UpgradeService.js:744"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-CUS-02",
+      "existingSource": "scripts/engine/customization/PHASE-F-INTEGRATION-GUIDE.md",
+      "claim": "workflow.applyInstall/applyStrip/applyTemplate is the integration API",
+      "observed": "no production caller",
+      "evidence": [
+        "scripts/engine/customization/PHASE-F-INTEGRATION-GUIDE.md:155",
+        "scripts/engine/customization/customization-workflow.js:194"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-CUS-03",
+      "existingSource": "OSI customization authority",
+      "claim": "old per-item modification apps stay retired",
+      "observed": "SWSEUpgradeApp opened from item sheet fallback",
+      "evidence": [
+        "scripts/items/swse-item-sheet.js:2208",
+        "scripts/items/swse-item-sheet.js:2213",
+        "scripts/apps/upgrade-app.js:131"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-CUS-01",
+      "item": "Certified V2 modification installation (TX-14, selectable: 0)",
+      "source": "docs/audits/transaction-integrity/tx-remediation-ledger.md",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [
+    {
+      "item": "Whether removing an item upgrade refunds credits (droid removal refunds resale; item removal does not)",
+      "registerRef": "none found — candidate DEFERRED_RULES_REVIEW"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "Workbench apply and store staging",
+      "source": "R-CUS-01"
+    },
+    {
+      "item": "Lightsaber construction and light sync with two clients",
+      "source": "R-CUS-06, R-CUS-09"
+    }
+  ],
+  "findings": [
+    {
+      "category": "legacy-compat",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Old per-item SWSEUpgradeApp revived as item-sheet fallback (legacy B)",
+      "affectedFiles": [
+        "scripts/apps/upgrade-app.js",
+        "scripts/items/swse-item-sheet.js"
+      ],
+      "evidence": [
+        "scripts/items/swse-item-sheet.js:2189",
+        "scripts/items/swse-item-sheet.js:2208",
+        "scripts/items/swse-item-sheet.js:2213",
+        "scripts/apps/upgrade-app.js:131",
+        "scripts/engine/upgrades/UpgradeService.js:703"
+      ],
+      "observed": "Owned items open the workbench overlay; unowned items and any thrown error fall back to the standalone SWSEUpgradeApp, which applies upgrades through CommandBus -> UpgradeService. For an unowned item that path installs via the world-item branch (no actor, no charge).",
+      "intendedOwnership": "ItemCustomizationWorkbench (A-17)",
+      "contractRef": "A-17 | CR-CUS-03",
+      "proposedSolution": "Owner decision: open the workbench in a read/GM mode for unowned items and drop the fallback; then delete upgrade-app.js and the CommandBus APPLY_ITEM_UPGRADE UI entry points (ShellHost/actor-sheet-base) once rerouted.",
+      "alternatives": "Keep for GM editing of world items only, documented.",
+      "dependencies": [
+        "F-CUS-002"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Item sheet upgrade button never constructs SWSEUpgradeApp.",
+      "foundryAcceptance": "Upgrade button on owned and world items.",
+      "scope": "M",
+      "simplificationBenefit": "One customization UI.",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-CUS-001"
+    },
+    {
+      "category": "duplicate-schema-interpretation",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Two live installed-upgrade representations; inconsistent removal refunds",
+      "affectedFiles": [
+        "scripts/engine/upgrades/UpgradeService.js",
+        "scripts/apps/customization/item-customization-workbench.js"
+      ],
+      "evidence": [
+        "scripts/engine/upgrades/UpgradeService.js:685",
+        "scripts/engine/upgrades/UpgradeService.js:757",
+        "scripts/apps/customization/item-customization-workbench.js:3700",
+        "scripts/engine/core/CommandBus.js:106"
+      ],
+      "observed": "UpgradeService writes system.installedUpgrades (paid via TE; removal writes without refund); workbench writes flags.swse.*Upgrades/gearMods and flags.foundryvtt-swse.customization via TE. Readers of one do not see the other (TX-02, still open). Droid removal refunds resale through DroidCustomizationEngine.",
+      "intendedOwnership": "One installed-upgrade SSOT (A-01); V2 installer gated by TX-14.",
+      "contractRef": "A-01 | R-CUS-03",
+      "proposedSolution": "Owner: choose SSOT (customization flag model) and route UpgradeService through the workbench plan builder; separately rule on removal refunds.",
+      "alternatives": "Mirror both until V2 installer certification.",
+      "dependencies": [
+        "TX-14 gate"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": true,
+      "regressionTests": "Install via either path visible to both readers.",
+      "foundryAcceptance": "Install/remove via sheet and workbench.",
+      "scope": "L",
+      "simplificationBenefit": "One schema interpretation.",
+      "risk": "Medium — migration of existing items.",
+      "perfImpact": "none",
+      "id": "F-CUS-002"
+    },
+    {
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "CustomizationWorkflow write engines dormant",
+      "affectedFiles": [
+        "scripts/engine/customization/customization-workflow.js",
+        "scripts/engine/customization/install-remove-engine.js",
+        "scripts/engine/customization/structural-change-engine.js",
+        "scripts/engine/customization/template-engine.js"
+      ],
+      "evidence": [
+        "scripts/engine/customization/customization-workflow.js:140",
+        "scripts/engine/customization/customization-workflow.js:203",
+        "scripts/engine/customization/install-remove-engine.js:154",
+        "scripts/engine/customization/install-remove-engine.js:246",
+        "scripts/engine/customization/structural-change-engine.js:91"
+      ],
+      "observed": "apply* methods have no production caller (tests only); they charge via LedgerService + ActorEngine (no TE) and pass the Item as applyMutationPlan options (TI-N8). Read methods are live via UpgradeService.",
+      "intendedOwnership": "Workbench + TE",
+      "contractRef": "A-10 | A-17",
+      "proposedSolution": "Delete write methods (or reroute through TE) and update weapon-phase-5d test to call previews only.",
+      "alternatives": "Keep as V2-installer basis behind TX-14 gate but fix TE routing first.",
+      "dependencies": [
+        "TX-14"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "weapon-phase-5d-i-d-b3-upgrades adapted.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "~350 lines of dormant paid writers.",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-CUS-003"
+    },
+    {
+      "category": "ownership-violation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Lightsaber prompt/construction flags written with raw setFlag/unsetFlag",
+      "affectedFiles": [
+        "scripts/applications/lightsaber/lightsaber-router.js",
+        "scripts/engine/crafting/lightsaber-construction-engine.js"
+      ],
+      "evidence": [
+        "scripts/applications/lightsaber/lightsaber-router.js:75",
+        "scripts/applications/lightsaber/lightsaber-router.js:76",
+        "scripts/applications/lightsaber/lightsaber-router.js:84",
+        "scripts/applications/lightsaber/lightsaber-router.js:85",
+        "scripts/engine/crafting/lightsaber-construction-engine.js:652",
+        "scripts/engine/crafting/lightsaber-construction-engine.js:654"
+      ],
+      "observed": "Actor flags written directly from a Dialog callback (presentation) and after the construction plan committed (errors swallowed). Router uses V1 Dialog.",
+      "intendedOwnership": "ActorEngine (A-02)",
+      "contractRef": "A-02 | A-04",
+      "proposedSolution": "Use ActorEngine.updateActorFlags; fold construction flag cleanup into the construction plan.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Prompt later/now persists flags.",
+      "foundryAcceptance": "Level-up lightsaber prompt.",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-CUS-004"
+    },
+    {
+      "category": "multiple-writers",
+      "severity": "low",
+      "status": "suspected",
+      "title": "Light-sync hook writes token light on every client without gating",
+      "affectedFiles": [
+        "scripts/utils/lightsaber-light-sync.js"
+      ],
+      "evidence": [
+        "scripts/utils/lightsaber-light-sync.js:186",
+        "scripts/utils/lightsaber-light-sync.js:215",
+        "scripts/utils/lightsaber-light-sync.js:89",
+        "scripts/utils/lightsaber-light-sync.js:111",
+        "scripts/utils/lightsaber-light-sync.js:167"
+      ],
+      "observed": "preUpdateItem runs on the initiating client only, but Hooks.once(\"updateItem\") fires on the next updateItem of ANY item and then updates token documents; no GM/owner check seen in syncActorTokenLight. Token writes are Foundry scene documents (legitimate exception) but uncommented.",
+      "intendedOwnership": "one writer (active GM or owner)",
+      "contractRef": "A-02 | A-08",
+      "proposedSolution": "Use updateItem with id match and an owner/active-GM gate.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Hook fires only for matching item id.",
+      "foundryAcceptance": "Ignite with two clients connected.",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "low",
+      "id": "F-CUS-005"
+    },
+    {
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "13 unreachable customization modules",
+      "affectedFiles": [
+        "scripts/apps/customization/unified-customization-workbench.js",
+        "scripts/apps/customization/unified-workbench-integration.js",
+        "scripts/apps/customization/customization-workbench-app.js",
+        "scripts/apps/customization/raw-customization-workbench-app.js",
+        "scripts/apps/customization/customization-router.js",
+        "scripts/apps/customization/index.js",
+        "scripts/engine/customization/index.js",
+        "scripts/engine/crafting/blaster-customization-engine.js",
+        "scripts/engine/crafting/phase-3-advanced-crystal-system.js",
+        "scripts/engine/crafting/modification-intent-builder.js",
+        "scripts/engine/customization/restriction-propagation-engine.js",
+        "scripts/data/lightsaber-crystals-map.js",
+        "scripts/engine/customization/modification-v2/modification-legality.js"
+      ],
+      "evidence": [
+        "scripts/apps/customization/unified-customization-workbench.js:2",
+        "scripts/engine/crafting/blaster-customization-engine.js:2",
+        "scripts/engine/crafting/modification-intent-builder.js:226"
+      ],
+      "observed": "Deprecated compatibility wrappers and barrels with no importer (legacy D -> C); blaster-customization-engine is an old per-item modification engine (class C, must not be revived per OSI); phase-3 crystal system, intent builder (always-truthy funds check at :226), restriction-propagation, crystals map are orphan; modification-legality is test-only (TX-14 groundwork).",
+      "intendedOwnership": "n/a",
+      "contractRef": "A-09 | A-17",
+      "proposedSolution": "Delete C set after macro/pack grep; keep modification-legality with its gate.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "n/a",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "~1.2k SLOC.",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-CUS-006"
+    },
+    {
+      "category": "oversized-module",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "ItemCustomizationWorkbench is a 3.8k-line class",
+      "affectedFiles": [
+        "scripts/apps/customization/item-customization-workbench.js"
+      ],
+      "evidence": [
+        "scripts/apps/customization/item-customization-workbench.js:606",
+        "scripts/apps/customization/item-customization-workbench.js:1136",
+        "scripts/apps/customization/item-customization-workbench.js:3590",
+        "scripts/apps/customization/item-customization-workbench.js:3719"
+      ],
+      "observed": "One class owns lightsaber construction UI, store-stage mode, templates, structural edits, preview pricing and the TE commit.",
+      "intendedOwnership": "A-04",
+      "contractRef": "A-04 | A-17",
+      "proposedSolution": "Seams: draft/preview model (pure), lightsaber workbench controller, store-stage adapter; commit stays one TE call.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "modification-v2-convergence.",
+      "foundryAcceptance": "Workbench live.",
+      "scope": "L",
+      "simplificationBenefit": "Testable preview model.",
+      "risk": "Medium.",
+      "perfImpact": "low",
+      "id": "F-CUS-007"
+    },
+    {
+      "category": "presentation-rules",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Tech Specialist service posts chat directly",
+      "affectedFiles": [
+        "scripts/engine/customization/tech-specialist-modification-service.js"
+      ],
+      "evidence": [
+        "scripts/engine/customization/tech-specialist-modification-service.js:427"
+      ],
+      "observed": "ChatMessage.create in an engine service.",
+      "intendedOwnership": "swse-chat (A-05)",
+      "contractRef": "A-05",
+      "proposedSolution": "Use SWSEChat.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "P-A05 ratchet",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-CUS-008"
+    }
+  ],
+  "multiDomainLeadVerdicts": [
+    {
+      "lead": "price-computation",
+      "verdict": "distinct",
+      "note": "removal/modification costs, not store prices"
+    },
+    {
+      "lead": "upgrade-slots",
+      "verdict": "single authority",
+      "note": "UpgradeSlotEngine.getStockBaseSlots"
+    }
+  ],
+  "revivedOldAppsClassification": [
+    {
+      "path": "scripts/apps/upgrade-app.js",
+      "legacyClass": "B",
+      "note": "referenced by item sheet fallback; reroute then delete (F-CUS-001)"
+    },
+    {
+      "path": "scripts/engine/crafting/blaster-customization-engine.js",
+      "legacyClass": "C",
+      "note": "orphan"
+    },
+    {
+      "path": "scripts/apps/customization/unified-customization-workbench.js",
+      "legacyClass": "D->C",
+      "note": "compat wrapper with no importer"
+    }
+  ]
+}

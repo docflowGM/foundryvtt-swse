@@ -413,6 +413,79 @@
    "tests": []
   },
   {
+   "id": "R-CHT-01",
+   "domain": "chat",
+   "responsibility": "Gameplay chat posting API",
+   "owner": {
+    "path": "scripts/chat/swse-chat.js",
+    "symbol": "SWSEChat"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/swse-chat-no-phantom-postmessage.test.mjs"
+   ]
+  },
+  {
+   "id": "R-CHT-02",
+   "domain": "chat",
+   "responsibility": "Store/credit receipt cards",
+   "owner": {
+    "path": "scripts/chat/store-receipt-chat.js",
+    "symbol": "registerStoreReceiptChatCards"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CHT-03",
+   "domain": "chat",
+   "responsibility": "Holonet record cards",
+   "owner": {
+    "path": "scripts/chat/holonet-chat-card.js",
+    "symbol": "registerHolonetChatCards"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CHT-04",
+   "domain": "chat",
+   "responsibility": "Roll card model (delegated)",
+   "owner": {
+    "path": "scripts/engine/rolls/swse-roll-engine.js",
+    "symbol": "SWSERollEngine"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-CHT-05",
+   "domain": "chat",
+   "responsibility": "Persistence primitive",
+   "owner": {
+    "path": "scripts/core/document-api-v13.js",
+    "symbol": "createChatMessage"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
    "id": "R-CLS-01",
    "domain": "classes",
    "responsibility": "Load classes compendium, normalize, O(1) lookup",
@@ -804,6 +877,148 @@
    "status": [
     "OBSERVED",
     "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CUS-01",
+   "domain": "customization",
+   "responsibility": "Single item customization surface",
+   "owner": {
+    "path": "scripts/apps/customization/item-customization-workbench.js",
+    "symbol": "ItemCustomizationWorkbench"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": [
+    "tests/modification-v2-convergence.test.mjs"
+   ]
+  },
+  {
+   "id": "R-CUS-02",
+   "domain": "customization",
+   "responsibility": "Paid item customization commit",
+   "owner": {
+    "path": "scripts/apps/customization/item-customization-workbench.js",
+    "symbol": "_applyCurrentItem"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/ti2-commerce-integrity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-CUS-03",
+   "domain": "customization",
+   "responsibility": "Upgrade install/remove via CommandBus",
+   "owner": {
+    "path": "scripts/engine/upgrades/UpgradeService.js",
+    "symbol": "UpgradeService.applyUpgrade/removeUpgrade"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/ti2-commerce-integrity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-CUS-04",
+   "domain": "customization",
+   "responsibility": "Customization state read model",
+   "owner": {
+    "path": "scripts/engine/customization/customization-workflow.js",
+    "symbol": "CustomizationWorkflow"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": [
+    "tests/weapon-phase-5d-i-d-b3-upgrades.test.mjs"
+   ]
+  },
+  {
+   "id": "R-CUS-05",
+   "domain": "customization",
+   "responsibility": "Droid and vehicle customization",
+   "owner": {
+    "path": "scripts/engine/customization/droid-customization-engine.js",
+    "symbol": "DroidCustomizationEngine"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CUS-06",
+   "domain": "customization",
+   "responsibility": "Lightsaber construction",
+   "owner": {
+    "path": "scripts/engine/crafting/lightsaber-construction-engine.js",
+    "symbol": "LightsaberConstructionEngine.attemptConstruction"
+   },
+   "status": [
+    "APPROVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-CUS-07",
+   "domain": "customization",
+   "responsibility": "Tech Specialist modifications",
+   "owner": {
+    "path": "scripts/engine/customization/tech-specialist-modification-service.js",
+    "symbol": "TechSpecialistModificationService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CUS-08",
+   "domain": "customization",
+   "responsibility": "Modification-v2 installation",
+   "owner": {
+    "path": "scripts/engine/customization/modification-v2-runtime/modification-install-service.js",
+    "symbol": "modification-install-service"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/modification-v2-convergence.test.mjs"
+   ]
+  },
+  {
+   "id": "R-CUS-09",
+   "domain": "customization",
+   "responsibility": "Lightsaber token light sync",
+   "owner": {
+    "path": "scripts/utils/lightsaber-light-sync.js",
+    "symbol": "LightsaberLightSync"
+   },
+   "status": [
+    "OBSERVED"
    ],
    "verification": "source-inspected",
    "tests": []

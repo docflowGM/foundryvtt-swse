@@ -128,10 +128,10 @@
    "kind": "mechanical",
    "files": 172,
    "runtimeModules": 59,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-CUS",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 9,
+   "findings": 8
   },
   {
    "domain": "store-economy",
@@ -228,10 +228,10 @@
    "kind": "infrastructure",
    "files": 15,
    "runtimeModules": 7,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-CHT",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 5,
+   "findings": 4
   },
   {
    "domain": "ui-shell",
@@ -375,9 +375,7 @@
   }
  ],
  "missingContracts": [
-  "customization",
   "houserules",
-  "chat",
   "settings-config",
   "migration"
  ]

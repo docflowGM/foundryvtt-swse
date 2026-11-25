@@ -3,9 +3,9 @@
  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
  "generator": "tools/architecture-census/assemble-contracts.mjs",
  "counts": {
-  "FOUNDRY_ACCEPTANCE_REQUIRED": 94,
-  "UNIMPLEMENTED": 35,
-  "DEFERRED_RULES_REVIEW": 76
+  "FOUNDRY_ACCEPTANCE_REQUIRED": 97,
+  "UNIMPLEMENTED": 37,
+  "DEFERRED_RULES_REVIEW": 77
  },
  "items": [
   {
@@ -56,6 +56,20 @@
    "id": null,
    "item": "setFlag('swse',...) remap behaviour under Foundry v13 flag-scope validation",
    "source": "scripts/actors/base/swse-actor-base.js:463"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "chat",
+   "id": "U-CHT-01",
+   "item": "Chat commands parser never loaded",
+   "source": "scripts/chat/chat-commands.js:10"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "chat",
+   "id": null,
+   "item": "Card rendering, whisper/blind roll modes",
+   "source": "scripts/chat/swse-chat.js:291"
   },
   {
    "kind": "DEFERRED_RULES_REVIEW",
@@ -154,6 +168,34 @@
    "id": null,
    "item": "Any fold-back of a class-F patch (combat attack options, follower lifecycle, progression steps)",
    "source": "scripts/patches/runtime-bugfix-hotfixes-init.js:21"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "customization",
+   "id": "U-CUS-01",
+   "item": "Certified V2 modification installation (TX-14, selectable: 0)",
+   "source": "docs/audits/transaction-integrity/tx-remediation-ledger.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "customization",
+   "id": "none found — candidate DEFERRED_RULES_REVIEW",
+   "item": "Whether removing an item upgrade refunds credits (droid removal refunds resale; item removal does not)",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "customization",
+   "id": null,
+   "item": "Workbench apply and store staging",
+   "source": "R-CUS-01"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "customization",
+   "id": null,
+   "item": "Lightsaber construction and light sync with two clients",
+   "source": "R-CUS-06, R-CUS-09"
   },
   {
    "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",

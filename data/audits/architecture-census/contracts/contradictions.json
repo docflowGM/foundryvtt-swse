@@ -198,6 +198,18 @@
    "domain": "actor-core"
   },
   {
+   "id": "CR-CHT-01",
+   "existingSource": "docs/architecture/ARCHITECTURE.md §II",
+   "claim": "Sheets and engines may not create ChatMessage directly",
+   "observed": "74 live bypass sites (43 ChatMessage.create, 31 createChatMessage)",
+   "evidence": [
+    "scripts/engine/species/species-activated-ability-engine.js:93",
+    "scripts/combat/systems/grappling-system.js:940"
+   ],
+   "status": "CONFLICT",
+   "domain": "chat"
+  },
+  {
    "id": "CR-CLS-01",
    "existingSource": "scripts/data/classes-db.js:6 header",
    "claim": "ClassesDB is the only authorized access point for class data",
@@ -321,6 +333,43 @@
    ],
    "status": "CONFLICT",
    "domain": "compat-patches"
+  },
+  {
+   "id": "CR-CUS-01",
+   "existingSource": "docs/audits/transaction-integrity/tx-remediation-ledger.md TX-01 item 9 (D3)",
+   "claim": "UpgradeService vehicle branch charges nothing",
+   "observed": "vehicle branch refuses install and removal",
+   "evidence": [
+    "scripts/engine/upgrades/UpgradeService.js:645",
+    "scripts/engine/upgrades/UpgradeService.js:744"
+   ],
+   "status": "CONFLICT",
+   "domain": "customization"
+  },
+  {
+   "id": "CR-CUS-02",
+   "existingSource": "scripts/engine/customization/PHASE-F-INTEGRATION-GUIDE.md",
+   "claim": "workflow.applyInstall/applyStrip/applyTemplate is the integration API",
+   "observed": "no production caller",
+   "evidence": [
+    "scripts/engine/customization/PHASE-F-INTEGRATION-GUIDE.md:155",
+    "scripts/engine/customization/customization-workflow.js:194"
+   ],
+   "status": "CONFLICT",
+   "domain": "customization"
+  },
+  {
+   "id": "CR-CUS-03",
+   "existingSource": "OSI customization authority",
+   "claim": "old per-item modification apps stay retired",
+   "observed": "SWSEUpgradeApp opened from item sheet fallback",
+   "evidence": [
+    "scripts/items/swse-item-sheet.js:2208",
+    "scripts/items/swse-item-sheet.js:2213",
+    "scripts/apps/upgrade-app.js:131"
+   ],
+   "status": "CONFLICT",
+   "domain": "customization"
   },
   {
    "id": "CR-DAT-01",

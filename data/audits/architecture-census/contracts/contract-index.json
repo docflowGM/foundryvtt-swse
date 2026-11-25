@@ -46,6 +46,17 @@
    "findings": 15
   },
   {
+   "contractId": "B-CHT",
+   "domain": "chat",
+   "doc": "docs/architecture/v2-contracts/B-CHT-chat.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/chat.json",
+   "responsibilities": 5,
+   "subsystemContracts": 0,
+   "contradictions": 1,
+   "unimplemented": 1,
+   "findings": 4
+  },
+  {
    "contractId": "B-CLS",
    "domain": "classes",
    "doc": "docs/architecture/v2-contracts/B-CLS-classes.md",
@@ -77,6 +88,17 @@
    "contradictions": 3,
    "unimplemented": 0,
    "findings": 7
+  },
+  {
+   "contractId": "B-CUS",
+   "domain": "customization",
+   "doc": "docs/architecture/v2-contracts/B-CUS-customization.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/customization.json",
+   "responsibilities": 9,
+   "subsystemContracts": 1,
+   "contradictions": 3,
+   "unimplemented": 1,
+   "findings": 8
   },
   {
    "contractId": "B-DAT",

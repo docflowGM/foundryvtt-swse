@@ -1,6 +1,6 @@
 # Unimplemented and unresolved requirement ledger (generated)
 
-Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIRED 94 · UNIMPLEMENTED 35 · DEFERRED_RULES_REVIEW 76. Rules questions are never decided here; they belong in `docs/audits/swse-rules-decisions-pending.md`.
+Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIRED 97 · UNIMPLEMENTED 37 · DEFERRED_RULES_REVIEW 77. Rules questions are never decided here; they belong in `docs/audits/swse-rules-decisions-pending.md`.
 
 | Kind | Domain | ID | Item | Source |
 |---|---|---|---|---|
@@ -11,6 +11,8 @@ Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIR
 | FOUNDRY_ACCEPTANCE_REQUIRED | `actor-core` | — | Multi-client Force/Destiny point ledger serialisation (single-client queue only) | scripts/governance/actor-engine/actor-engine.js:41 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `actor-core` | — | applyMutationPlan transactional rollback including CREATE-bucket world actors | scripts/governance/actor-engine/actor-engine.js:3389 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `actor-core` | — | setFlag('swse',...) remap behaviour under Foundry v13 flag-scope validation | scripts/actors/base/swse-actor-base.js:463 |
+| UNIMPLEMENTED | `chat` | U-CHT-01 | Chat commands parser never loaded | scripts/chat/chat-commands.js:10 |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `chat` | — | Card rendering, whisper/blind roll modes | scripts/chat/swse-chat.js:291 |
 | DEFERRED_RULES_REVIEW | `classes` | SWSE-NPC-RD-002 | Nonheroic class skill list (Ride) | docs/audits/swse-rules-decisions-pending.md |
 | DEFERRED_RULES_REVIEW | `classes` | SWSE-NPC-RD-004 | Galactic Profile Nonheroic starting feats | docs/audits/swse-rules-decisions-pending.md |
 | DEFERRED_RULES_REVIEW | `classes` | CF-RD-001 | Class features whose printed text could not be read | docs/audits/swse-rules-decisions-pending.md |
@@ -25,6 +27,10 @@ Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIR
 | FOUNDRY_ACCEPTANCE_REQUIRED | `combat` | — | Damage packet application incl. bookkeeping flags | R-CMB-04 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `combat` | — | Combat Action Browser execution | F-CMB-004 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `compat-patches` | — | Any fold-back of a class-F patch (combat attack options, follower lifecycle, progression steps) | scripts/patches/runtime-bugfix-hotfixes-init.js:21 |
+| UNIMPLEMENTED | `customization` | U-CUS-01 | Certified V2 modification installation (TX-14, selectable: 0) | docs/audits/transaction-integrity/tx-remediation-ledger.md |
+| DEFERRED_RULES_REVIEW | `customization` | none found — candidate DEFERRED_RULES_REVIEW | Whether removing an item upgrade refunds credits (droid removal refunds resale; item removal does not) | docs/audits/swse-rules-decisions-pending.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `customization` | — | Workbench apply and store staging | R-CUS-01 |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `customization` | — | Lightsaber construction and light sync with two clients | R-CUS-06, R-CUS-09 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `data-registries` | — | Prerequisite evaluation on draft actors after consolidating level/BAB reads | scripts/data/prerequisite-checker.js:3094 |
 | UNIMPLEMENTED | `droids` | U-DRD-01 | Production registry certification and cross-application parity for droid components (both 0) | docs/audits/droids/droid-component-mechanical-certification-closeout.md:22 |
 | DEFERRED_RULES_REVIEW | `droids` | none (new; to be registered by owner) | Whether a constructed droid requires an Armor component and at least one appendage for readiness (code paths disagree) | docs/audits/swse-rules-decisions-pending.md |

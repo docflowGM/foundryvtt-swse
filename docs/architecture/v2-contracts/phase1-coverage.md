@@ -1,6 +1,6 @@
 # Phase 1 coverage (generated)
 
-Every taxonomy domain has a contract or an explicit disposition. Generated at `f734b4d`. Validation: 25 sidecars, 693 unique IDs, 1811 evidence references checked against the audited commit, **0 unresolved**, 0 errors, 1 warnings (`data/audits/architecture-census/contracts/validation.json`).
+Every taxonomy domain has a contract or an explicit disposition. Generated at `f734b4d`. Validation: 27 sidecars, 726 unique IDs, 1887 evidence references checked against the audited commit, **0 unresolved**, 0 errors, 1 warnings (`data/audits/architecture-census/contracts/validation.json`).
 
 | Domain | Kind | Files | Runtime modules | Disposition | Responsibilities | Findings |
 |---|---|---:|---:|---|---:|---:|
@@ -16,7 +16,7 @@ Every taxonomy domain has a contract or an explicit disposition. Generated at `f
 | `combat` | mechanical | 431 | 174 | contract B-CMB | 11 | 12 |
 | `rolls` | mechanical | 36 | 24 | contract B-ROL | 8 | 5 |
 | `equipment` | mechanical | 377 | 92 | contract B-EQP | 7 | 8 |
-| `customization` | mechanical | 172 | 59 | MISSING CONTRACT | 0 | 0 |
+| `customization` | mechanical | 172 | 59 | contract B-CUS | 9 | 8 |
 | `store-economy` | mechanical | 162 | 39 | contract B-STO | 8 | 9 |
 | `vehicles` | mechanical | 764 | 119 | contract B-VEH | 16 | 12 |
 | `droids` | mechanical | 472 | 47 | contract B-DRD | 12 | 6 |
@@ -26,7 +26,7 @@ Every taxonomy domain has a contract or an explicit disposition. Generated at `f
 | `holonet` | feature | 94 | 75 | contract B-HOL | 12 | 9 |
 | `games` | feature | 115 | 32 | contract B-GAM | 8 | 6 |
 | `houserules` | feature | 43 | 25 | MISSING CONTRACT | 0 | 0 |
-| `chat` | infrastructure | 15 | 7 | MISSING CONTRACT | 0 | 0 |
+| `chat` | infrastructure | 15 | 7 | contract B-CHT | 5 | 4 |
 | `ui-shell` | presentation | 464 | 179 | contract B-UIS | 13 | 13 |
 | `governance` | infrastructure | 100 | 86 | contract B-GOV | 9 | 7 |
 | `settings-config` | infrastructure | 11 | 4 | MISSING CONTRACT | 0 | 0 |

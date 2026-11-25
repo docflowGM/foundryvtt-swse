@@ -586,6 +586,84 @@
    "foundry": "not live-verified"
   },
   {
+   "requirement": "R-CHT-01",
+   "domain": "chat",
+   "responsibility": "Gameplay chat posting API",
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "code": "scripts/chat/swse-chat.js :: SWSEChat",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/swse-chat-no-phantom-postmessage.test.mjs"
+   ],
+   "ownerDirectTests": 50,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CHT-02",
+   "domain": "chat",
+   "responsibility": "Store/credit receipt cards",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/chat/store-receipt-chat.js :: registerStoreReceiptChatCards",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CHT-03",
+   "domain": "chat",
+   "responsibility": "Holonet record cards",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/chat/holonet-chat-card.js :: registerHolonetChatCards",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CHT-04",
+   "domain": "chat",
+   "responsibility": "Roll card model (delegated)",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/rolls/swse-roll-engine.js :: SWSERollEngine",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CHT-05",
+   "domain": "chat",
+   "responsibility": "Persistence primitive",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/core/document-api-v13.js :: createChatMessage",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
    "requirement": "R-CLS-01",
    "domain": "classes",
    "responsibility": "Load classes compendium, normalize, O(1) lookup",
@@ -1005,6 +1083,157 @@
    "ownerDirectTests": 1,
    "ownerCiTests": 1,
    "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CUS-01",
+   "domain": "customization",
+   "responsibility": "Single item customization surface",
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "code": "scripts/apps/customization/item-customization-workbench.js :: ItemCustomizationWorkbench",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/modification-v2-convergence.test.mjs"
+   ],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 52,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CUS-02",
+   "domain": "customization",
+   "responsibility": "Paid item customization commit",
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "code": "scripts/apps/customization/item-customization-workbench.js :: _applyCurrentItem",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/ti2-commerce-integrity.test.mjs"
+   ],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 52,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CUS-03",
+   "domain": "customization",
+   "responsibility": "Upgrade install/remove via CommandBus",
+   "status": [
+    "APPROVED",
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/upgrades/UpgradeService.js :: UpgradeService.applyUpgrade/removeUpgrade",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/ti2-commerce-integrity.test.mjs"
+   ],
+   "ownerDirectTests": 6,
+   "ownerCiTests": 29,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CUS-04",
+   "domain": "customization",
+   "responsibility": "Customization state read model",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/customization/customization-workflow.js :: CustomizationWorkflow",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/weapon-phase-5d-i-d-b3-upgrades.test.mjs"
+   ],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 29,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CUS-05",
+   "domain": "customization",
+   "responsibility": "Droid and vehicle customization",
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/customization/droid-customization-engine.js :: DroidCustomizationEngine",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 9,
+   "ownerCiTests": 39,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CUS-06",
+   "domain": "customization",
+   "responsibility": "Lightsaber construction",
+   "status": [
+    "APPROVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/crafting/lightsaber-construction-engine.js :: LightsaberConstructionEngine.attemptConstruction",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 54,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CUS-07",
+   "domain": "customization",
+   "responsibility": "Tech Specialist modifications",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/customization/tech-specialist-modification-service.js :: TechSpecialistModificationService",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 57,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CUS-08",
+   "domain": "customization",
+   "responsibility": "Modification-v2 installation",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/customization/modification-v2-runtime/modification-install-service.js :: modification-install-service",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/modification-v2-convergence.test.mjs"
+   ],
+   "ownerDirectTests": 4,
+   "ownerCiTests": 54,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CUS-09",
+   "domain": "customization",
+   "responsibility": "Lightsaber token light sync",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/utils/lightsaber-light-sync.js :: LightsaberLightSync",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
    "foundry": "not live-verified"
   },
   {

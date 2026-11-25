@@ -2,7 +2,7 @@
 
 Level A invariants trace to probes (see `A-global-invariants.md`). Domain requirements trace to the owning module and its tests. **No requirement is live-Foundry-verified.** Generated at `f734b4d`.
 
-- Domain requirements: 280; with a named test or a direct test of the owner module: 184; **test gaps: 96**.
+- Domain requirements: 294; with a named test or a direct test of the owner module: 193; **test gaps: 101**.
 
 | Requirement | Domain | Code | Reachability | Named tests | Owner direct tests | Owner CI tests (transitive) |
 |---|---|---|---|---:|---:|---:|
@@ -33,6 +33,11 @@ Level A invariants trace to probes (see `A-global-invariants.md`). Domain requir
 | R-ACT-13 | `actor-core` | `scripts/engine/HP/hp-accounting.js :: planHpRecompute; ActorEngine.recomputeHP` | reachable-static | 1 | 2 | 353 |
 | R-ACT-14 ⚠ | `actor-core` | `scripts/engine/progression/xp-engine.js :: computeXpDerived` | reachable-static | 0 | 0 | 353 |
 | R-ACT-15 | `actor-core` | `scripts/actors/vehicle/vehicle-precreate-hooks.js :: registerVehiclePreCreateHooks` | reachable-static | 0 | 17 | 17 |
+| R-CHT-01 | `chat` | `scripts/chat/swse-chat.js :: SWSEChat` | reachable-static | 1 | 50 | 353 |
+| R-CHT-02 ⚠ | `chat` | `scripts/chat/store-receipt-chat.js :: registerStoreReceiptChatCards` | reachable-static | 0 | 0 | 0 |
+| R-CHT-03 ⚠ | `chat` | `scripts/chat/holonet-chat-card.js :: registerHolonetChatCards` | reachable-static | 0 | 0 | 0 |
+| R-CHT-04 | `chat` | `scripts/engine/rolls/swse-roll-engine.js :: SWSERollEngine` | reachable-static | 0 | 1 | 353 |
+| R-CHT-05 ⚠ | `chat` | `scripts/core/document-api-v13.js :: createChatMessage` | reachable-static | 0 | 0 | 353 |
 | R-CLS-01 | `classes` | `scripts/data/classes-db.js :: ClassesDB` | reachable-static | 1 | 13 | 370 |
 | R-CLS-02 | `classes` | `scripts/engine/registries/classes-registry.js :: ClassesRegistry` | reachable-static | 0 | 1 | 368 |
 | R-CLS-03 | `classes` | `scripts/data/class-normalizer.js :: normalizeClass` | reachable-static | 0 | 10 | 370 |
@@ -59,6 +64,15 @@ Level A invariants trace to probes (see `A-global-invariants.md`). Domain requir
 | R-PAT-04 | `compat-patches` | `scripts/patches/follower-orphan-transfer-hotfix.js :: registerFollowerOrphanTransferHotfix` | reachable-static | 0 | 1 | 1 |
 | R-PAT-05 | `compat-patches` | `scripts/patches/armor-hydration-defense-hotfix.js :: registerArmorHydrationDefenseHotfix` | reachable-static | 0 | 2 | 2 |
 | R-PAT-06 | `compat-patches` | `scripts/patches/weapon-branch-coherence-hotfix.js :: registerWeaponBranchCoherenceHotfix` | reachable-static | 0 | 1 | 1 |
+| R-CUS-01 | `customization` | `scripts/apps/customization/item-customization-workbench.js :: ItemCustomizationWorkbench` | reachable-static | 1 | 1 | 52 |
+| R-CUS-02 | `customization` | `scripts/apps/customization/item-customization-workbench.js :: _applyCurrentItem` | reachable-static | 1 | 1 | 52 |
+| R-CUS-03 | `customization` | `scripts/engine/upgrades/UpgradeService.js :: UpgradeService.applyUpgrade/removeUpgrade` | reachable-static | 1 | 6 | 29 |
+| R-CUS-04 | `customization` | `scripts/engine/customization/customization-workflow.js :: CustomizationWorkflow` | reachable-static | 1 | 1 | 29 |
+| R-CUS-05 | `customization` | `scripts/engine/customization/droid-customization-engine.js :: DroidCustomizationEngine` | reachable-static | 0 | 9 | 39 |
+| R-CUS-06 | `customization` | `scripts/engine/crafting/lightsaber-construction-engine.js :: LightsaberConstructionEngine.attemptConstruction` | reachable-static | 0 | 2 | 54 |
+| R-CUS-07 ⚠ | `customization` | `scripts/engine/customization/tech-specialist-modification-service.js :: TechSpecialistModificationService` | reachable-static | 0 | 0 | 57 |
+| R-CUS-08 | `customization` | `scripts/engine/customization/modification-v2-runtime/modification-install-service.js :: modification-install-service` | reachable-static | 1 | 4 | 54 |
+| R-CUS-09 ⚠ | `customization` | `scripts/utils/lightsaber-light-sync.js :: LightsaberLightSync` | reachable-static | 0 | 0 | 353 |
 | R-DAT-01 | `data-registries` | `scripts/data/prerequisite-checker.js :: PrerequisiteChecker` | reachable-static | 1 | 4 | 363 |
 | R-DAT-02 ⚠ | `data-registries` | `scripts/data/authority/prerequisite-text-helpers.js :: getCanonicalPrerequisiteText` | reachable-static | 0 | 0 | 372 |
 | R-DAT-03 ⚠ | `data-registries` | `scripts/data/authority/authority-key-normalizer.js :: normalizeAuthorityKey` | reachable-static | 0 | 0 | 372 |

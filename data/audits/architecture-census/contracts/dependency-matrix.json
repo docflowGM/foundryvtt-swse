@@ -473,7 +473,8 @@
    "edges": 17,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "droids",
@@ -553,7 +554,8 @@
    "edges": 15,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "droids",
@@ -633,7 +635,8 @@
    "edges": 14,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "talents",
@@ -677,7 +680,8 @@
    "edges": 13,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "customization",
@@ -685,7 +689,8 @@
    "edges": 13,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "mentor-suggestion",
@@ -936,7 +941,8 @@
    "edges": 10,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "force",
@@ -1114,7 +1120,8 @@
    "edges": 8,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "data-registries",
@@ -1257,7 +1264,8 @@
    "edges": 7,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "dev-tooling",
@@ -1574,7 +1582,8 @@
    "edges": 5,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "documentation",
@@ -1903,7 +1912,8 @@
    "edges": 3,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "dev-tooling",
@@ -2231,7 +2241,8 @@
    "edges": 2,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "chat",
@@ -2239,7 +2250,8 @@
    "edges": 2,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "chat",
@@ -2247,7 +2259,8 @@
    "edges": 2,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 1,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -2852,7 +2865,8 @@
    "edges": 1,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "classes",
@@ -2941,7 +2955,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "customization",
@@ -2949,7 +2964,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "customization",
@@ -2957,7 +2973,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "data-registries",
