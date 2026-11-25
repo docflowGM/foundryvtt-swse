@@ -293,7 +293,7 @@ export class SentinelTalentActions {
     const currentDss = getDarkSideScore(actor);
     const active = actor.getFlag?.(NS, 'darkDeception.active') === true;
     const nextActive = !active;
-    await actor.setFlag(NS, 'darkDeception', { active: nextActive, effectiveDarkSideScore: wisdomScore, actualDarkSideScore: currentDss, updatedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'darkDeception', { active: nextActive, effectiveDarkSideScore: wisdomScore, actualDarkSideScore: currentDss, updatedAt: Date.now() }, { recalc: false });
     await postCard(actor, 'Dark Deception', `<p>${nextActive ? 'Activated' : 'Deactivated'} Dark Deception.</p><p>When another character attempts to sense ${esc(actor.name)} through the Force in any way, ${esc(actor.name)} may choose to act as though their Dark Side Score equals their Wisdom score.</p><p><strong>Current actual DSS:</strong> ${currentDss}. <strong>Masked DSS while chosen:</strong> ${wisdomScore}.</p><p>Deception is a class skill for this character.</p>`, { talentName: 'Dark Deception', active: nextActive, effectiveDarkSideScore: wisdomScore });
     return { success: true, active: nextActive, effectiveDarkSideScore: wisdomScore };
   }
@@ -354,7 +354,7 @@ export class SentinelTalentActions {
       const hidden = chosenTokens.map(token => ({ tokenId: token.id, actorId: token.actor?.id ?? null, name: token.name ?? token.actor?.name ?? 'Hidden ally' }));
       const persistent = hasTalent(actor, 'Persistent Haze');
       const unseenEyes = hasTalent(actor, 'Unseen Eyes');
-      await actor.setFlag(NS, 'forceHaze', {
+      await ActorEngine.updateActorFlags(actor, NS, 'forceHaze', {
         active: true,
         rollTotal: total,
         hidden,
@@ -365,7 +365,7 @@ export class SentinelTalentActions {
         createdAt: Date.now(),
         expiresAt: Date.now() + 60_000,
         dismissedWhenHiddenCreatureAttacks: !persistent
-      });
+      }, { recalc: false });
       for (const token of chosenTokens) {
         if (!token.actor) continue;
         await createEffectOnActor(token.actor, {
@@ -443,7 +443,7 @@ export class SentinelTalentActions {
         const power = await spendReadyForcePower(actor, choice.powerId, 'dark-retaliation');
         powerName = power.name;
       }
-      await actor.setFlag(NS, 'encounterUses.darkRetaliation', { encounterId: this._encounterId(), used: true, powerName, usedAt: Date.now() });
+      await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.darkRetaliation', { encounterId: this._encounterId(), used: true, powerName, usedAt: Date.now() }, { recalc: false });
       await postCard(actor, 'Dark Retaliation', `<p>${esc(actor.name)} spends a Force Point and activates <strong>${esc(powerName)}</strong> as a Reaction to being targeted by a [Dark Side] Force Power.</p><p>Resolve the selected Force Power normally against eligible targets.</p>`, { talentName: 'Dark Retaliation', powerName });
       return { success: true, powerName };
     });
@@ -502,7 +502,7 @@ export class SentinelTalentActions {
       await createEffectOnActor(target.actor, { name: `Sentinel's Gambit (${actor.name})`, icon: 'icons/svg/eye.svg', changes: [], disabled: false, duration: { rounds: 1, turns: 1 }, flags: { swse: { talentName: "Sentinel's Gambit", sourceActorId: actor.id, sourceActorName: actor.name, deniedDexToReflexAgainstSource: true, expiresEndOfSourceNextTurn: true } } }, { source: 'sentinels-gambit' });
     }
     const nextUsedCount = usedCount + 1;
-    await actor.setFlag(NS, 'encounterUses.sentinelsGambit', { encounterId: this._encounterId(), used: nextUsedCount >= maxUses, usedCount: nextUsedCount, maxUses, targetName: target.name, targetActorId: target.actor?.id ?? null, usedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.sentinelsGambit', { encounterId: this._encounterId(), used: nextUsedCount >= maxUses, usedCount: nextUsedCount, maxUses, targetName: target.name, targetActorId: target.actor?.id ?? null, usedAt: Date.now() }, { recalc: false });
     await postCard(actor, "Sentinel's Gambit", `<p><strong>${esc(target.name)}</strong> loses its Dexterity bonus to Reflex Defense against ${esc(actor.name)}'s attacks until the end of ${esc(actor.name)}'s next turn.</p><p><strong>Encounter uses:</strong> ${nextUsedCount}/${maxUses}${improvedExtraUses ? ` (includes +${improvedExtraUses} from Improved Sentinel's Gambit)` : ''}.</p>`, { talentName: "Sentinel's Gambit", targetActorId: target.actor?.id ?? null, usedCount: nextUsedCount, maxUses });
     return { success: true, targetName: target.name };
   }
@@ -590,7 +590,7 @@ export class SentinelTalentActions {
       const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [data], { source: 'taint-of-the-dark-side', render: false });
       ownedItem = Array.isArray(created) ? created[0] : created;
     }
-    await actor.setFlag(NS, 'taintOfTheDarkSide', { powerId: ownedItem?.id ?? null, powerName: selected.name, selectedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'taintOfTheDarkSide', { powerId: ownedItem?.id ?? null, powerName: selected.name, selectedAt: Date.now() }, { recalc: false });
     await postCard(actor, 'Taint of the Dark Side', `<p><strong>${esc(selected.name)}</strong> is recorded as ${esc(actor.name)}'s Taint of the Dark Side power.</p><p>Once per encounter, using this specific [Dark Side] Force Power does not increase Dark Side Score unless it is modified by a Force Point or Destiny Point.</p>`, { talentName: 'Taint of the Dark Side', powerId: ownedItem?.id ?? null, powerName: selected.name });
     return { success: true, powerId: ownedItem?.id ?? null, powerName: selected.name };
   }

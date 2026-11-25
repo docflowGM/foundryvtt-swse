@@ -4110,7 +4110,7 @@ export const ActorEngine = {
    * @param {string} scope - Flag scope (e.g. 'foundryvtt-swse')
    * @param {string} key - Flag key name
    * @param {*} value - Flag value (any serializable type)
-   * @param {object} [options={}] - Additional options
+   * @param {object} [options={}] - Additional options; `recalc:false` skips the derived recalculation (bookkeeping flags only)
    */
   async updateActorFlags(actor, scope, key, value, options = {}) {
     try {
@@ -4132,7 +4132,9 @@ export const ActorEngine = {
       try {
         // Route through setFlag with mutation context active
         const result = await actor.setFlag(scope, key, value);
-        await this.recalcAll(actor);
+        // `options.recalc === false`: bookkeeping flags (encounter-use markers, state notes) that do not feed derived values use the governed
+        // gate without a derived recalculation. Default is unchanged: every existing caller still recalculates.
+        if (options.recalc !== false) await this.recalcAll(actor);
         return result;
       } finally {
         MutationInterceptor.clearContext();
@@ -4177,7 +4179,7 @@ export const ActorEngine = {
       try {
         // Route through unsetFlag with mutation context active
         const result = await actor.unsetFlag(scope, key);
-        await this.recalcAll(actor);
+        if (options.recalc !== false) await this.recalcAll(actor);   // see updateActorFlags: `recalc:false` for bookkeeping flags
         return result;
       } finally {
         MutationInterceptor.clearContext();

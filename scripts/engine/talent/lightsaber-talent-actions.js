@@ -280,24 +280,24 @@ export class LightsaberTalentActions {
 
   static async _recordBlockDeflectUse(actor, kind, success, increment = 5) {
     const state = currentBlockDeflectState(actor);
-    await actor?.setFlag?.(NS, BLOCK_DEFLECT_FLAG, {
+    await ActorEngine.updateActorFlags(actor, NS, BLOCK_DEFLECT_FLAG, {
       ...state,
       ...withRecordedUse(state, increment),
       lastKind: kind,
       lastSuccess: success === true,
       updatedAt: Date.now()
-    });
+    }, { recalc: false });
   }
 
   static async _creditBackBlockDeflectUse(actor, reason = '') {
     const state = currentBlockDeflectState(actor);
     if (state.uses <= 0) return false;
-    await actor?.setFlag?.(NS, BLOCK_DEFLECT_FLAG, {
+    await ActorEngine.updateActorFlags(actor, NS, BLOCK_DEFLECT_FLAG, {
       ...state,
       ...withCreditedBackUse(state),
       creditedBackReason: reason,
       creditedBackAt: Date.now()
-    });
+    }, { recalc: false });
     return true;
   }
 
@@ -373,7 +373,7 @@ export class LightsaberTalentActions {
     const success = roll.success === true;
     await this._recordBlockDeflectUse(actor, 'Block', success, weaponMods.increment);
     if (success) {
-      await actor?.setFlag?.(NS, 'lastSuccessfulBlock', { encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, usedAt: Date.now(), area: choice.area });
+      await ActorEngine.updateActorFlags(actor, NS, 'lastSuccessfulBlock', { encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, usedAt: Date.now(), area: choice.area }, { recalc: false });
     }
     await postCard(actor, 'Block', `<p>${esc(actor.name)} attempts to Block a melee attack (${roll.roll?.total ?? '?'} vs DC ${choice.dc}).</p>
       <p><strong>${success ? 'Success' : 'Failure'}:</strong> ${success ? (choice.area ? 'For a melee area attack, take half damage if the attack hit or no damage if it missed.' : 'The melee attack is negated.') : 'The melee attack is not negated.'}</p>
@@ -457,7 +457,7 @@ export class LightsaberTalentActions {
     const success = roll.success === true;
     await this._recordBlockDeflectUse(actor, 'Deflect', success, weaponMods.increment);
     if (success) {
-      await actor?.setFlag?.(NS, 'lastSuccessfulDeflect', { encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, usedAt: Date.now(), area: choice.area });
+      await ActorEngine.updateActorFlags(actor, NS, 'lastSuccessfulDeflect', { encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, usedAt: Date.now(), area: choice.area }, { recalc: false });
     }
     await postCard(actor, 'Deflect', `<p>${esc(actor.name)} attempts to Deflect a ranged attack (${roll.roll?.total ?? '?'} vs DC ${choice.dc}).</p>
       <p><strong>${success ? 'Success' : 'Failure'}:</strong> ${success ? (choice.area ? 'For autofire/Force Lightning-style barrages, take half damage if the attack hit or no damage if it missed.' : 'The ranged attack is negated.') : 'The ranged attack is not negated.'}</p>
@@ -537,7 +537,7 @@ export class LightsaberTalentActions {
     if (!redirectWeapon) return null;
     const target = await promptNamedTarget('Redirect Shot', 'Use after successfully Deflecting a single blaster bolt. Autofire barrages and other projectiles cannot be redirected.');
     if (!target) return null;
-    await actor?.setFlag?.(NS, 'redirectShot', { roundKey, used: true, targetName: target.targetName, usedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'redirectShot', { roundKey, used: true, targetName: target.targetName, usedAt: Date.now() }, { recalc: false });
     const improved = hasTalent(actor, 'Improved Redirect');
     const credited = improved ? await this._creditBackBlockDeflectUse(actor, 'Improved Redirect') : false;
     await postCard(actor, 'Redirect Shot', `<p>${esc(actor.name)} redirects a deflected blaster bolt toward <strong>${esc(target.targetName)}</strong>.</p><p>Make the immediate ranged attack using normal range penalties, not counting the distance the bolt traveled to reach you. If it hits, it deals normal weapon damage.</p>${improved ? `<p><strong>Improved Redirect:</strong> the Deflect use that triggered this Redirect ${credited ? 'does not count toward the cumulative Block/Deflect penalty.' : 'would not count toward the cumulative Block/Deflect penalty; no tracked Deflect use was available to credit back.'}</p>` : ''}`, { talentName: 'Redirect Shot', targetName: target.targetName, improvedRedirect: improved, creditedBack: credited });
@@ -567,7 +567,7 @@ export class LightsaberTalentActions {
     }
     const target = await promptNamedTarget('Riposte', 'Use after successfully negating a non-area melee attack with Block.');
     if (!target) return null;
-    await actor?.setFlag?.(NS, 'encounterUses.riposte', { encounterId: encounterId(), used: true, targetName: target.targetName, usedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.riposte', { encounterId: encounterId(), used: true, targetName: target.targetName, usedAt: Date.now() }, { recalc: false });
     const improved = hasTalent(actor, 'Improved Riposte');
     const credited = improved ? await this._creditBackBlockDeflectUse(actor, 'Improved Riposte') : false;
     await postCard(actor, 'Riposte', `<p>${esc(actor.name)} makes a lightsaber attack against <strong>${esc(target.targetName)}</strong>, whose non-area melee attack was successfully negated with Block.</p><p>Once per encounter. Cannot be used against melee area attacks such as Whirlwind Attack.</p>${improved ? `<p><strong>Improved Riposte:</strong> the Block use that triggered this Riposte ${credited ? 'does not count toward the cumulative Block/Deflect penalty.' : 'would not count toward the cumulative Block/Deflect penalty; no tracked Block use was available to credit back.'}</p>` : ''}`, { talentName: 'Riposte', targetName: target.targetName, improvedRiposte: improved, creditedBack: credited });
@@ -738,7 +738,7 @@ export class LightsaberTalentActions {
       try {
         const actor = current?.combatant?.actor ?? combat?.combatant?.actor ?? null;
         if (!actor) return;
-        await actor.unsetFlag?.(NS, BLOCK_DEFLECT_FLAG);
+        await ActorEngine.unsetActorFlag(actor, NS, BLOCK_DEFLECT_FLAG, { recalc: false });
       } catch (err) {
         console.warn('[SWSE] Failed to reset Block/Deflect use state:', err);
       }

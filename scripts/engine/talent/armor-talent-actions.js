@@ -118,14 +118,14 @@ export class ArmorTalentActions {
       'system.activated': true
     }], { source: 'ShieldExpert.restoreSR' });
 
-    await actor?.setFlag?.(NS, SHIELD_EXPERT_FLAG, {
+    await ActorEngine.updateActorFlags(actor, NS, SHIELD_EXPERT_FLAG, {
       encounterId: state.encounterId,
       used: state.used + 1,
       lastShieldId: choice.id,
       lastShieldName: choice.name,
       restored,
       updatedAt: Date.now()
-    });
+    }, { recalc: false });
 
     await postCard(actor, 'Shield Expert', `<p>${esc(actor.name)} restores <strong>${restored} SR</strong> to ${esc(choice.name)}.</p>
       <p><strong>Shield SR:</strong> ${choice.current} → ${nextSR} / ${choice.max}</p>

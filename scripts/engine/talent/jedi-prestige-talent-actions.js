@@ -367,7 +367,7 @@ export class JediPrestigeTalentActions {
       return null;
     }
     const cap = actorLevel(actor) * 500;
-    await actor.setFlag?.(NS, 'jediNetwork', { used: true, purpose: choice.purpose, cap, usedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'jediNetwork', { used: true, purpose: choice.purpose, cap, usedAt: Date.now() }, { recalc: false });
     const descriptions = {
       equipment: `obtain equipment/funds up to ${cap} credits, subject to licensing/restriction context`,
       information: 'automatically succeed on Gather Information if DC is 20 or lower and cover the check cost',
@@ -388,7 +388,7 @@ export class JediPrestigeTalentActions {
   static async promptJediQuarry(actor) {
     const target = await chooseTargetActor('Jedi Quarry', 'target creature');
     if (!target) return null;
-    await actor.setFlag?.(NS, 'jediQuarry', { targetName: target.name, targetActorId: target.actor?.id ?? null, encounterId: encounterId(), active: true, setAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'jediQuarry', { targetName: target.name, targetActorId: target.actor?.id ?? null, encounterId: encounterId(), active: true, setAt: Date.now() }, { recalc: false });
     return postCard(actor, 'Jedi Quarry', `<p>${esc(actor.name)} designates <strong>${esc(target.name)}</strong> as their Jedi Quarry.</p><p>Gain +2 Speed whenever spending a Move Action to move, provided you end adjacent to the quarry. This lasts until the target surrenders, reaches 0 HP, reaches the bottom of the Condition Track, or the encounter ends.</p>`, { targetActorId: target.actor?.id ?? null });
   }
 
@@ -464,7 +464,7 @@ export class JediPrestigeTalentActions {
         if (!pending || pending.granted === true) return;
         if (pending.encounterId && pending.encounterId !== encounterId()) return;
         const grant = await grantBonusForcePoint(priorActor, { source: 'Master Advisor', sourceActorId: pending.sourceActorId, sourceActorName: pending.sourceActorName, expires: 'encounter', encounter: pending.encounterId ?? encounterId() });
-        await priorActor.setFlag?.(NS, 'pendingMasterAdvisorForcePoint', { ...pending, granted: true, grantedAt: Date.now(), grantedAmount: grant.granted });
+        await ActorEngine.updateActorFlags(priorActor, NS, 'pendingMasterAdvisorForcePoint', { ...pending, granted: true, grantedAt: Date.now(), grantedAmount: grant.granted }, { recalc: false });
         await postCard(priorActor, 'Master Advisor', `<p>${esc(priorActor.name)} gains one temporary Force Point from ${esc(pending.sourceActorName || 'Master Advisor')} at the end of their turn. It expires at the end of the encounter if unspent.</p>`, { targetActorId: priorActor.id, granted: grant.granted });
       } catch (err) {
         console.warn('[SWSE] Master Advisor pending grant failed:', err);

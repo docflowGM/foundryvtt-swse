@@ -376,7 +376,7 @@ export class ForceAdeptTalentActions {
     ]);
     if (!selected?.powerName) return null;
     const nextPowers = [...new Set([...selectedPowers, selected.powerName])];
-    await actor.setFlag?.(NS, 'forcePowerAdept', { powerName: selected.powerName, powers: nextPowers, recordedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'forcePowerAdept', { powerName: selected.powerName, powers: nextPowers, recordedAt: Date.now() }, { recalc: false });
     if (selected.recordOnly) {
       return postCard(actor, 'Force Power Adept', `<p>Recorded <strong>${esc(selected.powerName)}</strong> as a selected Force Power for Force Power Adept.</p><p>Recorded selections: <strong>${nextPowers.map(esc).join(', ')}</strong>.</p><p>When using a selected power, this actor may spend a Force Point to roll two Use the Force checks and keep the better result.</p>`, { powerName: selected.powerName, powers: nextPowers, recordedOnly: true });
     }
@@ -488,7 +488,7 @@ export class ForceAdeptTalentActions {
       const granted = await grantBonusForcePoint(actor, 'Mystical Link');
       return postCard(actor, 'Mystical Link', `<p>Mystical Link succeeded. ${esc(actor.name)} gains 1 temporary Force Point that expires at the end of the encounter.</p><p>Current bonus Force Points: <strong>${granted.total ?? '?'}</strong>.</p>`, { success: true, benefit: choice.benefit });
     }
-    await actor.setFlag?.(NS, `mysticalLink.${choice.benefit}`, { encounterId: encounterId(), actorId: actor.id, createdAt: Date.now(), unresolved: true });
+    await ActorEngine.updateActorFlags(actor, NS, `mysticalLink.${choice.benefit}`, { encounterId: encounterId(), actorId: actor.id, createdAt: Date.now(), unresolved: true }, { recalc: false });
     return postCard(actor, 'Mystical Link', `<p>Mystical Link succeeded. GM selected: <strong>${esc(choice.benefit === 'encounterUse' ? 'additional once/encounter use' : 'additional die on Use the Force')}</strong>.</p><p>This benefit has been recorded on the actor for manual resolution.</p>`, { success: true, benefit: choice.benefit, manualResolution: true });
   }
 
@@ -544,7 +544,7 @@ export class ForceAdeptTalentActions {
       { type: 'checkbox', name: 'recordOnly', label: 'Record talisman selection only; do not spend a Force Point now', checked: true }
     ]);
     if (!choice?.powerName) return null;
-    await actor.setFlag?.(NS, 'focusedForceTalisman', { powerName: choice.powerName, greater, recordedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'focusedForceTalisman', { powerName: choice.powerName, greater, recordedAt: Date.now() }, { recalc: false });
     if (choice.recordOnly) {
       return postCard(actor, title, `<p>Recorded <strong>${esc(choice.powerName)}</strong> as the Focused Force Talisman power.</p><p>Creation/equipment state remains manual until talisman UI exists.</p>`, { powerName: choice.powerName, greater, recordedOnly: true });
     }
@@ -624,7 +624,7 @@ export class ForceAdeptTalentActions {
         const will = defenseTotal(target, 'will');
         const affected = total >= will;
         if (affected) {
-          await target.setFlag?.(NS, 'forceAdept.unsettlingPresence', { encounterId: enc, sourceActorId: actor.id, sourceActorName: actor.name, attackPenalty: -2, skillPenalty: -2, useTheForceTotal: total, createdAt: Date.now() });
+          await ActorEngine.updateActorFlags(target, NS, 'forceAdept.unsettlingPresence', { encounterId: enc, sourceActorId: actor.id, sourceActorName: actor.name, attackPenalty: -2, skillPenalty: -2, useTheForceTotal: total, createdAt: Date.now() }, { recalc: false });
         }
         rows.push(`<li><strong>${esc(target.name)}</strong>: ${total} vs Will ${will}; ${affected ? 'affected (-2 attack/skill while within 6 squares)' : 'not affected'}.</li>`);
       }
@@ -701,7 +701,7 @@ export class ForceAdeptTalentActions {
     if (!hasTalent(actor, 'Telepathic Intruder')) return postCard(actor, 'Telepathic Intruder', '<p>This actor does not have Telepathic Intruder.</p>');
     const target = selectedTargetActors()[0] ?? null;
     if (!target) return postCard(actor, 'Telepathic Intruder', '<p>Target the creature that was successfully affected by your [Mind-Affecting] Force Power, then use this action again.</p>', { requiresTarget: true });
-    await actor.setFlag?.(NS, 'telepathicIntruder', { targetActorId: target.id, targetName: target.name, bonus: 2, bonusType: 'force', expires: 'end_next_turn', encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, createdAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'telepathicIntruder', { targetActorId: target.id, targetName: target.name, bonus: 2, bonusType: 'force', expires: 'end_next_turn', encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, createdAt: Date.now() }, { recalc: false });
     return postCard(actor, 'Telepathic Intruder', `<p>${esc(actor.name)} records <strong>${esc(target.name)}</strong> as the Telepathic Intruder target until the end of ${esc(actor.name)}'s next turn.</p><p>The Force executor applies a <strong>+2 Force bonus</strong> to [Mind-Affecting] Force Power activation checks against that target when target context is passed.</p>`, { targetActorId: target.id, bonus: 2, expires: 'end_next_turn' });
   }
 }

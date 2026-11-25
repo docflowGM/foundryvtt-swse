@@ -143,12 +143,12 @@ export class GuardianSpiritActions {
       return null;
     }
     const fpReceipt = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'guardian-spirit:manifest' });
-    await actor.setFlag(NS, GUARDIAN_PATH, {
+    await ActorEngine.updateActorFlags(actor, NS, GUARDIAN_PATH, {
       manifested: true,
       manifestedAt: Date.now(),
       source: 'Manifest Guardian Spirit',
       note: 'Guardian Spirit is manifested for this encounter. GM/player adjudicates location and morale bonuses.'
-    });
+    }, { recalc: false });
     // The paid effect (manifestation) now exists: settle the receipt exactly.
     try { await ActorEngine.finalizeForcePointSpend(actor, fpReceipt); } catch (error) { console.error('[SWSE] Force Point paid effect applied but finality was not persisted; receipt stays committed for audit.', error); }
     await this._post(actor, 'Manifest Guardian Spirit', 'Guardian Spirit manifested for the encounter. Position and aura bonuses are GM/player adjudicated.');
@@ -169,7 +169,7 @@ export class GuardianSpiritActions {
     const currentTemp = Number(actor?.system?.hp?.temp ?? actor?.system?.health?.temp ?? 0) || 0;
     const update = { 'system.hp.temp': Math.max(currentTemp, amount) };
     await ActorEngine.updateActor(actor, update, { source: 'vital-encouragement' });
-    await actor.setFlag(NS, 'encounterUses.guardianSpirit.vitalEncouragement', true);
+    await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.guardianSpirit.vitalEncouragement', true, { recalc: false });
     await this._post(actor, 'Vital Encouragement', `Gained ${amount} Bonus Hit Points. Bonus Hit Points from multiple sources do not stack and expire at encounter end.`);
     return { bonusHitPoints: amount };
   }
@@ -233,12 +233,12 @@ export class GuardianSpiritActions {
       showRollCompanion: true
     });
     if (result) {
-      await actor.setFlag(NS, 'encounterUses.guardianSpirit.crucialAdvice', {
+      await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.guardianSpirit.crucialAdvice', {
         encounterId: state.encounterId,
         used: true,
         skillKey,
         usedAt: Date.now()
-      });
+      }, { recalc: false });
     }
     return result;
   }

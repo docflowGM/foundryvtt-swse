@@ -180,6 +180,18 @@ export const ActorEngine = {
     return removed;
   },
 
+  // Mirrors the real governed flag API (actor-engine.js updateActorFlags / unsetActorFlag): the write goes through the actor's setFlag/unsetFlag
+  // (which is where the 'swse' scope redirect lives). The real engine's follow-up recalcAll has no effect in this fake.
+  async updateActorFlags(actor, scope, key, value, options = {}) {
+    fakeActorEngineCallLog.push({ method: 'updateActorFlags', actorId: actor?.id, scope, key, options: { ...options } });
+    return actor.setFlag(scope, key, value);
+  },
+
+  async unsetActorFlag(actor, scope, key, options = {}) {
+    fakeActorEngineCallLog.push({ method: 'unsetActorFlag', actorId: actor?.id, scope, key, options: { ...options } });
+    return actor.unsetFlag(scope, key);
+  },
+
   async restoreFromSnapshot(actor, snapshot = {}, options = {}) {
     fakeActorEngineCallLog.push({ method: 'restoreFromSnapshot', actorId: actor?.id, options: { ...options } });
     actor.system = deepCloneJSON(snapshot.system ?? {});

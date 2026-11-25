@@ -348,7 +348,7 @@ export class ConsularTalentActions {
       const newStep = Math.min(maxStep, oldStep + steps);
       conditionResult = await ConditionEngine.applyConditionStep(targetActor, newStep, { source: 'adept-negotiator-condition-track' });
       brokenResolve = newStep >= maxStep;
-      await targetActor.setFlag(NS, ADEP_FLAG, {
+      await ActorEngine.updateActorFlags(targetActor, NS, ADEP_FLAG, {
         sourceActorId: actor.id,
         sourceActorName: actor.name,
         previousStep: oldStep,
@@ -363,7 +363,7 @@ export class ConsularTalentActions {
         noPhysicalDamage: true,
         combatId: this._encounterId(),
         appliedAt: Date.now()
-      });
+      }, { recalc: false });
       await createEffectOnActor(targetActor, {
         name: brokenResolve ? `Adept Negotiator: Broken Resolve (${actor.name})` : `Adept Negotiator (${actor.name})`,
         icon: 'icons/svg/downgrade.svg',
@@ -446,7 +446,7 @@ export class ConsularTalentActions {
     }
     let masterAdvisorPending = false;
     if (hasTalent(actor, 'Master Advisor') && allyActor) {
-      await allyActor.setFlag?.('swse', 'pendingMasterAdvisorForcePoint', {
+      await ActorEngine.updateActorFlags(allyActor, 'swse', 'pendingMasterAdvisorForcePoint', {
         sourceActorId: actor.id,
         sourceActorName: actor.name,
         allyActorId: allyActor.id,
@@ -456,7 +456,7 @@ export class ConsularTalentActions {
         granted: false,
         createdAt: Date.now(),
         note: 'Grant one temporary Force Point at the end of this ally\'s next turn. Expires at the end of the encounter if unspent.'
-      });
+      }, { recalc: false });
       masterAdvisorPending = true;
     }
     await postCard(actor, 'Skilled Advisor', `<p>${esc(actor.name)} advises <strong>${esc(ally?.name ?? allyActor?.name ?? 'an ally')}</strong>.</p><p><strong>Effect:</strong> +${bonus} on the ally's next ${esc(getSkillLabel(allyActor ?? actor, skillKey))} check.${useForcePoint ? ' One Force Point was spent.' : ''}</p>${masterAdvisorPending ? '<p><strong>Master Advisor:</strong> one temporary Force Point is queued for that ally at the end of their next turn; it expires at the end of the encounter if unspent.</p>' : ''}<p><strong>Descriptor:</strong> Mind-Affecting.</p>`, { talentName: 'Skilled Advisor', bonus, skillKey, masterAdvisorPending });
@@ -544,7 +544,7 @@ export class ConsularTalentActions {
       await ConditionEngine.applyConditionStep(allyActor, previous, { source: 'cleanse-mind-adept-negotiator' });
       const ids = candidates.filter(e => /adept negotiator|broken resolve/i.test(String(e.name ?? e.label ?? ''))).map(e => e.id).filter(Boolean);
       if (ids.length) await ActorEngine.deleteEmbeddedDocuments(allyActor, 'ActiveEffect', ids, { source: 'cleanse-mind' });
-      await allyActor.unsetFlag?.(NS, ADEP_FLAG);
+      await ActorEngine.unsetActorFlag(allyActor, NS, ADEP_FLAG, { recalc: false });
     } else if (result.choice.startsWith('effect:')) {
       const id = result.choice.slice(7);
       await ActorEngine.deleteEmbeddedDocuments(allyActor, 'ActiveEffect', [id], { source: 'cleanse-mind' });
@@ -587,7 +587,7 @@ export class ConsularTalentActions {
     if (ally.actor) {
       await createEffectOnActor(ally.actor, { name: `Consular's Wisdom (${actor.name})`, icon: 'icons/svg/shield.svg', changes: [], disabled: false, duration: { rounds: 999 }, flags: { swse: { talentName: "Consular's Wisdom", sourceActorId: actor.id, manualDefenseAdjustment: true, mindAffectingWillBonus: bonus, appliesVs: 'Mind-Affecting effects', encounterId: this._encounterId() } } }, { source: 'consulars-wisdom' });
     }
-    await actor.setFlag(NS, 'encounterUses.consularsWisdom', { encounterId: this._encounterId(), used: true, usedAt: Date.now(), targetName: ally.name, bonus });
+    await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.consularsWisdom', { encounterId: this._encounterId(), used: true, usedAt: Date.now(), targetName: ally.name, bonus }, { recalc: false });
     await postCard(actor, "Consular's Wisdom", `<p><strong>${esc(ally?.name ?? 'Ally')}</strong> adds your Wisdom bonus (${bonus}) to Will Defense against Mind-Affecting effects until the end of the encounter.</p><p>This is a conditional defense bonus and is not applied globally.</p>`, { talentName: "Consular's Wisdom", bonus });
     return { success: true, bonus };
   }
@@ -610,7 +610,7 @@ export class ConsularTalentActions {
     const fp = await beginContractedForcePoint(actor, "consular:promptEntreatAid", {}, { label: "promptEntreatAid" });
     if (!fp.ok) return null;
     return fp.settle(async () => {
-      await actor.setFlag(NS, 'entreatAid', { turnKey, usedThisTurn: [...used, allyKey], pending: { allyName: ally.name, allyActorId: ally.actor?.id ?? null, createdAt: Date.now(), expires: 'end-of-turn' } });
+      await ActorEngine.updateActorFlags(actor, NS, 'entreatAid', { turnKey, usedThisTurn: [...used, allyKey], pending: { allyName: ally.name, allyActorId: ally.actor?.id ?? null, createdAt: Date.now(), expires: 'end-of-turn' } }, { recalc: false });
       await postCard(actor, 'Entreat Aid', `<p>${esc(actor.name)} spends a Force Point. <strong>${esc(ally.name)}</strong> may use Aid Another as a Reaction to assist ${esc(actor.name)}'s next Skill Check before the end of this turn.</p><p>The benefit is lost if the Skill Check is not made before the end of the turn.</p>`, { talentName: 'Entreat Aid', allyActorId: ally.actor?.id ?? null });
       return { success: true, allyName: ally.name };
     });
@@ -691,7 +691,7 @@ export class ConsularTalentActions {
       return null;
     }
     await ActorEngine.updateEmbeddedDocuments(actor, 'Item', spent.map(power => ({ _id: power.id, 'system.discarded': false, 'system.lastRecovered': Date.now(), 'flags.swse.lastRecoverySource': 'renew-vision' })), { source: 'renew-vision', render: false });
-    await actor.setFlag(NS, 'encounterUses.renewVision', { encounterId: this._encounterId(), used: true, recovered: spent.length, usedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.renewVision', { encounterId: this._encounterId(), used: true, recovered: spent.length, usedAt: Date.now() }, { recalc: false });
     await postCard(actor, 'Renew Vision', `<p>${esc(actor.name)} regains all expended uses of <strong>Farseeing</strong> (${spent.length} recovered).</p><p><strong>Action:</strong> Swift Action · once per encounter.</p>`, { talentName: 'Renew Vision', recovered: spent.length });
     return { success: true, recovered: spent.length };
   }
@@ -881,7 +881,7 @@ export class ConsularTalentActions {
     }
     const target = await promptToken(actor, 'Close Maneuvering', { relation: 'enemy', fallbackLabel: 'designated target', note: 'Designate one target. Until the start of your next turn, your movement does not provoke Attacks of Opportunity from that target if you end adjacent to it.' });
     if (!target) return null;
-    await actor.setFlag(NS, 'closeManeuvering', { targetName: target.name, targetActorId: target.actor?.id ?? null, round: game.combat?.round ?? null, turn: game.combat?.turn ?? null, expires: 'start-of-next-turn', usedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'closeManeuvering', { targetName: target.name, targetActorId: target.actor?.id ?? null, round: game.combat?.round ?? null, turn: game.combat?.turn ?? null, expires: 'start-of-next-turn', usedAt: Date.now() }, { recalc: false });
     await postCard(actor, 'Close Maneuvering', '<p>' + esc(actor.name) + ' designates <strong>' + esc(target.name) + '</strong>. Movement does not provoke Attacks of Opportunity from that target until the start of ' + esc(actor.name) + "'s next turn, provided movement ends adjacent to that target.</p>", { talentName: 'Close Maneuvering', targetActorId: target.actor?.id ?? null });
     return { success: true, targetName: target.name };
   }
@@ -966,7 +966,7 @@ export class ConsularTalentActions {
     }
     const target = await promptToken(actor, 'Mobile Combatant', { relation: 'enemy', fallbackLabel: 'adjacent opponent', note: 'Use after ending movement adjacent to an opponent. If the target moves or withdraws before your next turn, you may move with it up to your speed.' });
     if (!target) return null;
-    await actor.setFlag(NS, 'mobileCombatant', { targetName: target.name, targetActorId: target.actor?.id ?? null, speed: actor.system?.movement?.speed ?? actor.system?.speed ?? null, round: game.combat?.round ?? null, turn: game.combat?.turn ?? null, expires: 'beginning-of-next-turn', usedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'mobileCombatant', { targetName: target.name, targetActorId: target.actor?.id ?? null, speed: actor.system?.movement?.speed ?? actor.system?.speed ?? null, round: game.combat?.round ?? null, turn: game.combat?.turn ?? null, expires: 'beginning-of-next-turn', usedAt: Date.now() }, { recalc: false });
     await postCard(actor, 'Mobile Combatant', '<p>' + esc(actor.name) + ' shadows <strong>' + esc(target.name) + '</strong>. If that opponent Moves or Withdraws before the beginning of ' + esc(actor.name) + "'s next turn, " + esc(actor.name) + ' may move with it up to their current speed, ending closer if the target moves farther.</p><p>Normal Attack of Opportunity rules for the first square of movement still apply unless the target Withdraws or avoids AoO with Acrobatics.</p>', { talentName: 'Mobile Combatant', targetActorId: target.actor?.id ?? null });
     return { success: true, targetName: target.name };
   }
@@ -1001,15 +1001,15 @@ export class ConsularTalentActions {
         const damage = Number(payload.damage ?? payload.damageTotal ?? payload.totalDamage ?? 0) || 0;
         if (!hit || damage <= 0 || !this._looksLikeLightsaber(payload)) return;
         if (hasTalent(actor, 'Aggressive Negotiator')) {
-          await actor.setFlag(NS, 'aggressiveNegotiatorTake10', { active: true, combatId: this._encounterId(), round: game.combat?.round ?? null, turn: game.combat?.turn ?? null, expires: 'end-of-next-turn', triggeredAt: Date.now() });
+          await ActorEngine.updateActorFlags(actor, NS, 'aggressiveNegotiatorTake10', { active: true, combatId: this._encounterId(), round: game.combat?.round ?? null, turn: game.combat?.turn ?? null, expires: 'end-of-next-turn', triggeredAt: Date.now() }, { recalc: false });
           ui?.notifications?.info?.('Aggressive Negotiator active: you may Take 10 on Persuasion checks before the end of your next turn.');
         }
         if (hasTalent(actor, 'Guiding Strikes')) {
-          await actor.setFlag(NS, 'guidingStrikesAvailable', { active: true, combatId: this._encounterId(), round: game.combat?.round ?? null, turn: game.combat?.turn ?? null, targetName: payload.target?.name ?? payload.targetActor?.name ?? payload.targetName ?? 'damaged target', triggeredAt: Date.now() });
+          await ActorEngine.updateActorFlags(actor, NS, 'guidingStrikesAvailable', { active: true, combatId: this._encounterId(), round: game.combat?.round ?? null, turn: game.combat?.turn ?? null, targetName: payload.target?.name ?? payload.targetActor?.name ?? payload.targetName ?? 'damaged target', triggeredAt: Date.now() }, { recalc: false });
           ui?.notifications?.info?.('Guiding Strikes available: use a Swift Action before the end of your turn.');
         }
         if (hasTalent(actor, "Improved Consular's Vitality")) {
-          await actor.setFlag(NS, 'improvedConsularsVitalityAvailable', { active: true, combatId: this._encounterId(), round: game.combat?.round ?? null, turn: game.combat?.turn ?? null, expires: 'start-of-next-turn', triggeredAt: Date.now() });
+          await ActorEngine.updateActorFlags(actor, NS, 'improvedConsularsVitalityAvailable', { active: true, combatId: this._encounterId(), round: game.combat?.round ?? null, turn: game.combat?.turn ?? null, expires: 'start-of-next-turn', triggeredAt: Date.now() }, { recalc: false });
           ui?.notifications?.info?.("Improved Consular's Vitality available: use Consular's Vitality as a Free Action until the start of your next turn.");
         }
 
@@ -1017,7 +1017,7 @@ export class ConsularTalentActions {
         const targetName = payload.target?.name ?? payload.targetActor?.name ?? payload.targetName ?? targetActor?.name ?? 'damaged target';
 
         if (hasTalent(actor, 'Exposing Strike')) {
-          await actor.setFlag(NS, 'exposingStrikeAvailable', { active: true, combatId: this._encounterId(), round: game.combat?.round ?? null, turn: game.combat?.turn ?? null, targetName, targetActorId: targetActor?.id ?? null, expires: 'end-of-next-turn', triggeredAt: Date.now() });
+          await ActorEngine.updateActorFlags(actor, NS, 'exposingStrikeAvailable', { active: true, combatId: this._encounterId(), round: game.combat?.round ?? null, turn: game.combat?.turn ?? null, targetName, targetActorId: targetActor?.id ?? null, expires: 'end-of-next-turn', triggeredAt: Date.now() }, { recalc: false });
           ui?.notifications?.info?.('Exposing Strike available: spend a Force Point to make the damaged target Flat-Footed.');
         }
 
