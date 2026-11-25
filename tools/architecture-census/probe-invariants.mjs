@@ -14,11 +14,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
-const CENSUS = path.join(ROOT, 'data', 'audits', 'architecture-census');
+// --census-dir <dir>: read a census produced by `build-census.mjs --current --out <dir>` and write the
+// probe result inside it (never touches the committed baseline).
+const cdIdx = process.argv.indexOf('--census-dir');
+const CUSTOM = cdIdx >= 0 ? path.resolve(process.argv[cdIdx + 1]) : null;
+const CENSUS = CUSTOM || path.join(ROOT, 'data', 'audits', 'architecture-census');
 const OUT = path.join(CENSUS, 'contracts', 'invariant-probes.json');
 const CHECK = process.argv.includes('--check');
 let acorn, walk;
@@ -31,7 +36,13 @@ const HEAD = baseline.auditedCommit;
 const reg = [];
 for (const f of fs.readdirSync(path.join(CENSUS, 'registry'))) if (f !== 'index.json') reg.push(...J('registry/' + f).files);
 const byPath = new Map(reg.map(e => [e.path, e]));
-const read = p => fs.readFileSync(path.join(ROOT, p), 'utf8');
+// Baseline mode reads source from the pinned audited commit (immutable); --census-dir mode reads the working tree.
+const BASELINE_COMMIT = baseline.auditedCommit;
+const _cache = new Map();
+const read = CUSTOM ? (p => fs.readFileSync(path.join(ROOT, p), 'utf8')) : (p => {
+  if (!_cache.has(p)) _cache.set(p, execFileSync('git', ['show', `${BASELINE_COMMIT}:${p}`], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 }));
+  return _cache.get(p);
+});
 const isRuntime = e => e.imports && (e.path === 'index.js' || e.path.startsWith('scripts/')) && !/^scripts\/(dev|build|debug)\//.test(e.path) && !['node-tool', 'node-script', 'tool-only-import'].includes(e.runtimeReachability);
 const live = e => e.runtimeReachability.startsWith('reachable');
 const runtime = reg.filter(isRuntime);

@@ -10,7 +10,7 @@ Contracts for flows that cross domain boundaries. Each names the **single** auth
 | Gate | `ActorEngine` (`scripts/governance/actor-engine/actor-engine.js:83`, object export) | `updateActor` `:570` · `updateEmbeddedDocuments` `:859` · `updateOwnedItems` `:932` · `createEmbeddedDocuments` `:940` · `deleteEmbeddedDocuments` `:986` · `applyMutationPlan` `:3259` · **flags:** `updateActorFlags` `:4114`, `unsetActorFlag` `:4160` | APPROVED · OBSERVED |
 | Exceptions | world documents not owned by an actor; Foundry-only operations | must carry an inline comment naming the exception | APPROVED (OSI) |
 
-Conformance: 331 live direct-write sites outside the gate (`P-A02`); 203 of them are `setFlag`/`unsetFlag`, for which the governed equivalents above already exist. **CONFLICT** — classified per domain in Phase 2.
+Conformance: 331 direct-write sites outside the gate, 295 of them in reachable modules (`P-A02`; erratum E-1); 203 of them are `setFlag`/`unsetFlag`, for which the governed equivalents above already exist. **CONFLICT** — classified per domain in Phase 2.
 
 ## X-02 — Progression finalization (progression → ActorEngine)
 

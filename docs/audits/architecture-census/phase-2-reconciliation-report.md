@@ -153,3 +153,7 @@ The wave assignment for every finding is in `remediation-roadmap.json`. The reco
 - **Probes are lower bounds.** Domain audits found more sites than the regex/AST probes did; for example, 108 monkey-patch sites against 20 from the probe.
 - **Reachability is static.** Macros in packs, console use of `game.swse.*` globals and module APIs can reach code the census marks unreachable. Every deletion therefore keeps the legacy class E/F check.
 - **Git history** at the audited commit is a single squashed commit, so intent was established from documents rather than history.
+
+## Errata (added during implementation, 2026-11-25)
+
+- **E-1 (direct document writes).** This report and `A-global-invariants.md` (A-02), `X-integration-contracts.md` (X-01) say "331 live direct document-write sites". 331 is the count over **all runtime modules**, including 36 sites in modules the census marks unreachable. The count in **reachable** modules is **295 sites in 97 files**; all 203 `setFlag`/`unsetFlag` sites are among those 295 (`invariant-probes.json` → `P-A02`, `liveHits`/`byMethod`). The implementation ratchet tracks the 295 per file. The unreachable 36 are dead-code candidates, not live violations.

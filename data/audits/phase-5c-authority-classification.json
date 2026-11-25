@@ -18,7 +18,7 @@
   "GENERATED_RUNTIME_INDEX": 1,
   "GENERATED_COMPATIBILITY": 3,
   "MIGRATION_ALIAS_ONLY": 2,
-  "HISTORICAL_AUDIT_EVIDENCE": 724,
+  "HISTORICAL_AUDIT_EVIDENCE": 726,
   "DEAD_REMOVE": 0,
   "OTHER_DOMAIN_DATA": 31,
   "REFERENCE_BEARING_DOMAIN_DATA": 14
@@ -547,6 +547,16 @@
   },
   {
    "path": "data/audits/architecture-census/findings/unimplemented.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/architecture-census/implementation/ratchet-baseline.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/architecture-census/implementation/tracker.json",
    "class": "HISTORICAL_AUDIT_EVIDENCE",
    "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
   },

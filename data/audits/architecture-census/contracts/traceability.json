@@ -17,7 +17,7 @@
    "source": "ARCHITECTURE §II/§VI; ENGINE-ARCH §2; progression-architecture; OSI",
    "status": "APPROVED · **CONFLICT**",
    "probe": "`P-A02`",
-   "observed": "**331** direct document-write sites in **120** live modules (155 `setFlag`, 48 `unsetFlag`, 35 `update`, 19 `create`, 19 `delete`, …). Highest: talents 72, combat 25, equipment 24, mentor 24, npc-followers 23, force 23"
+   "observed": "**331** direct document-write sites in **120** runtime modules (**295 in 97 reachable modules**; see Phase 2 report erratum E-1) (155 `setFlag`, 48 `unsetFlag`, 35 `update`, 19 `create`, 19 `delete`, …). Highest: talents 72, combat 25, equipment 24, mentor 24, npc-followers 23, force 23"
   },
   {
    "requirement": "A-03",

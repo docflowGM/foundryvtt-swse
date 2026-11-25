@@ -8,6 +8,7 @@
  * Usage: node tools/architecture-census/assemble-findings.mjs [--check]
  */
 import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -113,7 +114,8 @@ const md = `# Phase 2 finding register (generated)\n\nSortable backlog: \`data/a
 outs.set(path.join(DOCS, 'phase-2-finding-register.md'), md);
 
 // rules questions for the owner's register (never written to the register itself)
-const registerText = fs.readFileSync(path.join(ROOT, 'docs', 'audits', 'swse-rules-decisions-pending.md'), 'utf8');
+// the register is append-only and will grow; the audit compared against it as of the audited commit
+const registerText = execFileSync('git', ['show', `${AUDITED}:docs/audits/swse-rules-decisions-pending.md`], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 26 });
 const deferred = [];
 for (const s of sidecars) {
   for (const d of s.deferredRules || []) deferred.push({ domain: s.domain, item: d.item, ref: d.registerRef || null, from: 'deferredRules' });

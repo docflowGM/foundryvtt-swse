@@ -14,6 +14,7 @@
  * with parseError and analysed with a regex fallback.
  */
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -23,8 +24,16 @@ import { DOMAINS, classifyDomain, inferRole, keywordDomain } from './taxonomy.mj
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
-const OUT = path.join(ROOT, 'data', 'audits', 'architecture-census');
+// Two modes:
+//   baseline (default): pinned to the audited commit f734b4d-era snapshot; immutable history.
+//   --current [--out <dir>]: censuses the CURRENT working tree and writes to <dir> (default:
+//     <os tmpdir>/swse-census-current). Never touches the committed baseline outputs. Used by
+//     tools/architecture-census/check-architecture.mjs (the CI ratchet).
+const CURRENT = process.argv.includes('--current');
+const argOut = (() => { const i = process.argv.indexOf('--out'); return i >= 0 ? process.argv[i + 1] : null; })();
+const OUT = CURRENT ? path.resolve(argOut || path.join(os.tmpdir(), 'swse-census-current')) : path.join(ROOT, 'data', 'audits', 'architecture-census');
 const CHECK = process.argv.includes('--check');
+if (CURRENT && CHECK) { console.error('--current and --check are mutually exclusive'); process.exit(2); }
 
 // ---------- acorn resolution (dev dependency only) ----------
 function loadAcorn() {
@@ -43,20 +52,25 @@ const { acorn, walk } = AC;
 
 // ---------- repository snapshot ----------
 const git = (...a) => execFileSync('git', a, { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 });
-// The audited commit is the last commit that touched anything OUTSIDE the audit's own
-// paths, so committing audit outputs never changes what is being audited.
+// The baseline is PINNED to the commit that was audited. It never moves, even as production
+// code changes during the realignment program; use --current to census the live tree.
+const BASELINE_COMMIT = 'f734b4d33f0e7603856b262f06dd705cc02ab5b8';
 const SELF_PREFIXES = ['data/audits/architecture-census/', 'tools/architecture-census/', 'docs/audits/architecture-census/', 'docs/architecture/v2-contracts/'];
 // Repository registries that must list the audit's own new evidence files (the Phase 5C
 // classification test requires every data/audits/** file to be classified). Changes to
-// these files only register audit outputs; the census reads them as of the audited commit.
+// these files only register audit outputs; the baseline reads them as of the audited commit.
 const REGISTRY_SIDE_EFFECTS = ['data/audits/phase-5c-authority-classification.json', 'docs/audits/phase-5c-authority-classification.md'];
 const EXCLUDE = [...SELF_PREFIXES, ...REGISTRY_SIDE_EFFECTS].map(p => `:(exclude)${p}`);
-const HEAD = git('log', '-1', '--format=%H', '--', '.', ...EXCLUDE).trim();
-{
+const HEAD = CURRENT ? git('rev-parse', 'HEAD').trim() : BASELINE_COMMIT;
+if (!CURRENT) {
   const drift = git('diff', '--name-only', HEAD, '--', '.', ...EXCLUDE).trim();
-  if (drift) { console.error(`Working tree differs from audited commit ${HEAD.slice(0, 7)} outside audit paths:\n${drift}`); process.exit(3); }
+  const untrackedProd = git('ls-files', '--others', '--exclude-standard', '--', '.', ...EXCLUDE).trim();
+  if (drift || untrackedProd) {
+    console.error(`The working tree has moved past the pinned baseline ${HEAD.slice(0, 7)} outside audit paths, so the immutable baseline cannot be regenerated here.\nTo re-verify it, check out a commit whose non-audit tree equals ${HEAD.slice(0, 7)} (e.g. the audit branch tip b6b7923). To census the current code, use: node tools/architecture-census/build-census.mjs --current\nFirst differing paths:\n${(drift + '\n' + untrackedProd).trim().split('\n').slice(0, 8).join('\n')}`);
+    process.exit(3);
+  }
 }
-const ALL_TRACKED = git('ls-tree', '-r', '--name-only', '-z', HEAD).split('\0').filter(Boolean);
+const ALL_TRACKED = CURRENT ? git('ls-files', '-z').split('\0').filter(Boolean) : git('ls-tree', '-r', '--name-only', '-z', HEAD).split('\0').filter(Boolean);
 const FILES = ALL_TRACKED.filter(f => !SELF_PREFIXES.some(p => f.startsWith(p))).sort();
 const FILESET = new Set(FILES);
 
@@ -72,7 +86,7 @@ for (const f of FILES) {
   const abs = path.join(ROOT, f);
   let st; try { st = fs.statSync(abs); } catch { sizeOf.set(f, -1); continue; }
   sizeOf.set(f, st.size);
-  if (REGISTRY_SIDE_EFFECTS.includes(f)) {
+  if (!CURRENT && REGISTRY_SIDE_EFFECTS.includes(f)) {
     const t = git('show', `${HEAD}:${f}`); content.set(f, t); sizeOf.set(f, Buffer.byteLength(t)); continue;
   }
   if (isText(f) && st.size < 40_000_000) content.set(f, fs.readFileSync(abs, 'utf8'));
