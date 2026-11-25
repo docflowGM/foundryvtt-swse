@@ -2584,17 +2584,21 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3C",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": true,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "Should Lineage/progression credit awards and chargen starting credits be recorded through TransactionEngine.executeCreditAdjustment (a progression context + ledger record), or remain inside the single finalizer/ActorEngine plan? (AD-004 direction: staging stays draft until an authorized commit.)",
    "dependencies": [
     "progression domain contract"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "c957dd1fd"
+   ],
+   "tests": [
+    "tests/progression-credit-grant-idempotency.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "GRANT_CREDITS (Lineage) idempotency fixed: credits + progressionHistory in one write. Remaining: grants/starting credits still bypass TransactionEngine (equipment-engine.setCredits, summary-step staging); legacy numeric-value branch of _grantCredits is not idempotent. Foundry acceptance NOT run."
   },
   {
    "id": "F-STO-005",
