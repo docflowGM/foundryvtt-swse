@@ -22,3 +22,8 @@ Contradictions between existing architecture documents and the code at `f734b4d`
 ## How entries are closed
 
 When the owner decides an entry, append the decision, date and implementing commit beneath it. Do not delete or rewrite the original row, in line with the `CLAUDE.md` append-only convention.
+
+## Implementation notes (engineering follow-up; not owner decisions)
+- **CR-06** — rerouted the two house-rule reads (`athleticsConsolidation` in `skill-registry.js`, `legacy-prereq-registry.js`) to `HouseRuleService.getBoolean` (`tests/house-rule-reads-via-service.test.mjs`). The remaining engine `game.settings.get` site (`skill-challenges/SkillChallengeStore.js`) reads a world data store, not a house rule, and is retained. Implementing commit: see tracker/ledger (3D.4).
+- **CR-07** — runtime-patch count is unchanged; folding is scheduled with 3N.
+- **CR-09** — `scripts/ui/framework/BaseAppV2.js` was deleted as an unreferenced module (3O, commit "3O: delete 25 statically-proven dead modules…").
