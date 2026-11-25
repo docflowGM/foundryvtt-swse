@@ -25,7 +25,6 @@ import { ReviewThreadAssembler } from "/systems/foundryvtt-swse/scripts/apps/sto
 import { StoreCardInteractions } from "/systems/foundryvtt-swse/scripts/apps/store/store-card-interactions.js";
 import { resolveStoreGlyph } from "/systems/foundryvtt-swse/scripts/apps/store/store-glyph-map.js";
 import {
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
   safeString,
   safeImg,
   safeSystem,
@@ -84,6 +83,7 @@ import {
   buildDroidWithBuilder,
   createCustomStarship
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 
 function storeI18n(key, data = {}) {

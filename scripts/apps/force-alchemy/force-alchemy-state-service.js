@@ -2,7 +2,6 @@
 // Persistent, non-destructive state ledger for the Force Artifact / Sith Alchemy Workbench.
 
 import {
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
   FORCE_ALCHEMY_FLAG_SCOPE,
   FORCE_ALCHEMY_FLAG_KEY,
   FORCE_ALCHEMY_RITES,
@@ -10,6 +9,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
   FORCE_ALCHEMY_TEMPLATES,
   FORCE_ALCHEMY_SPECIALIST_TRAITS
 } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-data.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const DEFAULT_STATE = Object.freeze({
   version: 1,
