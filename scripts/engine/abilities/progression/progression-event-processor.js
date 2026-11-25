@@ -371,8 +371,6 @@ export class ProgressionEventProcessor {
       `(${newLevelsGranted.length} Lineage levels, multiplier: ${multiplier})`
     );
 
-    await this._applyCreditsUpdate(actor, creditsToGrant, ability.name, ActorEngine);
-
     progressionHistory[abilityId] = {
       ...historyEntry,
       levelsGranted: Array.from(new Set(newLevelsGranted)).sort((a, b) => a - b),
@@ -380,7 +378,9 @@ export class ProgressionEventProcessor {
       lastGrantedCredits: creditsToGrant
     };
 
-    await ActorEngine.updateActor(actor, {
+    // F-STO-004: the credits and the idempotency record are ONE write. Written separately, a failure of the second left the credits granted but
+    // the levels unrecorded, so the next run granted the same levels again.
+    await this._applyCreditsUpdate(actor, creditsToGrant, ability.name, ActorEngine, {
       "flags.swse.progressionHistory": progressionHistory
     });
 
@@ -401,11 +401,13 @@ export class ProgressionEventProcessor {
    * @param {number} creditsToAdd - Amount of credits to add
    * @param {string} abilityName - Name of the ability for logging
    * @param {Object} ActorEngine - ActorEngine class
+   * @param {Object} [alsoPersist] - further update paths written in the SAME update (e.g. the idempotency record)
    */
-  static async _applyCreditsUpdate(actor, creditsToAdd, abilityName, ActorEngine) {
+  static async _applyCreditsUpdate(actor, creditsToAdd, abilityName, ActorEngine, alsoPersist = {}) {
     const currentCredits = Number(actor.system?.credits ?? 0) || 0;
     const newCredits = currentCredits + creditsToAdd;
     await ActorEngine.updateActor(actor, {
+      ...alsoPersist,
       "system.credits": newCredits
     });
   }

@@ -2121,17 +2121,21 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3C",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "ActorEngine._rollbackTransactionalPlan"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "cd2c0cc38"
+   ],
+   "tests": [
+    "tests/store-purchase-created-actor-rollback.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "world actors created by a purchase are removed (and verified) on failure; rolledBack only when verified, otherwise indeterminate+rollbackFailed with actor ids. Foundry acceptance NOT run."
   },
   {
    "id": "F-TAL-001",
