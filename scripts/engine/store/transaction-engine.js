@@ -441,9 +441,14 @@ export class TransactionEngine {
 
       const mergedPlan = mergeMutationPlans(...plans, ...(creditPlan ? [creditPlan] : []), transactionAudit);
 
+      // F-STO-001: ActorEngine creates CREATE-bucket world actors (purchased droids/vehicles) FIRST, and removes them on failure ONLY in transactional
+      // mode. A plan that creates world actors is therefore applied transactionally; plans that create none keep the existing non-transactional path
+      // (no extra snapshot). On failure the engine attaches verified rollback evidence to the thrown error (`error.rollback`), read in the catch below.
+      const createsWorldActors = Array.isArray(mergedPlan?.create?.actors) && mergedPlan.create.actors.length > 0;
       await ActorEngine.applyMutationPlan(freshActor, mergedPlan, {
         validate,
         rederive,
+        transactional: createsWorldActors,
         source: `${source}.${transactionContext}`
       });
 
@@ -489,16 +494,36 @@ export class TransactionEngine {
         error: error.message
       });
 
+      // F-STO-001: rollback is claimed only when EVERYTHING the plan changed is verified undone. ActorEngine's transactional mode reports the
+      // purchaser restore and the removal of created world actors (verified against the world registry); anything but FAILED_COMPENSATED means a
+      // purchased actor and/or the purchaser's changes may remain, so the result is `indeterminate` (the store holds stock for it), never `rolledBack`.
+      const planRollback = error?.rollback ?? null;
+      const planCleanupUnverified = planRollback != null && planRollback.outcome !== 'FAILED_COMPENSATED';
+      const unresolvedCreatedIds = planCleanupUnverified
+        ? [...new Set([...(planRollback.created?.stillPresent ?? []), ...(planRollback.created?.unverifiable ?? [])])]
+        : [];
+      const unresolvedResult = () => ({
+        success: false, transactionId, indeterminate: true, rollbackFailed: true,
+        createdActorIds: unresolvedCreatedIds,
+        rollbackEvidence: { outcome: planRollback?.outcome ?? null, compensation: planRollback?.compensation ?? null, reasons: planRollback?.reasons ?? [] },
+        error: `Transaction failed (${error.message}) and could not be fully undone${unresolvedCreatedIds.length ? `: purchased actor(s) ${unresolvedCreatedIds.join(', ')} may still exist` : ''}. A GM must review before retrying.`
+      });
+
       if (snapshotId) {
         const restore = await this.#restoreVerified(freshActor, snapshotId);
         if (!restore.restored) {
           swseLogger.error('TransactionEngine: Rollback failed', { transactionId, snapshotId, error: restore.error?.message });
-          return { success: false, transactionId, rollbackFailed: true, error: `Transaction failed and rollback failed: ${error.message}` };
+          return { success: false, transactionId, rollbackFailed: true, ...(planCleanupUnverified ? { indeterminate: true, createdActorIds: unresolvedCreatedIds } : {}), error: `Transaction failed and rollback failed: ${error.message}` };
+        }
+        if (planCleanupUnverified) {
+          swseLogger.error('TransactionEngine: Rollback incomplete; created world actors could not be verified removed', { transactionId, createdActorIds: unresolvedCreatedIds, reasons: planRollback.reasons });
+          return unresolvedResult();
         }
         swseLogger.info('TransactionEngine: Rollback successful', { transactionId, snapshotId });
         return { success: false, transactionId, rolledBack: true, error: error.message };
       }
 
+      if (planCleanupUnverified) return unresolvedResult();
       return { success: false, transactionId, error: error.message };
     } finally {
       this._mutationLocks.delete(lockKey);
