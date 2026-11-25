@@ -93,7 +93,7 @@ Agreements: tree identity uses the pack `_id` (`docs/audits/talent-phase-3f-iden
 | ID | Existing source | Claim | Observed | Status |
 |---|---|---|---|---|
 | CR-TAL-01 | `docs/audits/class-force-v2-integration-matrix-2026-11-22.md:9` (Decision A) and `tests/class-force-v2-direct-fp-writer-classification.test.mjs:21` | Every direct Force Point writer file is pinned and classified | The pin only scans the normal balance (`system.forcePoints.value`); the bonus pool `bonusForcePoints` has 6 independent writers (incl. `guardian-spirit-actions.js:91`) that the guard does not see | CONFLICT |
-| CR-TAL-02 | `scripts/data/talent-tree-db.js` header ("ALL engines MUST use this DB instead of string matching on names") | Name matching is prohibited for tree access | Talent action modules gate by talent **name** (`hasTalent(actor,'Guardian Spirit')`, `scripts/engine/talent/guardian-spirit-actions.js:150`) | CONFLICT (minor; talents, not trees) |
+| CR-TAL-02 | `scripts/data/talent-tree-db.js` header ("ALL engines MUST use this DB instead of string matching on names") | Name matching is prohibited for tree access | Talent action modules gate by talent **name** (`hasTalent(actor,'Guardian Spirit')`, `scripts/engine/talent/guardian-spirit-actions.js:149`) | CONFLICT (minor; talents, not trees) |
 
 ## 11. Phase 2 conformance summary
 

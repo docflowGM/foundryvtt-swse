@@ -60,7 +60,7 @@ None — no real internal boundary.
 | F-PAT-001 | high | confirmed | 108 live runtime monkey-patch sites in 41 live modules across 9 domains (full inventory in sidecar) |
 | F-PAT-002 | high | confirmed | Follower hotfixes write owner-actor flags directly, non-atomically (`setFlag` ×2) |
 | F-PAT-003 | medium | confirmed | Hotfix layer is composed by a side-effect import chain hidden in `squad-actions-init.js` |
-| F-PAT-004 | high | confirmed | Wrapper chains: `CombatOptionResolver.collectAttackModifiers` wrapped by 9 live modules, `ForceExecutor.executeForcePower` by 4 — behavior depends on import order |
+| F-PAT-004 | high | confirmed | Wrapper chains: `CombatOptionResolver.collectAttackModifiers` wrapped by 8 live modules, `ForceExecutor.executeForcePower` by 4 — behavior depends on import order |
 | F-PAT-005 | medium | confirmed | `Document.prototype` flag-scope patch (INF-owned) affects every document type |
 | F-PAT-006 | low | confirmed | Probe false positives (`Set.delete`) and exact clone in combat-ui-behavior-hotfix |
 | F-PAT-007 | low | confirmed | 29 unreachable monkey-patch modules (feat riders, combat adapters, sentinel hooks layers) |

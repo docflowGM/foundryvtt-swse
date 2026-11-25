@@ -31,7 +31,7 @@ Census note: domain-specific UI files are contracted in their domain (vehicle sh
 ## 3. Authorities
 
 - **Canonical data:** none — the domain must not own canonical game data. OBSERVED exceptions: per-actor sheet preferences stored as actor flags (R-UIS-12).
-- **Rules:** none permitted (A-04). OBSERVED violations: Second Wind healing/uses (`PanelContextBuilder.js:881`), defense subtotal (`defense-tooltip.js:226`), item-dialog prerequisite evaluation (`scripts/dialogs/entity-dialog/prereq-engine.js:244`) — F-UIS-005/006.
+- **Rules:** none permitted (A-04). OBSERVED violations: Second Wind healing/uses (`scripts/sheets/v2/context/PanelContextBuilder.js:881`), defense subtotal (`scripts/ui/defense-tooltip.js:226`), item-dialog prerequisite evaluation (`scripts/dialogs/entity-dialog/prereq-engine.js:244`) — F-UIS-005/006.
 - **Mutation:** intents to ActorEngine via `mutateAndRepaint` — OBSERVED for most paths; direct `setFlag`/`Actor.create` sites classified in F-UIS-003/F-UIS-012.
 - **Credits:** none permitted; OBSERVED violation `add-credits-to-actor` and form-editable `system.credits` (F-UIS-001).
 
@@ -75,7 +75,7 @@ UIS-I1 every surface write goes through the shell mutation queue (PROPOSED; most
 
 ## 10. Reconciliation with existing contracts
 
-**A-14 / CR-10 classification (answer to the census question).** OBSERVED: the four sheets are *not* parallel standalone sheets. All four extend `SWSEV2ActorSheetBase` (ShellHost + one PARTS template, `actor-sheet-base.js:167`). Character (`character-sheet.js:31`, empty body), NPC (`npc-actor-sheet.js:30`) and Droid (`droid-actor-sheet.js:145`) are subclasses of the shared `SWSEV2CharacterLikeSheet`. Vehicle (`vehicle-actor-sheet.js:281`) is a **sibling** subclass of the base, not of the character-like shell, and duplicates three pure helpers verbatim. The shared template renders vehicle and NPC content partials inside the same Holopad frame (`character-sheet.hbs:19-24`). Verdict: unified shell at base+template level; separate registration is required by Foundry's per-type `registerSheet` and is not itself a violation. Whether per-type subclasses satisfy OSI "no standalone droid/NPC/vehicle sheets" is an owner reading (PROPOSED: yes, provided no type-specific shell chrome is reintroduced).
+**A-14 / CR-10 classification (answer to the census question).** OBSERVED: the four sheets are *not* parallel standalone sheets. All four extend `SWSEV2ActorSheetBase` (ShellHost + one PARTS template, `scripts/sheets/v2/actor-sheet-base.js:167`). Character (`scripts/sheets/v2/character-sheet.js:31`, empty body), NPC (`scripts/sheets/v2/npc-actor-sheet.js:30`) and Droid (`scripts/sheets/v2/droid-actor-sheet.js:145`) are subclasses of the shared `SWSEV2CharacterLikeSheet`. Vehicle (`scripts/sheets/v2/vehicle-actor-sheet.js:281`) is a **sibling** subclass of the base, not of the character-like shell, and duplicates three pure helpers verbatim. The shared template renders vehicle and NPC content partials inside the same Holopad frame (`templates/actors/character/v2-concept/character-sheet.hbs:19-24`). Verdict: unified shell at base+template level; separate registration is required by Foundry's per-type `registerSheet` and is not itself a violation. Whether per-type subclasses satisfy OSI "no standalone droid/NPC/vehicle sheets" is an owner reading (PROPOSED: yes, provided no type-specific shell chrome is reintroduced).
 
 | ID | Existing source | Claim | Observed |
 |---|---|---|---|
