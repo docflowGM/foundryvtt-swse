@@ -547,6 +547,442 @@
    "tests": []
   },
   {
+   "id": "R-CMB-01",
+   "domain": "combat",
+   "responsibility": "Single attack pipeline",
+   "owner": {
+    "path": "scripts/combat/rolls/attacks.js",
+    "symbol": "rollAttack"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/architecture-combat-authority.test.mjs"
+   ]
+  },
+  {
+   "id": "R-CMB-02",
+   "domain": "combat",
+   "responsibility": "Attack bonus math",
+   "owner": {
+    "path": "scripts/engine/combat/combat-roll-math.js",
+    "symbol": "resolveAttackBonus"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-CMB-03",
+   "domain": "combat",
+   "responsibility": "Damage bonus, formula and critical multiplier",
+   "owner": {
+    "path": "scripts/engine/combat/combat-roll-math.js",
+    "symbol": "resolveDamageBonus/resolveCriticalMultiplier"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-CMB-04",
+   "domain": "combat",
+   "responsibility": "Damage application boundary",
+   "owner": {
+    "path": "scripts/governance/actor-engine/actor-engine.js",
+    "symbol": "ActorEngine.applyDamage"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-CMB-05",
+   "domain": "combat",
+   "responsibility": "Damage threshold evaluation",
+   "owner": {
+    "path": "scripts/engine/combat/threshold-engine.js",
+    "symbol": "ThresholdEngine"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/damage-threshold-authority.test.mjs"
+   ]
+  },
+  {
+   "id": "R-CMB-06",
+   "domain": "combat",
+   "responsibility": "Condition-track rules and shift",
+   "owner": {
+    "path": "scripts/engine/combat/ConditionTrackRules.js",
+    "symbol": "ConditionTrackRules"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-CMB-07",
+   "domain": "combat",
+   "responsibility": "Action economy",
+   "owner": {
+    "path": "scripts/engine/combat/action/action-economy-consumption.js",
+    "symbol": "ActionEconomyConsumption"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/attack-transaction-rollback.test.mjs"
+   ]
+  },
+  {
+   "id": "R-CMB-08",
+   "domain": "combat",
+   "responsibility": "Combat options and combat features",
+   "owner": {
+    "path": "scripts/engine/combat/combat-option-resolver.js",
+    "symbol": "CombatOptionResolver"
+   },
+   "status": [
+    "APPROVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CMB-09",
+   "domain": "combat",
+   "responsibility": "Grapple and control state",
+   "owner": {
+    "path": "scripts/engine/combat/grapple-state-engine.js",
+    "symbol": "GrappleStateEngine"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CMB-10",
+   "domain": "combat",
+   "responsibility": "Initiative",
+   "owner": {
+    "path": "scripts/engine/combat/SWSEInitiative.js",
+    "symbol": "SWSEInitiative"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CMB-11",
+   "domain": "combat",
+   "responsibility": "Action authority (definitions/availability)",
+   "owner": {
+    "path": "scripts/engine/actions/action-registry.js",
+    "symbol": "ActionRegistry"
+   },
+   "status": [
+    "APPROVED",
+    "UNIMPLEMENTED"
+   ],
+   "verification": "dependency-traced",
+   "tests": [
+    "tests/action-authority-groundwork.test.mjs"
+   ]
+  },
+  {
+   "id": "R-PAT-01",
+   "domain": "compat-patches",
+   "responsibility": "Load all hotfixes by side-effect import",
+   "owner": {
+    "path": "scripts/patches/runtime-bugfix-hotfixes-init.js",
+    "symbol": "(module body)"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-PAT-02",
+   "domain": "compat-patches",
+   "responsibility": "Progression step behaviour overrides",
+   "owner": {
+    "path": "scripts/patches/progression-choice-language-hotfix.js",
+    "symbol": "registerProgressionChoiceLanguageHotfix"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-PAT-03",
+   "domain": "compat-patches",
+   "responsibility": "Combat/attack corrections",
+   "owner": {
+    "path": "scripts/patches/attack-dialog-combat-corrections-hotfix.js",
+    "symbol": "registerAttackDialogCombatCorrectionsHotfix"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-PAT-04",
+   "domain": "compat-patches",
+   "responsibility": "Follower lifecycle repairs",
+   "owner": {
+    "path": "scripts/patches/follower-orphan-transfer-hotfix.js",
+    "symbol": "registerFollowerOrphanTransferHotfix"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-PAT-05",
+   "domain": "compat-patches",
+   "responsibility": "Sheet/defense hydration overrides",
+   "owner": {
+    "path": "scripts/patches/armor-hydration-defense-hotfix.js",
+    "symbol": "registerArmorHydrationDefenseHotfix"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-PAT-06",
+   "domain": "compat-patches",
+   "responsibility": "Data-shape coherence guards",
+   "owner": {
+    "path": "scripts/patches/weapon-branch-coherence-hotfix.js",
+    "symbol": "registerWeaponBranchCoherenceHotfix"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-DRD-01",
+   "domain": "droids",
+   "responsibility": "Droid systems catalog",
+   "owner": {
+    "path": "scripts/data/droid-systems.js",
+    "symbol": "DROID_SYSTEMS"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-DRD-02",
+   "domain": "droids",
+   "responsibility": "Canonical part definition/cost/modifiers/weapon profile",
+   "owner": {
+    "path": "scripts/data/droid-part-schema.js",
+    "symbol": "getDroidPartDefinition"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-DRD-03",
+   "domain": "droids",
+   "responsibility": "Prerequisite identity overlay",
+   "owner": {
+    "path": "scripts/domain/droids/droid-part-schema.js",
+    "symbol": "resolveDroidSystemIdentity"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-DRD-04",
+   "domain": "droids",
+   "responsibility": "Component quote by size",
+   "owner": {
+    "path": "scripts/domain/droids/droid-component-quote-authority.js",
+    "symbol": "resolveDroidComponentQuote"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-DRD-05",
+   "domain": "droids",
+   "responsibility": "Installed component resolution",
+   "owner": {
+    "path": "scripts/domain/droids/droid-installed-component-resolver.js",
+    "symbol": "resolveInstalledDroidComponents"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-DRD-06",
+   "domain": "droids",
+   "responsibility": "Component operation gate",
+   "owner": {
+    "path": "scripts/domain/droids/droid-component-operation-gate.js",
+    "symbol": "authorizeDroidComponentOperation"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/droid-component-operation-gate.test.mjs"
+   ]
+  },
+  {
+   "id": "R-DRD-07",
+   "domain": "droids",
+   "responsibility": "Droid rules profile",
+   "owner": {
+    "path": "scripts/domain/droids/droid-rules-profile.js",
+    "symbol": "resolveDroidRulesProfile"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-DRD-08",
+   "domain": "droids",
+   "responsibility": "Droid configuration readiness (sheet)",
+   "owner": {
+    "path": "scripts/engine/droid-validation-engine.js",
+    "symbol": "DroidValidationEngine"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT",
+    "DEFERRED_RULES_REVIEW"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-DRD-09",
+   "domain": "droids",
+   "responsibility": "Stock droid import and factory",
+   "owner": {
+    "path": "scripts/engine/droids/droid-factory.js",
+    "symbol": "DroidFactory"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-DRD-10",
+   "domain": "droids",
+   "responsibility": "Stock-to-playable conversion and reconciliation",
+   "owner": {
+    "path": "scripts/domain/droids/droid-statblock-conversion-service.js",
+    "symbol": "(service)"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-DRD-11",
+   "domain": "droids",
+   "responsibility": "Droid sheet subclass and context",
+   "owner": {
+    "path": "scripts/sheets/v2/droid-actor-sheet.js",
+    "symbol": "SWSEV2DroidSheet"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-DRD-12",
+   "domain": "droids",
+   "responsibility": "Exclusion of droids from organic rest/natural healing",
+   "owner": {
+    "path": "scripts/holonet/subsystems/gm-healing-trigger.js",
+    "symbol": "isEligibleForHealing"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
    "id": "R-FEA-01",
    "domain": "feats",
    "responsibility": "Canonical feat content",
@@ -916,6 +1352,327 @@
    "status": [
     "UNIMPLEMENTED",
     "PROPOSED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-GOV-01",
+   "domain": "governance",
+   "responsibility": "Mutation context and enforcement level",
+   "owner": {
+    "path": "scripts/governance/mutation/MutationInterceptor.js",
+    "symbol": "MutationInterceptor"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-GOV-02",
+   "domain": "governance",
+   "responsibility": "Mutation payload normalization",
+   "owner": {
+    "path": "scripts/governance/mutation/mutation-normalization-service.js",
+    "symbol": "MutationNormalizationService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-GOV-03",
+   "domain": "governance",
+   "responsibility": "Semantic boundary classification/guardrails",
+   "owner": {
+    "path": "scripts/governance/mutation/mutation-boundary-service.js",
+    "symbol": "MutationBoundaryService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-GOV-04",
+   "domain": "governance",
+   "responsibility": "Post-recompute prerequisite integrity report",
+   "owner": {
+    "path": "scripts/governance/integrity/prerequisite-integrity-checker.js",
+    "symbol": "PrerequisiteIntegrityChecker.evaluate"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-GOV-05",
+   "domain": "governance",
+   "responsibility": "Preflight validation for repairs",
+   "owner": {
+    "path": "scripts/governance/enforcement/preflight-validator.js",
+    "symbol": "PreflightValidator.validateBeforeMutation"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-GOV-06",
+   "domain": "governance",
+   "responsibility": "Snapshot capture and verified restore",
+   "owner": {
+    "path": "scripts/governance/snapshot/snapshot-service.js",
+    "symbol": "SnapshotService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/snapshot-restoration-plan.test.mjs",
+    "tests/snapshot-service-restoration.test.mjs"
+   ]
+  },
+  {
+   "id": "R-GOV-07",
+   "domain": "governance",
+   "responsibility": "Sentinel diagnostic engine",
+   "owner": {
+    "path": "scripts/governance/sentinel/sentinel-core.js",
+    "symbol": "SentinelEngine"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-GOV-08",
+   "domain": "governance",
+   "responsibility": "Sentinel bootstrap and GM API",
+   "owner": {
+    "path": "scripts/governance/sentinel/sentinel-init.js",
+    "symbol": "initializeSentinelGovernance"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-GOV-09",
+   "domain": "governance",
+   "responsibility": "Store/compendium/sheet diagnostic layers",
+   "owner": {
+    "path": "scripts/governance/sentinel/sentinel-compendium-forensics.js",
+    "symbol": "registerCompendiumInteractionDiagnostic"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/sentinel-compendium-forensics-invariants.test.mjs"
+   ]
+  },
+  {
+   "id": "R-HOL-01",
+   "domain": "holonet",
+   "responsibility": "Record/thread persistence in world settings (GM-only, serialized queue)",
+   "owner": {
+    "path": "scripts/holonet/subsystems/holonet-storage.js",
+    "symbol": "HolonetStorage"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs"
+   ]
+  },
+  {
+   "id": "R-HOL-02",
+   "domain": "holonet",
+   "responsibility": "Publication and exactly-once delivery",
+   "owner": {
+    "path": "scripts/holonet/holonet-engine.js",
+    "symbol": "HolonetEngine.publish"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs"
+   ]
+  },
+  {
+   "id": "R-HOL-03",
+   "domain": "holonet",
+   "responsibility": "Contracts and vocabulary",
+   "owner": {
+    "path": "scripts/holonet/contracts/enums.js",
+    "symbol": "RECORD_TYPE, INTENT_TYPE, ..."
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-HOL-04",
+   "domain": "holonet",
+   "responsibility": "Notification emitters from system hooks",
+   "owner": {
+    "path": "scripts/holonet/subsystems/holonet-emission-service.js",
+    "symbol": "HolonetEmissionService.emit + emitters/*"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-HOL-05",
+   "domain": "holonet",
+   "responsibility": "Intel records and per-actor intel locker",
+   "owner": {
+    "path": "scripts/holonet/subsystems/holonet-intel-service.js",
+    "symbol": "HolonetIntelService"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs"
+   ]
+  },
+  {
+   "id": "R-HOL-06",
+   "domain": "holonet",
+   "responsibility": "Messenger: threads, presence, personas, secret notes, job board, view models",
+   "owner": {
+    "path": "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "symbol": "HolonetMessengerService"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/gm-job-source-location-identity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-HOL-07",
+   "domain": "holonet",
+   "responsibility": "Holonet credit movement",
+   "owner": {
+    "path": "scripts/engine/store/transaction-engine.js",
+    "symbol": "TransactionEngine.executeCreditAdjustment / executeCreditTransfer (called by messenger)"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/ti4c0-g16-holonet-credit-evidence.test.mjs"
+   ]
+  },
+  {
+   "id": "R-HOL-08",
+   "domain": "holonet",
+   "responsibility": "Multi-step trade/payout atomicity",
+   "owner": {
+    "path": "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "symbol": "_executeAtomicTradeSettlement / _executeAtomicJobRewardSettlement / _restoreTradeSnapshot"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/ti4c0-g26-party-fund-integrity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-HOL-09",
+   "domain": "holonet",
+   "responsibility": "Party Fund balance and ledger",
+   "owner": {
+    "path": "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "symbol": "setPartyFundBalance / appendPartyFundLedger / PartyFundAccess"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED",
+    "CONFLICT"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/ti4c0-g26-party-fund-integrity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-HOL-10",
+   "domain": "holonet",
+   "responsibility": "GM combat recovery (encounter reset, rests, second-wind reset)",
+   "owner": {
+    "path": "scripts/holonet/subsystems/gm-combat-recovery-service.js",
+    "symbol": "GMCombatRecoveryService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-HOL-11",
+   "domain": "holonet",
+   "responsibility": "Socket relay with trusted GM authority check",
+   "owner": {
+    "path": "scripts/holonet/subsystems/holonet-socket-service.js",
+    "symbol": "HolonetSocketService; HolonetMessengerService._isRequesterGm"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-HOL-12",
+   "domain": "holonet",
+   "responsibility": "Preferences and player/party state",
+   "owner": {
+    "path": "scripts/holonet/holonet-preferences.js",
+    "symbol": "HolonetPreferences; HolonetStateService"
+   },
+   "status": [
+    "OBSERVED"
    ],
    "verification": "source-inspected",
    "tests": []
@@ -1394,6 +2151,328 @@
    "tests": []
   },
   {
+   "id": "R-SKL-01",
+   "domain": "skills",
+   "responsibility": "Canonical skill definitions and key canonicalization",
+   "owner": {
+    "path": "scripts/utils/skill-normalization.js",
+    "symbol": "canonicalizeSkillKey"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SKL-02",
+   "domain": "skills",
+   "responsibility": "Progression skill registry incl. Athletics consolidation",
+   "owner": {
+    "path": "scripts/engine/progression/skills/skill-registry.js",
+    "symbol": "SkillRegistry"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SKL-03",
+   "domain": "skills",
+   "responsibility": "Skill house-rule reads",
+   "owner": {
+    "path": "scripts/engine/skills/SkillRules.js",
+    "symbol": "SkillRules"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SKL-04",
+   "domain": "skills",
+   "responsibility": "Feat/talent effects on skill checks",
+   "owner": {
+    "path": "scripts/engine/skills/skill-feat-resolver.js",
+    "symbol": "SkillFeatResolver"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SKL-05",
+   "domain": "skills",
+   "responsibility": "Extra skill uses and sheet dispatch",
+   "owner": {
+    "path": "scripts/utils/skill-use-filter.js",
+    "symbol": "SkillUseFilter"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/shield-recharge-skill-dispatch-authority.test.mjs"
+   ]
+  },
+  {
+   "id": "R-SKL-06",
+   "domain": "skills",
+   "responsibility": "Feat-eligibility extra-use metadata",
+   "owner": {
+    "path": "scripts/engine/skills/extra-skill-use-registry.js",
+    "symbol": "ExtraSkillUseRegistry"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SKL-07",
+   "domain": "skills",
+   "responsibility": "Retry bookkeeping (in memory)",
+   "owner": {
+    "path": "scripts/engine/skills/skill-attempt-registry.js",
+    "symbol": "SkillAttemptRegistry"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SKL-08",
+   "domain": "skills",
+   "responsibility": "Ranked-skills house rule",
+   "owner": {
+    "path": "scripts/engine/skills/ranked-skills-engine.js",
+    "symbol": "calculateSkillPointGrant"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SKL-09",
+   "domain": "skills",
+   "responsibility": "Skill challenges",
+   "owner": {
+    "path": "scripts/engine/skill-challenges/SkillChallengeEngine.js",
+    "symbol": "SkillChallengeEngine"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SKL-10",
+   "domain": "skills",
+   "responsibility": "Legacy consolidated skill-use classes",
+   "owner": {
+    "path": "scripts/skills/skill-uses.js",
+    "symbol": "JumpUses..GatherInformationUses"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-SPC-01",
+   "domain": "species",
+   "responsibility": "Species enumeration and lookup",
+   "owner": {
+    "path": "scripts/engine/registries/species-registry.js",
+    "symbol": "SpeciesRegistry"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SPC-02",
+   "domain": "species",
+   "responsibility": "Publication-version selection",
+   "owner": {
+    "path": "scripts/species/species-publication-selection.js",
+    "symbol": "getPublicationStatus"
+   },
+   "status": [
+    "OBSERVED",
+    "DEFERRED_RULES_REVIEW"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/species-publication-selection.test.mjs"
+   ]
+  },
+  {
+   "id": "R-SPC-03",
+   "domain": "species",
+   "responsibility": "Variant / resolved snapshot profile",
+   "owner": {
+    "path": "scripts/species/species-variant-profile.js",
+    "symbol": "applySpeciesVariantProfile"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SPC-04",
+   "domain": "species",
+   "responsibility": "Species grant ledger",
+   "owner": {
+    "path": "scripts/species/species-grant-ledger-builder.js",
+    "symbol": "SpeciesGrantLedgerBuilder"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SPC-05",
+   "domain": "species",
+   "responsibility": "Grant reconciliation keys/manifest",
+   "owner": {
+    "path": "scripts/species/species-grant-reconciliation.js",
+    "symbol": "computeSpeciesGrantKey"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SPC-06",
+   "domain": "species",
+   "responsibility": "Chargen species materialization into plan",
+   "owner": {
+    "path": "scripts/engine/progression/helpers/apply-canonical-species-to-actor.js",
+    "symbol": "applyCanonicalSpeciesToActor"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SPC-07",
+   "domain": "species",
+   "responsibility": "Atomic species replacement on existing actor",
+   "owner": {
+    "path": "scripts/species/species-plan-transaction.js",
+    "symbol": "buildSpeciesReplacementPlan"
+   },
+   "status": [
+    "OBSERVED",
+    "UNIMPLEMENTED"
+   ],
+   "verification": "dependency-traced",
+   "tests": [
+    "tests/species-drop-atomicity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-SPC-08",
+   "domain": "species",
+   "responsibility": "Conditional species bonus feats",
+   "owner": {
+    "path": "scripts/engine/species/SpeciesConditionalGrantResolver.js",
+    "symbol": "SpeciesConditionalGrantResolver"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-SPC-09",
+   "domain": "species",
+   "responsibility": "Species skill rerolls",
+   "owner": {
+    "path": "scripts/species/species-reroll-handler.js",
+    "symbol": "SpeciesRerollHandler"
+   },
+   "status": [
+    "OBSERVED",
+    "DEFERRED_RULES_REVIEW"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SPC-10",
+   "domain": "species",
+   "responsibility": "Activated species abilities incl. Rage",
+   "owner": {
+    "path": "scripts/engine/species/species-activated-ability-engine.js",
+    "symbol": "SpeciesActivatedAbilityEngine"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-SPC-11",
+   "domain": "species",
+   "responsibility": "Anatomy schema v1",
+   "owner": {
+    "path": "scripts/species/species-anatomy-schema-v1.js",
+    "symbol": "SPECIES_ANATOMY_SCHEMA_VERSION"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SPC-12",
+   "domain": "species",
+   "responsibility": "Legacy trait engine",
+   "owner": {
+    "path": "scripts/engine/systems/species/species-trait-engine.js",
+    "symbol": "SpeciesTraitEngine"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
    "id": "R-STO-01",
    "domain": "store-economy",
    "responsibility": "Single authority for credit movement",
@@ -1524,6 +2603,206 @@
    "tests": [
     "tests/store-v2-s8-architecture.test.mjs"
    ]
+  },
+  {
+   "id": "R-TAL-01",
+   "domain": "talents",
+   "responsibility": "Canonical talent content",
+   "owner": {
+    "path": "data/canonical/talents.json",
+    "symbol": "(data)"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-TAL-02",
+   "domain": "talents",
+   "responsibility": "Talent tree data access",
+   "owner": {
+    "path": "scripts/data/talent-tree-db.js",
+    "symbol": "TalentTreeDB"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/talent-phase-3f-tree-identity.test.mjs",
+    "tests/talent-phase-3g-runtime-identity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-TAL-03",
+   "domain": "talents",
+   "responsibility": "Talent tree membership (additive multi-source)",
+   "owner": {
+    "path": "scripts/engine/progression/talents/talent-tree-membership-authority.js",
+    "symbol": "getTalentMembership"
+   },
+   "status": [
+    "OBSERVED",
+    "PROPOSED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/talent-tree-membership-authority-repair.test.mjs"
+   ]
+  },
+  {
+   "id": "R-TAL-04",
+   "domain": "talents",
+   "responsibility": "Talent lookup",
+   "owner": {
+    "path": "scripts/registries/talent-registry.js",
+    "symbol": "TalentRegistry"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/talent-tree-registry-runtime.test.mjs"
+   ]
+  },
+  {
+   "id": "R-TAL-05",
+   "domain": "talents",
+   "responsibility": "Talent source identity",
+   "owner": {
+    "path": "scripts/data/talent-source-identity.js",
+    "symbol": "canonicalTalentId"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-TAL-06",
+   "domain": "talents",
+   "responsibility": "Talent prerequisite data",
+   "owner": {
+    "path": "scripts/data/authority/talent-prerequisite-authority.js",
+    "symbol": "(authority table)"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-TAL-07",
+   "domain": "talents",
+   "responsibility": "Active talent actions",
+   "owner": {
+    "path": "scripts/engine/talent/*-talent-actions.js",
+    "symbol": "SithTalentActions, ConsularTalentActions, ..."
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/force-v2-03b-talent-contracts.test.mjs"
+   ]
+  },
+  {
+   "id": "R-TAL-08",
+   "domain": "talents",
+   "responsibility": "Lightsaber form state",
+   "owner": {
+    "path": "scripts/engine/talent/lightsaber-form-engine.js",
+    "symbol": "LightsaberFormEngine"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-TAL-09",
+   "domain": "talents",
+   "responsibility": "Bonus Force Point pool maintenance (parallel to FRC)",
+   "owner": {
+    "path": "scripts/engine/talent/guardian-spirit-actions.js",
+    "symbol": "GuardianSpiritActions"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-TAL-10",
+   "domain": "talents",
+   "responsibility": "Turn/encounter lifecycle for talent state",
+   "owner": {
+    "path": "scripts/engine/talent/sith-talent-actions.js",
+    "symbol": "SithTalentActions.registerHooks"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-TAL-11",
+   "domain": "talents",
+   "responsibility": "Custom talent tree workbench and progression overlay",
+   "owner": {
+    "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js",
+    "symbol": "registerCustomTalentTreeProgressionOverlay"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-TAL-12",
+   "domain": "talents",
+   "responsibility": "Custom content GM approval",
+   "owner": {
+    "path": "scripts/apps/talent-tree-workbench/custom-content-approval-service.js",
+    "symbol": "CustomContentApprovalService"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-TAL-13",
+   "domain": "talents",
+   "responsibility": "Minion/squad talent actions",
+   "owner": {
+    "path": "scripts/engine/talent/minion-actions-mechanics.js",
+    "symbol": "(module)"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
   },
   {
    "id": "R-UIS-01",

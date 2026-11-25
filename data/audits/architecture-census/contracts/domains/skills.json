@@ -1,0 +1,577 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-SKL",
+  "domain": "skills",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "Skills owns skill identity, skill house-rule reads, feat effects on skills, extra skill uses and sheet dispatch, retry bookkeeping, the ranked-skills house rule and GM skill challenges. It performs no actor writes; skill totals are read from actor-core derived data. The main problems are legacy and duplication: scripts/skills/skill-uses.js (2,617 SLOC, 17 skill-use classes) is confirmed dead yet named as the implementation in several class/ability audit documents and asserted on by two tests; about fourteen local skill-key normalizers exist beside canonicalizeSkillKey; two different classes are both named ExtraSkillUseRegistry. Skill challenges form a clean internal subsystem (GM-only world-setting store).",
+  "responsibilities": [
+    {
+      "id": "R-SKL-01",
+      "responsibility": "Canonical skill definitions and key canonicalization",
+      "owner": {
+        "path": "scripts/utils/skill-normalization.js",
+        "symbol": "canonicalizeSkillKey"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/utils/skill-normalization.js:111",
+        "scripts/utils/skill-normalization.js:198"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SKL-02",
+      "responsibility": "Progression skill registry incl. Athletics consolidation",
+      "owner": {
+        "path": "scripts/engine/progression/skills/skill-registry.js",
+        "symbol": "SkillRegistry"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/progression/skills/skill-registry.js:8",
+        "scripts/engine/progression/skills/skill-registry.js:85"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SKL-03",
+      "responsibility": "Skill house-rule reads",
+      "owner": {
+        "path": "scripts/engine/skills/SkillRules.js",
+        "symbol": "SkillRules"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/skills/SkillRules.js:14"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SKL-04",
+      "responsibility": "Feat/talent effects on skill checks",
+      "owner": {
+        "path": "scripts/engine/skills/skill-feat-resolver.js",
+        "symbol": "SkillFeatResolver"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/skills/skill-feat-resolver.js:196",
+        "scripts/engine/skills/skill-feat-rule-resolver.js:131"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SKL-05",
+      "responsibility": "Extra skill uses and sheet dispatch",
+      "owner": {
+        "path": "scripts/utils/skill-use-filter.js",
+        "symbol": "SkillUseFilter"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/utils/extra-skill-use-registry.js:57",
+        "scripts/utils/skill-use-filter.js:43",
+        "scripts/utils/skill-use-filter.js:348"
+      ],
+      "tests": [
+        "tests/shield-recharge-skill-dispatch-authority.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-SKL-06",
+      "responsibility": "Feat-eligibility extra-use metadata",
+      "owner": {
+        "path": "scripts/engine/skills/extra-skill-use-registry.js",
+        "symbol": "ExtraSkillUseRegistry"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/skills/extra-skill-use-registry.js:2",
+        "scripts/engine/skills/extra-skill-use-registry.js:66"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SKL-07",
+      "responsibility": "Retry bookkeeping (in memory)",
+      "owner": {
+        "path": "scripts/engine/skills/skill-attempt-registry.js",
+        "symbol": "SkillAttemptRegistry"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/skills/skill-attempt-registry.js:21"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SKL-08",
+      "responsibility": "Ranked-skills house rule",
+      "owner": {
+        "path": "scripts/engine/skills/ranked-skills-engine.js",
+        "symbol": "calculateSkillPointGrant"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/skills/ranked-skills-engine.js:28",
+        "scripts/engine/skills/ranked-skills-engine.js:217"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SKL-09",
+      "responsibility": "Skill challenges",
+      "owner": {
+        "path": "scripts/engine/skill-challenges/SkillChallengeEngine.js",
+        "symbol": "SkillChallengeEngine"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/skill-challenges/SkillChallengeEngine.js:21",
+        "scripts/engine/skill-challenges/SkillChallengeStore.js:47",
+        "scripts/engine/skill-challenges/SkillChallengeStore.js:88"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SKL-10",
+      "responsibility": "Legacy consolidated skill-use classes",
+      "owner": {
+        "path": "scripts/skills/skill-uses.js",
+        "symbol": "JumpUses..GatherInformationUses"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/skills/skill-uses.js:24",
+        "scripts/skills/skill-uses.js:3435"
+      ],
+      "tests": [],
+      "notes": "Dead, legacy C"
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "canonicalizeSkillKey",
+      "path": "scripts/utils/skill-normalization.js",
+      "line": 111,
+      "consumers": 10,
+      "contract": "raw -> canonical skill key"
+    },
+    {
+      "symbol": "SkillRules",
+      "path": "scripts/engine/skills/SkillRules.js",
+      "line": 14,
+      "consumers": 7,
+      "contract": "skill house-rule getters"
+    },
+    {
+      "symbol": "SkillFeatResolver",
+      "path": "scripts/engine/skills/skill-feat-resolver.js",
+      "line": 196,
+      "consumers": 7,
+      "contract": "feat/talent skill effects"
+    },
+    {
+      "symbol": "ExtraSkillUseRegistry",
+      "path": "scripts/utils/extra-skill-use-registry.js",
+      "line": 57,
+      "consumers": 5,
+      "contract": "pack-backed skill uses"
+    },
+    {
+      "symbol": "SkillUseFilter",
+      "path": "scripts/utils/skill-use-filter.js",
+      "line": 43,
+      "consumers": 5,
+      "contract": "sheet skill-use dispatch"
+    },
+    {
+      "symbol": "SkillChallengeStore",
+      "path": "scripts/engine/skill-challenges/SkillChallengeStore.js",
+      "line": 47,
+      "consumers": 6,
+      "contract": "GM-only world setting store"
+    },
+    {
+      "symbol": "SkillChallengeEngine",
+      "path": "scripts/engine/skill-challenges/SkillChallengeEngine.js",
+      "line": 21,
+      "consumers": 2,
+      "contract": "challenge flow"
+    },
+    {
+      "symbol": "SkillRegistry",
+      "path": "scripts/engine/progression/skills/skill-registry.js",
+      "line": 8,
+      "consumers": 15,
+      "contract": "progression skill list"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "infrastructure",
+      "data-registries",
+      "rolls",
+      "houserules (via SkillRules / HouseRuleService)"
+    ],
+    "prohibited": [
+      "actor writes",
+      "direct chat",
+      "direct game.settings house-rule reads"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/skill-challenges/SkillChallengeRollAdapter.js",
+        "to": "ChatMessage.create",
+        "evidence": "scripts/engine/skill-challenges/SkillChallengeRollAdapter.js:127"
+      },
+      {
+        "from": "scripts/engine/progression/skills/skill-registry.js",
+        "to": "game.settings.get",
+        "evidence": "scripts/engine/progression/skills/skill-registry.js:85"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-SKL-1",
+      "boundary": "Skill challenges",
+      "interface": "only SkillChallengeStore persists (GM-only world setting); only SkillChallengeRollAdapter touches rolls/chat",
+      "status": [
+        "OBSERVED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-SKL-01",
+      "existingSource": "docs/audits/class-phase-6f10-quick-sabotage.md:26; docs/audits/class-phase-6f11-saboteur-convergence.md:18; docs/audits/class-feature-contract-wave-a-matrix.md:13",
+      "claim": "Quick Sabotage implemented in MechanicsUses.disableDevice (skill-uses.js)",
+      "observed": "skill-uses.js has no importer; live path is SkillUseFilter / extra-skill-use-registry",
+      "evidence": [
+        "scripts/utils/skill-use-filter.js:348",
+        "scripts/utils/extra-skill-use-registry.js:152"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-SKL-02",
+      "existingSource": "docs/audits/ability-schema-authority-migration-phase3-ledger.md:155",
+      "claim": "Six skill-use ability sites FIXED",
+      "observed": "Fix is in a dead file",
+      "evidence": [
+        "scripts/skills/skill-uses.js:24"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [],
+  "deferredRules": [
+    {
+      "item": "Trained-skill entitlement under skill house rules",
+      "registerRef": "RECON-007"
+    },
+    {
+      "item": "Species skill reroll result",
+      "registerRef": "SPECIES-RD-013"
+    },
+    {
+      "item": "Nonheroic class skill Ride",
+      "registerRef": "SWSE-NPC-RD-002"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "Sheet extra skill uses (Quick Sabotage, recharge shields)",
+      "source": "scripts/utils/skill-use-filter.js:348"
+    },
+    {
+      "item": "Vehicle crew skill routing",
+      "source": "scripts/sheets/v2/vehicle-sheet/crew-skill-router.js:243"
+    },
+    {
+      "item": "Skill challenge flow",
+      "source": "scripts/engine/skill-challenges/SkillChallengeEngine.js:21"
+    }
+  ],
+  "findings": [
+    {
+      "category": "dead-code",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Dead skill-uses.js (2,617 SLOC) is still cited as the implementation and guarded by tests",
+      "affectedFiles": [
+        "scripts/skills/skill-uses.js",
+        "tests/skill-uses-ability-authority.test.mjs",
+        "tests/class-phase-6f8-master-saboteur-reroll.test.mjs"
+      ],
+      "evidence": [
+        "scripts/skills/skill-uses.js:24",
+        "scripts/skills/skill-uses.js:461",
+        "scripts/skills/skill-uses.js:3435",
+        "tests/skill-uses-ability-authority.test.mjs:28",
+        "tests/class-phase-6f8-master-saboteur-reroll.test.mjs:83",
+        "scripts/utils/skill-use-filter.js:350"
+      ],
+      "observed": "No static, dynamic, template, pack or global reference to the file or its 17 exported classes (only comments in skill-use-filter.js mention MechanicsUses as the old bypassed path). Two tests read its source text, so they pass regardless of runtime behavior. Audit docs record Quick Sabotage and ability-schema fixes there (CR-SKL-01/02). Legacy C.",
+      "intendedOwnership": "SkillUseFilter + utils ExtraSkillUseRegistry",
+      "contractRef": "A-09 | CR-SKL-01 | CR-SKL-02",
+      "proposedSolution": "Retarget the two tests at the live dispatch (skill-use-filter / extra-skill-use-registry) first, then delete skill-uses.js; append correction notes to the three audit docs (do not rewrite history). Before deleting, diff mechanics present only in skill-uses.js (e.g. Jump/Swim/Treat Injury special uses) against the pack-backed registry; anything missing is an UNIMPLEMENTED list for the owner, not silently dropped.",
+      "alternatives": "Wire selected classes back in (would revive a parallel authority)",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Behavioral tests on SkillUseFilter for Quick Sabotage and Master Saboteur reroll",
+      "foundryAcceptance": "Sheet skill uses",
+      "scope": "M",
+      "simplificationBenefit": "-2.6k SLOC; certifications point at live code",
+      "risk": "Low runtime (not loaded); medium audit-trail risk",
+      "perfImpact": "none",
+      "id": "F-SKL-001"
+    },
+    {
+      "category": "duplicate-normalization",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "About fourteen independent skill-key normalizers",
+      "affectedFiles": [
+        "scripts/utils/skill-normalization.js",
+        "scripts/engine/skills/SkillRules.js",
+        "scripts/engine/skills/skill-feat-resolver.js",
+        "scripts/apps/progression-framework/utils/skill-display.js",
+        "scripts/apps/chargen/chargen-property-accessor.js",
+        "scripts/engine/equipment/equipment-skill-hook-resolver.js",
+        "scripts/locations/location-registry-service.js",
+        "scripts/species/species-grant-ledger-builder.js",
+        "scripts/utils/extra-skill-use-registry.js",
+        "scripts/engine/feats/skill-feat-runtime-patches.js"
+      ],
+      "evidence": [
+        "scripts/utils/skill-normalization.js:111",
+        "scripts/engine/skills/SkillRules.js:121",
+        "scripts/engine/skills/skill-feat-resolver.js:17",
+        "scripts/engine/skills/skill-feat-resolver.js:197",
+        "scripts/apps/progression-framework/utils/skill-display.js:97",
+        "scripts/apps/chargen/chargen-property-accessor.js:110",
+        "scripts/engine/equipment/equipment-skill-hook-resolver.js:57",
+        "scripts/locations/location-registry-service.js:233",
+        "scripts/species/species-grant-ledger-builder.js:1886",
+        "scripts/utils/extra-skill-use-registry.js:577",
+        "scripts/engine/feats/skill-feat-runtime-patches.js:27",
+        "scripts/apps/progression-framework/shell/active-step-computer.js:488"
+      ],
+      "observed": "Each module maps names/aliases to skill keys with its own alias table; plus scripts/utils/skill-resolver.js (SKILL_NAME_TO_KEY) and the progression SkillRegistry. Divergence between tables (e.g. Athletics consolidation, knowledge sub-skills) is likely but was not exhaustively diffed (suspected for divergence; confirmed for count).",
+      "intendedOwnership": "canonicalizeSkillKey (scripts/utils/skill-normalization.js)",
+      "contractRef": "A-01 | I-SKL-1",
+      "proposedSolution": "Add an alias-table equivalence test over all normalizers, then make them delegate to canonicalizeSkillKey (keeping per-domain extras as data passed in).",
+      "alternatives": "",
+      "dependencies": [
+        "feats",
+        "species",
+        "equipment",
+        "progression"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Table test: every skill name/alias in packs resolves identically through each normalizer",
+      "foundryAcceptance": "none",
+      "scope": "M",
+      "simplificationBenefit": "~14 -> 1",
+      "risk": "Low-medium",
+      "perfImpact": "none",
+      "id": "F-SKL-002"
+    },
+    {
+      "category": "conflicting-interface",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Two different classes named ExtraSkillUseRegistry",
+      "affectedFiles": [
+        "scripts/engine/skills/extra-skill-use-registry.js",
+        "scripts/utils/extra-skill-use-registry.js"
+      ],
+      "evidence": [
+        "scripts/engine/skills/extra-skill-use-registry.js:66",
+        "scripts/utils/extra-skill-use-registry.js:57",
+        "scripts/engine/skills/skill-feat-rule-resolver.js:1"
+      ],
+      "observed": "The engine one (1 importer) holds inert feat-eligibility metadata (its own header says so); the utils one is the live pack-backed registry. Same symbol name invites wrong imports.",
+      "intendedOwnership": "utils registry",
+      "contractRef": "A-01",
+      "proposedSolution": "Rename the engine class to SkillUseFeatEligibility or fold its metadata into the utils registry records.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-SKL-003"
+    },
+    {
+      "category": "ownership-violation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Direct game.settings.get for Athletics consolidation",
+      "affectedFiles": [
+        "scripts/engine/progression/skills/skill-registry.js",
+        "scripts/engine/progression/prerequisites/legacy-prereq-registry.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/skills/skill-registry.js:85",
+        "scripts/engine/progression/prerequisites/legacy-prereq-registry.js:89"
+      ],
+      "observed": "Same as F-PRG-015.",
+      "intendedOwnership": "SkillRules / HouseRuleService",
+      "contractRef": "A-06",
+      "proposedSolution": "Read via SkillRules.",
+      "alternatives": "",
+      "dependencies": [
+        "F-PRG-015"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-SKL-004"
+    },
+    {
+      "category": "ownership-violation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Skill challenge roll card created outside swse-chat",
+      "affectedFiles": [
+        "scripts/engine/skill-challenges/SkillChallengeRollAdapter.js"
+      ],
+      "evidence": [
+        "scripts/engine/skill-challenges/SkillChallengeRollAdapter.js:106",
+        "scripts/engine/skill-challenges/SkillChallengeRollAdapter.js:127"
+      ],
+      "observed": "Adapter calls globalThis.ChatMessage.create directly (census missed it because of the globalThis prefix).",
+      "intendedOwnership": "scripts/chat/swse-chat.js",
+      "contractRef": "A-05",
+      "proposedSolution": "Route through swse-chat.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "Skill challenge roll",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-SKL-005"
+    },
+    {
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Other unreachable skill modules",
+      "affectedFiles": [
+        "scripts/apps/skill-modifier-breakdown-app.js",
+        "scripts/config/skills.js",
+        "scripts/engine/progression/skills/skill-resolver.js"
+      ],
+      "evidence": [
+        "scripts/config/skills.js:42"
+      ],
+      "observed": "No importer, template or pack reference for skill-modifier-breakdown-app.js or scripts/config/skills.js (getSkillConfig/getSkillsArray unused); scripts/engine/progression/skills/skill-resolver.js orphan (B-PRG F-PRG-018). Legacy C.",
+      "intendedOwnership": "",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Boot-graph check",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-SKL-006"
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Probe hits are false positives / legitimate",
+      "affectedFiles": [
+        "scripts/engine/skills/skill-attempt-registry.js",
+        "scripts/engine/skill-challenges/SkillChallengeStore.js",
+        "scripts/engine/skills/skill-feat-resolver.js",
+        "scripts/engine/skills/ranked-skills-engine.js"
+      ],
+      "evidence": [
+        "scripts/engine/skills/skill-attempt-registry.js:95",
+        "scripts/engine/skill-challenges/SkillChallengeStore.js:62",
+        "scripts/engine/skills/skill-feat-resolver.js:210",
+        "scripts/engine/skills/ranked-skills-engine.js:77"
+      ],
+      "observed": "A-02 hit is Map.delete; A-06 hit reads the challenge store (world state), not a house rule; skill-total lead reads derived totals; price-computation lead is skill-rank point cost under the ranked house rule, not an item price.",
+      "intendedOwnership": "",
+      "contractRef": "A-02 | A-06 | A-01",
+      "proposedSolution": "Refine probes.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "",
+      "perfImpact": "none",
+      "id": "F-SKL-007"
+    }
+  ]
+}

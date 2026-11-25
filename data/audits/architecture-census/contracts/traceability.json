@@ -729,6 +729,471 @@
    "foundry": "not live-verified"
   },
   {
+   "requirement": "R-CMB-01",
+   "domain": "combat",
+   "responsibility": "Single attack pipeline",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/combat/rolls/attacks.js :: rollAttack",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/architecture-combat-authority.test.mjs"
+   ],
+   "ownerDirectTests": 52,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CMB-02",
+   "domain": "combat",
+   "responsibility": "Attack bonus math",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/combat/combat-roll-math.js :: resolveAttackBonus",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 42,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CMB-03",
+   "domain": "combat",
+   "responsibility": "Damage bonus, formula and critical multiplier",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/combat/combat-roll-math.js :: resolveDamageBonus/resolveCriticalMultiplier",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 42,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CMB-04",
+   "domain": "combat",
+   "responsibility": "Damage application boundary",
+   "status": [
+    "APPROVED",
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/governance/actor-engine/actor-engine.js :: ActorEngine.applyDamage",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 91,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CMB-05",
+   "domain": "combat",
+   "responsibility": "Damage threshold evaluation",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/combat/threshold-engine.js :: ThresholdEngine",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/damage-threshold-authority.test.mjs"
+   ],
+   "ownerDirectTests": 5,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CMB-06",
+   "domain": "combat",
+   "responsibility": "Condition-track rules and shift",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/combat/ConditionTrackRules.js :: ConditionTrackRules",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CMB-07",
+   "domain": "combat",
+   "responsibility": "Action economy",
+   "status": [
+    "APPROVED",
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/combat/action/action-economy-consumption.js :: ActionEconomyConsumption",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/attack-transaction-rollback.test.mjs"
+   ],
+   "ownerDirectTests": 35,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CMB-08",
+   "domain": "combat",
+   "responsibility": "Combat options and combat features",
+   "status": [
+    "APPROVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/combat/combat-option-resolver.js :: CombatOptionResolver",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 24,
+   "ownerCiTests": 360,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CMB-09",
+   "domain": "combat",
+   "responsibility": "Grapple and control state",
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/combat/grapple-state-engine.js :: GrappleStateEngine",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 5,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CMB-10",
+   "domain": "combat",
+   "responsibility": "Initiative",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/combat/SWSEInitiative.js :: SWSEInitiative",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 15,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-CMB-11",
+   "domain": "combat",
+   "responsibility": "Action authority (definitions/availability)",
+   "status": [
+    "APPROVED",
+    "UNIMPLEMENTED"
+   ],
+   "code": "scripts/engine/actions/action-registry.js :: ActionRegistry",
+   "codeReachability": "test-only-import",
+   "namedTests": [
+    "tests/action-authority-groundwork.test.mjs"
+   ],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 3,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-PAT-01",
+   "domain": "compat-patches",
+   "responsibility": "Load all hotfixes by side-effect import",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/patches/runtime-bugfix-hotfixes-init.js :: (module body)",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-PAT-02",
+   "domain": "compat-patches",
+   "responsibility": "Progression step behaviour overrides",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/patches/progression-choice-language-hotfix.js :: registerProgressionChoiceLanguageHotfix",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-PAT-03",
+   "domain": "compat-patches",
+   "responsibility": "Combat/attack corrections",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/patches/attack-dialog-combat-corrections-hotfix.js :: registerAttackDialogCombatCorrectionsHotfix",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 1,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-PAT-04",
+   "domain": "compat-patches",
+   "responsibility": "Follower lifecycle repairs",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/patches/follower-orphan-transfer-hotfix.js :: registerFollowerOrphanTransferHotfix",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 1,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-PAT-05",
+   "domain": "compat-patches",
+   "responsibility": "Sheet/defense hydration overrides",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/patches/armor-hydration-defense-hotfix.js :: registerArmorHydrationDefenseHotfix",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 2,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-PAT-06",
+   "domain": "compat-patches",
+   "responsibility": "Data-shape coherence guards",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/patches/weapon-branch-coherence-hotfix.js :: registerWeaponBranchCoherenceHotfix",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 1,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DRD-01",
+   "domain": "droids",
+   "responsibility": "Droid systems catalog",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/data/droid-systems.js :: DROID_SYSTEMS",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 6,
+   "ownerCiTests": 385,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DRD-02",
+   "domain": "droids",
+   "responsibility": "Canonical part definition/cost/modifiers/weapon profile",
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "code": "scripts/data/droid-part-schema.js :: getDroidPartDefinition",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 18,
+   "ownerCiTests": 372,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DRD-03",
+   "domain": "droids",
+   "responsibility": "Prerequisite identity overlay",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/domain/droids/droid-part-schema.js :: resolveDroidSystemIdentity",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 364,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DRD-04",
+   "domain": "droids",
+   "responsibility": "Component quote by size",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/domain/droids/droid-component-quote-authority.js :: resolveDroidComponentQuote",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 4,
+   "ownerCiTests": 375,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DRD-05",
+   "domain": "droids",
+   "responsibility": "Installed component resolution",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/domain/droids/droid-installed-component-resolver.js :: resolveInstalledDroidComponents",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 7,
+   "ownerCiTests": 383,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DRD-06",
+   "domain": "droids",
+   "responsibility": "Component operation gate",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/domain/droids/droid-component-operation-gate.js :: authorizeDroidComponentOperation",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/droid-component-operation-gate.test.mjs"
+   ],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 8,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DRD-07",
+   "domain": "droids",
+   "responsibility": "Droid rules profile",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/domain/droids/droid-rules-profile.js :: resolveDroidRulesProfile",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 356,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DRD-08",
+   "domain": "droids",
+   "responsibility": "Droid configuration readiness (sheet)",
+   "status": [
+    "OBSERVED",
+    "CONFLICT",
+    "DEFERRED_RULES_REVIEW"
+   ],
+   "code": "scripts/engine/droid-validation-engine.js :: DroidValidationEngine",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 3,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DRD-09",
+   "domain": "droids",
+   "responsibility": "Stock droid import and factory",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/droids/droid-factory.js :: DroidFactory",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DRD-10",
+   "domain": "droids",
+   "responsibility": "Stock-to-playable conversion and reconciliation",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/domain/droids/droid-statblock-conversion-service.js :: (service)",
+   "codeReachability": "reachable-dynamic",
+   "namedTests": [],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 3,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DRD-11",
+   "domain": "droids",
+   "responsibility": "Droid sheet subclass and context",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/sheets/v2/droid-actor-sheet.js :: SWSEV2DroidSheet",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 1,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DRD-12",
+   "domain": "droids",
+   "responsibility": "Exclusion of droids from organic rest/natural healing",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/holonet/subsystems/gm-healing-trigger.js :: isEligibleForHealing",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 10,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
    "requirement": "R-FEA-01",
    "domain": "feats",
    "responsibility": "Canonical feat content",
@@ -1123,6 +1588,348 @@
    "namedTests": [],
    "ownerDirectTests": 0,
    "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GOV-01",
+   "domain": "governance",
+   "responsibility": "Mutation context and enforcement level",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/governance/mutation/MutationInterceptor.js :: MutationInterceptor",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GOV-02",
+   "domain": "governance",
+   "responsibility": "Mutation payload normalization",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/governance/mutation/mutation-normalization-service.js :: MutationNormalizationService",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GOV-03",
+   "domain": "governance",
+   "responsibility": "Semantic boundary classification/guardrails",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/governance/mutation/mutation-boundary-service.js :: MutationBoundaryService",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GOV-04",
+   "domain": "governance",
+   "responsibility": "Post-recompute prerequisite integrity report",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/governance/integrity/prerequisite-integrity-checker.js :: PrerequisiteIntegrityChecker.evaluate",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GOV-05",
+   "domain": "governance",
+   "responsibility": "Preflight validation for repairs",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/governance/enforcement/preflight-validator.js :: PreflightValidator.validateBeforeMutation",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GOV-06",
+   "domain": "governance",
+   "responsibility": "Snapshot capture and verified restore",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/governance/snapshot/snapshot-service.js :: SnapshotService",
+   "codeReachability": "reachable-dynamic",
+   "namedTests": [
+    "tests/snapshot-restoration-plan.test.mjs",
+    "tests/snapshot-service-restoration.test.mjs"
+   ],
+   "ownerDirectTests": 3,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GOV-07",
+   "domain": "governance",
+   "responsibility": "Sentinel diagnostic engine",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/governance/sentinel/sentinel-core.js :: SentinelEngine",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 370,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GOV-08",
+   "domain": "governance",
+   "responsibility": "Sentinel bootstrap and GM API",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/governance/sentinel/sentinel-init.js :: initializeSentinelGovernance",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GOV-09",
+   "domain": "governance",
+   "responsibility": "Store/compendium/sheet diagnostic layers",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/governance/sentinel/sentinel-compendium-forensics.js :: registerCompendiumInteractionDiagnostic",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/sentinel-compendium-forensics-invariants.test.mjs"
+   ],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HOL-01",
+   "domain": "holonet",
+   "responsibility": "Record/thread persistence in world settings (GM-only, serialized queue)",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/holonet/subsystems/holonet-storage.js :: HolonetStorage",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs"
+   ],
+   "ownerDirectTests": 6,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HOL-02",
+   "domain": "holonet",
+   "responsibility": "Publication and exactly-once delivery",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/holonet/holonet-engine.js :: HolonetEngine.publish",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs"
+   ],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HOL-03",
+   "domain": "holonet",
+   "responsibility": "Contracts and vocabulary",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/holonet/contracts/enums.js :: RECORD_TYPE, INTENT_TYPE, ...",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HOL-04",
+   "domain": "holonet",
+   "responsibility": "Notification emitters from system hooks",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/holonet/subsystems/holonet-emission-service.js :: HolonetEmissionService.emit + emitters/*",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 10,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HOL-05",
+   "domain": "holonet",
+   "responsibility": "Intel records and per-actor intel locker",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/holonet/subsystems/holonet-intel-service.js :: HolonetIntelService",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs"
+   ],
+   "ownerDirectTests": 6,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HOL-06",
+   "domain": "holonet",
+   "responsibility": "Messenger: threads, presence, personas, secret notes, job board, view models",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/holonet/subsystems/holonet-messenger-service.js :: HolonetMessengerService",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/gm-job-source-location-identity.test.mjs"
+   ],
+   "ownerDirectTests": 3,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HOL-07",
+   "domain": "holonet",
+   "responsibility": "Holonet credit movement",
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "code": "scripts/engine/store/transaction-engine.js :: TransactionEngine.executeCreditAdjustment / executeCreditTransfer (called by messenger)",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/ti4c0-g16-holonet-credit-evidence.test.mjs"
+   ],
+   "ownerDirectTests": 14,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HOL-08",
+   "domain": "holonet",
+   "responsibility": "Multi-step trade/payout atomicity",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/holonet/subsystems/holonet-messenger-service.js :: _executeAtomicTradeSettlement / _executeAtomicJobRewardSettlement / _restoreTradeSnapshot",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/ti4c0-g26-party-fund-integrity.test.mjs"
+   ],
+   "ownerDirectTests": 3,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HOL-09",
+   "domain": "holonet",
+   "responsibility": "Party Fund balance and ledger",
+   "status": [
+    "OBSERVED",
+    "APPROVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/holonet/subsystems/holonet-messenger-service.js :: setPartyFundBalance / appendPartyFundLedger / PartyFundAccess",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/ti4c0-g26-party-fund-integrity.test.mjs"
+   ],
+   "ownerDirectTests": 3,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HOL-10",
+   "domain": "holonet",
+   "responsibility": "GM combat recovery (encounter reset, rests, second-wind reset)",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/holonet/subsystems/gm-combat-recovery-service.js :: GMCombatRecoveryService",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 10,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HOL-11",
+   "domain": "holonet",
+   "responsibility": "Socket relay with trusted GM authority check",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/holonet/subsystems/holonet-socket-service.js :: HolonetSocketService; HolonetMessengerService._isRequesterGm",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HOL-12",
+   "domain": "holonet",
+   "responsibility": "Preferences and player/party state",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/holonet/holonet-preferences.js :: HolonetPreferences; HolonetStateService",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
    "testGap": true,
    "foundry": "not live-verified"
   },
@@ -1630,6 +2437,350 @@
    "foundry": "not live-verified"
   },
   {
+   "requirement": "R-SKL-01",
+   "domain": "skills",
+   "responsibility": "Canonical skill definitions and key canonicalization",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/utils/skill-normalization.js :: canonicalizeSkillKey",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 364,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SKL-02",
+   "domain": "skills",
+   "responsibility": "Progression skill registry incl. Athletics consolidation",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/progression/skills/skill-registry.js :: SkillRegistry",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 366,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SKL-03",
+   "domain": "skills",
+   "responsibility": "Skill house-rule reads",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/skills/SkillRules.js :: SkillRules",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SKL-04",
+   "domain": "skills",
+   "responsibility": "Feat/talent effects on skill checks",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/skills/skill-feat-resolver.js :: SkillFeatResolver",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SKL-05",
+   "domain": "skills",
+   "responsibility": "Extra skill uses and sheet dispatch",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/utils/skill-use-filter.js :: SkillUseFilter",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/shield-recharge-skill-dispatch-authority.test.mjs"
+   ],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 53,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SKL-06",
+   "domain": "skills",
+   "responsibility": "Feat-eligibility extra-use metadata",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/skills/extra-skill-use-registry.js :: ExtraSkillUseRegistry",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SKL-07",
+   "domain": "skills",
+   "responsibility": "Retry bookkeeping (in memory)",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/skills/skill-attempt-registry.js :: SkillAttemptRegistry",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SKL-08",
+   "domain": "skills",
+   "responsibility": "Ranked-skills house rule",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/skills/ranked-skills-engine.js :: calculateSkillPointGrant",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SKL-09",
+   "domain": "skills",
+   "responsibility": "Skill challenges",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/skill-challenges/SkillChallengeEngine.js :: SkillChallengeEngine",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SKL-10",
+   "domain": "skills",
+   "responsibility": "Legacy consolidated skill-use classes",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/skills/skill-uses.js :: JumpUses..GatherInformationUses",
+   "codeReachability": "orphan-unreferenced",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SPC-01",
+   "domain": "species",
+   "responsibility": "Species enumeration and lookup",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/registries/species-registry.js :: SpeciesRegistry",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 14,
+   "ownerCiTests": 375,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SPC-02",
+   "domain": "species",
+   "responsibility": "Publication-version selection",
+   "status": [
+    "OBSERVED",
+    "DEFERRED_RULES_REVIEW"
+   ],
+   "code": "scripts/species/species-publication-selection.js :: getPublicationStatus",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/species-publication-selection.test.mjs"
+   ],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SPC-03",
+   "domain": "species",
+   "responsibility": "Variant / resolved snapshot profile",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/species/species-variant-profile.js :: applySpeciesVariantProfile",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 14,
+   "ownerCiTests": 364,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SPC-04",
+   "domain": "species",
+   "responsibility": "Species grant ledger",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/species/species-grant-ledger-builder.js :: SpeciesGrantLedgerBuilder",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 72,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SPC-05",
+   "domain": "species",
+   "responsibility": "Grant reconciliation keys/manifest",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/species/species-grant-reconciliation.js :: computeSpeciesGrantKey",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 3,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SPC-06",
+   "domain": "species",
+   "responsibility": "Chargen species materialization into plan",
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "code": "scripts/engine/progression/helpers/apply-canonical-species-to-actor.js :: applyCanonicalSpeciesToActor",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 4,
+   "ownerCiTests": 78,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SPC-07",
+   "domain": "species",
+   "responsibility": "Atomic species replacement on existing actor",
+   "status": [
+    "OBSERVED",
+    "UNIMPLEMENTED"
+   ],
+   "code": "scripts/species/species-plan-transaction.js :: buildSpeciesReplacementPlan",
+   "codeReachability": "test-only-import",
+   "namedTests": [
+    "tests/species-drop-atomicity.test.mjs"
+   ],
+   "ownerDirectTests": 3,
+   "ownerCiTests": 3,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SPC-08",
+   "domain": "species",
+   "responsibility": "Conditional species bonus feats",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/species/SpeciesConditionalGrantResolver.js :: SpeciesConditionalGrantResolver",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 2,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SPC-09",
+   "domain": "species",
+   "responsibility": "Species skill rerolls",
+   "status": [
+    "OBSERVED",
+    "DEFERRED_RULES_REVIEW"
+   ],
+   "code": "scripts/species/species-reroll-handler.js :: SpeciesRerollHandler",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SPC-10",
+   "domain": "species",
+   "responsibility": "Activated species abilities incl. Rage",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/species/species-activated-ability-engine.js :: SpeciesActivatedAbilityEngine",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 14,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SPC-11",
+   "domain": "species",
+   "responsibility": "Anatomy schema v1",
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "code": "scripts/species/species-anatomy-schema-v1.js :: SPECIES_ANATOMY_SCHEMA_VERSION",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 3,
+   "ownerCiTests": 378,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SPC-12",
+   "domain": "species",
+   "responsibility": "Legacy trait engine",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/systems/species/species-trait-engine.js :: SpeciesTraitEngine",
+   "codeReachability": "orphan-unreferenced",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
    "requirement": "R-STO-01",
    "domain": "store-economy",
    "responsibility": "Single authority for credit movement",
@@ -1767,6 +2918,219 @@
    "ownerDirectTests": 0,
    "ownerCiTests": 51,
    "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-TAL-01",
+   "domain": "talents",
+   "responsibility": "Canonical talent content",
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "code": "data/canonical/talents.json :: (data)",
+   "codeReachability": "runtime-referenced",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-TAL-02",
+   "domain": "talents",
+   "responsibility": "Talent tree data access",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/data/talent-tree-db.js :: TalentTreeDB",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/talent-phase-3f-tree-identity.test.mjs",
+    "tests/talent-phase-3g-runtime-identity.test.mjs"
+   ],
+   "ownerDirectTests": 5,
+   "ownerCiTests": 370,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-TAL-03",
+   "domain": "talents",
+   "responsibility": "Talent tree membership (additive multi-source)",
+   "status": [
+    "OBSERVED",
+    "PROPOSED"
+   ],
+   "code": "scripts/engine/progression/talents/talent-tree-membership-authority.js :: getTalentMembership",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/talent-tree-membership-authority-repair.test.mjs"
+   ],
+   "ownerDirectTests": 4,
+   "ownerCiTests": 55,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-TAL-04",
+   "domain": "talents",
+   "responsibility": "Talent lookup",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/registries/talent-registry.js :: TalentRegistry",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/talent-tree-registry-runtime.test.mjs"
+   ],
+   "ownerDirectTests": 4,
+   "ownerCiTests": 371,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-TAL-05",
+   "domain": "talents",
+   "responsibility": "Talent source identity",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/data/talent-source-identity.js :: canonicalTalentId",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 4,
+   "ownerCiTests": 368,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-TAL-06",
+   "domain": "talents",
+   "responsibility": "Talent prerequisite data",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/data/authority/talent-prerequisite-authority.js :: (authority table)",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 372,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-TAL-07",
+   "domain": "talents",
+   "responsibility": "Active talent actions",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/talent/*-talent-actions.js :: SithTalentActions, ConsularTalentActions, ...",
+   "codeReachability": null,
+   "namedTests": [
+    "tests/force-v2-03b-talent-contracts.test.mjs"
+   ],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-TAL-08",
+   "domain": "talents",
+   "responsibility": "Lightsaber form state",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/talent/lightsaber-form-engine.js :: LightsaberFormEngine",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 11,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-TAL-09",
+   "domain": "talents",
+   "responsibility": "Bonus Force Point pool maintenance (parallel to FRC)",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/talent/guardian-spirit-actions.js :: GuardianSpiritActions",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 5,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-TAL-10",
+   "domain": "talents",
+   "responsibility": "Turn/encounter lifecycle for talent state",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/talent/sith-talent-actions.js :: SithTalentActions.registerHooks",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 5,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-TAL-11",
+   "domain": "talents",
+   "responsibility": "Custom talent tree workbench and progression overlay",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js :: registerCustomTalentTreeProgressionOverlay",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-TAL-12",
+   "domain": "talents",
+   "responsibility": "Custom content GM approval",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/apps/talent-tree-workbench/custom-content-approval-service.js :: CustomContentApprovalService",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-TAL-13",
+   "domain": "talents",
+   "responsibility": "Minion/squad talent actions",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/talent/minion-actions-mechanics.js :: (module)",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
    "foundry": "not live-verified"
   },
   {

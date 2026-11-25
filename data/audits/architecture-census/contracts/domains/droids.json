@@ -1,0 +1,582 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-DRD",
+  "domain": "droids",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "Droid component authority is mostly consolidated (canonical definitions in scripts/data/droid-part-schema.js, fail-closed quotes, ledger-first resolver, handler-enforced operation gate). Certification is source-only: 99 of 122 identities SOURCE_VERIFIED, 23 HOLD, production registry/parity/Foundry runtime certification all 0. Real problems: two readiness validators disagree on whether armor is required (rules question deferred), a second hand-synced part overlay still exporting a divergent dead getSelfDestructDamage, one raw chat site, an orphan stock-droid import cluster. Droids are excluded from organic natural healing in the code paths read (A-18 conforms).",
+  "responsibilities": [
+    {
+      "id": "R-DRD-01",
+      "responsibility": "Droid systems catalog",
+      "owner": {
+        "path": "scripts/data/droid-systems.js",
+        "symbol": "DROID_SYSTEMS"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/data/droid-part-schema.js:31"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-DRD-02",
+      "responsibility": "Canonical part definition/cost/modifiers/weapon profile",
+      "owner": {
+        "path": "scripts/data/droid-part-schema.js",
+        "symbol": "getDroidPartDefinition"
+      },
+      "status": [
+        "OBSERVED",
+        "APPROVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/data/droid-part-schema.js:545",
+        "scripts/data/droid-part-schema.js:843",
+        "docs/audits/droid-authority-consolidation-phase-1.md:61"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-DRD-03",
+      "responsibility": "Prerequisite identity overlay",
+      "owner": {
+        "path": "scripts/domain/droids/droid-part-schema.js",
+        "symbol": "resolveDroidSystemIdentity"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/domain/droids/droid-part-schema.js:1",
+        "scripts/data/prerequisite-checker.js:77"
+      ],
+      "tests": [],
+      "notes": "F-DRD-002"
+    },
+    {
+      "id": "R-DRD-04",
+      "responsibility": "Component quote by size",
+      "owner": {
+        "path": "scripts/domain/droids/droid-component-quote-authority.js",
+        "symbol": "resolveDroidComponentQuote"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/domain/droids/droid-component-quote-authority.js:77"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-DRD-05",
+      "responsibility": "Installed component resolution",
+      "owner": {
+        "path": "scripts/domain/droids/droid-installed-component-resolver.js",
+        "symbol": "resolveInstalledDroidComponents"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/domain/droids/droid-installed-component-resolver.js:421"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-DRD-06",
+      "responsibility": "Component operation gate",
+      "owner": {
+        "path": "scripts/domain/droids/droid-component-operation-gate.js",
+        "symbol": "authorizeDroidComponentOperation"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/domain/droids/droid-component-operation-gate.js:78"
+      ],
+      "tests": [
+        "tests/droid-component-operation-gate.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-DRD-07",
+      "responsibility": "Droid rules profile",
+      "owner": {
+        "path": "scripts/domain/droids/droid-rules-profile.js",
+        "symbol": "resolveDroidRulesProfile"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/domain/droids/droid-rules-profile.js:49",
+        "scripts/domain/droids/droid-rules-profile.js:71"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-DRD-08",
+      "responsibility": "Droid configuration readiness (sheet)",
+      "owner": {
+        "path": "scripts/engine/droid-validation-engine.js",
+        "symbol": "DroidValidationEngine"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT",
+        "DEFERRED_RULES_REVIEW"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/droid-validation-engine.js:17",
+        "scripts/sheets/v2/droid-sheet/context-builder.js:438"
+      ],
+      "tests": [],
+      "notes": "F-DRD-001"
+    },
+    {
+      "id": "R-DRD-09",
+      "responsibility": "Stock droid import and factory",
+      "owner": {
+        "path": "scripts/engine/droids/droid-factory.js",
+        "symbol": "DroidFactory"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/engine/droids/droid-factory.js:25"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-DRD-10",
+      "responsibility": "Stock-to-playable conversion and reconciliation",
+      "owner": {
+        "path": "scripts/domain/droids/droid-statblock-conversion-service.js",
+        "symbol": "(service)"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/domain/droids/droid-converted-system-reconciliation-classifier.js:246"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-DRD-11",
+      "responsibility": "Droid sheet subclass and context",
+      "owner": {
+        "path": "scripts/sheets/v2/droid-actor-sheet.js",
+        "symbol": "SWSEV2DroidSheet"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/sheets/v2/droid-actor-sheet.js:145",
+        "scripts/sheets/v2/droid-sheet/context-builder.js:111"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-DRD-12",
+      "responsibility": "Exclusion of droids from organic rest/natural healing",
+      "owner": {
+        "path": "scripts/holonet/subsystems/gm-healing-trigger.js",
+        "symbol": "isEligibleForHealing"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/holonet/subsystems/gm-healing-trigger.js:97",
+        "scripts/holonet/subsystems/gm-healing-trigger.js:102",
+        "scripts/holonet/subsystems/gm-combat-recovery-service.js:9"
+      ],
+      "tests": [],
+      "notes": "A-18 conforms in paths read"
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "getDroidPartDefinition",
+      "path": "scripts/data/droid-part-schema.js",
+      "line": 545,
+      "consumers": 35,
+      "contract": "canonical part definition"
+    },
+    {
+      "symbol": "resolveInstalledDroidComponents",
+      "path": "scripts/domain/droids/droid-installed-component-resolver.js",
+      "line": 421,
+      "consumers": 21,
+      "contract": "ledger-first components"
+    },
+    {
+      "symbol": "resolveDroidRulesProfile",
+      "path": "scripts/domain/droids/droid-rules-profile.js",
+      "line": 49,
+      "consumers": 10,
+      "contract": "droid rules applicability"
+    },
+    {
+      "symbol": "resolveDroidComponentQuote",
+      "path": "scripts/domain/droids/droid-component-quote-authority.js",
+      "line": 77,
+      "consumers": 9,
+      "contract": "quote or BLOCKED"
+    },
+    {
+      "symbol": "authorizeDroidComponentOperation",
+      "path": "scripts/domain/droids/droid-component-operation-gate.js",
+      "line": 78,
+      "consumers": 5,
+      "contract": "OPERABLE gate"
+    },
+    {
+      "symbol": "DroidValidationEngine.validateDroidConfiguration",
+      "path": "scripts/engine/droid-validation-engine.js",
+      "line": 24,
+      "consumers": 1,
+      "contract": "required-systems check"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "actor-core",
+      "infrastructure",
+      "data-registries",
+      "progression droid trait rules"
+    ],
+    "prohibited": [
+      "direct actor writes (A-02)",
+      "credit movement (A-10)",
+      "engine -> UI (A-07)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/sheets/v2/droid-actor-sheet.js",
+        "to": "ChatMessage.create (A-05)",
+        "evidence": "scripts/sheets/v2/droid-actor-sheet.js:127"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-DRD-1",
+      "boundary": "catalog/overlay -> quote authority -> installation ledger -> resolver -> operation gate",
+      "interface": "getDroidPartDefinition / resolveDroidComponentQuote / resolveInstalledDroidComponents / authorizeDroidComponentOperation",
+      "status": [
+        "OBSERVED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-DRD-01",
+      "existingSource": "scripts/engine/droid-validation-engine.js header",
+      "claim": "used by DroidBuilderApp, Chargen, Store and Sheet",
+      "observed": "only the droid sheet context builder uses it; chargen builder validates without armor; Store construction path does not require armor",
+      "evidence": [
+        "scripts/engine/droid-validation-engine.js:9",
+        "scripts/apps/progression-framework/steps/droid-builder-step.js:623",
+        "scripts/apps/progression-framework/shell/reconciliation/domain-adapters.js:143"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-DRD-02",
+      "existingSource": "scripts/domain/droids/droid-part-schema.js header",
+      "claim": "prerequisite-only adapter; no cost/weapon logic here",
+      "observed": "still exports a getSelfDestructDamage that size-shifts and uses a pre-shifted miniaturized table, diverging from canonical; no consumer",
+      "evidence": [
+        "scripts/domain/droids/droid-part-schema.js:795",
+        "scripts/domain/droids/droid-part-schema.js:799",
+        "scripts/data/droid-part-schema.js:843"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-DRD-01",
+      "item": "Production registry certification and cross-application parity for droid components (both 0)",
+      "source": "docs/audits/droids/droid-component-mechanical-certification-closeout.md:22",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [
+    {
+      "item": "Whether a constructed droid requires an Armor component and at least one appendage for readiness (code paths disagree)",
+      "registerRef": "none (new; to be registered by owner)"
+    },
+    {
+      "item": "Stabilized Mount host",
+      "registerRef": "DROID-RD-001"
+    },
+    {
+      "item": "Telescopic Appendage host",
+      "registerRef": "DROID-RD-002"
+    },
+    {
+      "item": "Upgrade Workshop 10-system cap",
+      "registerRef": "DROID-RD-003"
+    },
+    {
+      "item": "Re-installing size-default locomotion",
+      "registerRef": "DROID-BUILD-001"
+    },
+    {
+      "item": "Droid-only evidence for action cards / cyborg hybrids",
+      "registerRef": "CAE-003"
+    },
+    {
+      "item": "Ability increase count for droids/Nonheroic",
+      "registerRef": "RECON-002"
+    },
+    {
+      "item": "23 component source HOLDs",
+      "registerRef": "docs/audits/droids/droid-component-mechanical-certification-closeout.md"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "Droid sheet readiness card and component browser",
+      "source": "scripts/sheets/v2/droid-sheet/context-builder.js:438"
+    },
+    {
+      "item": "Self-destruct MeasuredTemplate placement",
+      "source": "scripts/sheets/v2/droid-actor-sheet.js:37"
+    },
+    {
+      "item": "GM natural healing excludes droids including NPC-type droid followers",
+      "source": "scripts/holonet/subsystems/gm-healing-trigger.js:97"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-DRD-001",
+      "category": "duplicate-authority",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Two droid readiness validators disagree on armor",
+      "affectedFiles": [
+        "scripts/engine/droid-validation-engine.js",
+        "scripts/sheets/v2/droid-sheet/context-builder.js",
+        "scripts/apps/progression-framework/steps/droid-builder-step.js"
+      ],
+      "evidence": [
+        "scripts/engine/droid-validation-engine.js:9",
+        "scripts/engine/droid-validation-engine.js:24",
+        "scripts/sheets/v2/droid-sheet/context-builder.js:438",
+        "scripts/sheets/v2/droid-sheet/context-builder.js:751",
+        "scripts/apps/progression-framework/steps/droid-builder-step.js:623",
+        "scripts/apps/progression-framework/shell/reconciliation/domain-adapters.js:143"
+      ],
+      "observed": "DroidValidationEngine (sheet readiness and issues list) requires locomotion, >=1 appendage, processor and armor; the chargen droid builder requires locomotion, processor, >=1 appendage and resolved quotes but not armor; reconciliation notes the Store path does not require armor. A droid built legally in chargen/store shows 'not ready' on its sheet.",
+      "intendedOwnership": "One droid construction validator owned by the droid domain, used by builder, store and sheet.",
+      "contractRef": "A-01 | R-DRD-08",
+      "proposedSolution": "Defer the rule (armor/appendage requirement) to the owner with source citation; then make one validator (pure, in scripts/domain/droids/) consumed by all three paths. Until ruled, the sheet should not claim 'not ready' for a missing armor component.",
+      "alternatives": "Keep both but label sheet readiness as advisory.",
+      "dependencies": [
+        "B-PRG progression",
+        "B-STO store-economy"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": true,
+      "regressionTests": "Parity test: same droidSystems give the same verdict from builder and sheet.",
+      "foundryAcceptance": "Live V13: chargen droid without armor; sheet readiness.",
+      "scope": "S",
+      "simplificationBenefit": "One readiness truth.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-DRD-002",
+      "category": "duplicate-schema-interpretation",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Second droid part overlay with hand-synced aliases and a divergent dead self-destruct export",
+      "affectedFiles": [
+        "scripts/domain/droids/droid-part-schema.js",
+        "scripts/data/droid-part-schema.js",
+        "scripts/data/prerequisite-checker.js"
+      ],
+      "evidence": [
+        "scripts/domain/droids/droid-part-schema.js:1",
+        "scripts/domain/droids/droid-part-schema.js:795",
+        "scripts/domain/droids/droid-part-schema.js:799",
+        "scripts/data/droid-part-schema.js:37",
+        "scripts/data/droid-part-schema.js:843",
+        "scripts/data/prerequisite-checker.js:77",
+        "docs/audits/droid-authority-consolidation-phase-1.md:62"
+      ],
+      "observed": "The domain overlay keeps its own DROID_PART_CATEGORIES, alias table and getDroidPartDefinition/getSelfDestructDamage; only resolveDroidSystemIdentity/actorMeetsDroidSystemRequirement are consumed (prerequisite-checker). Its getSelfDestructDamage disagrees with the canonical table for miniaturized systems but has no consumer.",
+      "intendedOwnership": "scripts/data/droid-part-schema.js is the only part-definition authority; prerequisite identity resolves through it.",
+      "contractRef": "A-01 | R-DRD-02",
+      "proposedSolution": "Delete the unused exports (getSelfDestructDamage, getDroidPartDefinition, DROID_PART_CATEGORIES) from the domain overlay now (class C); then reimplement resolveDroidSystemIdentity on the canonical normalizeDroidPartId + alias table and retire the overlay.",
+      "alternatives": "Generate the alias table from the canonical file.",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Prerequisite tests for 'requires Heuristic Processor' etc. pass against canonical ids; test that no module imports getSelfDestructDamage from the domain file.",
+      "foundryAcceptance": "Feat/talent prerequisite checks on a droid.",
+      "scope": "M",
+      "simplificationBenefit": "One overlay; no hand sync.",
+      "risk": "Low-medium (prerequisite regressions).",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-DRD-003",
+      "category": "presentation-rules",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Droid part use card via raw ChatMessage.create",
+      "affectedFiles": [
+        "scripts/sheets/v2/droid-actor-sheet.js"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/droid-actor-sheet.js:127"
+      ],
+      "observed": "Part use/self-destruct card is posted directly with rolls.",
+      "intendedOwnership": "A-05 SWSEChat.",
+      "contractRef": "A-05",
+      "proposedSolution": "Route through SWSEChat.",
+      "alternatives": "none",
+      "dependencies": [
+        "B-CHT chat"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "P-A05 zero hits in droids.",
+      "foundryAcceptance": "Chat card for self-destruct.",
+      "scope": "S",
+      "simplificationBenefit": "One chat entry point.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-DRD-004",
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Orphan stock-droid import cluster and legacy droid utilities",
+      "affectedFiles": [
+        "scripts/apps/stock-droid-import-wizard.js",
+        "scripts/apps/stock-droid-comparison-dialog.js",
+        "scripts/domain/droids/stock-droid-converter.js",
+        "scripts/domain/droids/stock-droid-comparison-utility.js",
+        "scripts/data/droid-modifications.js",
+        "scripts/utils/droid-appendage-utils.js",
+        "scripts/sheets/v2/character-sheet/droid-actor-mode.js",
+        "scripts/engine/import/droid-template-importer-engine.js",
+        "scripts/domain/droids/droid-installation-reconciler.js"
+      ],
+      "evidence": [
+        "scripts/engine/import/droid-template-importer-engine.js:11",
+        "scripts/apps/galactic-records-browser.js:11",
+        "scripts/debug/droid-authority-diagnostics.js:45"
+      ],
+      "observed": "No runtime importer for the wizard, comparison dialog/utility, converter, droid-modifications.js, droid-appendage-utils.js (which writes via ActorEngine), droid-actor-mode.js; droid-template-importer-engine is imported only by the unreachable galactic-records-browser; the installation reconciler only by an unreachable debug module and tests.",
+      "intendedOwnership": "Live import goes through DroidFactory/StockDroidImporterEngine; conversion through the statblock conversion service.",
+      "contractRef": "A-09",
+      "proposedSolution": "Class C: delete the orphan UI/utility files; owner decides whether the stock-droid import wizard is an intended UI (then wire, UNIMPLEMENTED) or retired. Keep reconciler if diagnostics are to be wired (class E).",
+      "alternatives": "none",
+      "dependencies": [
+        "B-GAL galactic-profiles (galactic-records-browser)"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Census --check; existing stock import tests.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "~1,600 SLOC removed.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-DRD-005",
+      "category": "ownership-violation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Self-destruct MeasuredTemplate creation is a world-document exception",
+      "affectedFiles": [
+        "scripts/sheets/v2/droid-actor-sheet.js"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/droid-actor-sheet.js:37"
+      ],
+      "observed": "scene.createEmbeddedDocuments('MeasuredTemplate') from the sheet module: Scene-owned world document, not actor state.",
+      "intendedOwnership": "A-02 world-document exception with comment.",
+      "contractRef": "A-02",
+      "proposedSolution": "Add the exception comment; optionally move template placement to a canvas helper.",
+      "alternatives": "none",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "none",
+      "foundryAcceptance": "Template placement live.",
+      "scope": "S",
+      "simplificationBenefit": "Clears probe classification.",
+      "risk": "None.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-DRD-006",
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "A-18 droid organic-rest exclusion conforms in the paths read",
+      "affectedFiles": [
+        "scripts/holonet/subsystems/gm-healing-trigger.js",
+        "scripts/holonet/subsystems/gm-combat-recovery-service.js"
+      ],
+      "evidence": [
+        "scripts/holonet/subsystems/gm-healing-trigger.js:97",
+        "scripts/holonet/subsystems/gm-healing-trigger.js:102",
+        "scripts/holonet/subsystems/gm-combat-recovery-service.js:9"
+      ],
+      "observed": "Natural healing requires type character and not isDroid; recovery console excludes droids/vehicles from rest and offers repair actions. Second Wind is not organic rest and is outside this check.",
+      "intendedOwnership": "A-18.",
+      "contractRef": "A-18",
+      "proposedSolution": "None; add a regression test that a droid (type droid and NPC isDroid) is never healed by triggerNaturalHealing.",
+      "alternatives": "none",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "New test as stated.",
+      "foundryAcceptance": "Live GM rest with a droid in party.",
+      "scope": "S",
+      "simplificationBenefit": "Pins the invariant.",
+      "risk": "None.",
+      "perfImpact": "none"
+    }
+  ]
+}

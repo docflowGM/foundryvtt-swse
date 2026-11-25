@@ -48,20 +48,20 @@
    "kind": "mechanical",
    "files": 267,
    "runtimeModules": 19,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-SPC",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 12,
+   "findings": 6
   },
   {
    "domain": "skills",
    "kind": "mechanical",
    "files": 87,
    "runtimeModules": 34,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-SKL",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 10,
+   "findings": 7
   },
   {
    "domain": "feats",
@@ -78,10 +78,10 @@
    "kind": "mechanical",
    "files": 440,
    "runtimeModules": 36,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-TAL",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 13,
+   "findings": 13
   },
   {
    "domain": "force",
@@ -98,10 +98,10 @@
    "kind": "mechanical",
    "files": 431,
    "runtimeModules": 174,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-CMB",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 11,
+   "findings": 12
   },
   {
    "domain": "rolls",
@@ -158,10 +158,10 @@
    "kind": "mechanical",
    "files": 472,
    "runtimeModules": 47,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-DRD",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 12,
+   "findings": 6
   },
   {
    "domain": "npc-followers",
@@ -198,10 +198,10 @@
    "kind": "feature",
    "files": 94,
    "runtimeModules": 75,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-HOL",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 12,
+   "findings": 9
   },
   {
    "domain": "games",
@@ -248,10 +248,10 @@
    "kind": "infrastructure",
    "files": 100,
    "runtimeModules": 86,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-GOV",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 9,
+   "findings": 7
   },
   {
    "domain": "settings-config",
@@ -298,10 +298,10 @@
    "kind": "infrastructure",
    "files": 19,
    "runtimeModules": 17,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-PAT",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 6,
+   "findings": 7
   },
   {
    "domain": "dev-tooling",
@@ -375,25 +375,17 @@
   }
  ],
  "missingContracts": [
-  "species",
-  "skills",
-  "talents",
   "force",
-  "combat",
   "rolls",
   "equipment",
   "customization",
-  "droids",
   "npc-followers",
-  "holonet",
   "games",
   "houserules",
   "chat",
-  "governance",
   "settings-config",
   "data-registries",
   "infrastructure",
-  "migration",
-  "compat-patches"
+  "migration"
  ]
 }

@@ -1,0 +1,615 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-GOV",
+  "domain": "governance",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "governance provides mutation payload services and snapshot/rollback used by ActorEngine, a post-recompute prerequisite integrity report, and Sentinel diagnostics (default OFF). The MutationInterceptor context is set around every ActorEngine write but never consumed, so A-02 has no runtime enforcement; 55 of 81 governance runtime modules are unreachable, including the layers that ARCHITECTURE.md says enforce invariants.",
+  "responsibilities": [
+    {
+      "id": "R-GOV-01",
+      "responsibility": "Mutation context and enforcement level",
+      "owner": {
+        "path": "scripts/governance/mutation/MutationInterceptor.js",
+        "symbol": "MutationInterceptor"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/governance/mutation/MutationInterceptor.js:102",
+        "scripts/governance/mutation/MutationInterceptor.js:156",
+        "scripts/governance/mutation/MutationInterceptor.js:186",
+        "index.js:287"
+      ],
+      "tests": [],
+      "notes": "context never consumed outside the class"
+    },
+    {
+      "id": "R-GOV-02",
+      "responsibility": "Mutation payload normalization",
+      "owner": {
+        "path": "scripts/governance/mutation/mutation-normalization-service.js",
+        "symbol": "MutationNormalizationService"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:4375"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-GOV-03",
+      "responsibility": "Semantic boundary classification/guardrails",
+      "owner": {
+        "path": "scripts/governance/mutation/mutation-boundary-service.js",
+        "symbol": "MutationBoundaryService"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:4484",
+        "scripts/governance/actor-engine/actor-engine.js:4551"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-GOV-04",
+      "responsibility": "Post-recompute prerequisite integrity report",
+      "owner": {
+        "path": "scripts/governance/integrity/prerequisite-integrity-checker.js",
+        "symbol": "PrerequisiteIntegrityChecker.evaluate"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:324",
+        "scripts/governance/actor-engine/actor-engine.js:417"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-GOV-05",
+      "responsibility": "Preflight validation for repairs",
+      "owner": {
+        "path": "scripts/governance/enforcement/preflight-validator.js",
+        "symbol": "PreflightValidator.validateBeforeMutation"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:4050"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-GOV-06",
+      "responsibility": "Snapshot capture and verified restore",
+      "owner": {
+        "path": "scripts/governance/snapshot/snapshot-service.js",
+        "symbol": "SnapshotService"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/governance/snapshot/snapshot-service.js:405",
+        "scripts/governance/snapshot/snapshot-service.js:419"
+      ],
+      "tests": [
+        "tests/snapshot-restoration-plan.test.mjs",
+        "tests/snapshot-service-restoration.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-GOV-07",
+      "responsibility": "Sentinel diagnostic engine",
+      "owner": {
+        "path": "scripts/governance/sentinel/sentinel-core.js",
+        "symbol": "SentinelEngine"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/governance/sentinel/sentinel-core.js:70",
+        "scripts/governance/sentinel/sentinel-core.js:79",
+        "scripts/core/settings.js:205"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-GOV-08",
+      "responsibility": "Sentinel bootstrap and GM API",
+      "owner": {
+        "path": "scripts/governance/sentinel/sentinel-init.js",
+        "symbol": "initializeSentinelGovernance"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/governance/sentinel/sentinel-init.js:13",
+        "scripts/governance/sentinel/sentinel-init.js:46"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-GOV-09",
+      "responsibility": "Store/compendium/sheet diagnostic layers",
+      "owner": {
+        "path": "scripts/governance/sentinel/sentinel-compendium-forensics.js",
+        "symbol": "registerCompendiumInteractionDiagnostic"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/governance/sentinel/sentinel-compendium-forensics.js:551"
+      ],
+      "tests": [
+        "tests/sentinel-compendium-forensics-invariants.test.mjs"
+      ],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "SentinelEngine.report/reportSSOTViolation",
+      "path": "scripts/governance/sentinel/sentinel-core.js",
+      "line": 661,
+      "consumers": 33,
+      "contract": "no-op when OFF"
+    },
+    {
+      "symbol": "SentinelEngine.registerLayer",
+      "path": "scripts/governance/sentinel/sentinel-core.js",
+      "line": 113,
+      "consumers": 33,
+      "contract": ""
+    },
+    {
+      "symbol": "MutationInterceptor.setContext",
+      "path": "scripts/governance/mutation/MutationInterceptor.js",
+      "line": 156,
+      "consumers": 4,
+      "contract": "single global slot"
+    },
+    {
+      "symbol": "SnapshotService",
+      "path": "scripts/governance/snapshot/snapshot-service.js",
+      "line": 405,
+      "consumers": 5,
+      "contract": "schema-v2 capture, verified restore via ActorEngine"
+    },
+    {
+      "symbol": "PrerequisiteIntegrityChecker.evaluate",
+      "path": "scripts/governance/integrity/prerequisite-integrity-checker.js",
+      "line": 1,
+      "consumers": 6,
+      "contract": "report only"
+    },
+    {
+      "symbol": "MissingPrereqsTracker",
+      "path": "scripts/governance/integrity/missing-prereqs-tracker.js",
+      "line": 26,
+      "consumers": 10,
+      "contract": "imports ActorEngine"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "infrastructure",
+      "actor-core reads",
+      "ActorEngine (SnapshotService writes)"
+    ],
+    "prohibited": [
+      "governance -> UI",
+      "diagnostics patching Foundry/DOM prototypes (A-09)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/governance/mutation/MutationInterceptor.js",
+        "to": "scripts/governance/sentinel/governance-diagnostics.js",
+        "evidence": "static cycle P-A07 #7"
+      },
+      {
+        "from": "scripts/governance/integrity/missing-prereqs-tracker.js",
+        "to": "scripts/governance/actor-engine/actor-engine.js",
+        "evidence": "scripts/governance/integrity/missing-prereqs-tracker.js:26"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-GOV-1",
+      "boundary": "ActorEngine.applyMutationPlan(transactional) <-> SnapshotService",
+      "interface": "capture -> restore -> {success, exact}; else INDETERMINATE",
+      "status": [
+        "OBSERVED",
+        "FOUNDRY_ACCEPTANCE_REQUIRED"
+      ]
+    },
+    {
+      "id": "C-GOV-2",
+      "boundary": "ActorEngine <-> mutation normalization/boundary services",
+      "interface": "thin delegating methods actor-engine.js:4374-4589",
+      "status": [
+        "OBSERVED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-GOV-01",
+      "existingSource": "docs/architecture/ARCHITECTURE.md \u00a7V (global CR-08)",
+      "claim": "Sentinel monitors unauthorized mutation, shadow writes, duplicate modifiers",
+      "observed": "Monitoring layers unreachable; mutation context never checked",
+      "evidence": [
+        "scripts/governance/mutation/MutationInterceptor.js:186"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-GOV-02",
+      "existingSource": "scripts/governance/mutation/MutationInterceptor.js:123 (comment)",
+      "claim": "Guards enforced through Sentinel/secureActorUpdate()",
+      "observed": "secureActorUpdate does not exist in scripts/",
+      "evidence": [
+        "scripts/governance/mutation/MutationInterceptor.js:123"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-GOV-03",
+      "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md \u00a72",
+      "claim": "All mutations go through ActorEngine and only ActorEngine",
+      "observed": "Convention only; no runtime gate; P-A02 finds 331 direct sites",
+      "evidence": [
+        "docs/architecture/ENGINE-ARCHITECTURE.md:27"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-GOV-01",
+      "item": "Runtime mutation enforcement (observer checking MutationInterceptor context in DEV/STRICT) or retirement of the enforcement claims",
+      "source": "scripts/governance/mutation/MutationInterceptor.js:99",
+      "status": "UNIMPLEMENTED"
+    },
+    {
+      "id": "U-GOV-02",
+      "item": "Sentinel invariant-monitoring layers (layers/*, mutation-path-guard, sovereignty-enforcement)",
+      "source": "scripts/governance/sentinel/sentinel-registry.js:54",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [],
+  "foundryAcceptance": [
+    {
+      "item": "Transactional rollback verification (C-GOV-1)",
+      "source": "scripts/governance/actor-engine/actor-engine.js:3389"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-GOV-001",
+      "category": "unimplemented",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "A-02 has no runtime enforcement: MutationInterceptor context is write-only",
+      "affectedFiles": [
+        "scripts/governance/mutation/MutationInterceptor.js",
+        "scripts/governance/actor-engine/actor-engine.js"
+      ],
+      "evidence": [
+        "scripts/governance/mutation/MutationInterceptor.js:99",
+        "scripts/governance/mutation/MutationInterceptor.js:156",
+        "scripts/governance/mutation/MutationInterceptor.js:186",
+        "scripts/governance/mutation/MutationInterceptor.js:192",
+        "scripts/governance/actor-engine/actor-engine.js:1061"
+      ],
+      "observed": "ActorEngine sets/clears a global context around each write; nothing outside MutationInterceptor reads hasContext/_isAuthorized (git grep). No preUpdate hook checks it. A nested ActorEngine call clears the outer context (single slot, not a stack). Comments claim enforcement via Sentinel/secureActorUpdate, which does not exist.",
+      "intendedOwnership": "A-02 enforced or at least detected at runtime in dev/strict.",
+      "contractRef": "A-02; CR-GOV-01/02",
+      "proposedSolution": "Owner decision: (a) add a DEV/STRICT-only preUpdateActor/preUpdateItem/preCreate/preDelete observer that reports writes without context (make context a depth counter), or (b) remove the enforcement wording and rely on the census probe + CI ratchet (A-P3). Either way fix the single-slot nesting.",
+      "alternatives": "(b) is cheaper and matches the current evidence model.",
+      "dependencies": [
+        "B-ACT",
+        "A-P3"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Unit: direct actor.update in STRICT mode emits a Sentinel report; nested ActorEngine calls keep outer context.",
+      "foundryAcceptance": "Run with sentinelMode DEV in a live world and confirm report volume is usable.",
+      "scope": "M",
+      "simplificationBenefit": "Turns A-02 from convention into a measurable gate.",
+      "risk": "Low (observer only).",
+      "perfImpact": "low"
+    },
+    {
+      "id": "F-GOV-002",
+      "category": "dead-code",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "55 unreachable governance modules",
+      "affectedFiles": [
+        "scripts/governance/sentinel/enforcement-core.js",
+        "scripts/governance/sentinel/v2-comprehensive-audit.js",
+        "scripts/governance/sentinel/appv2-auditor.js",
+        "scripts/governance/sentinel/migration-auditor.js",
+        "scripts/governance/sentinel/tab-diagnostics.js",
+        "scripts/governance/sentinel/sentinel-layout-contract.js",
+        "scripts/governance/sentinel/sentinel-layout-debugger.js",
+        "scripts/governance/sentinel/sentinel-layout-evaluator.js",
+        "scripts/governance/mutation-adapter.js",
+        "scripts/governance/sentinel/appv2-interaction-auditor.js",
+        "scripts/governance/ui/slot-resolution-flow.js",
+        "scripts/governance/sentinel/layers/combat-layer.js",
+        "scripts/governance/ui/rebuild-orchestrator.js",
+        "scripts/governance/mutation/batch-1-validation.js",
+        "scripts/governance/sentinel/sovereignty-enforcement.js",
+        "scripts/governance/sentinel/sentry.js",
+        "scripts/validation/archetype-validator.js",
+        "scripts/contracts/diagnostic-mode.js",
+        "scripts/governance/sentinel/enforcement/integrity-wiring-validator.js",
+        "scripts/governance/ui/integrity-dashboard.js",
+        "scripts/governance/sentinel/sentinel-reporter.js",
+        "scripts/governance/sentinel/css-auditor.js",
+        "scripts/engine/repair/actor-repair-engine.js",
+        "scripts/governance/audit/audit-trail.js",
+        "scripts/governance/governance-integration.js",
+        "scripts/governance/sentinel/investigator.js",
+        "scripts/governance/sentinel/sentinel-template-integrity.js",
+        "scripts/engine/integrity/world-integrity-sweep.js",
+        "scripts/governance/sentinel/sentinel-css-contract.js",
+        "scripts/governance/integrity/prerequisite-integrity-tests.js",
+        "scripts/governance/sentinel/layers/utility-layer.js",
+        "scripts/governance/sentinel/enforcement/mutation-path-validator.js",
+        "scripts/governance/sentinel/mutation-path-guard.js",
+        "scripts/governance/ui/integrity-banner.js",
+        "scripts/governance/sentinel/sentinel-sheet-hydration.js",
+        "scripts/governance/sentinel/transaction-verification.js",
+        "scripts/validation/validate-identity-engine.js",
+        "scripts/governance/sentinel/sentinel-update-atomicity.js",
+        "scripts/governance/sentinel/sentinel-dashboard.js",
+        "scripts/governance/sentinel/sentinel-roll-pipeline.js",
+        "scripts/governance/sentinel/layers/css-layer.js",
+        "scripts/governance/sentinel/enforcement/import-graph-validator.js",
+        "scripts/engine/integrity/drift-detector.js",
+        "scripts/governance/enforcement/levelup-preflight-gate.js",
+        "scripts/governance/sentinel/layers/sheet-integration-layer.js",
+        "scripts/governance/export/export-marking.js",
+        "scripts/governance/enforcement/actor-engine-enforcement-gates.js",
+        "scripts/governance/sentinel/appv2-audit-runner.js",
+        "scripts/governance/sentinel/layers/data-layer.js",
+        "scripts/governance/sentinel/layers/hooks-mutation-layer.js",
+        "scripts/governance/sentinel/layers/promises-layer.js",
+        "scripts/governance/sentinel/sentinel-auditors.js",
+        "scripts/governance/sentinel/layers/hooks-layer.js",
+        "scripts/governance/sentinel/sentinel-registry.js",
+        "scripts/governance/sentinel/hook-investigator.js"
+      ],
+      "evidence": [
+        "scripts/governance/sentinel/enforcement-core.js:1",
+        "scripts/governance/sentinel/v2-comprehensive-audit.js:1",
+        "scripts/governance/sentinel/appv2-auditor.js:1",
+        "scripts/governance/sentinel/migration-auditor.js:1",
+        "scripts/governance/sentinel/tab-diagnostics.js:1",
+        "scripts/governance/sentinel/sentinel-layout-contract.js:1",
+        "scripts/governance/sentinel/sentinel-layout-debugger.js:1",
+        "scripts/governance/sentinel/sentinel-layout-evaluator.js:1",
+        "scripts/governance/mutation-adapter.js:1",
+        "scripts/governance/sentinel/appv2-interaction-auditor.js:1",
+        "scripts/governance/ui/slot-resolution-flow.js:1",
+        "scripts/governance/sentinel/layers/combat-layer.js:1",
+        "scripts/governance/ui/rebuild-orchestrator.js:1",
+        "scripts/governance/mutation/batch-1-validation.js:1",
+        "scripts/governance/sentinel/sovereignty-enforcement.js:1",
+        "scripts/governance/sentinel/sentry.js:1",
+        "scripts/validation/archetype-validator.js:1",
+        "scripts/contracts/diagnostic-mode.js:1",
+        "scripts/governance/sentinel/enforcement/integrity-wiring-validator.js:1",
+        "scripts/governance/ui/integrity-dashboard.js:1",
+        "scripts/governance/sentinel/sentinel-reporter.js:1",
+        "scripts/governance/sentinel/css-auditor.js:1",
+        "scripts/engine/repair/actor-repair-engine.js:1",
+        "scripts/governance/audit/audit-trail.js:1",
+        "scripts/governance/governance-integration.js:1",
+        "scripts/governance/sentinel/investigator.js:1",
+        "scripts/governance/sentinel/sentinel-template-integrity.js:1",
+        "scripts/engine/integrity/world-integrity-sweep.js:1",
+        "scripts/governance/sentinel/sentinel-css-contract.js:1",
+        "scripts/governance/integrity/prerequisite-integrity-tests.js:1"
+      ],
+      "observed": "Classification: adapter/integration/validation: 11; enforcement gate/validator: 3; governance UI: 4; sentinel auditor (CSS/layout/AppV2/template/hydration/atomicity/roll): 22; sentinel diagnostic layer/tool: 15. Self-registering modules (registerLayer at load) never load because nothing imports them; governance-integration.js (orphan) was the intended wiring for several (hp-recompute-hooks, audit-trail, export-marking).",
+      "intendedOwnership": "Each module either wired by the composition root or removed.",
+      "contractRef": "A-09; CR-GOV-01",
+      "proposedSolution": "Delete enforcement-core, v2-comprehensive-audit, mutation-path-guard, sovereignty-enforcement, transaction-verification, integrity-wiring/import-graph/mutation-path validators (legacy C; superseded by the census). Investigate as UNIMPLEMENTED: sentinel layers (U-GOV-02), governance/ui integrity dashboard/banner, actor-repair-engine, world-integrity-sweep, audit-trail, export-marking. Owner decides wire vs delete per cluster.",
+      "alternatives": "",
+      "dependencies": [
+        "B-INF"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Full CI after each deletion batch.",
+      "foundryAcceptance": "None for deletions.",
+      "scope": "M",
+      "simplificationBenefit": "~10k SLOC of dormant governance removed or made real.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-GOV-003",
+      "category": "legacy-compat",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Unreachable enforcement-core.js patches Application.prototype.render and Element.prototype",
+      "affectedFiles": [
+        "scripts/governance/sentinel/enforcement-core.js"
+      ],
+      "evidence": [
+        "scripts/governance/sentinel/enforcement-core.js:204",
+        "scripts/governance/sentinel/enforcement-core.js:344",
+        "scripts/governance/sentinel/enforcement-core.js:394",
+        "scripts/governance/sentinel/enforcement-core.js:438"
+      ],
+      "observed": "Self-registering layer that would wrap V1 Application.render and DOM Element remove/replaceWith/offsetWidth/offsetHeight/getBoundingClientRect. Not imported today.",
+      "intendedOwnership": "No DOM/Foundry prototype patching (A-09).",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete (legacy C).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Static test: no file assigns Element.prototype.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "Removes a latent global patch.",
+      "risk": "None.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-GOV-004",
+      "category": "performance",
+      "severity": "medium",
+      "status": "suspected",
+      "title": "Prerequisite integrity evaluation runs on every recalcAll",
+      "affectedFiles": [
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/governance/integrity/prerequisite-integrity-checker.js"
+      ],
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:324",
+        "scripts/governance/actor-engine/actor-engine.js:417"
+      ],
+      "observed": "Every ActorEngine.recalcAll (after each updateActor, owned-item change, flag change) awaits PrerequisiteIntegrityChecker.evaluate(actor), whose result is only logged. Hypothesis: measurable cost on actors with many feats/talents; not measured.",
+      "intendedOwnership": "Integrity reporting is opt-in or scoped to item-set changes.",
+      "contractRef": "A-16 (perf)",
+      "proposedSolution": "Instrument with ActorPerfDiagnostics; then run only when items changed or when Sentinel is enabled.",
+      "alternatives": "",
+      "dependencies": [
+        "B-ACT"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Counter test: flag-only update does not run integrity evaluation.",
+      "foundryAcceptance": "Profile a level-15 character sheet edit.",
+      "scope": "S",
+      "simplificationBenefit": "Lower hot-path cost.",
+      "risk": "Low (report-only).",
+      "perfImpact": "medium"
+    },
+    {
+      "id": "F-GOV-005",
+      "category": "consolidation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Unbounded SentinelSourceMapper cache; duplicated CSS auditor",
+      "affectedFiles": [
+        "scripts/governance/sentinel/sentinel-source-mapper.js",
+        "scripts/core/css-auditor.js",
+        "scripts/governance/sentinel/css-auditor.js"
+      ],
+      "evidence": [
+        "scripts/governance/sentinel/sentinel-source-mapper.js:16",
+        "scripts/governance/sentinel/sentinel-source-mapper.js:83",
+        "scripts/core/css-auditor.js:115",
+        "scripts/governance/sentinel/css-auditor.js:116"
+      ],
+      "observed": "#enrichCache grows per unique stack hash and is never evicted (only age-checked on read). Both css-auditor modules (unreachable) define the same 9 functions; auditIcons is an exact clone.",
+      "intendedOwnership": "Bounded diagnostic caches; one copy of tooling.",
+      "contractRef": "A-16; A-01",
+      "proposedSolution": "Bound the cache (LRU, e.g. 500 entries). Delete both css-auditor copies or keep one under tools/.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None.",
+      "perfImpact": "low"
+    },
+    {
+      "id": "F-GOV-006",
+      "category": "wrapper-indirection",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "mutation-adapter.js is an orphan wrapper over ActorEngine",
+      "affectedFiles": [
+        "scripts/governance/mutation-adapter.js"
+      ],
+      "evidence": [
+        "scripts/governance/mutation-adapter.js:499",
+        "scripts/governance/mutation-adapter.js:539"
+      ],
+      "observed": "Re-exports ActorEngine flag/update calls under another API; no importers, no pack/template mentions.",
+      "intendedOwnership": "Callers use ActorEngine directly.",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete (legacy D/C).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Full CI.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-GOV-007",
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Documentation candidates",
+      "affectedFiles": [
+        "docs/governance/PARTIAL_SUBPARTIAL_CONTRACT.md",
+        "docs/governance/ROW_TRANSFORMER_STANDARD.md",
+        "docs/audits/v2-math-integrity-authority-ledger.md"
+      ],
+      "evidence": [
+        "docs/architecture/ARCHITECTURE.md:1"
+      ],
+      "observed": "ARCHITECTURE \u00a7V Sentinel description is aspirational; governance docs are UI-row standards (not mutation governance).",
+      "intendedOwnership": "",
+      "contractRef": "A-P2",
+      "proposedSolution": "Rewrite ARCHITECTURE \u00a7V to reference this contract once U-GOV-01 is decided; keep the governance/ docs as UI standards (they belong to ui-shell).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None.",
+      "perfImpact": "none"
+    }
+  ]
+}

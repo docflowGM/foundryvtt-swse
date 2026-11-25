@@ -57,6 +57,39 @@
    "findings": 6
   },
   {
+   "contractId": "B-CMB",
+   "domain": "combat",
+   "doc": "docs/architecture/v2-contracts/B-CMB-combat.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/combat.json",
+   "responsibilities": 11,
+   "subsystemContracts": 2,
+   "contradictions": 5,
+   "unimplemented": 2,
+   "findings": 12
+  },
+  {
+   "contractId": "B-PAT",
+   "domain": "compat-patches",
+   "doc": "docs/architecture/v2-contracts/B-PAT-compat-patches.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/compat-patches.json",
+   "responsibilities": 6,
+   "subsystemContracts": 0,
+   "contradictions": 3,
+   "unimplemented": 0,
+   "findings": 7
+  },
+  {
+   "contractId": "B-DRD",
+   "domain": "droids",
+   "doc": "docs/architecture/v2-contracts/B-DRD-droids.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/droids.json",
+   "responsibilities": 12,
+   "subsystemContracts": 1,
+   "contradictions": 2,
+   "unimplemented": 1,
+   "findings": 6
+  },
+  {
    "contractId": "B-FEA",
    "domain": "feats",
    "doc": "docs/architecture/v2-contracts/B-FEA-feats.md",
@@ -76,6 +109,28 @@
    "subsystemContracts": 2,
    "contradictions": 2,
    "unimplemented": 3,
+   "findings": 9
+  },
+  {
+   "contractId": "B-GOV",
+   "domain": "governance",
+   "doc": "docs/architecture/v2-contracts/B-GOV-governance.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/governance.json",
+   "responsibilities": 9,
+   "subsystemContracts": 2,
+   "contradictions": 3,
+   "unimplemented": 2,
+   "findings": 7
+  },
+  {
+   "contractId": "B-HOL",
+   "domain": "holonet",
+   "doc": "docs/architecture/v2-contracts/B-HOL-holonet.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/holonet.json",
+   "responsibilities": 12,
+   "subsystemContracts": 3,
+   "contradictions": 3,
+   "unimplemented": 2,
    "findings": 9
   },
   {
@@ -101,6 +156,28 @@
    "findings": 23
   },
   {
+   "contractId": "B-SKL",
+   "domain": "skills",
+   "doc": "docs/architecture/v2-contracts/B-SKL-skills.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/skills.json",
+   "responsibilities": 10,
+   "subsystemContracts": 1,
+   "contradictions": 2,
+   "unimplemented": 0,
+   "findings": 7
+  },
+  {
+   "contractId": "B-SPC",
+   "domain": "species",
+   "doc": "docs/architecture/v2-contracts/B-SPC-species.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/species.json",
+   "responsibilities": 12,
+   "subsystemContracts": 2,
+   "contradictions": 3,
+   "unimplemented": 1,
+   "findings": 6
+  },
+  {
    "contractId": "B-STO",
    "domain": "store-economy",
    "doc": "docs/architecture/v2-contracts/B-STO-store-economy.md",
@@ -110,6 +187,17 @@
    "contradictions": 4,
    "unimplemented": 2,
    "findings": 9
+  },
+  {
+   "contractId": "B-TAL",
+   "domain": "talents",
+   "doc": "docs/architecture/v2-contracts/B-TAL-talents.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/talents.json",
+   "responsibilities": 13,
+   "subsystemContracts": 3,
+   "contradictions": 2,
+   "unimplemented": 2,
+   "findings": 13
   },
   {
    "contractId": "B-UIS",
