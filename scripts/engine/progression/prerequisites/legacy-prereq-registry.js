@@ -2,6 +2,7 @@ import { canonicalizeSkillKey } from "/systems/foundryvtt-swse/scripts/utils/ski
 import { FeatRegistry as CanonicalFeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { TalentRegistry as CanonicalTalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { isDroidProgressionActor } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
 import { resolveCanonicalForcePowerName } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 
@@ -86,8 +87,7 @@ export function resolveCanonicalSpeciesName(rawName) {
 
 const _ATHLETICS_COMPONENT_KEYS = new Set(['acrobatics', 'climb', 'jump', 'swim']);
 function _athleticsOn() {
-  try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; }
-  catch { return false; }
+  return HouseRuleService.getBoolean('athleticsConsolidation', false);
 }
 
 export function resolveCanonicalSkillKey(rawName) {

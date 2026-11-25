@@ -56,6 +56,10 @@ const DEV_MODE = true;     // Always log all mutations with stack traces
 
 // Track which ActorEngine method is currently executing
 let _currentMutationContext = null;
+// Contexts nest (ActorEngine.updateActor -> recalcAll -> updateActorFlags, or two async ActorEngine calls interleaving). A single slot was
+// cleared by the INNER call's `finally`, leaving the OUTER call's remaining writes unauthorized (F-GOV-001). Keep a stack: clear pops one level,
+// authorization lasts until the outermost call clears. clearContext() on an empty stack is a no-op (unbalanced callers cannot go negative).
+const _contextStack = [];
 
 export class MutationInterceptor {
   /**
@@ -168,6 +172,7 @@ export class MutationInterceptor {
         `Nested mutations are not permitted during ${_currentMutationContext.operation}.`
       );
     }
+    _contextStack.push(context);
     _currentMutationContext = context;
   }
 
@@ -175,7 +180,8 @@ export class MutationInterceptor {
    * Clear the current mutation context (when ActorEngine finishes).
    */
   static clearContext() {
-    _currentMutationContext = null;
+    _contextStack.pop();
+    _currentMutationContext = _contextStack.length ? _contextStack[_contextStack.length - 1] : null;
   }
 
   /**

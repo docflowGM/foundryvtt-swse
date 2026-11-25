@@ -4,6 +4,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 export const SkillRegistry = {
   skills: new Map(),
@@ -82,7 +83,7 @@ export const SkillRegistry = {
       this.isBuilt = true;
 
       // Athletics Consolidation house rule: remove component skills, inject Athletics.
-      const athleticsOn = (() => { try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; } catch { return false; } })();
+      const athleticsOn = HouseRuleService.getBoolean('athleticsConsolidation', false);
       if (athleticsOn) {
         const componentKeys = ['acrobatics', 'climb', 'jump', 'swim'];
         const componentNames = ['Acrobatics', 'Climb', 'Jump', 'Swim'];

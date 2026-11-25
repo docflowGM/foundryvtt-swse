@@ -5389,7 +5389,7 @@
    "auditStatus": "confirmed",
    "wave": 6,
    "plannedPhase": "3D",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": true,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -5397,10 +5397,14 @@
     "B-ACT",
     "A-P3"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "pending"
+   ],
+   "tests": [
+    "tests/mutation-interceptor-nested-context.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "3D observation: MutationInterceptor's context is a single non-stacking variable and clearContext() nulls it, so a governed flag write nested inside another ActorEngine operation clears the outer context. Harmless today because nothing reads the context (this finding); it must become a stack before any enforcement is enabled."
+   "notes": "3D observation: MutationInterceptor's context is a single non-stacking variable and clearContext() nulls it, so a governed flag write nested inside another ActorEngine operation clears the outer context. Harmless today because nothing reads the context (this finding); it must become a stack before any enforcement is enabled. | MutationInterceptor now keeps a context stack; inner clear no longer de-authorizes the outer call."
   },
   {
    "id": "F-MEN-002",

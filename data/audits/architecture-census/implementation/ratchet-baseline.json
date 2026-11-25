@@ -119,9 +119,7 @@
    "scripts/engine/combat/ConditionEngine.js": 2,
    "scripts/engine/progression/ProgressionEngineV2.js": 2,
    "scripts/engine/combat/SecondWindEngine.js": 1,
-   "scripts/engine/skill-challenges/SkillChallengeStore.js": 1,
-   "scripts/engine/progression/prerequisites/legacy-prereq-registry.js": 1,
-   "scripts/engine/progression/skills/skill-registry.js": 1
+   "scripts/engine/skill-challenges/SkillChallengeStore.js": 1
   },
   "P-A07-ui": {
    "scripts/engine/combat/canonical-special-effects.js>scripts/dialogs/entity-dialog/effect-intent-engine.js": 1,
