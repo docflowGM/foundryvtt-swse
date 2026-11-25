@@ -1028,17 +1028,19 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3B",
-   "status": "OPEN",
+   "status": "OWNER_DECISION_REQUIRED",
    "ownerDecisionRequired": true,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "Choose the canonical flag namespace (AD-008) after auditing saved-world data, and approve a controlled one-time migration, before retiring the redirect (also covers F-PAT-005).",
    "dependencies": [
     "B-PAT F-PAT-005"
    ],
-   "commits": [],
+   "commits": [
+    "15ea0c7cc"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "3B removed the Force Point pool's dependence on the scope redirect (it now has one stored location); the global Document.prototype redirect itself is untouched"
   },
   {
    "id": "F-MEN-009",
@@ -1093,18 +1095,20 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3B",
-   "status": "OPEN",
+   "status": "OWNER_DECISION_REQUIRED",
    "ownerDecisionRequired": true,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "See F-INF-005 (AD-008 namespace choice + migration approval).",
    "dependencies": [
     "B-ACT F-ACT-009",
     "B-MIG"
    ],
-   "commits": [],
+   "commits": [
+    "15ea0c7cc"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "same decision as F-INF-005"
   },
   {
    "id": "F-PRG-005",
@@ -3514,17 +3518,21 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3B",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "F-TAL-007"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "15ea0c7cc"
+   ],
+   "tests": [
+    "tests/force-point-bonus-pool-single-authority.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "two flag scopes resolved; 10 readers/9 writers on one module; 2 proven verbatim clone pairs consolidated. Residual: feat-actions bonusPoolEntries (differs for legacy aggregate source label) and Guardian _buildPool (different default note) intentionally retained; direct-FP-writer guard test does not scan the pool (follow-up)"
   },
   {
    "id": "F-TAL-007",
@@ -3535,17 +3543,21 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3B",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "F-FRC-003"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "15ea0c7cc"
+   ],
+   "tests": [
+    "tests/force-point-bonus-pool-single-authority.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "single governed read/write location for the bonus pool; Guardian Spirit writes via ActorEngine; divergent historical data merged without discarding balances. Foundry acceptance NOT run (flag-scope persistence and the -= deletion key through updateActor need a live check)"
   },
   {
    "id": "F-CMB-003",
@@ -3596,17 +3608,19 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3B",
-   "status": "OPEN",
+   "status": "OWNER_DECISION_REQUIRED",
    "ownerDecisionRequired": true,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "Should the registered dailyForcePoints house-rule mode drive the STORED system.forcePoints.max (today progression computes base + floor(level/2) + MetaResource bonus and ForcePointsService.getMax, which applies the daily band, has no callers)? And which feat-bonus reader is authoritative: MetaResourceFeatResolver or max(MetaResource, ForcePointFeatRules)? Rules-sensitive; do not pick a formula without a ruling.",
    "dependencies": [
     "B-PRG finalizer"
    ],
-   "commits": [],
+   "commits": [
+    "15ea0c7cc"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "behavior preserved; not changed by 3B"
   },
   {
    "id": "F-HOL-002",
@@ -4292,7 +4306,7 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3B",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -4300,7 +4314,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "audit confirmed a single authority for the normal Force Point balance; unchanged"
   },
   {
    "id": "F-SPC-006",

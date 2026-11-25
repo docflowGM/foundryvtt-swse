@@ -20,9 +20,13 @@
 | 3A.3 authority reconciliation | done | `DECISIONS.md` AD-001…AD-010; `docs/governance/owner-standing-instructions.md` |
 | 3A.4 regression guards | done (CI run pending) | `check-architecture.mjs`, `ratchet-baseline.json`, CI step added |
 | 3A.5 acceptance framework | done | `ACCEPTANCE.md` |
-| 3B Force Point integrity | not started | |
+| 3B Force Point integrity | core done; 6 non-integrity findings still open | F-TAL-007, F-FRC-003 `OFFLINE_TESTED` (commit 15ea0c7cc, `tests/force-point-bonus-pool-single-authority.test.mjs`); F-FRC-002, F-INF-005, F-PAT-005 `OWNER_DECISION_REQUIRED`; F-FRC-001 verified. Open (planned 3B, not integrity): F-FRC-004, -006, -007, -008, -011, -012 |
 | 3C Transaction integrity | not started | |
 | 3D–3P | not started | |
 
 ## Next executable subphase
-3B.1 — reproduce the bonus Force Point pool defect (F-TAL-007 / F-FRC-003) with a failing test.
+3C.1 — store purchase rollback (F-STO-001): reproduce with a failing test, then fix. (Remaining 3B-tagged findings F-FRC-004/-006/-007/-008/-011/-012 are structural/cleanup and continue after the correctness phases.)
+
+## Measured effect so far (ratchet, current code vs baseline)
+- Direct document writes (runtime, all): 357 -> 356; exact runtime function-clone groups: 33 -> 31; no new violations in any probe; no new cycles.
+- Rolling test suite: 795 passed, 0 failed (794 baseline + 1 new).
