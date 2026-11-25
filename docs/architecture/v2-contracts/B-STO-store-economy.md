@@ -64,9 +64,9 @@ A-10 (credits), A-02 (writes via ActorEngine), A-08, A-13. Observed TE guarantee
 
 ## 10. Reconciliation with existing contracts
 
-Agreements: `combat-authority-map.md:18,31` (credits → TE); `transaction-integrity/authority-and-call-path-map.md` §1 (TE + LedgerService as one commerce authority); `ti4-c0-closure-report.md` §2 ("LedgerService builds plans; it does not write") — confirmed.
+Agreements: `combat-authority-map.md:18,31` (credits → TE); `docs/audits/transaction-integrity/authority-and-call-path-map.md` §1 (TE + LedgerService as one commerce authority); `ti4-c0-closure-report.md` §2 ("LedgerService builds plans; it does not write") — confirmed.
 - **CR-STO-01** `authority-and-call-path-map.md` §2.2/§3 and `tx-remediation-ledger.md` TX-10 cite `StoreTransactionEngine`, `DroidTransactionService`, `VehicleTransactionService` as INACTIVE; they no longer exist in the tree (only a comment in `scripts/holonet/emitters/store-emitter.js`). Stale evidence.
-- **CR-STO-02** `ti4-c0-closure-report.md` §2 and `tx-remediation-ledger.md` TI-N3 list `scripts/talents/DarkSidePowers.js` credit writers; the file no longer exists. The live successor writing credits outside TE is `scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:441`.
+- **CR-STO-02** `ti4-c0-closure-report.md` §2 and `tx-remediation-ledger.md` TI-N3 list `DarkSidePowers.js` (removed talents module) credit writers; the file no longer exists. The live successor writing credits outside TE is `scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:441`.
 - **CR-STO-03** `tx-remediation-ledger.md` TX-01 (UpgradeService writes item before charging) is now corrected: `scripts/engine/upgrades/UpgradeService.js:685` routes through TE. Ledger still reads as open.
 - **CR-STO-04** Probe A-08 (`invariant-probes.json` / A-global table) flags `store-main.js:1437` as a write during render; it is inside a click handler registered in `_onRender`, i.e. **false positive** for A-08 (the A-02/A-04 classification still applies).
 

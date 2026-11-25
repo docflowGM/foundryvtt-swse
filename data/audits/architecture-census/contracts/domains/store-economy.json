@@ -291,7 +291,7 @@
     {
       "id": "CR-STO-02",
       "existingSource": "docs/audits/transaction-integrity/ti4-c0-closure-report.md §2; tx-remediation-ledger.md TI-N3",
-      "claim": "scripts/talents/DarkSidePowers.js writes credits outside TE",
+      "claim": "DarkSidePowers.js (removed talents module) writes credits outside TE",
       "observed": "File removed; live successor is force-alchemy-mechanics-service",
       "evidence": [
         "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:441"

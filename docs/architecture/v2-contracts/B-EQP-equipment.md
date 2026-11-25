@@ -57,7 +57,7 @@ A-02, A-04, A-09, A-16. Coordinator: GM-local execution, durable journal, field-
 ## 10. Reconciliation with existing contracts
 
 Agreements: E4-P1/P2 (single coordinator, occupancy with posture) and OA-11/12 — observed. E4-P4 WP3 gated — the player route/transport/lease modules are test-only, consistent.
-- **CR-EQP-01** `docs/architecture/equipment-ecosystem-e3a4-clean-break-posture-contract.md:70` lists `ui/inventory-handlers.js` (A9) and `ui/weapon-config-dialog.js` (A10) as live legacy writers; both files no longer exist, and A8 (`setItemEquipped`) now refuses weapons (`swse-actor-base.js:172`). OA-13 is effectively satisfied for these; the inventory is stale.
+- **CR-EQP-01** `docs/architecture/equipment-ecosystem-e3a4-clean-break-posture-contract.md:70` lists `inventory-handlers.js (removed)` (A9) and `weapon-config-dialog.js (removed)` (A10) as live legacy writers; both files no longer exist, and A8 (`setItemEquipped`) now refuses weapons (`swse-actor-base.js:172`). OA-13 is effectively satisfied for these; the inventory is stale.
 - **CR-EQP-02** `swse-item-sheet.js` header (`:7`) claims no mutation outside ActorEngine-owned APIs; ActiveEffects on items and effect-wizard draft flags are written directly (F-EQP-001).
 
 ## 11. Phase 2 conformance summary

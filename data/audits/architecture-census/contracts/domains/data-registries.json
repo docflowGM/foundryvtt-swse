@@ -1,0 +1,323 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-DAT",
+  "domain": "data-registries",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "data-registries (as scoped by the census) is the generic data layer: PrerequisiteChecker, canonical prerequisite text and key normalization, the language registry and class model adapters. PrerequisiteChecker recomputes level and BAB with a max-over-candidates rule that can trust stale stored values, is 4,029 lines and is altered at runtime by two live patches; five data modules are unreachable.",
+  "responsibilities": [
+    {
+      "id": "R-DAT-01",
+      "responsibility": "Prerequisite evaluation",
+      "owner": {
+        "path": "scripts/data/prerequisite-checker.js",
+        "symbol": "PrerequisiteChecker"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/data/prerequisite-checker.js:263",
+        "scripts/data/prerequisite-checker.js:3053"
+      ],
+      "tests": [
+        "tests/prerequisite-ability-score-authority.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-DAT-02",
+      "responsibility": "Canonical prerequisite/description text",
+      "owner": {
+        "path": "scripts/data/authority/prerequisite-text-helpers.js",
+        "symbol": "getCanonicalPrerequisiteText"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/data/authority/prerequisite-text-helpers.js:1"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-DAT-03",
+      "responsibility": "Authority key normalization",
+      "owner": {
+        "path": "scripts/data/authority/authority-key-normalizer.js",
+        "symbol": "normalizeAuthorityKey"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/data/authority/authority-key-normalizer.js:4"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-DAT-04",
+      "responsibility": "Language registry",
+      "owner": {
+        "path": "scripts/registries/language-registry.js",
+        "symbol": "LanguageRegistry"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/registries/language-registry.js:12",
+        "scripts/registries/language-registry.js:17"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-DAT-05",
+      "responsibility": "Class model adapters",
+      "owner": {
+        "path": "scripts/data/adapters/ClassModelAdapters.js",
+        "symbol": "adaptClassForProgression"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/data/adapters/ClassModelAdapters.js:1"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-DAT-06",
+      "responsibility": "Data JSON schemas",
+      "owner": {
+        "path": "schemas/archetype.schema.json",
+        "symbol": "(schema)"
+      },
+      "status": [
+        "OBSERVED",
+        "UNVERIFIED"
+      ],
+      "verification": "unverified",
+      "evidence": [
+        "schemas/archetype.schema.json:1"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "PrerequisiteChecker",
+      "path": "scripts/data/prerequisite-checker.js",
+      "line": 263,
+      "consumers": 15,
+      "contract": "feat/talent/class/prestige checks with pending draft state"
+    },
+    {
+      "symbol": "checkPrerequisites",
+      "path": "scripts/data/prerequisite-checker.js",
+      "line": 3053,
+      "consumers": 15,
+      "contract": ""
+    },
+    {
+      "symbol": "getAvailablePrestigeClasses",
+      "path": "scripts/data/prerequisite-checker.js",
+      "line": 4005,
+      "consumers": 15,
+      "contract": ""
+    },
+    {
+      "symbol": "LanguageRegistry.getByName",
+      "path": "scripts/registries/language-registry.js",
+      "line": 128,
+      "consumers": 9,
+      "contract": "async lazy-loaded"
+    },
+    {
+      "symbol": "normalizeAuthorityKey",
+      "path": "scripts/data/authority/authority-key-normalizer.js",
+      "line": 4,
+      "consumers": 4,
+      "contract": ""
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "infrastructure"
+    ],
+    "prohibited": [
+      "mutation",
+      "derived-state writes"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/data/prerequisite-checker.js",
+        "to": "progression class-level ledger reads",
+        "evidence": "scripts/data/prerequisite-checker.js:3094"
+      }
+    ]
+  },
+  "subsystemContracts": [],
+  "contradictions": [
+    {
+      "id": "CR-DAT-01",
+      "existingSource": "scripts/data/prerequisite-checker.js:3063 (comment)",
+      "claim": "Trust system.level as source of truth for total level",
+      "observed": "actor-core level-split.getTotalLevel derives level separately",
+      "evidence": [
+        "scripts/data/prerequisite-checker.js:3063",
+        "scripts/actors/derived/level-split.js:1"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [],
+  "deferredRules": [],
+  "foundryAcceptance": [
+    {
+      "item": "Prerequisite evaluation on draft actors after consolidating level/BAB reads",
+      "source": "scripts/data/prerequisite-checker.js:3094"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-DAT-001",
+      "category": "duplicate-authority",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "PrerequisiteChecker computes total level and BAB locally",
+      "affectedFiles": [
+        "scripts/data/prerequisite-checker.js"
+      ],
+      "evidence": [
+        "scripts/data/prerequisite-checker.js:3060",
+        "scripts/data/prerequisite-checker.js:3072",
+        "scripts/data/prerequisite-checker.js:3076",
+        "scripts/data/prerequisite-checker.js:3094",
+        "scripts/data/prerequisite-checker.js:3110"
+      ],
+      "observed": "getTotalLevel returns system.level ?? 1; getBaseAttackBonus returns the max of 12 stored/derived candidate paths (system.bab.*, system.derived.bab.*, system.combat.bab.*) and a value computed from class state. A stale stored value larger than the derived BAB wins (max), so a prerequisite can pass on stale data. Used at 4 call sites.",
+      "intendedOwnership": "Level from actor-core level-split; BAB from derived state (actor-core) or, for draft actors, from progression draft state passed explicitly.",
+      "contractRef": "A-01; CR-DAT-01",
+      "proposedSolution": "Read BAB from system.derived.bab (single path) for committed actors and from the pending/draft projection for drafts; read level via level-split getTotalLevel. Keep the draft fallback behaviour behind an explicit \"draft\" input.",
+      "alternatives": "",
+      "dependencies": [
+        "B-ACT",
+        "progression contract"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Prereq tests with stale system.bab > derived.bab must fail the check; draft actor tests unchanged.",
+      "foundryAcceptance": "Level-up prerequisite screens.",
+      "scope": "M",
+      "simplificationBenefit": "One BAB/level authority.",
+      "risk": "Medium (progression).",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-DAT-002",
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Unreachable data-registries modules",
+      "affectedFiles": [
+        "scripts/data/uuid-map.js",
+        "scripts/data/contracts/DisplayContract.js",
+        "scripts/data/normalizers/display-normalizer.js",
+        "scripts/data/models/ClassModel.js",
+        "scripts/data/prerequisite-checker-regression-guard.js"
+      ],
+      "evidence": [
+        "scripts/data/uuid-map.js:1",
+        "scripts/data/contracts/DisplayContract.js:1",
+        "scripts/data/models/ClassModel.js:1"
+      ],
+      "observed": "Orphans or importers-only; uuid-map/ClassModel names are mentioned in comments only.",
+      "intendedOwnership": "No dead modules.",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete (legacy C); keep prerequisite-checker-regression-guard as a test if it encodes a regression (move to tests/).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Full CI.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-DAT-003",
+      "category": "oversized-module",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "prerequisite-checker.js is 4,029 lines and is live-patched by two modules",
+      "affectedFiles": [
+        "scripts/data/prerequisite-checker.js",
+        "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js",
+        "scripts/patches/canonical-ability-prerequisite-hotfix.js"
+      ],
+      "evidence": [
+        "scripts/data/prerequisite-checker.js:263",
+        "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:382",
+        "scripts/patches/canonical-ability-prerequisite-hotfix.js:140"
+      ],
+      "observed": "One class mixes ability, feat, talent, class-level, prestige, Force and droid prerequisite evaluation plus draft-state BAB/level derivation; behaviour is then altered at runtime by patches.",
+      "intendedOwnership": "Prerequisite evaluator with per-prerequisite-kind modules; no patches.",
+      "contractRef": "A-09",
+      "proposedSolution": "Fold the two patches into the checker (with their tests), then split by prerequisite kind behind the existing PrerequisiteChecker facade.",
+      "alternatives": "",
+      "dependencies": [
+        "B-PAT F-PAT-001"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Existing prerequisite tests; add patch-parity tests before folding.",
+      "foundryAcceptance": "Chargen/level-up prerequisite displays.",
+      "scope": "L",
+      "simplificationBenefit": "Smaller, unpatched evaluator.",
+      "risk": "Medium.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-DAT-004",
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "normalizeAuthorityKey duplicate is a re-export",
+      "affectedFiles": [
+        "scripts/data/authority/feat-prerequisite-authority.js",
+        "scripts/data/authority/talent-prerequisite-authority.js"
+      ],
+      "evidence": [
+        "scripts/data/authority/feat-prerequisite-authority.js:2",
+        "scripts/data/authority/feat-prerequisite-authority.js:2134"
+      ],
+      "observed": "Both authority tables import and re-export the single implementation.",
+      "intendedOwnership": "",
+      "contractRef": "A-01",
+      "proposedSolution": "No action.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None.",
+      "perfImpact": "none"
+    }
+  ]
+}
