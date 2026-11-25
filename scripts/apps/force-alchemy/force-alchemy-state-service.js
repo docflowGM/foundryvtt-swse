@@ -2,6 +2,7 @@
 // Persistent, non-destructive state ledger for the Force Artifact / Sith Alchemy Workbench.
 
 import {
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
   FORCE_ALCHEMY_FLAG_SCOPE,
   FORCE_ALCHEMY_FLAG_KEY,
   FORCE_ALCHEMY_RITES,
@@ -206,7 +207,7 @@ export function readForceAlchemyState(actor) {
 async function writeForceAlchemyState(actor, nextState) {
   if (!actor?.setFlag) throw new Error('Cannot write Force Alchemy state without an actor document.');
   const normalized = normalizeForceAlchemyState(nextState);
-  await actor.setFlag(FORCE_ALCHEMY_FLAG_SCOPE, FORCE_ALCHEMY_FLAG_KEY, normalized);
+  await ActorEngine.updateActorFlags(actor, FORCE_ALCHEMY_FLAG_SCOPE, FORCE_ALCHEMY_FLAG_KEY, normalized, { recalc: false });
   return normalized;
 }
 

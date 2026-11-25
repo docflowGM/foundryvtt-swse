@@ -257,7 +257,7 @@ export class AttributeIncreaseHandler {
       // PHASE 3.4.2: Route through ActorEngine for governance
       await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'pendingAttributeGains', pending);
     } else {
-      await actor.unsetFlag('foundryvtt-swse', 'pendingAttributeGains');
+      await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'pendingAttributeGains', { recalc: false });
     }
   }
 }

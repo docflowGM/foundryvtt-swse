@@ -12,6 +12,7 @@ import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/them
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const NS = 'foundryvtt-swse';
 
@@ -89,7 +90,7 @@ export class SettingsSurfaceController {
           await this._mutate(async () => {
             await ThemeManager.setTheme({ theme: themeKey });
             if (this.persistActorTheme && this.actor?.setFlag) {
-              await this.actor.setFlag(NS, 'sheetTheme', themeKey);
+              await ActorEngine.updateActorFlags(this.actor, NS, 'sheetTheme', themeKey, { recalc: false });
             }
           }, { reason: 'settings-theme-preset' });
 
@@ -138,7 +139,7 @@ export class SettingsSurfaceController {
           await this._mutate(async () => {
             await ThemeManager.setTheme({ motionStyle, reducedMotion: motionStyle === 'off' });
             if (this.persistActorTheme && this.actor?.setFlag) {
-              await this.actor.setFlag(NS, 'sheetMotionStyle', motionStyle);
+              await ActorEngine.updateActorFlags(this.actor, NS, 'sheetMotionStyle', motionStyle, { recalc: false });
             }
           }, { reason: 'settings-motion-style' });
 
@@ -235,8 +236,8 @@ export class SettingsSurfaceController {
         await this._mutate(async () => {
           await ThemeManager.setTheme(ThemeManager.defaults);
           if (this.persistActorTheme && this.actor?.unsetFlag) {
-            await this.actor.unsetFlag(NS, 'sheetTheme');
-            await this.actor.unsetFlag(NS, 'sheetMotionStyle');
+            await ActorEngine.unsetActorFlag(this.actor, NS, 'sheetTheme', { recalc: false });
+            await ActorEngine.unsetActorFlag(this.actor, NS, 'sheetMotionStyle', { recalc: false });
           }
         }, { reason: 'settings-reset-defaults' });
         this._patchSettingsState({ ...ThemeManager.defaults, pendingControls: {} });

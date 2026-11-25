@@ -1,5 +1,6 @@
 import { TemptationOfTheDarkSide } from "/systems/foundryvtt-swse/scripts/engine/force/temptation-of-the-dark-side.js";
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 /**
  * Combat Lifecycle Hooks
  * All combat-related hook handlers consolidated here
@@ -341,7 +342,7 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
     const progressRound = Number(progress.round ?? -999);
     const sameCombat = progress.combatId === combat.id;
     if (!sameCombat || round > progressRound + 1) {
-      await actor.unsetFlag?.('foundryvtt-swse', 'conditionRecoverProgress');
+      await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'conditionRecoverProgress', { recalc: false });
     }
 }
 

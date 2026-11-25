@@ -216,7 +216,7 @@ export class SpeciesRerollHandler {
         });
       } else {
         // mutation-exception fallback-only: ActorEngine should exist in normal runtime.
-        await actor.setFlag?.('foundryvtt-swse', 'usedSpeciesTraits', usedTraits);
+        await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'usedSpeciesTraits', usedTraits, { recalc: false });
       }
     }
   }
@@ -234,7 +234,7 @@ export class SpeciesRerollHandler {
       return;
     }
     // mutation-exception fallback-only: ActorEngine should exist in normal runtime.
-    await actor.unsetFlag?.('foundryvtt-swse', 'usedSpeciesTraits');
+    await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'usedSpeciesTraits', { recalc: false });
   }
 
   /**

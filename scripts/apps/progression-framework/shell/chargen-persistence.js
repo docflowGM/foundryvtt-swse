@@ -19,6 +19,7 @@
  */
 
 import { swseLogger } from '../../../utils/logger.js';
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class ChargenPersistence {
   /**
@@ -115,7 +116,7 @@ export class ChargenPersistence {
     if (!actor) return false;
 
     try {
-      await actor.setFlag('foundryvtt-swse', 'chargen.checkpoint', null);
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'chargen.checkpoint', null, { recalc: false });
       swseLogger.log('[ChargenPersistence] Checkpoints cleared', { actorId: actor.id });
       return true;
     } catch (err) {
@@ -192,7 +193,7 @@ export class ChargenPersistence {
   static async _persistCheckpoint(actor, checkpoint) {
     // Store under actor flags for persistence across sessions
     // Structure: actor.flags.foundryvtt-swse.chargen.checkpoint
-    await actor.setFlag('foundryvtt-swse', 'chargen.checkpoint', checkpoint);
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'chargen.checkpoint', checkpoint, { recalc: false });
   }
 
   /**

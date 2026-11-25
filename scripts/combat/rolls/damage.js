@@ -17,7 +17,7 @@ function rapidAlchemyState(actor) {
 async function clearRapidAlchemyDamageBonus(actor, weapon) {
   const state = rapidAlchemyState(actor);
   if (!state?.sacrificePending || !weaponMatchesId(weapon, state.weaponId)) return;
-  await actor?.setFlag?.('swse', 'rapidAlchemy', { ...state, sacrificePending: false, consumedAt: Date.now() });
+  await ActorEngine.updateActorFlags(actor, 'swse', 'rapidAlchemy', { ...state, sacrificePending: false, consumedAt: Date.now() }, { recalc: false });
 }
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -33,6 +33,7 @@ import { isAreaAttack } from "/systems/foundryvtt-swse/scripts/engine/combat/com
 import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
 import { resolveCanonicalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { isVehicleManagedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Roll damage for a SWSE weapon/power.
@@ -245,12 +246,12 @@ export async function rollDamageWithEffects(actor, weapon, target, context = {})
   // Per-target bookkeeping when there is a target
   if (target) {
     // Track last attack target for Skirmisher
-    await actor.setFlag('foundryvtt-swse', 'lastAttackTarget', target.id);
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'lastAttackTarget', target.id, { recalc: false });
 
     // Mark sneak attack as used this round
     const abilityPanel = AbilityEngine.getCardPanelModelForActor(actor);
     if (abilityPanel.all?.some(a => a.id === 'sneak-attack')) {
-      await actor.setFlag('foundryvtt-swse', 'sneakAttackUsedThisRound', true);
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'sneakAttackUsedThisRound', true, { recalc: false });
     }
   }
 
