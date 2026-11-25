@@ -20,6 +20,7 @@ import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sent
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { planHpRecompute, HP_LEDGER_PATH } from "/systems/foundryvtt-swse/scripts/engine/HP/hp-accounting.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
+import { readBonusPool, bonusPoolUpdate } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 import { SecondWindRules } from "/systems/foundryvtt-swse/scripts/engine/combat/SecondWindRules.js";
 import { MutationNormalizationService } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-normalization-service.js";
@@ -2124,7 +2125,7 @@ export const ActorEngine = {
       });
       if (!decision.valid) throw new Error(decision.message);
 
-      const pool = actor.getFlag?.('swse', 'bonusForcePoints') ?? actor.flags?.swse?.bonusForcePoints ?? {};
+      const pool = readBonusPool(actor);
       const sourceEntries = Array.isArray(pool.entries) ? pool.entries.map(entry => ({ ...entry })) : [];
       const debit = decision.bonusEntriesSpent ?? [];
       for (const spentEntry of debit) {
@@ -2172,13 +2173,13 @@ export const ActorEngine = {
         'flags.swse.forcePointLedger': ledger
       };
       if (debit.length > 0) {
-        update['flags.swse.bonusForcePoints'] = {
+        Object.assign(update, bonusPoolUpdate(actor, {
           ...pool,
           entries: kept,
           value: bonusAfter,
           max: Math.max(bonusAfter, kept.reduce((sum, entry) => sum + Number(entry.max ?? entry.value ?? 0), 0)),
           sources: [...new Set(kept.map(entry => entry.source).filter(Boolean))]
-        };
+        }));
       }
       // A rejected or thrown write is never interpreted as a successful
       // payment; an applied-then-threw write is indeterminate, not retried.
@@ -2248,7 +2249,7 @@ export const ActorEngine = {
       // the receipt is still closed so the cancelled use frees its round slot.
       // Bonus entries are never converted into normal points, nor vice versa.
       const normalRestored = Math.max(0, Math.min(own.normalSpent, max - normal));
-      const pool = actor.getFlag?.('swse', 'bonusForcePoints') ?? actor.flags?.swse?.bonusForcePoints ?? {};
+      const pool = readBonusPool(actor);
       const merged = Array.isArray(pool.entries) ? pool.entries.map(e => ({ ...e })) : [];
       for (const used of own.bonusEntriesSpent ?? []) {
         const existing = merged.find(e => e.id === used.id);
@@ -2273,13 +2274,13 @@ export const ActorEngine = {
         'flags.swse.forcePointLedger': { ...currentLedger, receipts: updatedRecords }
       };
       if (own.bonusEntriesSpent?.length) {
-        update['flags.swse.bonusForcePoints'] = {
+        Object.assign(update, bonusPoolUpdate(actor, {
           ...pool,
           entries: merged,
           value: bonusValue,
           max: Math.max(bonusValue, merged.reduce((sum, e) => sum + Number(e.max ?? e.value ?? 0), 0)),
           sources: [...new Set(merged.map(e => e.source).filter(Boolean))]
-        };
+        }));
       }
       await this.updateActor(actor, update);
       return { rolledBack: true, receiptId: own.receiptId, normalRestored,
@@ -2415,13 +2416,13 @@ export const ActorEngine = {
     if (current && Number.isFinite(Number(current.expiresWorldTime)) && now < Number(current.expiresWorldTime) && current.grantId !== e.grantId) {
       return { granted: false, reason: 'Only one Force regimen can be in effect in a 24-hour period' };
     }
-    const pool = actor.getFlag?.('swse', 'bonusForcePoints') ?? actor.flags?.swse?.bonusForcePoints ?? {};
+    const pool = readBonusPool(actor);
     const kept = (Array.isArray(pool.entries) ? pool.entries : []).filter(en => !en?.entitlement || en.entitlement.grantId === e.grantId);
     const entries = [...kept.filter(en => !built.temporaryEntries.some(t => t.id === en.id)), ...built.temporaryEntries];
     const value = entries.reduce((n, en) => n + Number(en.value ?? 0), 0);
     const update = { 'flags.swse.regimenEntitlement': e };
     if (built.temporaryEntries.length || kept.length !== (pool.entries ?? []).length) {
-      update['flags.swse.bonusForcePoints'] = { ...pool, entries, value, max: Math.max(value, entries.reduce((n, en) => n + Number(en.max ?? en.value ?? 0), 0)), sources: [...new Set(entries.map(en => en.source).filter(Boolean))] };
+      Object.assign(update, bonusPoolUpdate(actor, { ...pool, entries, value, max: Math.max(value, entries.reduce((n, en) => n + Number(en.max ?? en.value ?? 0), 0)), sources: [...new Set(entries.map(en => en.source).filter(Boolean))] }));
     }
     await this.updateActor(actor, update);
     return { granted: true, entitlement: e, temporaryGranted: built.temporaryEntries.reduce((n, t) => n + t.value, 0) };

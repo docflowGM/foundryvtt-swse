@@ -1,4 +1,5 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { readBonusPool, bonusPoolUpdate, buildBonusPool } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { ForcePointFeatRules } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-rules.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
@@ -59,19 +60,7 @@ function bonusPoolEntries(pool = {}) {
   return entries;
 }
 
-function buildBonusPool(entries = [], existing = {}) {
-  const clean = entries.filter(entry => Math.max(0, Number(entry.value) || 0) > 0);
-  const value = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.value) || 0), 0);
-  const max = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.max ?? entry.value) || 0), 0);
-  return {
-    ...existing,
-    value,
-    max: Math.max(value, max),
-    sources: [...new Set(clean.map(entry => entry.source).filter(Boolean))],
-    entries: clean,
-    note: existing.note || 'Bonus Force Points are spent before normal Force Points and may have source-specific restrictions.'
-  };
-}
+
 
 async function postForcePointFeatMessage(actor, title, body, flags = {}) {
   return createChatMessage({
@@ -132,7 +121,7 @@ export class ForcePointFeatActions {
     const amount = Math.max(1, Number(options.amount ?? 1) || 1);
     const source = String(options.source ?? 'Temporary Force Point');
     const encounterId = options.encounterId ?? activeEncounterId();
-    const existingPool = actor.getFlag?.('swse', 'bonusForcePoints') ?? {};
+    const existingPool = readBonusPool(actor);
     const entries = bonusPoolEntries(existingPool);
     const id = options.id ?? `${normalizeToken(source)}-${encounterId ?? 'no-encounter'}-${Date.now()}`;
 
@@ -147,9 +136,7 @@ export class ForcePointFeatActions {
       createdAt: Date.now()
     });
 
-    await ActorEngine.updateActor(actor, {
-      'flags.swse.bonusForcePoints': buildBonusPool(entries, existingPool)
-    }, { source: 'ForcePointFeatActions.grantTemporaryForcePoint', render: false });
+    await ActorEngine.updateActor(actor, bonusPoolUpdate(actor, buildBonusPool(entries, existingPool)), { source: 'ForcePointFeatActions.grantTemporaryForcePoint', render: false });
 
     if (options.postChat !== false) {
       await postForcePointFeatMessage(actor, source, `<p>${actor.name} gains <strong>${amount}</strong> temporary Force Point${amount === 1 ? '' : 's'}${encounterId ? ' for this encounter' : ''}.</p>`, { source, amount, temporary: true, encounterId });

@@ -4,6 +4,7 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { ownedAbilityInstance } from "/systems/foundryvtt-swse/scripts/utils/canonical-ability-identity.js";
+import { readBonusPool } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { verifyAdjacentAllyEvent } from "/systems/foundryvtt-swse/scripts/engine/force/ability-option-contracts.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
@@ -260,7 +261,7 @@ async function pickProtectableEvent(actor, talent) {
 // spend is non-counting on the qualifying check (owner ruling FP-RD-007, Option B).
 async function askUseTemporaryPoint(actor, talent, modResult) {
   if (modResult?.useForcePoint !== true) return false;
-  const entries = actor?.getFlag?.(NS, 'bonusForcePoints')?.entries ?? actor?.flags?.swse?.bonusForcePoints?.entries ?? [];
+  const entries = readBonusPool(actor).entries ?? [];
   const has = Array.isArray(entries) && entries.some(e => e?.entitlement?.kind === 'regimen-reaction' && Number(e.value) >= 1 && (e.entitlement.talents ?? []).includes(talent));
   if (!has) return false;
   return await SWSEDialogV2.confirm({

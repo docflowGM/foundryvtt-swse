@@ -1,5 +1,6 @@
 import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { readBonusPool, bonusPoolUpdate } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
@@ -93,7 +94,7 @@ async function worsenConditionTrack(actor, steps = 1, source = 'force-adept-tale
 }
 
 async function grantTemporaryForcePoint(actor, source, expires = 'end_of_turn') {
-  const pool = actor.getFlag?.(NS, 'bonusForcePoints') ?? {};
+  const pool = readBonusPool(actor);
   const entries = Array.isArray(pool.entries) ? [...pool.entries] : [];
   entries.push({
     id: `${slug(source)}-${Date.now()}`,
@@ -109,16 +110,14 @@ async function grantTemporaryForcePoint(actor, source, expires = 'end_of_turn') 
   });
   const value = entries.reduce((sum, entry) => sum + Math.max(0, Number(entry.value) || 0), 0);
   const max = entries.reduce((sum, entry) => sum + Math.max(0, Number(entry.max ?? entry.value) || 0), 0);
-  await ActorEngine.updateActor(actor, {
-    'flags.swse.bonusForcePoints': {
+  await ActorEngine.updateActor(actor, bonusPoolUpdate(actor, {
       ...pool,
       value,
       max: Math.max(value, max),
       sources: [...new Set(entries.map(entry => entry.source).filter(Boolean))],
       entries,
       note: 'Bonus Force Points are spent before normal Force Points and may expire by source.'
-    }
-  }, { source: slug(source) });
+    }), { source: slug(source) });
   return { granted: 1, total: value };
 }
 
@@ -235,7 +234,7 @@ async function promptFields(title, body, fields = []) {
 
 
 async function grantBonusForcePoint(actor, source) {
-  const pool = actor.getFlag?.(NS, 'bonusForcePoints') ?? {};
+  const pool = readBonusPool(actor);
   const entries = Array.isArray(pool.entries) ? [...pool.entries] : [];
   entries.push({
     id: `${slug(source)}-${Date.now()}`,
@@ -249,16 +248,14 @@ async function grantBonusForcePoint(actor, source) {
   });
   const value = entries.reduce((sum, entry) => sum + Math.max(0, Number(entry.value) || 0), 0);
   const max = entries.reduce((sum, entry) => sum + Math.max(0, Number(entry.max ?? entry.value) || 0), 0);
-  await ActorEngine.updateActor(actor, {
-    'flags.swse.bonusForcePoints': {
+  await ActorEngine.updateActor(actor, bonusPoolUpdate(actor, {
       ...pool,
       value,
       max: Math.max(value, max),
       sources: [...new Set(entries.map(entry => entry.source).filter(Boolean))],
       entries,
       note: 'Bonus Force Points are spent before normal Force Points and may expire by source.'
-    }
-  }, { source: slug(source) });
+    }), { source: slug(source) });
   return { granted: 1, total: value };
 }
 

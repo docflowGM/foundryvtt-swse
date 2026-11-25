@@ -15,6 +15,7 @@
 
 import { ForceEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { readBonusPool, bonusPoolUpdate, normalizeBonusEntries, buildBonusPool } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
@@ -645,7 +646,7 @@ export class ForceExecutor {
   }
 
   static _getBonusForcePointPool(actor) {
-    const pool = actor?.getFlag?.('swse', 'bonusForcePoints') ?? actor?.flags?.swse?.bonusForcePoints ?? {};
+    const pool = readBonusPool(actor);
     if (Array.isArray(pool.entries) && pool.entries.length) {
       const value = pool.entries.reduce((sum, entry) => sum + Math.max(0, Number(entry?.value ?? 0) || 0), 0);
       return { ...pool, value };
@@ -655,41 +656,6 @@ export class ForceExecutor {
 
   static _getAvailableForcePoints(actor) {
     return SchemaAdapters.getForcePoints(actor) + Math.max(0, Number(this._getBonusForcePointPool(actor).value ?? 0) || 0);
-  }
-
-  static _normalizeBonusForcePointEntries(pool = {}) {
-    const entries = Array.isArray(pool.entries) ? pool.entries.map((entry, index) => ({
-      id: String(entry?.id ?? `bonus-${index}`),
-      source: String(entry?.source ?? 'Bonus Force Point'),
-      value: Math.max(0, Number(entry?.value ?? 0) || 0),
-      max: Math.max(0, Number(entry?.max ?? entry?.value ?? 0) || 0),
-      restrictions: entry?.restrictions ?? entry?.restriction ?? '',
-      expires: entry?.expires ?? '',
-      encounterId: entry?.encounterId ?? null,
-      createdAt: entry?.createdAt ?? null
-    })).filter(entry => entry.value > 0) : [];
-    const legacyValue = Math.max(0, Number(pool.value ?? 0) || 0);
-    const entryTotal = entries.reduce((sum, entry) => sum + entry.value, 0);
-    if (!entries.length && legacyValue > 0) {
-      entries.push({ id: 'legacy-bonus-force-points', source: Array.isArray(pool.sources) && pool.sources.length ? pool.sources.join(', ') : 'Bonus Force Point', value: legacyValue, max: Math.max(legacyValue, Number(pool.max ?? legacyValue) || legacyValue), restrictions: pool.note ?? '', expires: '', encounterId: null, createdAt: null });
-    } else if (legacyValue > entryTotal) {
-      entries.push({ id: 'legacy-bonus-force-points', source: 'Bonus Force Point', value: legacyValue - entryTotal, max: legacyValue - entryTotal, restrictions: pool.note ?? '', expires: '', encounterId: null, createdAt: null });
-    }
-    return entries;
-  }
-
-  static _buildBonusForcePointPool(entries = [], existing = {}) {
-    const clean = entries.filter(entry => Math.max(0, Number(entry.value) || 0) > 0);
-    const value = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.value) || 0), 0);
-    const max = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.max ?? entry.value) || 0), 0);
-    return {
-      ...existing,
-      value,
-      max: Math.max(value, max),
-      sources: [...new Set(clean.map(entry => entry.source).filter(Boolean))],
-      entries: clean,
-      note: existing.note || 'Bonus Force Points are spent before normal Force Points and may have source-specific restrictions.'
-    };
   }
 
   // Certified per-talent contracts (Aversion: CWCG p.53 swift; Illusion: FUCG p.87 standard). The printed action is
@@ -716,7 +682,7 @@ export class ForceExecutor {
       if (!actor || !this._actorHasTalent(actor, 'Force Flow')) return { success: false, reason: 'missing-talent' };
       const state = this.getForceFlowState(actor);
       const pool = this._getBonusForcePointPool(actor);
-      const entries = this._normalizeBonusForcePointEntries(pool);
+      const entries = normalizeBonusEntries(pool);
       const id = `force-flow-${state.encounterId}-${Date.now()}`;
       entries.push({
         id,
@@ -728,9 +694,7 @@ export class ForceExecutor {
         encounterId: state.encounterId,
         createdAt: Date.now()
       });
-      await ActorEngine.updateActor(actor, {
-        'flags.swse.bonusForcePoints': this._buildBonusForcePointPool(entries, pool)
-      }, { source: 'force-flow-temporary-force-point' });
+      await ActorEngine.updateActor(actor, bonusPoolUpdate(actor, buildBonusPool(entries, pool)), { source: 'force-flow-temporary-force-point' });
       await actor.setFlag?.('foundryvtt-swse', 'forceFlowTemporaryForcePoints', {
         encounterId: state.encounterId,
         total: state.total + 1,
@@ -757,16 +721,14 @@ export class ForceExecutor {
   static async resetForceFlowTemporaryForcePoints(actor, { encounterId = null } = {}) {
     const state = this.getForceFlowState(actor);
     const pool = this._getBonusForcePointPool(actor);
-    const entries = this._normalizeBonusForcePointEntries(pool);
+    const entries = normalizeBonusEntries(pool);
     const remainingEntries = entries.filter(entry => !(entry.source === 'Force Flow' && (!encounterId || entry.encounterId === encounterId)));
     const removed = entries.reduce((sum, entry) => {
       if (entry.source === 'Force Flow' && (!encounterId || entry.encounterId === encounterId)) return sum + (Number(entry.value) || 0);
       return sum;
     }, 0);
     if (removed > 0) {
-      await ActorEngine.updateActor(actor, {
-        'flags.swse.bonusForcePoints': this._buildBonusForcePointPool(remainingEntries, pool)
-      }, { source: 'force-flow-end-encounter-reset' });
+      await ActorEngine.updateActor(actor, bonusPoolUpdate(actor, buildBonusPool(remainingEntries, pool)), { source: 'force-flow-end-encounter-reset' });
     }
     if (!encounterId || state.encounterId === encounterId) await actor.unsetFlag?.('foundryvtt-swse', 'forceFlowTemporaryForcePoints');
     return { success: true, removed };

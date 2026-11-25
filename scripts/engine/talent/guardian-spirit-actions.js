@@ -1,9 +1,9 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { readBonusPool, bonusPoolUpdate, normalizeBonusEntries } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 
 const NS = 'swse';
-const BONUS_PATH = 'bonusForcePoints';
 const GUARDIAN_PATH = 'guardianSpirit';
 
 function esc(value) {
@@ -26,45 +26,7 @@ export class GuardianSpiritActions {
     return game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
   }
 
-  static _normalizeEntries(pool = {}) {
-    const entries = Array.isArray(pool.entries) ? pool.entries.map((entry, index) => ({
-      id: String(entry?.id ?? `bonus-${index}`),
-      source: String(entry?.source ?? 'Bonus Force Point'),
-      value: Math.max(0, Number(entry?.value ?? 0) || 0),
-      max: Math.max(0, Number(entry?.max ?? entry?.value ?? 0) || 0),
-      restrictions: entry?.restrictions ?? entry?.restriction ?? '',
-      expires: entry?.expires ?? '',
-      encounterId: entry?.encounterId ?? null,
-      createdAt: entry?.createdAt ?? null
-    })).filter(entry => entry.value > 0) : [];
-
-    const legacyValue = Math.max(0, Number(pool.value ?? 0) || 0);
-    const entryTotal = entries.reduce((sum, entry) => sum + entry.value, 0);
-    if (!entries.length && legacyValue > 0) {
-      entries.push({
-        id: 'legacy-bonus-force-points',
-        source: Array.isArray(pool.sources) && pool.sources.length ? pool.sources.join(', ') : 'Bonus Force Point',
-        value: legacyValue,
-        max: Math.max(legacyValue, Number(pool.max ?? legacyValue) || legacyValue),
-        restrictions: pool.note ?? '',
-        expires: '',
-        encounterId: null,
-        createdAt: null
-      });
-    } else if (legacyValue > entryTotal) {
-      entries.push({
-        id: 'legacy-bonus-force-points',
-        source: 'Bonus Force Point',
-        value: legacyValue - entryTotal,
-        max: legacyValue - entryTotal,
-        restrictions: pool.note ?? '',
-        expires: '',
-        encounterId: null,
-        createdAt: null
-      });
-    }
-    return entries;
-  }
+  
 
   static _buildPool(entries = [], note = '') {
     const clean = entries.filter(entry => Math.max(0, Number(entry.value) || 0) > 0);
@@ -81,14 +43,16 @@ export class GuardianSpiritActions {
   }
 
   static getBonusForcePoints(actor) {
-    const pool = actor?.getFlag?.(NS, BONUS_PATH) ?? {};
-    const entries = this._normalizeEntries(pool);
+    const pool = readBonusPool(actor);
+    const entries = normalizeBonusEntries(pool);
     return this._buildPool(entries, pool.note ?? '');
   }
 
   static async setBonusForcePointEntries(actor, entries, note = '') {
     const pool = this._buildPool(entries, note);
-    await actor.setFlag(NS, BONUS_PATH, pool);
+    // Single governed location (see bonus-force-point-pool.js): writes flags.swse.bonusForcePoints and clears any canonical
+    // shadow copy in one ActorEngine update. The previous actor.setFlag('swse', ...) wrote a second, unread-by-debits copy.
+    await ActorEngine.updateActor(actor, bonusPoolUpdate(actor, pool), { source: 'guardian-spirit-bonus-force-points' });
     return pool;
   }
 

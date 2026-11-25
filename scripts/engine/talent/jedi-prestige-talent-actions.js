@@ -1,5 +1,6 @@
 import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { readBonusPool, bonusPoolUpdate } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
@@ -94,7 +95,7 @@ async function promptSimple(title, body, fields = []) {
 
 async function grantBonusForcePoint(targetActor, { source = 'Bonus Force Point', sourceActorId = null, sourceActorName = '', expires = 'encounter', encounter = encounterId() } = {}) {
   if (!targetActor) return { granted: 0 };
-  const pool = targetActor.getFlag?.(NS, 'bonusForcePoints') ?? {};
+  const pool = readBonusPool(targetActor);
   const entries = Array.isArray(pool.entries) ? [...pool.entries] : [];
   entries.push({
     id: `${slug(source)}-${Date.now()}`,
@@ -110,16 +111,14 @@ async function grantBonusForcePoint(targetActor, { source = 'Bonus Force Point',
   });
   const value = entries.reduce((sum, entry) => sum + Math.max(0, Number(entry.value) || 0), 0);
   const max = entries.reduce((sum, entry) => sum + Math.max(0, Number(entry.max ?? entry.value) || 0), 0);
-  await ActorEngine.updateActor(targetActor, {
-    'flags.swse.bonusForcePoints': {
+  await ActorEngine.updateActor(targetActor, bonusPoolUpdate(targetActor, {
       ...pool,
       value,
       max: Math.max(value, max),
       sources: [...new Set(entries.map(entry => entry.source).filter(Boolean))],
       entries,
       note: 'Bonus Force Points are spent before normal Force Points and may expire by source.'
-    }
-  }, { source: slug(source) });
+    }), { source: slug(source) });
   return { granted: 1, total: value };
 }
 
