@@ -2335,15 +2335,19 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3B",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "None needed; remaining work is the deleteCombat gating/batching (behavior change, separate test).",
    "dependencies": [],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "fb4fb109b"
+   ],
+   "tests": [
+    "tests/actor-engine-flag-governance.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "all 16 direct flag writes in force-executor.js now use the governed flag API (recalc:false, old semantics). Remaining executable step (no decision needed): gate the deleteCombat cleanup with the responsible-GM check and batch deletions per actor; it changes which client runs the cleanup, so it needs its own test. Foundry acceptance NOT run."
   },
   {
    "id": "F-MEN-001",
@@ -5396,7 +5400,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "3D observation: MutationInterceptor's context is a single non-stacking variable and clearContext() nulls it, so a governed flag write nested inside another ActorEngine operation clears the outer context. Harmless today because nothing reads the context (this finding); it must become a stack before any enforcement is enabled."
   },
   {
    "id": "F-MEN-002",

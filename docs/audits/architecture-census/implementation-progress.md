@@ -22,7 +22,8 @@
 | 3A.5 acceptance framework | done | `ACCEPTANCE.md` |
 | 3B Force Point integrity | core done; 6 non-integrity findings still open | F-TAL-007, F-FRC-003 `OFFLINE_TESTED` (commit 15ea0c7cc, `tests/force-point-bonus-pool-single-authority.test.mjs`); F-FRC-002, F-INF-005, F-PAT-005 `OWNER_DECISION_REQUIRED`; F-FRC-001 verified. Open (planned 3B, not integrity): F-FRC-004, -006, -007, -008, -011, -012 |
 | 3C Transaction integrity | correctness fixes done; remaining items await owner decisions | F-STO-001 `OFFLINE_TESTED` (store rollback removes created actors; `tests/store-purchase-created-actor-rollback.test.mjs`); F-STO-004 `PARTIALLY_COMPLETE_BLOCKED` (GRANT_CREDITS idempotent; `tests/progression-credit-grant-idempotency.test.mjs`; TE-routing is a decision). `OWNER_DECISION_REQUIRED`: F-HOL-002, F-VEH-006, F-FRC-005, F-STO-003, F-UIS-001, F-STO-005, F-ABL-002. Open: F-PRG-003 (chargen credit staging, belongs with 3G), F-STO-002, F-STO-006/-008/-009 |
-| 3D–3P | not started | |
+| 3D Actor mutation boundary | in progress | 3D.1: governed flag API gained `recalc:false` (`tests/actor-engine-flag-governance.test.mjs`). 3D.2: 95 actor flag writes rerouted so far (65 talents, 30 force/feat/combat/crafting) via AST codemod, old semantics preserved; live direct writes 295 -> 200. F-TAL-001, F-FRC-006 `PARTIALLY_COMPLETE_BLOCKED`. Remaining flag sites: infrastructure wrappers (mutation-safety, document-api-v13, hardening: likely sanctioned wrappers, review), minion-manager, faction/location registries, lightsaber sync/router, damage-resolution-engine (runs inside ActorEngine.applyDamage; review), item-sheet (item flags, not actor), session-storage, SuggestionStateService. Non-flag writes (update/create/delete) need per-site ActorEngine equivalents and tests |
+| 3E–3P | not started | |
 
 ## Owner decisions currently blocking work (all in the tracker as `requiredDecision`)
 `node -e` helper: `node tools/architecture-census/tracker.mjs summary`; the full text of each question is in `tracker.json` under the finding.
@@ -39,7 +40,7 @@
 - 3O (after reroutes): delete statically confirmed dead modules directory by directory with the deletion checklist (Part XVII).
 
 ## Measured effect so far (ratchet, current code vs baseline)
-- Direct document writes (runtime, all): 357 -> 356; exact runtime function-clone groups: 33 -> 31; no new violations in any probe; no new cycles.
-- Rolling test suite: 797 passed, 0 failed (794 baseline + 3 new: Force Point pool, store created-actor rollback, credit grant idempotency).
+- Live direct document writes (A-02, reachable modules): 295 -> 200; exact runtime function-clone groups: 33 -> 31; no new violations in any probe; no new cycles.
+- Rolling test suite: 798 passed, 0 failed (794 baseline + 4 new: Force Point pool, store created-actor rollback, credit grant idempotency, ActorEngine flag governance).
 - Tracker: 3 findings OFFLINE_TESTED, 1 PARTIALLY_COMPLETE_BLOCKED, 2 IMPLEMENTED, 11 OWNER_DECISION_REQUIRED, 1 VERIFIED_NO_CHANGE_NEEDED, 256 OPEN.
 - Nothing is FOUNDRY_TESTED.
