@@ -809,6 +809,94 @@
    "tests": []
   },
   {
+   "id": "R-DAT-01",
+   "domain": "data-registries",
+   "responsibility": "Prerequisite evaluation",
+   "owner": {
+    "path": "scripts/data/prerequisite-checker.js",
+    "symbol": "PrerequisiteChecker"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/prerequisite-ability-score-authority.test.mjs"
+   ]
+  },
+  {
+   "id": "R-DAT-02",
+   "domain": "data-registries",
+   "responsibility": "Canonical prerequisite/description text",
+   "owner": {
+    "path": "scripts/data/authority/prerequisite-text-helpers.js",
+    "symbol": "getCanonicalPrerequisiteText"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-DAT-03",
+   "domain": "data-registries",
+   "responsibility": "Authority key normalization",
+   "owner": {
+    "path": "scripts/data/authority/authority-key-normalizer.js",
+    "symbol": "normalizeAuthorityKey"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-DAT-04",
+   "domain": "data-registries",
+   "responsibility": "Language registry",
+   "owner": {
+    "path": "scripts/registries/language-registry.js",
+    "symbol": "LanguageRegistry"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-DAT-05",
+   "domain": "data-registries",
+   "responsibility": "Class model adapters",
+   "owner": {
+    "path": "scripts/data/adapters/ClassModelAdapters.js",
+    "symbol": "adaptClassForProgression"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-DAT-06",
+   "domain": "data-registries",
+   "responsibility": "Data JSON schemas",
+   "owner": {
+    "path": "schemas/archetype.schema.json",
+    "symbol": "(schema)"
+   },
+   "status": [
+    "OBSERVED",
+    "UNVERIFIED"
+   ],
+   "verification": "unverified",
+   "tests": []
+  },
+  {
    "id": "R-DRD-01",
    "domain": "droids",
    "responsibility": "Droid systems catalog",
@@ -1694,6 +1782,124 @@
    "tests": []
   },
   {
+   "id": "R-GAM-01",
+   "domain": "games",
+   "responsibility": "Game session persistence (world setting gamesSessions)",
+   "owner": {
+    "path": "scripts/games/game-session-store.js",
+    "symbol": "GameSessionStore"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/ti4c0-g22-wager-refund-replay.test.mjs"
+   ]
+  },
+  {
+   "id": "R-GAM-02",
+   "domain": "games",
+   "responsibility": "Minigame rules engines",
+   "owner": {
+    "path": "scripts/games/games/",
+    "symbol": "PazaakEngine / SabaccEngine / HintaroEngine / DejarikEngine"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-GAM-03",
+   "domain": "games",
+   "responsibility": "Credit escrow, settlement, refund, rollback",
+   "owner": {
+    "path": "scripts/games/wagers/game-credit-escrow-service.js",
+    "symbol": "GameCreditEscrowService"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/ti4c0-g22-wager-refund-replay.test.mjs"
+   ]
+  },
+  {
+   "id": "R-GAM-04",
+   "domain": "games",
+   "responsibility": "GM economy policy",
+   "owner": {
+    "path": "scripts/games/wagers/game-economy-policy-service.js",
+    "symbol": "GameEconomyPolicyService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-GAM-05",
+   "domain": "games",
+   "responsibility": "Game settings",
+   "owner": {
+    "path": "scripts/games/game-settings.js",
+    "symbol": "registerGameSettings / getGameSettingsSnapshot"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-GAM-06",
+   "domain": "games",
+   "responsibility": "Accepted-invite materialization",
+   "owner": {
+    "path": "scripts/games/game-session-materializer.js",
+    "symbol": "GameSessionMaterializer"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-GAM-07",
+   "domain": "games",
+   "responsibility": "Multiplayer invite session creation",
+   "owner": {
+    "path": "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "symbol": "HolonetMessengerService._gmCreateGameInvite"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-GAM-08",
+   "domain": "games",
+   "responsibility": "GM approval of pending settlements",
+   "owner": {
+    "path": "scripts/ui/shell/gm/GMApprovalOperationsService.js",
+    "symbol": "-> GameCreditEscrowService.approvePendingSettlement"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
    "id": "R-GOV-01",
    "domain": "governance",
    "responsibility": "Mutation context and enforcement level",
@@ -2419,6 +2625,206 @@
    "verification": "source-inspected",
    "tests": [
     "tests/mentor-translator-cancellation.test.mjs"
+   ]
+  },
+  {
+   "id": "R-NPC-01",
+   "domain": "npc-followers",
+   "responsibility": "Canonical follower slots",
+   "owner": {
+    "path": "scripts/engine/crew/follower-slot-service.js",
+    "symbol": "FollowerSlotService"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/follower-slot-reservation.test.mjs"
+   ]
+  },
+  {
+   "id": "R-NPC-02",
+   "domain": "npc-followers",
+   "responsibility": "Talent to follower entitlement config",
+   "owner": {
+    "path": "scripts/engine/crew/follower-talent-config.js",
+    "symbol": "getFollowerTalentConfig"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-NPC-03",
+   "domain": "npc-followers",
+   "responsibility": "Slot creation/detach on talent create/delete",
+   "owner": {
+    "path": "scripts/infrastructure/hooks/follower-hooks.js",
+    "symbol": "initializeFollowerHooks"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/follower-hooks-governed-cleanup.test.mjs"
+   ]
+  },
+  {
+   "id": "R-NPC-04",
+   "domain": "npc-followers",
+   "responsibility": "Follower creation/derivation from owner level",
+   "owner": {
+    "path": "scripts/apps/follower-creator.js",
+    "symbol": "FollowerCreator"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-NPC-05",
+   "domain": "npc-followers",
+   "responsibility": "Follower enhancements",
+   "owner": {
+    "path": "scripts/apps/follower-manager.js",
+    "symbol": "FollowerManager"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-NPC-06",
+   "domain": "npc-followers",
+   "responsibility": "Minion creation and minion talent bookkeeping",
+   "owner": {
+    "path": "scripts/apps/minion-manager.js",
+    "symbol": "MinionManager"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-NPC-07",
+   "domain": "npc-followers",
+   "responsibility": "Ally assignment / conversion",
+   "owner": {
+    "path": "scripts/engine/crew/ally-assignment-service.js",
+    "symbol": "AllyAssignmentService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/gm-existing-npc-allies-assignment.test.mjs"
+   ]
+  },
+  {
+   "id": "R-NPC-08",
+   "domain": "npc-followers",
+   "responsibility": "Follower defenses",
+   "owner": {
+    "path": "scripts/patches/follower-npc-sheet-parity-hotfix.js",
+    "symbol": "patchFollowerDefenses"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT",
+    "DEFERRED_RULES_REVIEW"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-NPC-09",
+   "domain": "npc-followers",
+   "responsibility": "NPC template import",
+   "owner": {
+    "path": "scripts/engine/import/npc-template-importer-engine.js",
+    "symbol": "(engine)"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-NPC-10",
+   "domain": "npc-followers",
+   "responsibility": "NPC damage profile hydration",
+   "owner": {
+    "path": "scripts/engine/import/npc-damage-hydration-hooks.js",
+    "symbol": "registerNpcDamageHydrationHooks"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-NPC-11",
+   "domain": "npc-followers",
+   "responsibility": "Faction/relationship registry",
+   "owner": {
+    "path": "scripts/allies/faction-registry-service.js",
+    "symbol": "FactionRegistryService"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-NPC-12",
+   "domain": "npc-followers",
+   "responsibility": "NPC sheet subclass/context",
+   "owner": {
+    "path": "scripts/sheets/v2/npc-actor-sheet.js",
+    "symbol": "SWSEV2NpcSheet"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": [
+    "tests/npc-v2-convergence.test.mjs"
+   ]
+  },
+  {
+   "id": "R-NPC-13",
+   "domain": "npc-followers",
+   "responsibility": "Nonheroic offered only in nonheroic sessions",
+   "owner": {
+    "path": "scripts/apps/progression-framework/steps/class-step.js",
+    "symbol": "(class step)"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/nonheroic-chargen-class-item.test.mjs"
    ]
   },
   {

@@ -1008,6 +1008,100 @@
    "foundry": "not live-verified"
   },
   {
+   "requirement": "R-DAT-01",
+   "domain": "data-registries",
+   "responsibility": "Prerequisite evaluation",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/data/prerequisite-checker.js :: PrerequisiteChecker",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/prerequisite-ability-score-authority.test.mjs"
+   ],
+   "ownerDirectTests": 4,
+   "ownerCiTests": 363,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DAT-02",
+   "domain": "data-registries",
+   "responsibility": "Canonical prerequisite/description text",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/data/authority/prerequisite-text-helpers.js :: getCanonicalPrerequisiteText",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 372,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DAT-03",
+   "domain": "data-registries",
+   "responsibility": "Authority key normalization",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/data/authority/authority-key-normalizer.js :: normalizeAuthorityKey",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 372,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DAT-04",
+   "domain": "data-registries",
+   "responsibility": "Language registry",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/registries/language-registry.js :: LanguageRegistry",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 60,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DAT-05",
+   "domain": "data-registries",
+   "responsibility": "Class model adapters",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/data/adapters/ClassModelAdapters.js :: adaptClassForProgression",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 365,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-DAT-06",
+   "domain": "data-registries",
+   "responsibility": "Data JSON schemas",
+   "status": [
+    "OBSERVED",
+    "UNVERIFIED"
+   ],
+   "code": "schemas/archetype.schema.json :: (schema)",
+   "codeReachability": "unreferenced",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
    "requirement": "R-DRD-01",
    "domain": "droids",
    "responsibility": "Droid systems catalog",
@@ -1951,6 +2045,132 @@
    "foundry": "not live-verified"
   },
   {
+   "requirement": "R-GAM-01",
+   "domain": "games",
+   "responsibility": "Game session persistence (world setting gamesSessions)",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/games/game-session-store.js :: GameSessionStore",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/ti4c0-g22-wager-refund-replay.test.mjs"
+   ],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 354,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GAM-02",
+   "domain": "games",
+   "responsibility": "Minigame rules engines",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/games/games/ :: PazaakEngine / SabaccEngine / HintaroEngine / DejarikEngine",
+   "codeReachability": null,
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GAM-03",
+   "domain": "games",
+   "responsibility": "Credit escrow, settlement, refund, rollback",
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "code": "scripts/games/wagers/game-credit-escrow-service.js :: GameCreditEscrowService",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/ti4c0-g22-wager-refund-replay.test.mjs"
+   ],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GAM-04",
+   "domain": "games",
+   "responsibility": "GM economy policy",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/games/wagers/game-economy-policy-service.js :: GameEconomyPolicyService",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GAM-05",
+   "domain": "games",
+   "responsibility": "Game settings",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/games/game-settings.js :: registerGameSettings / getGameSettingsSnapshot",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GAM-06",
+   "domain": "games",
+   "responsibility": "Accepted-invite materialization",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/games/game-session-materializer.js :: GameSessionMaterializer",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GAM-07",
+   "domain": "games",
+   "responsibility": "Multiplayer invite session creation",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/holonet/subsystems/holonet-messenger-service.js :: HolonetMessengerService._gmCreateGameInvite",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 3,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-GAM-08",
+   "domain": "games",
+   "responsibility": "GM approval of pending settlements",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/ui/shell/gm/GMApprovalOperationsService.js :: -> GameCreditEscrowService.approvePendingSettlement",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 4,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
    "requirement": "R-GOV-01",
    "domain": "governance",
    "responsibility": "Mutation context and enforcement level",
@@ -2722,6 +2942,219 @@
    ],
    "ownerDirectTests": 1,
    "ownerCiTests": 57,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-NPC-01",
+   "domain": "npc-followers",
+   "responsibility": "Canonical follower slots",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/crew/follower-slot-service.js :: FollowerSlotService",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/follower-slot-reservation.test.mjs"
+   ],
+   "ownerDirectTests": 4,
+   "ownerCiTests": 12,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-NPC-02",
+   "domain": "npc-followers",
+   "responsibility": "Talent to follower entitlement config",
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "code": "scripts/engine/crew/follower-talent-config.js :: getFollowerTalentConfig",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 69,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-NPC-03",
+   "domain": "npc-followers",
+   "responsibility": "Slot creation/detach on talent create/delete",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/infrastructure/hooks/follower-hooks.js :: initializeFollowerHooks",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/follower-hooks-governed-cleanup.test.mjs"
+   ],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 57,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-NPC-04",
+   "domain": "npc-followers",
+   "responsibility": "Follower creation/derivation from owner level",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/apps/follower-creator.js :: FollowerCreator",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 57,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-NPC-05",
+   "domain": "npc-followers",
+   "responsibility": "Follower enhancements",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/apps/follower-manager.js :: FollowerManager",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 57,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-NPC-06",
+   "domain": "npc-followers",
+   "responsibility": "Minion creation and minion talent bookkeeping",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/apps/minion-manager.js :: MinionManager",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 57,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-NPC-07",
+   "domain": "npc-followers",
+   "responsibility": "Ally assignment / conversion",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/crew/ally-assignment-service.js :: AllyAssignmentService",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/gm-existing-npc-allies-assignment.test.mjs"
+   ],
+   "ownerDirectTests": 5,
+   "ownerCiTests": 10,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-NPC-08",
+   "domain": "npc-followers",
+   "responsibility": "Follower defenses",
+   "status": [
+    "OBSERVED",
+    "CONFLICT",
+    "DEFERRED_RULES_REVIEW"
+   ],
+   "code": "scripts/patches/follower-npc-sheet-parity-hotfix.js :: patchFollowerDefenses",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-NPC-09",
+   "domain": "npc-followers",
+   "responsibility": "NPC template import",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/import/npc-template-importer-engine.js :: (engine)",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 1,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-NPC-10",
+   "domain": "npc-followers",
+   "responsibility": "NPC damage profile hydration",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/import/npc-damage-hydration-hooks.js :: registerNpcDamageHydrationHooks",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-NPC-11",
+   "domain": "npc-followers",
+   "responsibility": "Faction/relationship registry",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/allies/faction-registry-service.js :: FactionRegistryService",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 3,
+   "ownerCiTests": 354,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-NPC-12",
+   "domain": "npc-followers",
+   "responsibility": "NPC sheet subclass/context",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/sheets/v2/npc-actor-sheet.js :: SWSEV2NpcSheet",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/npc-v2-convergence.test.mjs"
+   ],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-NPC-13",
+   "domain": "npc-followers",
+   "responsibility": "Nonheroic offered only in nonheroic sessions",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/apps/progression-framework/steps/class-step.js :: (class step)",
+   "codeReachability": "reachable-dynamic",
+   "namedTests": [
+    "tests/nonheroic-chargen-class-item.test.mjs"
+   ],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 51,
    "testGap": false,
    "foundry": "not live-verified"
   },

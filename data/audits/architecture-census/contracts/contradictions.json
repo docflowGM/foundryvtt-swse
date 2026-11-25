@@ -323,6 +323,18 @@
    "domain": "compat-patches"
   },
   {
+   "id": "CR-DAT-01",
+   "existingSource": "scripts/data/prerequisite-checker.js:3063 (comment)",
+   "claim": "Trust system.level as source of truth for total level",
+   "observed": "actor-core level-split.getTotalLevel derives level separately",
+   "evidence": [
+    "scripts/data/prerequisite-checker.js:3063",
+    "scripts/actors/derived/level-split.js:1"
+   ],
+   "status": "CONFLICT",
+   "domain": "data-registries"
+  },
+  {
    "id": "CR-DRD-01",
    "existingSource": "scripts/engine/droid-validation-engine.js header",
    "claim": "used by DroidBuilderApp, Chargen, Store and Sheet",
@@ -351,7 +363,7 @@
   {
    "id": "CR-EQP-01",
    "existingSource": "docs/architecture/equipment-ecosystem-e3a4-clean-break-posture-contract.md raw/legacy writers row",
-   "claim": "ui/inventory-handlers.js (A9) and ui/weapon-config-dialog.js (A10) are live legacy equip writers",
+   "claim": "inventory-handlers.js (removed) (A9) and weapon-config-dialog.js (removed) (A10) are live legacy equip writers",
    "observed": "files removed; setItemEquipped refuses weapons",
    "evidence": [
     "docs/architecture/equipment-ecosystem-e3a4-clean-break-posture-contract.md:70",
@@ -475,6 +487,19 @@
    ],
    "status": "CONFLICT",
    "domain": "galactic-profiles"
+  },
+  {
+   "id": "CR-GAM-01",
+   "existingSource": "OSI / A-10 (a trade is atomic; any failure fails the whole trade)",
+   "claim": "Atomic multi-party credit movement",
+   "observed": "Per-seat sequential adjustments with compensating refunds and rollback. Escrow state is persisted only after all debits, and in-flight guards are in memory, so a crash mid-sequence leaves partial debits recorded only in the TransactionEngine ledger.",
+   "evidence": [
+    "scripts/games/wagers/game-credit-escrow-service.js:765",
+    "scripts/games/wagers/game-credit-escrow-service.js:820",
+    "docs/audits/transaction-integrity/ti4-c0-closure-report.md:50"
+   ],
+   "status": "CONFLICT",
+   "domain": "games"
   },
   {
    "id": "CR-GOV-01",
@@ -662,6 +687,34 @@
    "domain": "mentor-suggestion"
   },
   {
+   "id": "CR-NPC-01",
+   "existingSource": "docs/audits/follower-mutation-transaction-authority-phase-6-addendum.md check 19",
+   "claim": "No direct setFlag() remains in normal follower mutation paths",
+   "observed": "true only for the 7 scanned files; direct setFlag on followerSlots/minions remains in minion modules and two hotfixes; checker not in CI",
+   "evidence": [
+    "docs/audits/follower-mutation-transaction-authority-phase-6-addendum.md:282",
+    "tools/check-follower-mutation-authority.mjs:87",
+    "scripts/apps/minion-creator.js:419",
+    "scripts/patches/follower-repeatable-entitlement-hotfix.js:170",
+    "scripts/patches/follower-orphan-transfer-hotfix.js:99"
+   ],
+   "status": "CONFLICT",
+   "domain": "npc-followers"
+  },
+  {
+   "id": "CR-NPC-02",
+   "existingSource": "scripts/engine/crew/follower-slot-service.js header",
+   "claim": "single canonical followerSlots writer",
+   "observed": "six modules write the array",
+   "evidence": [
+    "scripts/engine/crew/follower-slot-service.js:4",
+    "scripts/infrastructure/hooks/follower-hooks.js:51",
+    "scripts/apps/follower-creator.js:1040"
+   ],
+   "status": "CONFLICT",
+   "domain": "npc-followers"
+  },
+  {
    "id": "CR-PRG-01",
    "existingSource": "docs/architecture/progression-architecture.md §ProgressionFinalizer",
    "claim": "There is no runtime patching",
@@ -795,7 +848,7 @@
   {
    "id": "CR-STO-02",
    "existingSource": "docs/audits/transaction-integrity/ti4-c0-closure-report.md §2; tx-remediation-ledger.md TI-N3",
-   "claim": "scripts/talents/DarkSidePowers.js writes credits outside TE",
+   "claim": "DarkSidePowers.js (removed talents module) writes credits outside TE",
    "observed": "File removed; live successor is force-alchemy-mechanics-service",
    "evidence": [
     "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:441"

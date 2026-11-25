@@ -79,6 +79,17 @@
    "findings": 7
   },
   {
+   "contractId": "B-DAT",
+   "domain": "data-registries",
+   "doc": "docs/architecture/v2-contracts/B-DAT-data-registries.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/data-registries.json",
+   "responsibilities": 6,
+   "subsystemContracts": 0,
+   "contradictions": 1,
+   "unimplemented": 0,
+   "findings": 4
+  },
+  {
    "contractId": "B-DRD",
    "domain": "droids",
    "doc": "docs/architecture/v2-contracts/B-DRD-droids.md",
@@ -134,6 +145,17 @@
    "findings": 9
   },
   {
+   "contractId": "B-GAM",
+   "domain": "games",
+   "doc": "docs/architecture/v2-contracts/B-GAM-games.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/games.json",
+   "responsibilities": 8,
+   "subsystemContracts": 2,
+   "contradictions": 1,
+   "unimplemented": 2,
+   "findings": 6
+  },
+  {
    "contractId": "B-GOV",
    "domain": "governance",
    "doc": "docs/architecture/v2-contracts/B-GOV-governance.md",
@@ -176,6 +198,17 @@
    "contradictions": 6,
    "unimplemented": 3,
    "findings": 15
+  },
+  {
+   "contractId": "B-NPC",
+   "domain": "npc-followers",
+   "doc": "docs/architecture/v2-contracts/B-NPC-npc-followers.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/npc-followers.json",
+   "responsibilities": 13,
+   "subsystemContracts": 1,
+   "contradictions": 2,
+   "unimplemented": 1,
+   "findings": 9
   },
   {
    "contractId": "B-PRG",

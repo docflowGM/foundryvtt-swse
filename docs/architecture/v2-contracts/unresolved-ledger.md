@@ -1,6 +1,6 @@
 # Unimplemented and unresolved requirement ledger (generated)
 
-Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIRED 86 · UNIMPLEMENTED 32 · DEFERRED_RULES_REVIEW 69. Rules questions are never decided here; they belong in `docs/audits/swse-rules-decisions-pending.md`.
+Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIRED 93 · UNIMPLEMENTED 35 · DEFERRED_RULES_REVIEW 75. Rules questions are never decided here; they belong in `docs/audits/swse-rules-decisions-pending.md`.
 
 | Kind | Domain | ID | Item | Source |
 |---|---|---|---|---|
@@ -25,6 +25,7 @@ Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIR
 | FOUNDRY_ACCEPTANCE_REQUIRED | `combat` | — | Damage packet application incl. bookkeeping flags | R-CMB-04 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `combat` | — | Combat Action Browser execution | F-CMB-004 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `compat-patches` | — | Any fold-back of a class-F patch (combat attack options, follower lifecycle, progression steps) | scripts/patches/runtime-bugfix-hotfixes-init.js:21 |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `data-registries` | — | Prerequisite evaluation on draft actors after consolidating level/BAB reads | scripts/data/prerequisite-checker.js:3094 |
 | UNIMPLEMENTED | `droids` | U-DRD-01 | Production registry certification and cross-application parity for droid components (both 0) | docs/audits/droids/droid-component-mechanical-certification-closeout.md:22 |
 | DEFERRED_RULES_REVIEW | `droids` | none (new; to be registered by owner) | Whether a constructed droid requires an Armor component and at least one appendage for readiness (code paths disagree) | docs/audits/swse-rules-decisions-pending.md |
 | DEFERRED_RULES_REVIEW | `droids` | DROID-RD-001 | Stabilized Mount host | docs/audits/swse-rules-decisions-pending.md |
@@ -89,6 +90,10 @@ Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIR
 | UNIMPLEMENTED | `galactic-profiles` | U-GAL-02 | Applying generated rewards; credits must go through TransactionEngine (A-10); Store-index pricing adapter does not exist | docs/audits/gm-datapad-ecosystem-redesign.md §130 |
 | UNIMPLEMENTED | `galactic-profiles` | U-GAL-03 | NPC Opposition Catalog, species-specific names, encounter-balance math, rank/privilege mechanics (deferred; not to be invented) | docs/audits/gm-datapad-ecosystem-redesign.md §130 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `galactic-profiles` | — | GM Locations / player Atlas surfaces, Scene factory, Location Library import | docs/audits/gm-datapad-ecosystem-redesign.md:4945 (live checklist not run) |
+| UNIMPLEMENTED | `games` | U-GAM-01 | PvP credit wagers through Holonet invites | F-GAM-001 |
+| UNIMPLEMENTED | `games` | U-GAM-02 | Durable recovery for interrupted escrow/settlement | docs/audits/transaction-integrity/ti4-c0-closure-report.md:50 |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `games` | — | One wagered game per engine: escrow->settle and escrow->cancel->refund; GM pending-settlement approval | OSI runtime-risk (credit movement) |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `games` | — | Remaining runtime checks for each game | docs/Holopad-Games-Phase-10-QA-Rules-Fidelity-Audit.md:77 |
 | UNIMPLEMENTED | `governance` | U-GOV-01 | Runtime mutation enforcement (observer checking MutationInterceptor context in DEV/STRICT) or retirement of the enforcement claims | scripts/governance/mutation/MutationInterceptor.js:99 |
 | UNIMPLEMENTED | `governance` | U-GOV-02 | Sentinel invariant-monitoring layers (layers/*, mutation-path-guard, sovereignty-enforcement) | scripts/governance/sentinel/sentinel-registry.js:54 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `governance` | — | Transactional rollback verification (C-GOV-1) | scripts/governance/actor-engine/actor-engine.js:3389 |
@@ -114,6 +119,17 @@ Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIR
 | FOUNDRY_ACCEPTANCE_REQUIRED | `mentor-suggestion` | — | Entire Mentor Survey V2 live pass (NOT PERFORMED) | docs/design/mentor-survey-v2/20-FOUNDRY-ACCEPTANCE-CHECKLIST.md:3 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `mentor-suggestion` | — | Confirm Foundry rejects flag scope 'swse' (F-MEN-003) and observe multi-client decay behavior (F-MEN-004) | this contract |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `mentor-suggestion` | — | Sheet/progression re-render count caused by getSuggestions history writes (F-MEN-006) | this contract |
+| UNIMPLEMENTED | `npc-followers` | U-NPC-01 | Follower mutation authority checker covering all writers and wired into CI | tools/check-follower-mutation-authority.mjs:87 |
+| DEFERRED_RULES_REVIEW | `npc-followers` | none (new; owner to register) | Ability modifier for follower Fortitude Defense (hotfix uses CON, NPC sheet display uses max(STR, CON)) | docs/audits/swse-rules-decisions-pending.md |
+| DEFERRED_RULES_REVIEW | `npc-followers` | none (new; owner to register) | Fidelity of MinionManager.MINION_TALENTS paraphrases to printed talents (no source/page) | docs/audits/swse-rules-decisions-pending.md |
+| DEFERRED_RULES_REVIEW | `npc-followers` | GP-RD-010 | Beast creation authority | docs/audits/swse-rules-decisions-pending.md |
+| DEFERRED_RULES_REVIEW | `npc-followers` | GP-RD-011 | Beast readiness must block | docs/audits/swse-rules-decisions-pending.md |
+| DEFERRED_RULES_REVIEW | `npc-followers` | RECON-002 | Ability increase count for droids/Nonheroic | docs/audits/swse-rules-decisions-pending.md |
+| DEFERRED_RULES_REVIEW | `npc-followers` | RECON-003 | Which level drives entitlements for Nonheroic/mixed actors | docs/audits/swse-rules-decisions-pending.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `npc-followers` | — | Recruiting talent add/remove creates/detaches exactly one slot | scripts/infrastructure/hooks/follower-hooks.js:307 |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `npc-followers` | — | Follower defenses shown vs used in rolls | scripts/patches/follower-npc-sheet-parity-hotfix.js:312 |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `npc-followers` | — | Orphan transfer on owner deletion | scripts/patches/follower-orphan-transfer-hotfix.js:411 |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `npc-followers` | — | NPC import and damage hydration | scripts/engine/import/npc-damage-hydration-hooks.js:220 |
 | UNIMPLEMENTED | `progression` | U-PRG-01 | ClassPlanBuilder not wired; class compiled inline | docs/architecture/progression-architecture.md §Intentionally inline domains |
 | UNIMPLEMENTED | `progression` | U-PRG-02 | Single durable draft store | this contract (PROPOSED) |
 | UNIMPLEMENTED | `progression` | U-PRG-03 | SWSELanguageModule.init() never called; its updateActor and swse:progression:completed listeners are dormant | scripts/engine/progression/modules/language-module.js:12 |

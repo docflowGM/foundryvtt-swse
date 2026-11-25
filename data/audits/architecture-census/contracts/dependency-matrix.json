@@ -419,7 +419,8 @@
    "edges": 20,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "rolls",
@@ -567,7 +568,8 @@
    "edges": 15,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "progression",
@@ -957,7 +959,8 @@
    "edges": 10,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "store-economy",
@@ -1001,7 +1004,8 @@
    "edges": 9,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "equipment",
@@ -1114,7 +1118,8 @@
    "edges": 8,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "droids",
@@ -1149,7 +1154,8 @@
    "edges": 8,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 3,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -1321,7 +1327,8 @@
    "edges": 7,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -1692,7 +1699,8 @@
    "edges": 4,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "equipment",
@@ -1745,7 +1753,8 @@
    "edges": 4,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "governance",
@@ -1780,7 +1789,8 @@
    "edges": 4,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "npc-followers",
@@ -1788,7 +1798,8 @@
    "edges": 4,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "rolls",
@@ -2041,7 +2052,8 @@
    "edges": 3,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -2271,7 +2283,8 @@
    "edges": 2,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "data-registries",
@@ -2279,7 +2292,8 @@
    "edges": 2,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "dev-tooling",
@@ -2534,7 +2548,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "npc-followers",
@@ -2542,7 +2557,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -2937,7 +2953,8 @@
    "edges": 1,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "data-registries",
@@ -2945,7 +2962,8 @@
    "edges": 1,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "data-registries",
@@ -2953,7 +2971,8 @@
    "edges": 1,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "data-registries",
@@ -2961,7 +2980,8 @@
    "edges": 1,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "dev-tooling",
@@ -3088,7 +3108,8 @@
    "edges": 1,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 3,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "governance",
@@ -3311,7 +3332,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "npc-followers",
@@ -3319,7 +3341,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "npc-followers",
@@ -3327,7 +3350,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "progression",

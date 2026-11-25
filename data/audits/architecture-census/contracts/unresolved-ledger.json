@@ -3,9 +3,9 @@
  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
  "generator": "tools/architecture-census/assemble-contracts.mjs",
  "counts": {
-  "FOUNDRY_ACCEPTANCE_REQUIRED": 86,
-  "UNIMPLEMENTED": 32,
-  "DEFERRED_RULES_REVIEW": 69
+  "FOUNDRY_ACCEPTANCE_REQUIRED": 93,
+  "UNIMPLEMENTED": 35,
+  "DEFERRED_RULES_REVIEW": 75
  },
  "items": [
   {
@@ -154,6 +154,13 @@
    "id": null,
    "item": "Any fold-back of a class-F patch (combat attack options, follower lifecycle, progression steps)",
    "source": "scripts/patches/runtime-bugfix-hotfixes-init.js:21"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "data-registries",
+   "id": null,
+   "item": "Prerequisite evaluation on draft actors after consolidating level/BAB reads",
+   "source": "scripts/data/prerequisite-checker.js:3094"
   },
   {
    "kind": "UNIMPLEMENTED",
@@ -605,6 +612,34 @@
   },
   {
    "kind": "UNIMPLEMENTED",
+   "domain": "games",
+   "id": "U-GAM-01",
+   "item": "PvP credit wagers through Holonet invites",
+   "source": "F-GAM-001"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "games",
+   "id": "U-GAM-02",
+   "item": "Durable recovery for interrupted escrow/settlement",
+   "source": "docs/audits/transaction-integrity/ti4-c0-closure-report.md:50"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "games",
+   "id": null,
+   "item": "One wagered game per engine: escrow->settle and escrow->cancel->refund; GM pending-settlement approval",
+   "source": "OSI runtime-risk (credit movement)"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "games",
+   "id": null,
+   "item": "Remaining runtime checks for each game",
+   "source": "docs/Holopad-Games-Phase-10-QA-Rules-Fidelity-Audit.md:77"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
    "domain": "governance",
    "id": "U-GOV-01",
    "item": "Runtime mutation enforcement (observer checking MutationInterceptor context in DEV/STRICT) or retirement of the enforcement claims",
@@ -777,6 +812,83 @@
    "id": null,
    "item": "Sheet/progression re-render count caused by getSuggestions history writes (F-MEN-006)",
    "source": "this contract"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "npc-followers",
+   "id": "U-NPC-01",
+   "item": "Follower mutation authority checker covering all writers and wired into CI",
+   "source": "tools/check-follower-mutation-authority.mjs:87"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "npc-followers",
+   "id": "none (new; owner to register)",
+   "item": "Ability modifier for follower Fortitude Defense (hotfix uses CON, NPC sheet display uses max(STR, CON))",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "npc-followers",
+   "id": "none (new; owner to register)",
+   "item": "Fidelity of MinionManager.MINION_TALENTS paraphrases to printed talents (no source/page)",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "npc-followers",
+   "id": "GP-RD-010",
+   "item": "Beast creation authority",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "npc-followers",
+   "id": "GP-RD-011",
+   "item": "Beast readiness must block",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "npc-followers",
+   "id": "RECON-002",
+   "item": "Ability increase count for droids/Nonheroic",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "npc-followers",
+   "id": "RECON-003",
+   "item": "Which level drives entitlements for Nonheroic/mixed actors",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "npc-followers",
+   "id": null,
+   "item": "Recruiting talent add/remove creates/detaches exactly one slot",
+   "source": "scripts/infrastructure/hooks/follower-hooks.js:307"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "npc-followers",
+   "id": null,
+   "item": "Follower defenses shown vs used in rolls",
+   "source": "scripts/patches/follower-npc-sheet-parity-hotfix.js:312"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "npc-followers",
+   "id": null,
+   "item": "Orphan transfer on owner deletion",
+   "source": "scripts/patches/follower-orphan-transfer-hotfix.js:411"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "npc-followers",
+   "id": null,
+   "item": "NPC import and damage hydration",
+   "source": "scripts/engine/import/npc-damage-hydration-hooks.js:220"
   },
   {
    "kind": "UNIMPLEMENTED",

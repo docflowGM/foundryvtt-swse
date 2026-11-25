@@ -168,10 +168,10 @@
    "kind": "mechanical",
    "files": 169,
    "runtimeModules": 28,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-NPC",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 13,
+   "findings": 9
   },
   {
    "domain": "mentor-suggestion",
@@ -208,10 +208,10 @@
    "kind": "feature",
    "files": 115,
    "runtimeModules": 32,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-GAM",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 8,
+   "findings": 6
   },
   {
    "domain": "houserules",
@@ -268,10 +268,10 @@
    "kind": "infrastructure",
    "files": 54,
    "runtimeModules": 12,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-DAT",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 6,
+   "findings": 4
   },
   {
    "domain": "infrastructure",
@@ -377,12 +377,9 @@
  "missingContracts": [
   "rolls",
   "customization",
-  "npc-followers",
-  "games",
   "houserules",
   "chat",
   "settings-config",
-  "data-registries",
   "migration"
  ]
 }

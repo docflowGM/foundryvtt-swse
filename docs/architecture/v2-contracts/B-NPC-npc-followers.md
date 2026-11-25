@@ -45,11 +45,11 @@ Must NOT own: progression steps/finalization (A-15 → follower progression shel
 
 ## 5. Dependencies
 
-Allowed (PROPOSED): actor-core, progression adapters (follower deriver/advancer), infrastructure, store (owner wallet). Prohibited: engine → apps (A-07). Observed: `ally-assignment-service.js:793` dynamically imports `apps/follower-creator.js`; `follower-progression-live-state-hotfix.js` imports `follower-hooks.js` and patches progression step prototypes.
+Allowed (PROPOSED): actor-core, progression adapters (follower deriver/advancer), infrastructure, store (owner wallet). Prohibited: engine → apps (A-07). Observed: `scripts/engine/crew/ally-assignment-service.js:793` dynamically imports `apps/follower-creator.js`; `follower-progression-live-state-hotfix.js` imports `follower-hooks.js` and patches progression step prototypes.
 
 ## 6. Integration points and lifecycle
 
-Hooks (live): `follower-hooks.js:307` createItem, `:346` deleteItem, `:421` `swse:progression:completed`, `:434` updateActor; `faction-registry-service.js:310` ready; `npc-damage-hydration-hooks.js:220` createActor, `:227` ready. Hotfix hooks: `follower-repeatable-entitlement-hotfix.js:239-260` (createItem/updateItem/deleteItem/createActor/progression/renderApplicationV2), `follower-orphan-transfer-hotfix.js:411-429`, `follower-species-repair-hook.js:95`, `follower-npc-sheet-parity-hotfix.js:506`. Registered through `scripts/patches/runtime-bugfix-hotfixes-init.js:12-15`. Ordering between `follower-hooks` createItem and the repeatable-entitlement createItem repair is not defined.
+Hooks (live): `scripts/infrastructure/hooks/follower-hooks.js:307` createItem, `scripts/infrastructure/hooks/follower-hooks.js:346` deleteItem, `scripts/infrastructure/hooks/follower-hooks.js:421` `swse:progression:completed`, `scripts/infrastructure/hooks/follower-hooks.js:434` updateActor; `scripts/allies/faction-registry-service.js:310` ready; `scripts/engine/import/npc-damage-hydration-hooks.js:220` createActor, `scripts/engine/import/npc-damage-hydration-hooks.js:227` ready. Hotfix hooks: `scripts/patches/follower-repeatable-entitlement-hotfix.js:239-260` (createItem/updateItem/deleteItem/createActor/progression/renderApplicationV2), `scripts/patches/follower-orphan-transfer-hotfix.js:411-429`, `scripts/patches/follower-species-repair-hook.js:95`, `scripts/patches/follower-npc-sheet-parity-hotfix.js:506`. Registered through `scripts/patches/runtime-bugfix-hotfixes-init.js:12-15`. Ordering between `follower-hooks` createItem and the repeatable-entitlement createItem repair is not defined.
 
 ## 7. Failure behavior and domain invariants
 
@@ -69,7 +69,7 @@ Agreement: phase-6 addendum's transaction coordinator exists and is ActorEngine-
 
 | ID | Existing source | Claim | Observed |
 |---|---|---|---|
-| CR-NPC-01 | `docs/audits/follower-mutation-transaction-authority-phase-6-addendum.md:282` | "No direct setFlag() remains in normal follower mutation paths" | True only for the 7 files the checker scans (`tools/check-follower-mutation-authority.mjs:87`). Direct `setFlag` on `followerSlots`/`minions` remains in `minion-creator.js:408/419`, `minion-manager.js:86-142`, `follower-repeatable-entitlement-hotfix.js:170`, `follower-orphan-transfer-hotfix.js:99/225` |
+| CR-NPC-01 | `docs/audits/follower-mutation-transaction-authority-phase-6-addendum.md:282` | "No direct setFlag() remains in normal follower mutation paths" | True only for the 7 files the checker scans (`tools/check-follower-mutation-authority.mjs:87`). Direct `setFlag` on `followerSlots`/`minions` remains in `scripts/apps/minion-creator.js:408`, `scripts/apps/minion-creator.js:419`, `scripts/apps/minion-manager.js:86-142`, `scripts/patches/follower-repeatable-entitlement-hotfix.js:170`, `scripts/patches/follower-orphan-transfer-hotfix.js:99`, `scripts/patches/follower-orphan-transfer-hotfix.js:225` |
 | CR-NPC-02 | `scripts/engine/crew/follower-slot-service.js:4` | single canonical followerSlots writer | Six modules write the array |
 
 ## 11. Phase 2 conformance summary

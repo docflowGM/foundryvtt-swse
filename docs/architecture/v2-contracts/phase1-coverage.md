@@ -1,6 +1,6 @@
 # Phase 1 coverage (generated)
 
-Every taxonomy domain has a contract or an explicit disposition. Generated at `f734b4d`. Validation: 21 sidecars, 623 unique IDs, 1645 evidence references checked against the audited commit, **0 unresolved**, 0 errors, 1 warnings (`data/audits/architecture-census/contracts/validation.json`).
+Every taxonomy domain has a contract or an explicit disposition. Generated at `f734b4d`. Validation: 24 sidecars, 679 unique IDs, 1778 evidence references checked against the audited commit, **0 unresolved**, 0 errors, 1 warnings (`data/audits/architecture-census/contracts/validation.json`).
 
 | Domain | Kind | Files | Runtime modules | Disposition | Responsibilities | Findings |
 |---|---|---:|---:|---|---:|---:|
@@ -20,17 +20,17 @@ Every taxonomy domain has a contract or an explicit disposition. Generated at `f
 | `store-economy` | mechanical | 162 | 39 | contract B-STO | 8 | 9 |
 | `vehicles` | mechanical | 764 | 119 | contract B-VEH | 16 | 12 |
 | `droids` | mechanical | 472 | 47 | contract B-DRD | 12 | 6 |
-| `npc-followers` | mechanical | 169 | 28 | MISSING CONTRACT | 0 | 0 |
+| `npc-followers` | mechanical | 169 | 28 | contract B-NPC | 13 | 9 |
 | `mentor-suggestion` | feature | 568 | 240 | contract B-MEN | 15 | 15 |
 | `galactic-profiles` | feature | 211 | 167 | contract B-GAL | 9 | 9 |
 | `holonet` | feature | 94 | 75 | contract B-HOL | 12 | 9 |
-| `games` | feature | 115 | 32 | MISSING CONTRACT | 0 | 0 |
+| `games` | feature | 115 | 32 | contract B-GAM | 8 | 6 |
 | `houserules` | feature | 43 | 25 | MISSING CONTRACT | 0 | 0 |
 | `chat` | infrastructure | 15 | 7 | MISSING CONTRACT | 0 | 0 |
 | `ui-shell` | presentation | 464 | 179 | contract B-UIS | 13 | 13 |
 | `governance` | infrastructure | 100 | 86 | contract B-GOV | 9 | 7 |
 | `settings-config` | infrastructure | 11 | 4 | MISSING CONTRACT | 0 | 0 |
-| `data-registries` | infrastructure | 54 | 12 | MISSING CONTRACT | 0 | 0 |
+| `data-registries` | infrastructure | 54 | 12 | contract B-DAT | 6 | 4 |
 | `infrastructure` | infrastructure | 117 | 110 | contract B-INF | 11 | 8 |
 | `migration` | infrastructure | 31 | 24 | MISSING CONTRACT | 0 | 0 |
 | `compat-patches` | infrastructure | 19 | 17 | contract B-PAT | 6 | 7 |

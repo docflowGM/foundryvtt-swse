@@ -1,0 +1,745 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-NPC",
+  "domain": "npc-followers",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "Follower entitlements are talent-granted and Nonheroic is offered only in nonheroic sessions (A-18 conforms). Ownership is fragmented: followerSlots has six writers (two hotfixes via direct setFlag), follower defenses are computed three ways that disagree on the Fortitude ability (one by monkey-patching DefenseCalculator), minion modules write owner/minion flags directly from a createItem hook and store uncited, unconsumed talent paraphrases, NPC damage hydration mutates owned items from createActor/ready hooks, and follower domain authority lives in an app module that an engine imports. Six follower hotfix modules (1,977 lines) remain live. The existing follower mutation checker passes but scans only 7 files and is not in CI.",
+  "responsibilities": [
+    {
+      "id": "R-NPC-01",
+      "responsibility": "Canonical follower slots",
+      "owner": {
+        "path": "scripts/engine/crew/follower-slot-service.js",
+        "symbol": "FollowerSlotService"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/crew/follower-slot-service.js:4",
+        "scripts/engine/crew/follower-slot-service.js:173"
+      ],
+      "tests": [
+        "tests/follower-slot-reservation.test.mjs"
+      ],
+      "notes": "F-NPC-001"
+    },
+    {
+      "id": "R-NPC-02",
+      "responsibility": "Talent to follower entitlement config",
+      "owner": {
+        "path": "scripts/engine/crew/follower-talent-config.js",
+        "symbol": "getFollowerTalentConfig"
+      },
+      "status": [
+        "OBSERVED",
+        "APPROVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/infrastructure/hooks/follower-hooks.js:326"
+      ],
+      "tests": [],
+      "notes": "A-18 talent-granted"
+    },
+    {
+      "id": "R-NPC-03",
+      "responsibility": "Slot creation/detach on talent create/delete",
+      "owner": {
+        "path": "scripts/infrastructure/hooks/follower-hooks.js",
+        "symbol": "initializeFollowerHooks"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/infrastructure/hooks/follower-hooks.js:307",
+        "scripts/infrastructure/hooks/follower-hooks.js:51"
+      ],
+      "tests": [
+        "tests/follower-hooks-governed-cleanup.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-NPC-04",
+      "responsibility": "Follower creation/derivation from owner level",
+      "owner": {
+        "path": "scripts/apps/follower-creator.js",
+        "symbol": "FollowerCreator"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/apps/follower-creator.js:55",
+        "scripts/engine/crew/ally-assignment-service.js:793"
+      ],
+      "tests": [],
+      "notes": "F-NPC-004"
+    },
+    {
+      "id": "R-NPC-05",
+      "responsibility": "Follower enhancements",
+      "owner": {
+        "path": "scripts/apps/follower-manager.js",
+        "symbol": "FollowerManager"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/apps/follower-manager.js:19"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-NPC-06",
+      "responsibility": "Minion creation and minion talent bookkeeping",
+      "owner": {
+        "path": "scripts/apps/minion-manager.js",
+        "symbol": "MinionManager"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/apps/minion-creator.js:408",
+        "scripts/apps/minion-manager.js:86"
+      ],
+      "tests": [],
+      "notes": "F-NPC-002"
+    },
+    {
+      "id": "R-NPC-07",
+      "responsibility": "Ally assignment / conversion",
+      "owner": {
+        "path": "scripts/engine/crew/ally-assignment-service.js",
+        "symbol": "AllyAssignmentService"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/crew/ally-assignment-service.js:894"
+      ],
+      "tests": [
+        "tests/gm-existing-npc-allies-assignment.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-NPC-08",
+      "responsibility": "Follower defenses",
+      "owner": {
+        "path": "scripts/patches/follower-npc-sheet-parity-hotfix.js",
+        "symbol": "patchFollowerDefenses"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT",
+        "DEFERRED_RULES_REVIEW"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/patches/follower-npc-sheet-parity-hotfix.js:286",
+        "scripts/sheets/v2/npc/npc-sheet-helpers.js:238"
+      ],
+      "tests": [],
+      "notes": "F-NPC-003"
+    },
+    {
+      "id": "R-NPC-09",
+      "responsibility": "NPC template import",
+      "owner": {
+        "path": "scripts/engine/import/npc-template-importer-engine.js",
+        "symbol": "(engine)"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/import/npc-template-importer-engine.js:203",
+        "scripts/engine/import/npc-template-importer-engine.js:364"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-NPC-10",
+      "responsibility": "NPC damage profile hydration",
+      "owner": {
+        "path": "scripts/engine/import/npc-damage-hydration-hooks.js",
+        "symbol": "registerNpcDamageHydrationHooks"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/import/npc-damage-hydration-hooks.js:152",
+        "scripts/engine/import/npc-damage-hydration-hooks.js:227"
+      ],
+      "tests": [],
+      "notes": "F-NPC-005"
+    },
+    {
+      "id": "R-NPC-11",
+      "responsibility": "Faction/relationship registry",
+      "owner": {
+        "path": "scripts/allies/faction-registry-service.js",
+        "symbol": "FactionRegistryService"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/allies/faction-registry-service.js:318",
+        "scripts/allies/faction-registry-service.js:995"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-NPC-12",
+      "responsibility": "NPC sheet subclass/context",
+      "owner": {
+        "path": "scripts/sheets/v2/npc-actor-sheet.js",
+        "symbol": "SWSEV2NpcSheet"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/sheets/v2/npc-actor-sheet.js:30"
+      ],
+      "tests": [
+        "tests/npc-v2-convergence.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-NPC-13",
+      "responsibility": "Nonheroic offered only in nonheroic sessions",
+      "owner": {
+        "path": "scripts/apps/progression-framework/steps/class-step.js",
+        "symbol": "(class step)"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/apps/progression-framework/steps/class-step.js:73"
+      ],
+      "tests": [
+        "tests/nonheroic-chargen-class-item.test.mjs"
+      ],
+      "notes": "A-18 conforms; owned by progression"
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "FactionRegistryService",
+      "path": "scripts/allies/faction-registry-service.js",
+      "line": 318,
+      "consumers": 24,
+      "contract": "faction/relationship records"
+    },
+    {
+      "symbol": "FollowerCreator",
+      "path": "scripts/apps/follower-creator.js",
+      "line": 55,
+      "consumers": 16,
+      "contract": "create/derive/update follower"
+    },
+    {
+      "symbol": "resolveFollowerSlotActorId",
+      "path": "scripts/domain/followers/follower-slot-occupancy.js",
+      "line": 1,
+      "consumers": 16,
+      "contract": "pure occupancy"
+    },
+    {
+      "symbol": "getFollowerTalentConfig",
+      "path": "scripts/engine/crew/follower-talent-config.js",
+      "line": 1,
+      "consumers": 15,
+      "contract": "talent -> entitlement"
+    },
+    {
+      "symbol": "FollowerSlotService",
+      "path": "scripts/engine/crew/follower-slot-service.js",
+      "line": 173,
+      "consumers": 6,
+      "contract": "canonical slot writes"
+    },
+    {
+      "symbol": "AllyAssignmentService",
+      "path": "scripts/engine/crew/ally-assignment-service.js",
+      "line": 894,
+      "consumers": 6,
+      "contract": "ally assign/convert"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "actor-core",
+      "progression follower adapters",
+      "infrastructure",
+      "store-economy (owner wallet)"
+    ],
+    "prohibited": [
+      "engine -> apps (A-07)",
+      "direct actor writes (A-02)",
+      "prototype patches (A-09)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/crew/ally-assignment-service.js",
+        "to": "scripts/apps/follower-creator.js (dynamic)",
+        "evidence": "scripts/engine/crew/ally-assignment-service.js:793"
+      },
+      {
+        "from": "scripts/patches/follower-npc-sheet-parity-hotfix.js",
+        "to": "DefenseCalculator.calculate (monkey-patch)",
+        "evidence": "scripts/patches/follower-npc-sheet-parity-hotfix.js:286"
+      },
+      {
+        "from": "scripts/patches/follower-progression-live-state-hotfix.js",
+        "to": "FollowerSubtypeAdapter.prototype.contributeProjection (monkey-patch)",
+        "evidence": "scripts/patches/follower-progression-live-state-hotfix.js:85"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-NPC-1",
+      "boundary": "talent item -> entitlement config -> slot -> follower actor -> reconcile",
+      "interface": "getFollowerTalentConfig / FollowerSlotService / FollowerCreator / reconcileFollowerSlotsForActor",
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-NPC-01",
+      "existingSource": "docs/audits/follower-mutation-transaction-authority-phase-6-addendum.md check 19",
+      "claim": "No direct setFlag() remains in normal follower mutation paths",
+      "observed": "true only for the 7 scanned files; direct setFlag on followerSlots/minions remains in minion modules and two hotfixes; checker not in CI",
+      "evidence": [
+        "docs/audits/follower-mutation-transaction-authority-phase-6-addendum.md:282",
+        "tools/check-follower-mutation-authority.mjs:87",
+        "scripts/apps/minion-creator.js:419",
+        "scripts/patches/follower-repeatable-entitlement-hotfix.js:170",
+        "scripts/patches/follower-orphan-transfer-hotfix.js:99"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-NPC-02",
+      "existingSource": "scripts/engine/crew/follower-slot-service.js header",
+      "claim": "single canonical followerSlots writer",
+      "observed": "six modules write the array",
+      "evidence": [
+        "scripts/engine/crew/follower-slot-service.js:4",
+        "scripts/infrastructure/hooks/follower-hooks.js:51",
+        "scripts/apps/follower-creator.js:1040"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-NPC-01",
+      "item": "Follower mutation authority checker covering all writers and wired into CI",
+      "source": "tools/check-follower-mutation-authority.mjs:87",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [
+    {
+      "item": "Ability modifier for follower Fortitude Defense (hotfix uses CON, NPC sheet display uses max(STR, CON))",
+      "registerRef": "none (new; owner to register)"
+    },
+    {
+      "item": "Fidelity of MinionManager.MINION_TALENTS paraphrases to printed talents (no source/page)",
+      "registerRef": "none (new; owner to register)"
+    },
+    {
+      "item": "Beast creation authority",
+      "registerRef": "GP-RD-010"
+    },
+    {
+      "item": "Beast readiness must block",
+      "registerRef": "GP-RD-011"
+    },
+    {
+      "item": "Ability increase count for droids/Nonheroic",
+      "registerRef": "RECON-002"
+    },
+    {
+      "item": "Which level drives entitlements for Nonheroic/mixed actors",
+      "registerRef": "RECON-003"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "Recruiting talent add/remove creates/detaches exactly one slot",
+      "source": "scripts/infrastructure/hooks/follower-hooks.js:307"
+    },
+    {
+      "item": "Follower defenses shown vs used in rolls",
+      "source": "scripts/patches/follower-npc-sheet-parity-hotfix.js:312"
+    },
+    {
+      "item": "Orphan transfer on owner deletion",
+      "source": "scripts/patches/follower-orphan-transfer-hotfix.js:411"
+    },
+    {
+      "item": "NPC import and damage hydration",
+      "source": "scripts/engine/import/npc-damage-hydration-hooks.js:220"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-NPC-001",
+      "category": "multiple-writers",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Six writers of followerSlots; two hotfixes write via direct setFlag; createItem reactions unordered",
+      "affectedFiles": [
+        "scripts/engine/crew/follower-slot-service.js",
+        "scripts/infrastructure/hooks/follower-hooks.js",
+        "scripts/apps/follower-creator.js",
+        "scripts/apps/minion-creator.js",
+        "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+        "scripts/patches/follower-orphan-transfer-hotfix.js",
+        "scripts/engine/crew/ally-assignment-service.js"
+      ],
+      "evidence": [
+        "scripts/engine/crew/follower-slot-service.js:4",
+        "scripts/infrastructure/hooks/follower-hooks.js:51",
+        "scripts/infrastructure/hooks/follower-hooks.js:307",
+        "scripts/apps/follower-creator.js:1040",
+        "scripts/apps/minion-creator.js:419",
+        "scripts/patches/follower-repeatable-entitlement-hotfix.js:170",
+        "scripts/patches/follower-repeatable-entitlement-hotfix.js:239",
+        "scripts/patches/follower-orphan-transfer-hotfix.js:99",
+        "scripts/patches/follower-orphan-transfer-hotfix.js:225"
+      ],
+      "observed": "follower-hooks (ActorEngine), FollowerSlotService, FollowerCreator (transaction), MinionCreator (direct setFlag), repeatable-entitlement hotfix (direct setFlag, own createItem/updateItem/deleteItem listeners) and orphan-transfer hotfix (direct setFlag) all read-modify-write the same array. Two createItem listeners react to the same talent without defined order; read-modify-write without a shared queue can lose updates.",
+      "intendedOwnership": "FollowerSlotService is the only writer; hooks and hotfixes call it.",
+      "contractRef": "A-01 | A-02 | A-09 | R-NPC-01",
+      "proposedSolution": "Route every followerSlots write through FollowerSlotService (add the operations the hotfixes need: repair entitlements, transfer orphan); fold the repeatable-entitlement repair into follower-hooks reconciliation; then retire the two hotfixes. Extend tools/check-follower-mutation-authority.mjs to all writers and add it to CI.",
+      "alternatives": "Serialise writes per owner with the shell mutation queue.",
+      "dependencies": [
+        "compat-patches domain"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Concurrency test: two talents created back-to-back yield two slots; checker in CI.",
+      "foundryAcceptance": "Live V13: add/remove Attract Minion / recruiting talents repeatedly.",
+      "scope": "M",
+      "simplificationBenefit": "One slot writer; two hotfixes removed.",
+      "risk": "Medium (follower data).",
+      "perfImpact": "low"
+    },
+    {
+      "id": "F-NPC-002",
+      "category": "bypass-engine",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Minion modules write owner/minion flags directly from a createItem hook; minion talent flags are write-only uncited rule text",
+      "affectedFiles": [
+        "scripts/apps/minion-manager.js",
+        "scripts/apps/minion-creator.js",
+        "scripts/infrastructure/hooks/follower-hooks.js"
+      ],
+      "evidence": [
+        "scripts/apps/minion-manager.js:12",
+        "scripts/apps/minion-manager.js:86",
+        "scripts/apps/minion-manager.js:96",
+        "scripts/apps/minion-manager.js:100",
+        "scripts/apps/minion-manager.js:116",
+        "scripts/apps/minion-manager.js:120",
+        "scripts/apps/minion-manager.js:123",
+        "scripts/apps/minion-manager.js:131",
+        "scripts/apps/minion-manager.js:142",
+        "scripts/apps/minion-creator.js:408",
+        "scripts/infrastructure/hooks/follower-hooks.js:318"
+      ],
+      "observed": "MinionManager.applyTalent/removeTalent/_removeStaleFlags call owner.setFlag / minion.setFlag / unsetFlag directly (8 sites), triggered from the follower createItem/deleteItem hooks. The written flags (minionTacticalAbilities, minionTalentRegistry, minionTalentBenefits) have no reader outside the module. MINION_TALENTS holds hand-written rule paraphrases (e.g. Bodyguard II, Fear Me) without book/page.",
+      "intendedOwnership": "Minion bookkeeping as a domain service via ActorEngine.updateActorFlags; rule text from talent items/registry, not hard-coded.",
+      "contractRef": "A-02 | A-04 | A-11",
+      "proposedSolution": "Move MinionManager to scripts/domain/followers/ and route writes through ActorEngine (batched per actor). Owner decides whether the unconsumed flags are needed; if not, delete them (redundant-state). Do not use MINION_TALENTS descriptions mechanically until source-verified.",
+      "alternatives": "none",
+      "dependencies": [
+        "B-TAL talents"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": true,
+      "regressionTests": "Test that adding a minion talent performs one ActorEngine write per actor.",
+      "foundryAcceptance": "Live V13: Crime Lord minion talents.",
+      "scope": "S",
+      "simplificationBenefit": "8 direct writes removed; possibly dead state removed.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-NPC-003",
+      "category": "duplicate-authority",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Three follower defense computations disagree; one installed by monkey-patching DefenseCalculator",
+      "affectedFiles": [
+        "scripts/patches/follower-npc-sheet-parity-hotfix.js",
+        "scripts/sheets/v2/npc/npc-sheet-helpers.js",
+        "scripts/apps/progression-framework/adapters/follower-deriver.js"
+      ],
+      "evidence": [
+        "scripts/patches/follower-npc-sheet-parity-hotfix.js:283",
+        "scripts/patches/follower-npc-sheet-parity-hotfix.js:286",
+        "scripts/patches/follower-npc-sheet-parity-hotfix.js:312",
+        "scripts/sheets/v2/npc/npc-sheet-helpers.js:212",
+        "scripts/sheets/v2/npc/npc-sheet-helpers.js:238",
+        "scripts/sheets/v2/npc/npc-sheet-helpers.js:859",
+        "scripts/apps/progression-framework/adapters/follower-deriver.js:82"
+      ],
+      "observed": "The hotfix wraps DefenseCalculator.calculate for followers and rebuilds Fortitude with CON; the NPC sheet helper independently computes Fortitude as 10 + level + max(STR, CON) for display; the deriver applies template bonuses. A follower with STR > CON can show a different Fortitude than the one used by derived/rolls.",
+      "intendedOwnership": "DefenseCalculator (actor-core) computes follower defenses from a follower rules profile; the sheet displays derived values.",
+      "contractRef": "A-01 | A-04 | A-09 | R-NPC-08",
+      "proposedSolution": "Defer the Fortitude ability rule to the owner (cite Galaxy at War follower rules); then implement once in DefenseCalculator via a follower profile (no prototype patch) and make npc-sheet-helpers read derived.defenses only.",
+      "alternatives": "none",
+      "dependencies": [
+        "B-ACT actor-core"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": true,
+      "regressionTests": "Test: follower with STR 16 / CON 10 shows and rolls the same Fortitude.",
+      "foundryAcceptance": "Live V13: follower sheet defenses vs attack resolution.",
+      "scope": "M",
+      "simplificationBenefit": "One defense truth; one monkey-patch removed.",
+      "risk": "Wrong mechanics on a live path until resolved.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-NPC-004",
+      "category": "dependency",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Follower domain authority lives in an app module; engine imports it",
+      "affectedFiles": [
+        "scripts/apps/follower-creator.js",
+        "scripts/engine/crew/ally-assignment-service.js"
+      ],
+      "evidence": [
+        "scripts/apps/follower-creator.js:55",
+        "scripts/engine/crew/ally-assignment-service.js:793"
+      ],
+      "observed": "FollowerCreator (1,163 SLOC, 16 consumers) owns derivation from owner level and lifecycle; AllyAssignmentService dynamically imports it, noting it cannot be loaded in the Node harness.",
+      "intendedOwnership": "Follower derivation/lifecycle in scripts/domain/followers/ (pure + ActorEngine); apps keep UI.",
+      "contractRef": "A-07",
+      "proposedSolution": "Extract updateFollowerForOwnerLevel and lifecycle methods into a domain service; FollowerCreator becomes the UI over it.",
+      "alternatives": "none",
+      "dependencies": [
+        "B-PRG follower adapters"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Node test of the extracted derivation without Foundry UI shims.",
+      "foundryAcceptance": "Owner level-up updates followers.",
+      "scope": "M",
+      "simplificationBenefit": "Testable follower authority; removes engine->app import.",
+      "risk": "Medium.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-NPC-005",
+      "category": "bypass-engine",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "NPC damage hydration mutates owned items from createActor/ready hooks without ActorEngine",
+      "affectedFiles": [
+        "scripts/engine/import/npc-damage-hydration-hooks.js"
+      ],
+      "evidence": [
+        "scripts/engine/import/npc-damage-hydration-hooks.js:152",
+        "scripts/engine/import/npc-damage-hydration-hooks.js:220",
+        "scripts/engine/import/npc-damage-hydration-hooks.js:227"
+      ],
+      "observed": "On every createActor (GM) and on ready (world scan), item system/flags are rewritten with actor.updateEmbeddedDocuments(render:false). This is migration-like behavior running at every load.",
+      "intendedOwnership": "ActorEngine owned-item helpers; one-time migration through the migration framework.",
+      "contractRef": "A-02 | A-08 | A-09",
+      "proposedSolution": "Route through ActorEngine.updateOwnedItems; move the ready scan into a versioned migration (runs once), keep createActor hydration for imports only.",
+      "alternatives": "none",
+      "dependencies": [
+        "B-MIG migration"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Test that a second ready does not write.",
+      "foundryAcceptance": "Live V13: world load time with many NPCs.",
+      "scope": "S",
+      "simplificationBenefit": "No per-load world scan.",
+      "risk": "Migration runtime-risk area.",
+      "perfImpact": "medium"
+    },
+    {
+      "id": "F-NPC-006",
+      "category": "bypass-engine",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Faction registry writes actor flags directly",
+      "affectedFiles": [
+        "scripts/allies/faction-registry-service.js"
+      ],
+      "evidence": [
+        "scripts/allies/faction-registry-service.js:995",
+        "scripts/allies/faction-registry-service.js:1254",
+        "scripts/allies/faction-registry-service.js:1334",
+        "scripts/allies/faction-registry-service.js:1355",
+        "scripts/allies/faction-registry-service.js:963",
+        "scripts/allies/faction-registry-service.js:975"
+      ],
+      "observed": "actor.setFlag for relationships and legacy factions (4 sites); Actor.create/delete of a world faction actor (2 sites, world-document exception).",
+      "intendedOwnership": "ActorEngine.updateActorFlags for actor flags.",
+      "contractRef": "A-02",
+      "proposedSolution": "Route the 4 setFlag sites through ActorEngine; add exception comments on the world actor create/delete.",
+      "alternatives": "none",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Probe P-A02 shows only commented world-document sites.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "Clears 6 probe hits.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-NPC-007",
+      "category": "legacy-compat",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Six live follower hotfix modules with prototype patches and global render listeners",
+      "affectedFiles": [
+        "scripts/patches/follower-npc-sheet-parity-hotfix.js",
+        "scripts/patches/follower-orphan-transfer-hotfix.js",
+        "scripts/patches/follower-progression-live-state-hotfix.js",
+        "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+        "scripts/patches/follower-species-materialization-hotfix.js",
+        "scripts/patches/follower-species-repair-hook.js"
+      ],
+      "evidence": [
+        "scripts/patches/runtime-bugfix-hotfixes-init.js:12",
+        "scripts/patches/follower-npc-sheet-parity-hotfix.js:273",
+        "scripts/patches/follower-progression-live-state-hotfix.js:85",
+        "scripts/patches/follower-progression-live-state-hotfix.js:226",
+        "scripts/patches/follower-orphan-transfer-hotfix.js:427",
+        "scripts/patches/follower-repeatable-entitlement-hotfix.js:260",
+        "scripts/patches/follower-species-repair-hook.js:95"
+      ],
+      "observed": "1,977 lines patching SWSEV2NpcSheet.prototype, FollowerSubtypeAdapter.prototype, FollowerLanguageStep.prototype and DefenseCalculator.calculate, plus ready-time repairs and renderApplicationV2 DOM injection. Legacy class B (live, referenced): each encodes a real fix not yet in the owning module.",
+      "intendedOwnership": "Fixes live in the owning modules; no runtime patching (A-09).",
+      "contractRef": "A-09 | A-08",
+      "proposedSolution": "Retire one hotfix at a time: move its behavior into the patched module, add the test that motivated it, delete the hotfix. Order: species-repair-hook + species-materialization (into FollowerCreator), repeatable-entitlement + orphan-transfer (into FollowerSlotService, F-NPC-001), progression-live-state (into follower adapters/steps), npc-sheet-parity (into NPC sheet + DefenseCalculator, F-NPC-003).",
+      "alternatives": "none",
+      "dependencies": [
+        "compat-patches domain",
+        "B-PRG"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Per-hotfix regression test before deletion.",
+      "foundryAcceptance": "Live V13 follower flows after each retirement.",
+      "scope": "L",
+      "simplificationBenefit": "~2k lines and 4 prototype patches removed.",
+      "risk": "Medium.",
+      "perfImpact": "medium"
+    },
+    {
+      "id": "F-NPC-008",
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Orphan NPC panel modules and nonheroic units browser",
+      "affectedFiles": [
+        "scripts/sheets/v2/npc/NPCPanelContextBuilder.js",
+        "scripts/sheets/v2/npc/NPCPanelValidators.js",
+        "scripts/sheets/v2/npc/NPCPanelVisibilityManager.js",
+        "scripts/sheets/v2/npc/PANEL_REGISTRY.js",
+        "scripts/apps/nonheroic-units-browser.js"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/npc-actor-sheet.js:9"
+      ],
+      "observed": "No importer, template, global or pack reference; the live NPC sheet uses npc-sheet-helpers.js and the shared PANEL_REGISTRY. A duplicate PANEL_REGISTRY export name exists in the orphan.",
+      "intendedOwnership": "Live NPC sheet context only.",
+      "contractRef": "A-09",
+      "proposedSolution": "Class C: delete the four NPC panel modules; owner decides whether a nonheroic units browser is wanted (wire) or retired.",
+      "alternatives": "none",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Census --check.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "~870 SLOC removed.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-NPC-009",
+      "category": "ownership-violation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "NPC template import and world actor creation are legitimate world-document exceptions",
+      "affectedFiles": [
+        "scripts/engine/import/npc-template-importer-engine.js",
+        "scripts/apps/npc-template-importer.js",
+        "scripts/apps/allies/ally-assignment-modal.js",
+        "scripts/apps/follower-creator.js"
+      ],
+      "evidence": [
+        "scripts/engine/import/npc-template-importer-engine.js:203",
+        "scripts/engine/import/npc-template-importer-engine.js:364",
+        "scripts/engine/import/npc-template-importer-engine.js:373",
+        "scripts/apps/npc-template-importer.js:156",
+        "scripts/apps/allies/ally-assignment-modal.js:463",
+        "scripts/apps/follower-creator.js:1307"
+      ],
+      "observed": "Actor.create / actor.delete of world NPC actors (exception). Probe sites ally-assignment-modal:463, follower-creator:1307 and npc-template-importer:156 are false positives (Map/Set.delete and a wizard call).",
+      "intendedOwnership": "A-02 world-document exception with comment.",
+      "contractRef": "A-02",
+      "proposedSolution": "Add exception comments at the three real sites.",
+      "alternatives": "none",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "none",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "Clears 6 probe hits.",
+      "risk": "None.",
+      "perfImpact": "none"
+    }
+  ]
+}

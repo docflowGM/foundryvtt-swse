@@ -2,7 +2,7 @@
 
 Level A invariants trace to probes (see `A-global-invariants.md`). Domain requirements trace to the owning module and its tests. **No requirement is live-Foundry-verified.** Generated at `f734b4d`.
 
-- Domain requirements: 245; with a named test or a direct test of the owner module: 163; **test gaps: 82**.
+- Domain requirements: 272; with a named test or a direct test of the owner module: 177; **test gaps: 95**.
 
 | Requirement | Domain | Code | Reachability | Named tests | Owner direct tests | Owner CI tests (transitive) |
 |---|---|---|---|---:|---:|---:|
@@ -59,6 +59,12 @@ Level A invariants trace to probes (see `A-global-invariants.md`). Domain requir
 | R-PAT-04 | `compat-patches` | `scripts/patches/follower-orphan-transfer-hotfix.js :: registerFollowerOrphanTransferHotfix` | reachable-static | 0 | 1 | 1 |
 | R-PAT-05 | `compat-patches` | `scripts/patches/armor-hydration-defense-hotfix.js :: registerArmorHydrationDefenseHotfix` | reachable-static | 0 | 2 | 2 |
 | R-PAT-06 | `compat-patches` | `scripts/patches/weapon-branch-coherence-hotfix.js :: registerWeaponBranchCoherenceHotfix` | reachable-static | 0 | 1 | 1 |
+| R-DAT-01 | `data-registries` | `scripts/data/prerequisite-checker.js :: PrerequisiteChecker` | reachable-static | 1 | 4 | 363 |
+| R-DAT-02 ⚠ | `data-registries` | `scripts/data/authority/prerequisite-text-helpers.js :: getCanonicalPrerequisiteText` | reachable-static | 0 | 0 | 372 |
+| R-DAT-03 ⚠ | `data-registries` | `scripts/data/authority/authority-key-normalizer.js :: normalizeAuthorityKey` | reachable-static | 0 | 0 | 372 |
+| R-DAT-04 ⚠ | `data-registries` | `scripts/registries/language-registry.js :: LanguageRegistry` | reachable-static | 0 | 0 | 60 |
+| R-DAT-05 ⚠ | `data-registries` | `scripts/data/adapters/ClassModelAdapters.js :: adaptClassForProgression` | reachable-static | 0 | 0 | 365 |
+| R-DAT-06 ⚠ | `data-registries` | `schemas/archetype.schema.json :: (schema)` | unreferenced | 0 | 0 | 0 |
 | R-DRD-01 | `droids` | `scripts/data/droid-systems.js :: DROID_SYSTEMS` | reachable-static | 0 | 6 | 385 |
 | R-DRD-02 | `droids` | `scripts/data/droid-part-schema.js :: getDroidPartDefinition` | reachable-static | 0 | 18 | 372 |
 | R-DRD-03 | `droids` | `scripts/domain/droids/droid-part-schema.js :: resolveDroidSystemIdentity` | reachable-static | 0 | 1 | 364 |
@@ -117,6 +123,14 @@ Level A invariants trace to probes (see `A-global-invariants.md`). Domain requir
 | R-GAL-07 | `galactic-profiles` | `scripts/ui/shell/gm/LocationSceneBridgeService.js :: LocationSceneBridgeService` | reachable-static | 1 | 0 | 8 |
 | R-GAL-08 | `galactic-profiles` | `scripts/ui/shell/gm/FactionJobBridgeService.js :: FactionJobBridgeService (+LocationJob, FactionIntel, LocationIntel)` | reachable-static | 1 | 1 | 23 |
 | R-GAL-09 ⚠ | `galactic-profiles` | — | — | 0 | 0 | 0 |
+| R-GAM-01 | `games` | `scripts/games/game-session-store.js :: GameSessionStore` | reachable-static | 1 | 1 | 354 |
+| R-GAM-02 ⚠ | `games` | `scripts/games/games/ :: PazaakEngine / SabaccEngine / HintaroEngine / DejarikEngine` | — | 0 | 0 | 0 |
+| R-GAM-03 | `games` | `scripts/games/wagers/game-credit-escrow-service.js :: GameCreditEscrowService` | reachable-static | 1 | 1 | 353 |
+| R-GAM-04 ⚠ | `games` | `scripts/games/wagers/game-economy-policy-service.js :: GameEconomyPolicyService` | reachable-static | 0 | 0 | 353 |
+| R-GAM-05 ⚠ | `games` | `scripts/games/game-settings.js :: registerGameSettings / getGameSettingsSnapshot` | reachable-static | 0 | 0 | 353 |
+| R-GAM-06 ⚠ | `games` | `scripts/games/game-session-materializer.js :: GameSessionMaterializer` | reachable-static | 0 | 0 | 353 |
+| R-GAM-07 | `games` | `scripts/holonet/subsystems/holonet-messenger-service.js :: HolonetMessengerService._gmCreateGameInvite` | reachable-static | 0 | 3 | 353 |
+| R-GAM-08 | `games` | `scripts/ui/shell/gm/GMApprovalOperationsService.js :: -> GameCreditEscrowService.approvePendingSettlement` | reachable-static | 0 | 2 | 4 |
 | R-GOV-01 ⚠ | `governance` | `scripts/governance/mutation/MutationInterceptor.js :: MutationInterceptor` | reachable-static | 0 | 0 | 353 |
 | R-GOV-02 | `governance` | `scripts/governance/mutation/mutation-normalization-service.js :: MutationNormalizationService` | reachable-static | 0 | 1 | 353 |
 | R-GOV-03 ⚠ | `governance` | `scripts/governance/mutation/mutation-boundary-service.js :: MutationBoundaryService` | reachable-static | 0 | 0 | 353 |
@@ -164,6 +178,19 @@ Level A invariants trace to probes (see `A-global-invariants.md`). Domain requir
 | R-MEN-13 | `mentor-suggestion` | `scripts/engine/archetype/archetype-registry.js :: ArchetypeRegistry` | reachable-static | 2 | 0 | 55 |
 | R-MEN-14 | `mentor-suggestion` | `scripts/engine/suggestion/equipment-loadout-profile.js :: buildEquipmentLoadoutProfile` | reachable-static | 1 | 0 | 56 |
 | R-MEN-15 | `mentor-suggestion` | `scripts/mentor/mentor-translation-integration.js :: MentorTranslationIntegration` | reachable-static | 1 | 1 | 57 |
+| R-NPC-01 | `npc-followers` | `scripts/engine/crew/follower-slot-service.js :: FollowerSlotService` | reachable-static | 1 | 4 | 12 |
+| R-NPC-02 | `npc-followers` | `scripts/engine/crew/follower-talent-config.js :: getFollowerTalentConfig` | reachable-static | 0 | 1 | 69 |
+| R-NPC-03 | `npc-followers` | `scripts/infrastructure/hooks/follower-hooks.js :: initializeFollowerHooks` | reachable-static | 1 | 0 | 57 |
+| R-NPC-04 | `npc-followers` | `scripts/apps/follower-creator.js :: FollowerCreator` | reachable-static | 0 | 2 | 57 |
+| R-NPC-05 ⚠ | `npc-followers` | `scripts/apps/follower-manager.js :: FollowerManager` | reachable-static | 0 | 0 | 57 |
+| R-NPC-06 ⚠ | `npc-followers` | `scripts/apps/minion-manager.js :: MinionManager` | reachable-static | 0 | 0 | 57 |
+| R-NPC-07 | `npc-followers` | `scripts/engine/crew/ally-assignment-service.js :: AllyAssignmentService` | reachable-static | 1 | 5 | 10 |
+| R-NPC-08 ⚠ | `npc-followers` | `scripts/patches/follower-npc-sheet-parity-hotfix.js :: patchFollowerDefenses` | reachable-static | 0 | 0 | 0 |
+| R-NPC-09 | `npc-followers` | `scripts/engine/import/npc-template-importer-engine.js :: (engine)` | reachable-static | 0 | 1 | 1 |
+| R-NPC-10 ⚠ | `npc-followers` | `scripts/engine/import/npc-damage-hydration-hooks.js :: registerNpcDamageHydrationHooks` | reachable-static | 0 | 0 | 0 |
+| R-NPC-11 | `npc-followers` | `scripts/allies/faction-registry-service.js :: FactionRegistryService` | reachable-static | 0 | 3 | 354 |
+| R-NPC-12 | `npc-followers` | `scripts/sheets/v2/npc-actor-sheet.js :: SWSEV2NpcSheet` | reachable-static | 1 | 0 | 0 |
+| R-NPC-13 | `npc-followers` | `scripts/apps/progression-framework/steps/class-step.js :: (class step)` | reachable-dynamic | 1 | 0 | 51 |
 | R-PRG-01 ⚠ | `progression` | `scripts/apps/progression-framework/progression-entry.js :: launchProgression` | reachable-static | 0 | 0 | 51 |
 | R-PRG-02 | `progression` | `scripts/apps/progression-framework/shell/progression-shell.js :: ProgressionShell` | reachable-static | 0 | 4 | 51 |
 | R-PRG-03 | `progression` | `scripts/apps/progression-framework/shell/progression-session.js :: ProgressionSession` | reachable-static | 0 | 1 | 51 |
