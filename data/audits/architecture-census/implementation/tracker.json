@@ -1127,11 +1127,12 @@
     "F-PRG-006"
    ],
    "commits": [
-    "pending"
+    "pending",
+    "b4c9fc9e6"
    ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "Deleted 10 modules of the legacy static ProgressionEngine stack and 5 unused imports. feature-dispatcher.js kept: tests/class-phase-6d-officer-improviser-unlocks.test.mjs asserts its share_talent_choice mapping (needs a decision on whether that test covers live behavior). Cascade orphans (force-technique-engine, suite-reselection-*, skill-engine/validator, multiclass-policy*) retained as possibly unwired mechanics; ratchet unreachable limit set to 471 with this cascade. progression-event-processor.js is now test-only (see F-STO-004 note)."
+   "notes": "Deleted 10 modules of the legacy static ProgressionEngine stack and 5 unused imports. feature-dispatcher.js kept: tests/class-phase-6d-officer-improviser-unlocks.test.mjs asserts its share_talent_choice mapping (needs a decision on whether that test covers live behavior). Cascade orphans (force-technique-engine, suite-reselection-*, skill-engine/validator, multiclass-policy*) retained as possibly unwired mechanics; ratchet unreachable limit set to 471 with this cascade. progression-event-processor.js is now test-only (see F-STO-004 note). | see commit b4c9fc9e6"
   },
   {
    "id": "F-PRG-018",
@@ -1169,13 +1170,14 @@
     "B-ABL F-ABL-004"
    ],
    "commits": [
-    "pending"
+    "pending",
+    "b4c9fc9e6"
    ],
    "tests": [
     "tests/phase2-critical-confirmation-removal.test.mjs"
    ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "Deleted rollCriticalConfirmation, PRE/POST_CRIT_CONFIRM hook ids, getCriticalConfirmBonus. RULES.CRITICAL_CONFIRM_BONUS rule type left for F-ABL-004 coordination."
+   "notes": "Deleted rollCriticalConfirmation, PRE/POST_CRIT_CONFIRM hook ids, getCriticalConfirmBonus. RULES.CRITICAL_CONFIRM_BONUS rule type left for F-ABL-004 coordination. | see commit b4c9fc9e6"
   },
   {
    "id": "F-SKL-001",
