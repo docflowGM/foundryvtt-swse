@@ -8,40 +8,40 @@
    "kind": "mechanical",
    "files": 133,
    "runtimeModules": 37,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-ACT",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 15,
+   "findings": 15
   },
   {
    "domain": "abilities-effects",
    "kind": "mechanical",
    "files": 129,
    "runtimeModules": 91,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-ABL",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 12,
+   "findings": 9
   },
   {
    "domain": "progression",
    "kind": "mechanical",
    "files": 571,
    "runtimeModules": 367,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-PRG",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 15,
+   "findings": 23
   },
   {
    "domain": "classes",
    "kind": "mechanical",
    "files": 134,
    "runtimeModules": 11,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-CLS",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 9,
+   "findings": 6
   },
   {
    "domain": "species",
@@ -68,10 +68,10 @@
    "kind": "mechanical",
    "files": 720,
    "runtimeModules": 105,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-FEA",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 15,
+   "findings": 14
   },
   {
    "domain": "talents",
@@ -138,20 +138,20 @@
    "kind": "mechanical",
    "files": 162,
    "runtimeModules": 39,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-STO",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 8,
+   "findings": 9
   },
   {
    "domain": "vehicles",
    "kind": "mechanical",
    "files": 764,
    "runtimeModules": 119,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-VEH",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 16,
+   "findings": 12
   },
   {
    "domain": "droids",
@@ -178,20 +178,20 @@
    "kind": "feature",
    "files": 568,
    "runtimeModules": 240,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-MEN",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 15,
+   "findings": 15
   },
   {
    "domain": "galactic-profiles",
    "kind": "feature",
    "files": 211,
    "runtimeModules": 167,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-GAL",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 9,
+   "findings": 9
   },
   {
    "domain": "holonet",
@@ -238,10 +238,10 @@
    "kind": "presentation",
    "files": 464,
    "runtimeModules": 179,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-UIS",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 13,
+   "findings": 13
   },
   {
    "domain": "governance",
@@ -375,30 +375,20 @@
   }
  ],
  "missingContracts": [
-  "actor-core",
-  "abilities-effects",
-  "progression",
-  "classes",
   "species",
   "skills",
-  "feats",
   "talents",
   "force",
   "combat",
   "rolls",
   "equipment",
   "customization",
-  "store-economy",
-  "vehicles",
   "droids",
   "npc-followers",
-  "mentor-suggestion",
-  "galactic-profiles",
   "holonet",
   "games",
   "houserules",
   "chat",
-  "ui-shell",
   "governance",
   "settings-config",
   "data-registries",

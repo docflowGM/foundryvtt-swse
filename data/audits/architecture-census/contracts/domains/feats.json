@@ -1,0 +1,1012 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-FEA",
+  "domain": "feats",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "Feats own catalog identity (FeatRegistry over generated packs from data/canonical/feats.json), prerequisites data, choice persistence, and a mechanical layer of per-family normalization hooks (stamp abilityMeta on owned feats) plus runtime patches (wrap combat/skill/grapple resolvers). Owned-item writes route through ActorEngine, but 36 createItem/updateItem write listeners are ungated per client, the live rule tables duplicate canonical data in a different shape, seven live modules replace CombatOptionResolver.collectAttackModifiers in a chain, 49 modules (~9.8k SLOC) are orphan although addenda describe them as implemented, and usage flags are written directly (A-02). No Foundry acceptance exists for any feat runtime path.",
+  "responsibilities": [
+    {
+      "id": "R-FEA-01",
+      "responsibility": "Canonical feat content",
+      "owner": {
+        "path": "data/canonical/feats.json",
+        "symbol": "(data)"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "docs/audits/phase-5c-authority-classification.md:46",
+        "docs/feat-pack-recovery.md:1"
+      ],
+      "tests": [
+        "tests/feat-catalog-validity-regression.test.mjs"
+      ],
+      "notes": "APPROVED by Phase 5C classification"
+    },
+    {
+      "id": "R-FEA-02",
+      "responsibility": "Runtime feat lookup/identity",
+      "owner": {
+        "path": "scripts/registries/feat-registry.js",
+        "symbol": "FeatRegistry"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/registries/feat-registry.js:63"
+      ],
+      "tests": [
+        "tests/feat-registry-canonical-identity.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-FEA-03",
+      "responsibility": "Runtime pack seeding and icon repair (GM)",
+      "owner": {
+        "path": "scripts/registries/feat-pack-seeder.js",
+        "symbol": "FeatPackSeeder"
+      },
+      "status": [
+        "OBSERVED",
+        "FOUNDRY_ACCEPTANCE_REQUIRED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/registries/feat-registry.js:158",
+        "scripts/registries/feat-pack-seeder.js:146",
+        "scripts/registries/feat-pack-seeder.js:256"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FEA-04",
+      "responsibility": "Feat prerequisite data",
+      "owner": {
+        "path": "scripts/data/authority/feat-prerequisite-authority.js",
+        "symbol": "FEAT_PREREQUISITE_AUTHORITY"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/data/authority/feat-prerequisite-authority.js:4"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FEA-05",
+      "responsibility": "Feat/talent domain guard",
+      "owner": {
+        "path": "scripts/data/feat-domain-guard.js",
+        "symbol": "filterFeatDomainDocuments"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/data/feat-domain-guard.js:59"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FEA-06",
+      "responsibility": "Feat choice persistence",
+      "owner": {
+        "path": "scripts/apps/choices/feat-choice-dialog.js",
+        "symbol": "FeatChoiceDialog.promptAndApply"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/apps/choices/feat-choice-dialog.js:315"
+      ],
+      "tests": [
+        "tests/feat-choice-persistence-and-scoped-prerequisites.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-FEA-07",
+      "responsibility": "Feat rule metadata stamping (18 live normalization families)",
+      "owner": {
+        "path": "scripts/engine/feats/register-feat-runtime.js",
+        "symbol": "registerFeatRuntime"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/feats/register-feat-runtime.js:76",
+        "scripts/engine/feats/force-point-feat-normalization-hooks.js:192"
+      ],
+      "tests": [],
+      "notes": "CONFLICT with A-01 (duplicate rule copy) and A-09"
+    },
+    {
+      "id": "R-FEA-08",
+      "responsibility": "Feat runtime effects via resolver wrapping",
+      "owner": {
+        "path": "scripts/engine/feats/*-runtime-patches.js",
+        "symbol": "register*RuntimePatches"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/feats/grapple-runtime-patches.js:106",
+        "scripts/engine/feats/core-attack-option-runtime-patches.js:181"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FEA-09",
+      "responsibility": "Meta-resource feat rules and reroll supersession",
+      "owner": {
+        "path": "scripts/engine/feats/meta-resource-feat-resolver.js",
+        "symbol": "MetaResourceFeatResolver"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/feats/meta-resource-feat-resolver.js:110",
+        "scripts/engine/feats/meta-resource-feat-resolver.js:659"
+      ],
+      "tests": [
+        "tests/grab-grapple-resistance-channel-split.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-FEA-10",
+      "responsibility": "Weapon-scoped feat bonuses",
+      "owner": {
+        "path": "scripts/engine/feat/scoped-combat-feat-resolver.js",
+        "symbol": "ScopedCombatFeatResolver"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/engine/feat/scoped-combat-feat-resolver.js:139"
+      ],
+      "tests": [
+        "tests/combat-feat-attack-modifier-regression.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-FEA-11",
+      "responsibility": "Feat ActiveEffect lifecycle",
+      "owner": {
+        "path": "scripts/engine/features/feat-effect-applier.js",
+        "symbol": "FeatEffectApplier"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/features/feat-effect-applier.js:168",
+        "scripts/engine/features/feat-effect-applier.js:170"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FEA-12",
+      "responsibility": "Encounter-limited use tracking",
+      "owner": {
+        "path": "scripts/engine/feats/encounter-use-tracker.js",
+        "symbol": "EncounterUseTracker"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/feats/encounter-use-tracker.js:71"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FEA-13",
+      "responsibility": "Core attack-option action economy",
+      "owner": {
+        "path": "scripts/engine/feats/core-attack-option-action-economy.js",
+        "symbol": "getCoreAttackOptionEconomy"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/feats/core-attack-option-action-economy.js:201"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FEA-14",
+      "responsibility": "Condition-track feat actions",
+      "owner": {
+        "path": "scripts/engine/feats/condition-track-feat-actions.js",
+        "symbol": "ConditionTrackFeatActions"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/feats/condition-track-feat-actions.js:108",
+        "scripts/engine/feats/condition-track-feat-actions.js:309"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FEA-15",
+      "responsibility": "Force Point feat rules/actions",
+      "owner": {
+        "path": "scripts/engine/feats/force-point-feat-rules.js",
+        "symbol": "ForcePointFeatRules"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/feats/force-point-feat-rules.js:135",
+        "scripts/engine/feats/force-point-feat-actions.js:227"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "FeatRegistry",
+      "path": "scripts/registries/feat-registry.js",
+      "line": 63,
+      "consumers": 32,
+      "contract": "read-only feat lookup; canonical id authoritative; ambiguous names throw"
+    },
+    {
+      "symbol": "MetaResourceFeatResolver",
+      "path": "scripts/engine/feats/meta-resource-feat-resolver.js",
+      "line": 110,
+      "consumers": 21,
+      "contract": "static rule getters; sole writer of reroll supersession flags"
+    },
+    {
+      "symbol": "EncounterUseTracker",
+      "path": "scripts/engine/feats/encounter-use-tracker.js",
+      "line": 14,
+      "consumers": 9,
+      "contract": "per-combat use flags"
+    },
+    {
+      "symbol": "ConditionTrackFeatActions",
+      "path": "scripts/engine/feats/condition-track-feat-actions.js",
+      "line": 108,
+      "consumers": 4,
+      "contract": "Recover/Quick Comeback"
+    },
+    {
+      "symbol": "getCoreAttackOptionEconomy",
+      "path": "scripts/engine/feats/core-attack-option-action-economy.js",
+      "line": 201,
+      "consumers": 5,
+      "contract": "pure action-cost lookup"
+    },
+    {
+      "symbol": "ForcePointFeatRules",
+      "path": "scripts/engine/feats/force-point-feat-rules.js",
+      "line": 135,
+      "consumers": 4,
+      "contract": "pure FP feat rule reader"
+    },
+    {
+      "symbol": "resolveActionCost",
+      "path": "scripts/engine/feats/action-speed-runtime-patches.js",
+      "line": 61,
+      "consumers": 3,
+      "contract": "feat-adjusted action cost (register function never called)"
+    },
+    {
+      "symbol": "ScopedCombatFeatResolver",
+      "path": "scripts/engine/feat/scoped-combat-feat-resolver.js",
+      "line": 139,
+      "consumers": 2,
+      "contract": "getBonus(actor, weapon, kind, context)"
+    },
+    {
+      "symbol": "registerFeatRuntime",
+      "path": "scripts/engine/feats/register-feat-runtime.js",
+      "line": 76,
+      "consumers": 1,
+      "contract": "sole import gate; ordered registration at ready"
+    },
+    {
+      "symbol": "initializeFeatEffectsHooks",
+      "path": "scripts/engine/features/feat-effect-applier.js",
+      "line": 168,
+      "consumers": 1,
+      "contract": "author-client-gated createItem/deleteItem"
+    },
+    {
+      "symbol": "FeatChoiceDialog",
+      "path": "scripts/apps/choices/feat-choice-dialog.js",
+      "line": 214,
+      "consumers": 8,
+      "contract": "prompt + persist selectedChoice"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "infrastructure",
+      "data-registries",
+      "actor-core (read)",
+      "governance/ActorEngine",
+      "combat and skills resolvers via declared seams",
+      "chat/SWSEChat"
+    ],
+    "prohibited": [
+      "engine->UI imports (A-07)",
+      "direct actor/owned-item writes (A-02)",
+      "replacing other domains' methods at runtime (A-09)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/feats/core-attack-option-runtime-patches.js",
+        "to": "CombatOptionResolver.collectAttackModifiers (combat)",
+        "evidence": "scripts/engine/feats/core-attack-option-runtime-patches.js:181"
+      },
+      {
+        "from": "scripts/engine/feats/grapple-runtime-patches.js",
+        "to": "SWSEGrappling (combat)",
+        "evidence": "scripts/engine/feats/grapple-runtime-patches.js:106"
+      },
+      {
+        "from": "scripts/engine/feats/defense-feat-runtime-patches.js",
+        "to": "ModifierEngine._getFeatModifiers (abilities-effects)",
+        "evidence": "scripts/engine/feats/defense-feat-runtime-patches.js:64"
+      },
+      {
+        "from": "scripts/engine/feats/force-training-entitlement-runtime-patches.js",
+        "to": "FeatGrantEntitlementResolver (progression)",
+        "evidence": "scripts/engine/feats/force-training-entitlement-runtime-patches.js:134"
+      },
+      {
+        "from": "scripts/engine/feats/grapple-expanded-runtime-patches.js",
+        "to": "DamageSystem.applyPacketToActor (combat)",
+        "evidence": "scripts/engine/feats/grapple-expanded-runtime-patches.js:123"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-FEA-1",
+      "boundary": "canonical feats.json -> generated pack/catalog -> FeatRegistry",
+      "interface": "read-only documents; GM-only runtime seeding fallback",
+      "status": [
+        "OBSERVED",
+        "FOUNDRY_ACCEPTANCE_REQUIRED"
+      ]
+    },
+    {
+      "id": "C-FEA-2",
+      "boundary": "normalization hook (producer of system.abilityMeta.*) -> runtime patch/resolver (consumer)",
+      "interface": "owned-item abilityMeta rule arrays",
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ]
+    },
+    {
+      "id": "C-FEA-3",
+      "boundary": "feat contributions -> combat math",
+      "interface": "today: method replacement; PROPOSED: CombatOptionResolver contributor registry",
+      "status": [
+        "OBSERVED",
+        "PROPOSED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-FEA-01",
+      "existingSource": "docs/audits/chat-feat-implementation-addendum-2026-07-06.json (purpose, runtimeHomes)",
+      "claim": "Batch feats are implemented with a known consumer; runtime homes listed",
+      "observed": "skill-feat, expanded-skill, team, rebellion-species and second-wind normalization modules are orphan; registerSkillFeatRuntimePatches/registerTeamFeatRuntimePatches/rebellion-species register are never called",
+      "evidence": [
+        "docs/audits/chat-feat-implementation-addendum-2026-07-06.json:5",
+        "docs/audits/chat-feat-implementation-addendum-2026-07-06.json:17",
+        "scripts/engine/feats/team-feat-runtime-patches.js:172",
+        "scripts/engine/feats/register-feat-runtime.js:76"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-FEA-02",
+      "existingSource": "docs/audits/phase-5c-authority-classification.md §table",
+      "claim": "data/canonical/feats.json is the one operational authority",
+      "observed": "live runtime rule shapes are hard-coded in normalization hooks and differ from canonical abilityMeta (Confident Success: GRANT_FORCE_POINT_ON_SUCCESS in canonical vs GAIN_NORMAL_FP_ON_SKILL_APPLICATION_SUCCESS in hook, which runtime reads)",
+      "evidence": [
+        "docs/audits/phase-5c-authority-classification.md:46",
+        "data/canonical/feats.json:10331",
+        "scripts/engine/feats/force-point-feat-normalization-hooks.js:79",
+        "scripts/engine/feats/force-point-feat-actions.js:210"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-FEA-03",
+      "existingSource": "docs/audits/v2-math-integrity-authority-ledger.md §Second Wind",
+      "claim": "second-wind-rider-runtime-patches monkey-patch is a robustness note on a live path",
+      "observed": "module is orphan and never runs",
+      "evidence": [
+        "docs/audits/v2-math-integrity-authority-ledger.md:306"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-FEA-01",
+      "item": "Team feat skill bonuses: prompt is live, bonus patch and producer never registered",
+      "source": "scripts/rolls/skills.js:243; scripts/engine/feats/team-feat-runtime-patches.js:172",
+      "status": "UNIMPLEMENTED"
+    },
+    {
+      "id": "U-FEA-02",
+      "item": "Skill-feat reroll/substitution/temporary-defense runtime patches never registered",
+      "source": "scripts/engine/feats/skill-feat-runtime-patches.js:361",
+      "status": "UNIMPLEMENTED"
+    },
+    {
+      "id": "U-FEA-03",
+      "item": "Advisory/defense-avoidance riders need a per-attack selected-advisory UI context",
+      "source": "docs/audits/combat-feat-runtime-architecture.md:64",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [
+    {
+      "item": "Confident Success (Rebellion Era Campaign Guide p.31): is \"FP gained upon reaching current level\" the same as the system FP maximum? Second cap not enforced.",
+      "registerRef": "NONE — new entry required (owner)"
+    },
+    {
+      "item": "Meaning of a feat \"per day\" limit in a VTT (campaign day vs real-world day) for skill-feat daily uses",
+      "registerRef": "NONE — owner decision; may not be a rules question"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "Multi-client creation/update of a normalized feat: exactly one metadata write, no permission errors on non-owner clients",
+      "source": "F-FEA-001"
+    },
+    {
+      "item": "Cleave availability chat card posts once per drop",
+      "source": "F-FEA-006"
+    },
+    {
+      "item": "GM empty-pack seeding and icon repair on a migrated v13 world",
+      "source": "R-FEA-03"
+    },
+    {
+      "item": "Attack bonus composition with Riflemaster+Pistoleer+Sniper+Dual Weapon+droid+core attack options wrappers",
+      "source": "F-FEA-002"
+    }
+  ],
+  "findings": [
+    {
+      "category": "performance",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "36 ungated createItem/updateItem write listeners run on every client and on every item update",
+      "affectedFiles": [
+        "scripts/engine/feats/register-feat-runtime.js",
+        "scripts/engine/feats/force-point-feat-normalization-hooks.js",
+        "scripts/engine/feats/grapple-feat-normalization-hooks.js",
+        "scripts/engine/feats/droid-combat-feat-normalization-hooks.js",
+        "(15 further *-normalization-hooks.js registered at register-feat-runtime.js:78-177)"
+      ],
+      "evidence": [
+        "scripts/engine/feats/force-point-feat-normalization-hooks.js:193",
+        "scripts/engine/feats/force-point-feat-normalization-hooks.js:194",
+        "scripts/engine/feats/force-point-feat-normalization-hooks.js:179",
+        "scripts/engine/feats/grapple-feat-normalization-hooks.js:290",
+        "scripts/engine/features/feat-effect-applier.js:170"
+      ],
+      "observed": "Each of the 18 live families registers Hooks.on(createItem) and Hooks.on(updateItem) with the signature (item, options) and no userId/owner check; Foundry fires these on every connected client. For a matching feat each client calls ActorEngine.updateEmbeddedDocuments with a full metadata patch, without diffing against current values; any update to the feat (e.g. toggling) re-issues the patch. FeatEffectApplier shows the project's correct pattern (game.user.id !== userId return).",
+      "intendedOwnership": "One write per lifecycle event on the originating client; ideally metadata is derived at build time from canonical data (see F-FEA-003).",
+      "contractRef": "A-02, A-08, R-FEA-07, INV-FEA-2",
+      "proposedSolution": "Replace the 18 family listeners with one feat-normalization dispatcher (single createItem/updateItem pair) gated on game.user.id === userId, that looks up the family by canonical id/name in a table and skips when the computed patch equals current values.",
+      "alternatives": "Minimal: add the userId gate and a no-op diff to each family; or move metadata into the generated pack so no runtime normalization is needed.",
+      "dependencies": [
+        "F-FEA-003"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Offline: shim test that one createItem fires exactly one ActorEngine write with two simulated users; unchanged patch triggers no write.",
+      "foundryAcceptance": "Two clients (GM + owning player) add Force Boon; confirm one update and no permission errors in the non-owner console.",
+      "scope": "M",
+      "simplificationBenefit": "36 listeners -> 2; removes per-update redundant writes",
+      "risk": "Normalization order assumptions in register-feat-runtime.js:10-13 must be preserved by the dispatcher",
+      "perfImpact": "high",
+      "id": "F-FEA-001"
+    },
+    {
+      "category": "legacy-compat",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Live runtime monkey-patch chain on combat, grapple, modifier and progression resolvers",
+      "affectedFiles": [
+        "scripts/engine/feats/core-attack-option-runtime-patches.js",
+        "scripts/engine/feats/sniper-runtime-patches.js",
+        "scripts/engine/feats/riflemaster-runtime-patches.js",
+        "scripts/engine/feats/pistoleer-runtime-patches.js",
+        "scripts/engine/feats/dual-wield-runtime-patches.js",
+        "scripts/engine/feats/droid-combat-runtime-patches.js",
+        "scripts/engine/feats/combat-feat-damage-runtime-patches.js",
+        "scripts/engine/feats/grapple-runtime-patches.js",
+        "scripts/engine/feats/defense-feat-runtime-patches.js",
+        "scripts/engine/feats/force-training-entitlement-runtime-patches.js",
+        "scripts/engine/feats/grapple-expanded-runtime-patches.js"
+      ],
+      "evidence": [
+        "scripts/engine/feats/core-attack-option-runtime-patches.js:181",
+        "scripts/engine/feats/sniper-runtime-patches.js:127",
+        "scripts/engine/feats/riflemaster-runtime-patches.js:128",
+        "scripts/engine/feats/pistoleer-runtime-patches.js:139",
+        "scripts/engine/feats/dual-wield-runtime-patches.js:12",
+        "scripts/engine/feats/droid-combat-runtime-patches.js:485",
+        "scripts/engine/feats/combat-feat-damage-runtime-patches.js:41",
+        "scripts/engine/feats/grapple-runtime-patches.js:106",
+        "scripts/engine/feats/grapple-runtime-patches.js:308",
+        "scripts/engine/feats/defense-feat-runtime-patches.js:64",
+        "scripts/engine/feats/force-training-entitlement-runtime-patches.js:134",
+        "scripts/engine/feats/grapple-expanded-runtime-patches.js:123"
+      ],
+      "observed": "Seven live modules replace CombatOptionResolver.collectAttackModifiers, each wrapping the previous; composition depends on registerFeatRuntime order. SWSEGrappling has 8 methods replaced; ModifierEngine._getFeatModifiers, FeatGrantEntitlementResolver (progression) and DamageSystem.applyPacketToActor are replaced too. Legacy class A (active) but violates A-09.",
+      "intendedOwnership": "Combat/grapple/modifier owners expose declared contributor seams; feats register contributions, not replacements.",
+      "contractRef": "A-09, C-FEA-3",
+      "proposedSolution": "Add contributor registries (CombatOptionResolver.registerAttackContributor, SWSEGrappling feat-rule seam, ModifierEngine feat-modifier provider) and migrate wrappers one family at a time, deleting each patch after parity tests pass.",
+      "alternatives": "Keep wrappers but centralize them into one ordered composition list with a test asserting the order.",
+      "dependencies": [
+        "combat domain contract (seam owner)"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "tests/combat-feat-attack-modifier-regression.test.mjs extended to snapshot collectAttackModifiers output for each family before/after migration.",
+      "foundryAcceptance": "Attack roll breakdown with multiple stacked weapon-style feats matches pre-migration output.",
+      "scope": "L",
+      "simplificationBenefit": "Removes order-dependent hidden call chain from the attack SSOT path",
+      "risk": "Behavior drift in attack bonuses if parity is not snapshotted",
+      "perfImpact": "low",
+      "id": "F-FEA-002"
+    },
+    {
+      "category": "duplicate-schema-interpretation",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Normalization hooks hard-code a second copy of feat rules diverging from canonical abilityMeta",
+      "affectedFiles": [
+        "scripts/engine/feats/force-point-feat-normalization-hooks.js",
+        "scripts/engine/feats/force-point-feat-actions.js",
+        "data/canonical/feats.json"
+      ],
+      "evidence": [
+        "scripts/engine/feats/force-point-feat-normalization-hooks.js:26",
+        "scripts/engine/feats/force-point-feat-normalization-hooks.js:79",
+        "data/canonical/feats.json:10331",
+        "scripts/engine/feats/force-point-feat-actions.js:210"
+      ],
+      "observed": "rulesForFeat(name) tables in each family define runtime rule objects by feat name. For Confident Success the canonical record carries skillSuccessResourceRules type GRANT_FORCE_POINT_ON_SUCCESS; the hook writes resourceRules.forcePoints type GAIN_NORMAL_FP_ON_SKILL_APPLICATION_SUCCESS, which is what force-point-feat-actions reads (with a name fallback). The canonical rule is unread.",
+      "intendedOwnership": "data/canonical/feats.json (R-FEA-01) is the single rule source; runtime reads one shape.",
+      "contractRef": "A-01, CR-FEA-02",
+      "proposedSolution": "Per family, move the rule objects into the canonical record (owner-approved data change through tools/build-feat-production.mjs) and delete the hook table; until then add a CI check that flags feats whose canonical abilityMeta rule types are not consumed.",
+      "alternatives": "Declare the hook tables authoritative and strip unused rule shapes from canonical data (requires owner decision since it contradicts Phase 5C).",
+      "dependencies": [
+        "F-FEA-001"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Census-style test: every abilityMeta rule type in canonical feats has a runtime consumer, and no rulesForFeat table exists for a migrated family.",
+      "foundryAcceptance": "Confident Success grant works on a feat created from the pack without normalization.",
+      "scope": "L",
+      "simplificationBenefit": "Removes ~18 name-keyed rule tables and runtime writes",
+      "risk": "Data migration of existing actor-owned feat items",
+      "perfImpact": "medium",
+      "id": "F-FEA-003"
+    },
+    {
+      "category": "dead-code",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "49 orphan feat modules (~9.8k SLOC), many documented as implemented",
+      "affectedFiles": [
+        "scripts/engine/feats/skill-feat-expanded-normalization-hooks.js",
+        "scripts/engine/feats/unarmed-style-feat-normalization-hooks.js",
+        "scripts/engine/feats/team-feat-normalization-hooks.js",
+        "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+        "scripts/engine/feats/mobility-positioning-runtime-patches.js",
+        "scripts/engine/feats/defense-avoidance-runtime-patches.js",
+        "scripts/registries/feat-stub-pack.js",
+        "scripts/engine/progression/feats/feat-registry-ui.js",
+        "(41 more; see domain-facts feats.json unreachableModules)"
+      ],
+      "evidence": [
+        "scripts/engine/feats/register-feat-runtime.js:76",
+        "docs/audits/combat-feat-runtime-architecture.md:7",
+        "scripts/engine/feats/team-feat-runtime-patches.js:172",
+        "scripts/engine/feats/skill-feat-runtime-patches.js:361"
+      ],
+      "observed": "No static or dynamic importer, no system.json entry (esmodules is index.js only), no pack/macro reference found by git grep; modules self-register only when their register function is called, which never happens. Clusters: (a) normalization+runtime pairs for families in feat addenda (skill, expanded skill, team, rebellion, second wind, weapon/armor riders, galaxy intrigue, unknown regions, force scoundrel, legacy clone, starship, sport hunter, area explosives runtime, mobility runtime, defense-avoidance runtime) = unwired-but-intended (UNIMPLEMENTED integration); (b) feat-stub-pack.js, feat-registry-ui.js, action-speed-feat-resolver.js, combat-feat-runtime-support.js, ability-meta-schema-default-hooks.js = legacy C candidates pending owner; also live-imported modules whose register function is never called (skill-feat-runtime-patches, team-feat-runtime-patches, action-speed-runtime-patches, rebellion-species-skill-feat-runtime-patches).",
+      "intendedOwnership": "Every feat family is either wired through registerFeatRuntime with a test or deleted.",
+      "contractRef": "A-09, CR-FEA-01, C-FEA-2",
+      "proposedSolution": "Owner triage per cluster: wire (after F-FEA-001 dispatcher exists, with a test per family) or delete. Mark addenda statuses as NOT_REGISTERED until wired.",
+      "alternatives": "Move orphan modules to an archive directory outside scripts/ to prevent false implementation claims.",
+      "dependencies": [
+        "F-FEA-001",
+        "F-FEA-003"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "CI check: every scripts/engine/feats/*.js is reachable from index.js or listed in an explicit archive allow-list.",
+      "foundryAcceptance": "Per wired family.",
+      "scope": "L",
+      "simplificationBenefit": "Up to ~9.8k SLOC removed or made truthful",
+      "risk": "Wiring a family activates untested mechanics; deleting loses work in progress",
+      "perfImpact": "low",
+      "id": "F-FEA-004"
+    },
+    {
+      "category": "bypass-engine",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Direct actor.setFlag/unsetFlag usage flags in 7 live feat modules",
+      "affectedFiles": [
+        "scripts/engine/feats/condition-track-feat-actions.js",
+        "scripts/engine/feats/encounter-use-tracker.js",
+        "scripts/engine/feats/force-point-feat-actions.js",
+        "scripts/engine/feats/feat-action-listeners.js",
+        "scripts/engine/feats/skill-feat-runtime-patches.js",
+        "scripts/engine/feats/meta-resource-feat-resolver.js",
+        "scripts/engine/feats/combat-feat-damage-rule-resolver.js"
+      ],
+      "evidence": [
+        "scripts/engine/feats/condition-track-feat-actions.js:57",
+        "scripts/engine/feats/condition-track-feat-actions.js:193",
+        "scripts/engine/feats/condition-track-feat-actions.js:310",
+        "scripts/engine/feats/encounter-use-tracker.js:71",
+        "scripts/engine/feats/encounter-use-tracker.js:133",
+        "scripts/engine/feats/force-point-feat-actions.js:186",
+        "scripts/engine/feats/force-point-feat-actions.js:227",
+        "scripts/engine/feats/feat-action-listeners.js:122",
+        "scripts/engine/feats/skill-feat-runtime-patches.js:116",
+        "scripts/engine/feats/meta-resource-feat-resolver.js:1073",
+        "scripts/engine/feats/combat-feat-damage-rule-resolver.js:146"
+      ],
+      "observed": "Actor-owned usage/progress flags written directly (violations of A-02; not world docs, no exception comment). combat-feat-damage-rule-resolver uses ActorEngine.updateActor with a setFlag fallback (146). Writes paired with an ActorEngine call (condition-track 309-310, force-point 226-227, meta-resource 1065-1073) are two separate writes, so a failure leaves the state half-applied. Chat-message updates at meta-resource-feat-resolver.js:659,878 are documented supersession writes on ChatMessage documents (legitimate exception, CI-guarded).",
+      "intendedOwnership": "ActorEngine (single updateActor with flags path, combined with the paired mutation).",
+      "contractRef": "A-02, R-FEA-12, R-FEA-14",
+      "proposedSolution": "Route EncounterUseTracker through ActorEngine.updateActor({flags.<scope>.<key>}) and fold each paired write into the same ActorEngine update (e.g. gainForcePoints accepting extra flag updates).",
+      "alternatives": "An ActorEngine.setActorFlag helper with source metadata.",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Shim tests asserting a single ActorEngine call per action and no direct setFlag.",
+      "foundryAcceptance": "Recover action across rounds; Jedi Familiarity once per encounter.",
+      "scope": "S",
+      "simplificationBenefit": "Single mutation path; atomic paired writes",
+      "risk": "Low",
+      "perfImpact": "low",
+      "id": "F-FEA-005"
+    },
+    {
+      "category": "performance",
+      "severity": "medium",
+      "status": "suspected",
+      "title": "Cleave target-dropped emitted from ungated updateActor watcher and swse.damageApplied",
+      "affectedFiles": [
+        "scripts/engine/feats/core-combat-reaction-runtime-patches.js"
+      ],
+      "evidence": [
+        "scripts/engine/feats/core-combat-reaction-runtime-patches.js:396",
+        "scripts/engine/feats/core-combat-reaction-runtime-patches.js:417",
+        "scripts/engine/feats/core-combat-reaction-runtime-patches.js:288",
+        "scripts/governance/actor-engine/actor-engine.js:1528"
+      ],
+      "observed": "The updateActor HP watcher has no userId gate (fires on every client) and the swse.damageApplied listener treats a missing previousHp as positive; ActorEngine emits swse.damageApplied without previousHp/currentHp. emitTargetDropped posts a Cleave chat card per invocation (288). Duplicate cards per client and per path are likely; not run in Foundry.",
+      "intendedOwnership": "One emission from the damage authority with before/after HP.",
+      "contractRef": "A-05, A-08",
+      "proposedSolution": "Drop the updateActor watcher; have ActorEngine include hpBefore/hpAfter in swse.damageApplied and emit only on the originating client; dedupe by event id.",
+      "alternatives": "Gate the watcher on userId and dedupe per actor/round.",
+      "dependencies": [
+        "combat domain (damage event payload)"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Shim test: one drop -> one swse.cleaveAvailable.",
+      "foundryAcceptance": "Two clients connected, drop a target to 0 HP; count Cleave cards.",
+      "scope": "S",
+      "simplificationBenefit": "Removes a global updateActor listener",
+      "risk": "Low",
+      "perfImpact": "medium",
+      "id": "F-FEA-006"
+    },
+    {
+      "category": "conflicting-interface",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Skill-feat daily uses keyed on real-world UTC date",
+      "affectedFiles": [
+        "scripts/engine/feats/skill-feat-runtime-patches.js"
+      ],
+      "evidence": [
+        "scripts/engine/feats/skill-feat-runtime-patches.js:92",
+        "scripts/engine/feats/skill-feat-runtime-patches.js:116"
+      ],
+      "observed": "todayKey() = new Date().toISOString().slice(0,10); Force Point receipts record game.time.worldTime for once-per-day contracts (actor-engine.js spendForcePoints). Two incompatible \"day\" clocks. Note the module register function is never called, so only directly imported helpers run.",
+      "intendedOwnership": "One campaign-day clock service.",
+      "contractRef": "A-01",
+      "proposedSolution": "Owner decides the day definition; then use a single campaign clock helper in both feats and force.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": true,
+      "regressionTests": "Clock helper unit test.",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "One clock",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-FEA-007"
+    },
+    {
+      "category": "unimplemented",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Confident Success: second published cap not enforced; counter write not atomic",
+      "affectedFiles": [
+        "scripts/engine/feats/force-point-feat-actions.js"
+      ],
+      "evidence": [
+        "scripts/engine/feats/force-point-feat-actions.js:221",
+        "scripts/engine/feats/force-point-feat-actions.js:225",
+        "scripts/engine/feats/force-point-feat-actions.js:227",
+        "data/canonical/feats.json:10331"
+      ],
+      "observed": "Canonical text: no more than 3 FP per level and cannot have more FP than gained upon reaching current level; canonical automation note says \"Needs ... both Force Point caps\". Code enforces maxPerLevel (default 3 when rule missing) and relies on ActorEngine.gainForcePoints max cap; capToLevelStartMax is written by the hook but never read.",
+      "intendedOwnership": "Feats (rule) + FRC ForcePointsService (cap).",
+      "contractRef": "A-11, R-FEA-15",
+      "proposedSolution": "DEFERRED_RULES_REVIEW: record whether the second cap equals the FP max; do not implement an interpretation. Separately make the counter write part of the gain update.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": true,
+      "regressionTests": "After ruling.",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Mechanic may over-grant FP",
+      "perfImpact": "none",
+      "id": "F-FEA-008"
+    },
+    {
+      "category": "consolidation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "selectedChoiceFromItem cloned in 7 files, all orphan",
+      "affectedFiles": [
+        "scripts/engine/feats/remaining-weapon-armor-feat-normalization-hooks.js",
+        "scripts/engine/feats/return-fire-feat-normalization-hooks.js",
+        "scripts/engine/feats/unknown-regions-weapon-feat-normalization-hooks.js",
+        "scripts/engine/feats/weapon-autofire-feat-normalization-hooks.js",
+        "scripts/engine/feats/weapon-critical-feat-normalization-hooks.js",
+        "scripts/engine/feats/weapon-foundation-feat-normalization-hooks.js",
+        "scripts/engine/feats/weapon-leftover-feat-normalization-hooks.js"
+      ],
+      "evidence": [
+        "scripts/engine/feats/remaining-weapon-armor-feat-normalization-hooks.js:30",
+        "scripts/engine/feats/return-fire-feat-normalization-hooks.js:33",
+        "scripts/engine/feats/weapon-foundation-feat-normalization-hooks.js:29"
+      ],
+      "observed": "Identical 191-token function; every copy is in an orphan module, so there is no live duplication. Also weaponText cloned 3x (orphan) and abilityScore 2x (one live: core-attack-option-runtime-patches.js:36).",
+      "intendedOwnership": "FeatChoiceResolver (canonical system.selectedChoice reader).",
+      "contractRef": "F-FEA-004",
+      "proposedSolution": "Resolve with F-FEA-004: if wired, use FeatChoiceResolver; if deleted, the clone disappears.",
+      "alternatives": "",
+      "dependencies": [
+        "F-FEA-004"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "Low",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-FEA-009"
+    },
+    {
+      "category": "oversized-module",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "MetaResourceFeatResolver mixes 8 responsibilities including Force power recovery",
+      "affectedFiles": [
+        "scripts/engine/feats/meta-resource-feat-resolver.js"
+      ],
+      "evidence": [
+        "scripts/engine/feats/meta-resource-feat-resolver.js:125",
+        "scripts/engine/feats/meta-resource-feat-resolver.js:189",
+        "scripts/engine/feats/meta-resource-feat-resolver.js:493",
+        "scripts/engine/feats/meta-resource-feat-resolver.js:981",
+        "scripts/engine/feats/meta-resource-feat-resolver.js:1054"
+      ],
+      "observed": "1,096 lines, 21 consumers: FP/HP max bonuses, DT, Second Wind, reroll/supersession, temporary defenses, customization capabilities, grapple resistance, Forceful Recovery (restores Force powers - FRC concern), Destiny.",
+      "intendedOwnership": "Seams: reroll/supersession (CI-guarded authority, keep), resource bonuses, Force power recovery -> FRC recovery service.",
+      "contractRef": "R-FEA-09",
+      "proposedSolution": "Extract reroll/supersession into its own module (keep the CI guard path updated) and move recoverForcefulRecoveryPower behind the Force recovery service; keep static getters as a thin rule reader.",
+      "alternatives": "Leave as is; document seams.",
+      "dependencies": [
+        "tools/check-reroll-supersession-guard.mjs path update"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Existing reroll guards.",
+      "foundryAcceptance": "",
+      "scope": "M",
+      "simplificationBenefit": "Clear ownership",
+      "risk": "Guard tool hard-codes the path",
+      "perfImpact": "none",
+      "id": "F-FEA-010"
+    },
+    {
+      "category": "wrapper-indirection",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Four FeatRegistry symbols",
+      "affectedFiles": [
+        "scripts/engine/registries/feat-registry.js",
+        "scripts/engine/progression/feats/feat-registry.js",
+        "scripts/engine/progression/feats/feat-registry-ui.js",
+        "scripts/registries/feat-registry.js"
+      ],
+      "evidence": [
+        "scripts/engine/registries/feat-registry.js:1",
+        "scripts/engine/progression/feats/feat-registry.js:9"
+      ],
+      "observed": "engine/registries/feat-registry.js is a 3-line re-export (one dynamic consumer, galactic-profile-service); progression facade adds display-name and completeness logic (6 consumers); feat-registry-ui.js is orphan.",
+      "intendedOwnership": "scripts/registries/feat-registry.js",
+      "contractRef": "R-FEA-02",
+      "proposedSolution": "Reroute the one dynamic import and delete the alias (legacy D); delete feat-registry-ui.js (legacy C, owner confirm); keep the progression facade but document it as a view.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "tests/feat-registry-canonical-identity.test.mjs",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "Fewer lookalike authorities",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-FEA-011"
+    },
+    {
+      "category": "legacy-compat",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Runtime compendium seeding and icon repair fallback (legacy F)",
+      "affectedFiles": [
+        "scripts/registries/feat-pack-seeder.js",
+        "scripts/registries/feat-registry.js"
+      ],
+      "evidence": [
+        "scripts/registries/feat-registry.js:158",
+        "scripts/registries/feat-registry.js:168",
+        "scripts/registries/feat-pack-seeder.js:193",
+        "scripts/registries/feat-pack-seeder.js:316"
+      ],
+      "observed": "On an empty pack a GM client unlocks the system pack and creates documents; on load, icons are repaired by updateDocuments. World/compendium documents (legitimate A-02 exception), GM-gated (146, 256), but a runtime repair path for a build artefact.",
+      "intendedOwnership": "Build tooling (tools/build-feat-production.mjs).",
+      "contractRef": "A-09, R-FEA-03",
+      "proposedSolution": "Keep as F (runtime-risk) until Foundry acceptance proves packs load; then convert to diagnostic-only.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "Fresh v13 world: pack loads without seeding.",
+      "scope": "S",
+      "simplificationBenefit": "Removes runtime pack writes",
+      "risk": "Empty-pack recovery lost",
+      "perfImpact": "low",
+      "id": "F-FEA-012"
+    },
+    {
+      "category": "presentation-rules",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Direct ChatMessage.create in grapple tie message",
+      "affectedFiles": [
+        "scripts/engine/feats/grapple-runtime-patches.js"
+      ],
+      "evidence": [
+        "scripts/engine/feats/grapple-runtime-patches.js:334"
+      ],
+      "observed": "Patched _createGrappleCheckMessage creates the chat card directly.",
+      "intendedOwnership": "scripts/chat/swse-chat.js",
+      "contractRef": "A-05",
+      "proposedSolution": "Use SWSEChat.postHTML.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-FEA-013"
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Feat documentation consolidation candidates",
+      "affectedFiles": [
+        "docs/audits/combat-feat-runtime-architecture.md",
+        "docs/audits/chat-feat-implementation-addendum-2026-07-06.json",
+        "docs/audits/feat-pack-registration-audit.md"
+      ],
+      "evidence": [
+        "docs/audits/combat-feat-runtime-architecture.md:7",
+        "docs/audits/feat-pack-registration-audit.md:149"
+      ],
+      "observed": "Dozens of feat addenda/readiness docs record per-batch status; several assert implementation for orphan modules. combat-feat-runtime-architecture.md is accurate and should be linked as evidence from this contract.",
+      "intendedOwnership": "B-FEA + generated status",
+      "contractRef": "CR-FEA-01",
+      "proposedSolution": "Candidates only: link historical addenda from B-FEA; annotate (not delete) addenda whose runtime homes are unregistered. Preserve owner adjudication records (feat-tags-pass2-owner-adjudication).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "Truthful status",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-FEA-014"
+    }
+  ]
+}

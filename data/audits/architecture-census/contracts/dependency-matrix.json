@@ -42,7 +42,8 @@
    "edges": 225,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "mentor-suggestion",
@@ -50,7 +51,8 @@
    "edges": 119,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -66,7 +68,8 @@
    "edges": 88,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 3,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "feats",
@@ -74,7 +77,8 @@
    "edges": 86,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "ui-shell",
@@ -82,7 +86,8 @@
    "edges": 77,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -90,7 +95,8 @@
    "edges": 66,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 3,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "feats",
@@ -98,7 +104,8 @@
    "edges": 62,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -106,7 +113,8 @@
    "edges": 60,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -130,7 +138,8 @@
    "edges": 56,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "feats",
@@ -138,7 +147,8 @@
    "edges": 53,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -146,7 +156,8 @@
    "edges": 39,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "ui-shell",
@@ -154,7 +165,8 @@
    "edges": 39,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -170,7 +182,8 @@
    "edges": 36,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -186,7 +199,8 @@
    "edges": 35,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "governance",
@@ -202,7 +216,8 @@
    "edges": 33,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "force",
@@ -218,7 +233,8 @@
    "edges": 33,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 3,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "ui-shell",
@@ -226,7 +242,8 @@
    "edges": 33,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 3,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "ui-shell",
@@ -234,7 +251,8 @@
    "edges": 32,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -242,7 +260,8 @@
    "edges": 32,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -250,7 +269,8 @@
    "edges": 31,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -266,7 +286,8 @@
    "edges": 28,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "force",
@@ -282,7 +303,8 @@
    "edges": 26,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -290,7 +312,8 @@
    "edges": 25,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -298,7 +321,8 @@
    "edges": 25,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "ui-shell",
@@ -306,7 +330,8 @@
    "edges": 25,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "ui-shell",
@@ -314,7 +339,8 @@
    "edges": 25,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "houserules",
@@ -330,7 +356,8 @@
    "edges": 24,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -338,7 +365,8 @@
    "edges": 23,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -354,7 +382,8 @@
    "edges": 22,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 3,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -362,7 +391,8 @@
    "edges": 21,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -394,7 +424,8 @@
    "edges": 20,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 3,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -402,7 +433,8 @@
    "edges": 19,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -410,7 +442,8 @@
    "edges": 18,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "talents",
@@ -450,7 +483,8 @@
    "edges": 17,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "rolls",
@@ -474,7 +508,8 @@
    "edges": 17,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -490,7 +525,8 @@
    "edges": 16,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "customization",
@@ -522,7 +558,8 @@
    "edges": 15,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "talents",
@@ -538,7 +575,8 @@
    "edges": 15,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -546,7 +584,8 @@
    "edges": 15,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "combat",
@@ -586,7 +625,8 @@
    "edges": 14,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "compat-patches",
@@ -626,7 +666,8 @@
    "edges": 13,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "skills",
@@ -642,7 +683,8 @@
    "edges": 13,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -650,7 +692,8 @@
    "edges": 12,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -682,7 +725,8 @@
    "edges": 12,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "rolls",
@@ -706,7 +750,8 @@
    "edges": 12,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -714,7 +759,8 @@
    "edges": 11,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -722,7 +768,8 @@
    "edges": 11,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -786,7 +833,8 @@
    "edges": 11,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -794,7 +842,8 @@
    "edges": 11,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "store-economy",
@@ -802,7 +851,8 @@
    "edges": 11,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "ui-shell",
@@ -810,7 +860,8 @@
    "edges": 11,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -818,7 +869,8 @@
    "edges": 10,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "compat-patches",
@@ -874,7 +926,8 @@
    "edges": 10,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -882,7 +935,8 @@
    "edges": 10,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -890,7 +944,8 @@
    "edges": 9,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -954,7 +1009,8 @@
    "edges": 9,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "rolls",
@@ -978,7 +1034,8 @@
    "edges": 9,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -986,7 +1043,8 @@
    "edges": 9,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "compat-patches",
@@ -1058,7 +1116,8 @@
    "edges": 8,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "species",
@@ -1090,7 +1149,8 @@
    "edges": 8,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "ui-shell",
@@ -1098,7 +1158,8 @@
    "edges": 8,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -1106,7 +1167,8 @@
    "edges": 7,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -1114,7 +1176,8 @@
    "edges": 7,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -1209,7 +1272,8 @@
    "edges": 7,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -1217,7 +1281,8 @@
    "edges": 7,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "skills",
@@ -1233,7 +1298,8 @@
    "edges": 7,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "ui-shell",
@@ -1241,7 +1307,8 @@
    "edges": 7,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -1249,7 +1316,8 @@
    "edges": 7,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "actor-core",
@@ -1257,7 +1325,8 @@
    "edges": 6,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -1265,7 +1334,8 @@
    "edges": 6,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "classes",
@@ -1273,7 +1343,8 @@
    "edges": 6,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -1305,7 +1376,8 @@
    "edges": 6,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "galactic-profiles",
@@ -1313,7 +1385,8 @@
    "edges": 6,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -1337,7 +1410,8 @@
    "edges": 6,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "rolls",
@@ -1353,7 +1427,8 @@
    "edges": 6,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "store-economy",
@@ -1361,7 +1436,8 @@
    "edges": 6,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "store-economy",
@@ -1369,7 +1445,8 @@
    "edges": 6,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "ui-shell",
@@ -1377,7 +1454,8 @@
    "edges": 6,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -1385,7 +1463,8 @@
    "edges": 5,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "classes",
@@ -1393,7 +1472,8 @@
    "edges": 5,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "compat-patches",
@@ -1432,7 +1512,8 @@
    "edges": 5,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "force",
@@ -1464,7 +1545,8 @@
    "edges": 5,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "mentor-suggestion",
@@ -1472,7 +1554,8 @@
    "edges": 5,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "rolls",
@@ -1495,7 +1578,8 @@
    "to": "dev-tooling",
    "edges": 5,
    "proposedLayerFrom": 4,
-   "kind": "unlayered"
+   "kind": "unlayered",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -1503,7 +1587,8 @@
    "edges": 4,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -1511,7 +1596,8 @@
    "edges": 4,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -1519,7 +1605,8 @@
    "edges": 4,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -1551,7 +1638,8 @@
    "edges": 4,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "feats",
@@ -1559,7 +1647,8 @@
    "edges": 4,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "force",
@@ -1607,7 +1696,8 @@
    "edges": 4,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "npc-followers",
@@ -1663,7 +1753,8 @@
    "edges": 4,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 3,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -1671,7 +1762,8 @@
    "edges": 3,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -1679,7 +1771,8 @@
    "edges": 3,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -1750,7 +1843,8 @@
    "edges": 3,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "feats",
@@ -1758,7 +1852,8 @@
    "edges": 3,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "feats",
@@ -1766,7 +1861,8 @@
    "edges": 3,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "force",
@@ -1845,7 +1941,8 @@
    "edges": 3,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "npc-followers",
@@ -1861,7 +1958,8 @@
    "edges": 3,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -1869,7 +1967,8 @@
    "edges": 3,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "skills",
@@ -1925,7 +2024,8 @@
    "edges": 3,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "store-economy",
@@ -1933,7 +2033,8 @@
    "edges": 3,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "ui-shell",
@@ -1941,7 +2042,8 @@
    "edges": 3,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -1949,7 +2051,8 @@
    "edges": 3,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -1957,7 +2060,8 @@
    "edges": 3,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -1965,7 +2069,8 @@
    "edges": 2,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -1973,7 +2078,8 @@
    "edges": 2,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -1981,7 +2087,8 @@
    "edges": 2,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -1989,7 +2096,8 @@
    "edges": 2,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -1997,7 +2105,8 @@
    "edges": 2,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "chat",
@@ -2158,7 +2267,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "force",
@@ -2190,7 +2300,8 @@
    "edges": 2,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "galactic-profiles",
@@ -2198,7 +2309,8 @@
    "edges": 2,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 3,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "governance",
@@ -2278,7 +2390,8 @@
    "edges": 2,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "migration",
@@ -2318,7 +2431,8 @@
    "edges": 2,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -2326,7 +2440,8 @@
    "edges": 2,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "rolls",
@@ -2382,7 +2497,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "store-economy",
@@ -2390,14 +2506,16 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "store-economy",
    "to": "testing",
    "edges": 2,
    "proposedLayerFrom": 2,
-   "kind": "unlayered"
+   "kind": "unlayered",
+   "declaredAllowed": false
   },
   {
    "from": "talents",
@@ -2429,7 +2547,8 @@
    "edges": 2,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -2437,7 +2556,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -2445,7 +2565,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -2453,7 +2574,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -2461,7 +2583,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -2469,7 +2592,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -2477,7 +2601,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -2485,7 +2610,8 @@
    "edges": 1,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -2493,7 +2619,8 @@
    "edges": 1,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -2501,7 +2628,8 @@
    "edges": 1,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "abilities-effects",
@@ -2509,7 +2637,8 @@
    "edges": 1,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -2517,7 +2646,8 @@
    "edges": 1,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -2525,7 +2655,8 @@
    "edges": 1,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "abilities-effects",
@@ -2533,7 +2664,8 @@
    "edges": 1,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -2541,7 +2673,8 @@
    "edges": 1,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -2549,7 +2682,8 @@
    "edges": 1,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "actor-core",
@@ -2557,7 +2691,8 @@
    "edges": 1,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "chat",
@@ -2573,7 +2708,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "classes",
@@ -2581,7 +2717,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "classes",
@@ -2589,7 +2726,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "classes",
@@ -2597,7 +2735,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "combat",
@@ -2765,7 +2904,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "feats",
@@ -2773,7 +2913,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "feats",
@@ -2781,7 +2922,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "force",
@@ -2805,7 +2947,8 @@
    "edges": 1,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 3,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "games",
@@ -2980,7 +3123,8 @@
    "edges": 1,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "mentor-suggestion",
@@ -2988,7 +3132,8 @@
    "edges": 1,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "mentor-suggestion",
@@ -2996,7 +3141,8 @@
    "edges": 1,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "migration",
@@ -3043,7 +3189,8 @@
    "to": "dev-tooling",
    "edges": 1,
    "proposedLayerFrom": 3,
-   "kind": "unlayered"
+   "kind": "unlayered",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -3051,7 +3198,8 @@
    "edges": 1,
    "proposedLayerFrom": 3,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "rolls",
@@ -3147,7 +3295,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "talents",
@@ -3179,7 +3328,8 @@
    "edges": 1,
    "proposedLayerFrom": 4,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -3187,7 +3337,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -3195,7 +3346,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "vehicles",
@@ -3203,7 +3355,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   }
  ]
 }

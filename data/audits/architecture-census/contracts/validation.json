@@ -2,12 +2,12 @@
  "schema": "swse.v2-contract.validation/1",
  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
  "generator": "tools/architecture-census/assemble-contracts.mjs",
- "sidecars": 0,
- "uniqueIds": 12,
- "evidenceRefsChecked": 0,
+ "sidecars": 10,
+ "uniqueIds": 345,
+ "evidenceRefsChecked": 810,
  "evidenceFailures": [],
  "errors": [],
  "warnings": [
-  "domains without contract: actor-core, abilities-effects, progression, classes, species, skills, feats, talents, force, combat, rolls, equipment, customization, store-economy, vehicles, droids, npc-followers, mentor-suggestion, galactic-profiles, holonet, games, houserules, chat, ui-shell, governance, settings-config, data-registries, infrastructure, migration, compat-patches"
+  "domains without contract: species, skills, talents, force, combat, rolls, equipment, customization, droids, npc-followers, holonet, games, houserules, chat, governance, settings-config, data-registries, infrastructure, migration, compat-patches"
  ]
 }

@@ -1,0 +1,1335 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-PRG",
+  "domain": "progression",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "Progression (chargen, level-up, progression framework) is structurally sound at its core: ProgressionShell/ChargenShell/LevelupShell host step plugins that write to ProgressionSession draft state, and ProgressionFinalizer compiles one validated mutation plan applied transactionally through ActorEngine.applyMutationPlan with rollback evidence. Conformance gaps: (1) runtime monkey-patching persists despite progression-architecture.md stating there is none - five live files reassign TalentStep/ForcePowerStep/FeatStep prototype methods, PrerequisiteChecker/AbilityEngine statics and ProgressionFinalizer statics; (2) ProgressionFinalizer._applyForceKnowledgePostApply exists only because scripts/talents/squad-actions-init.js side-effect-imports a patch file; (3) the chargen Summary step stages system.credits and a store flag on the actor mid-wizard via ActorEngine.updateActor (not TransactionEngine), with duplicated reconciliation in finalizer and economy builder; (4) draft persistence uses raw setFlag in two parallel stores; (5) the legacy static ProgressionEngine stack (~2.6k lines) is loaded by five unused imports and closes an 11-file import cycle through mentor-dialogues.js. 75 census-unreachable modules are mostly dead experiment clusters (ux/, content/, forecast/, talent slot-*).",
+  "responsibilities": [
+    {
+      "id": "R-PRG-01",
+      "responsibility": "Launch/route progression",
+      "owner": {
+        "path": "scripts/apps/progression-framework/progression-entry.js",
+        "symbol": "launchProgression"
+      },
+      "status": [
+        "OBSERVED",
+        "APPROVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/apps/progression-framework/progression-entry.js:243",
+        "scripts/apps/progression-framework/progression-entry.js:204"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-PRG-02",
+      "responsibility": "Step shell lifecycle",
+      "owner": {
+        "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+        "symbol": "ProgressionShell"
+      },
+      "status": [
+        "OBSERVED",
+        "APPROVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/apps/progression-framework/shell/progression-shell.js:97",
+        "scripts/apps/progression-framework/chargen-shell.js:50",
+        "scripts/apps/progression-framework/levelup-shell.js:31"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-PRG-03",
+      "responsibility": "Draft (temporary) selections",
+      "owner": {
+        "path": "scripts/apps/progression-framework/shell/progression-session.js",
+        "symbol": "ProgressionSession"
+      },
+      "status": [
+        "OBSERVED",
+        "APPROVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/apps/progression-framework/shell/progression-session.js:30"
+      ],
+      "tests": [],
+      "notes": "APPROVED by OSI / A-15"
+    },
+    {
+      "id": "R-PRG-04",
+      "responsibility": "Draft durability across reloads",
+      "owner": {
+        "path": "scripts/apps/progression-framework/shell/session-storage.js",
+        "symbol": "SessionStorage + ChargenPersistence"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/apps/progression-framework/shell/session-storage.js:285",
+        "scripts/apps/progression-framework/shell/chargen-persistence.js:195"
+      ],
+      "tests": [
+        "tests/progression-session-persistence-writebehind.test.mjs"
+      ],
+      "notes": "Two stores; raw setFlag (A-02)"
+    },
+    {
+      "id": "R-PRG-05",
+      "responsibility": "Single finalization (compile, validate, prereq re-check, transactional apply)",
+      "owner": {
+        "path": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+        "symbol": "ProgressionFinalizer.finalize"
+      },
+      "status": [
+        "OBSERVED",
+        "APPROVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:369",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:477",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:4009"
+      ],
+      "tests": [
+        "tests/galactic-profile-mutation-plan.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-PRG-06",
+      "responsibility": "Scoped single-step finalization",
+      "owner": {
+        "path": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+        "symbol": "ProgressionFinalizer.finalizeSingleStep"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:582",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:653"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-PRG-07",
+      "responsibility": "Domain plan fragments",
+      "owner": {
+        "path": "scripts/apps/progression-framework/shell/mutation/",
+        "symbol": "*PlanBuilder"
+      },
+      "status": [
+        "OBSERVED",
+        "APPROVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:76",
+        "scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js:283"
+      ],
+      "tests": [],
+      "notes": "Base inline compilation still computed then clobbered"
+    },
+    {
+      "id": "R-PRG-08",
+      "responsibility": "Class domain compilation (inline)",
+      "owner": {
+        "path": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+        "symbol": "_compileMutationPlanBase"
+      },
+      "status": [
+        "OBSERVED",
+        "UNIMPLEMENTED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:1356"
+      ],
+      "tests": [],
+      "notes": "ClassPlanBuilder exists but is not wired"
+    },
+    {
+      "id": "R-PRG-09",
+      "responsibility": "Reconciliation of existing actors",
+      "owner": {
+        "path": "scripts/apps/progression-framework/shell/progression-reconciler.js",
+        "symbol": "ProgressionReconciler"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/apps/progression-framework/shell/progression-reconciler.js:392"
+      ],
+      "tests": [
+        "tests/reconciliation-phase5-integration.test.mjs"
+      ],
+      "notes": "Rules-deferred slots per RECON-001..007"
+    },
+    {
+      "id": "R-PRG-10",
+      "responsibility": "Step plugin contract",
+      "owner": {
+        "path": "scripts/apps/progression-framework/steps/step-plugin-base.js",
+        "symbol": "ProgressionStepPlugin"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/apps/progression-framework/steps/step-plugin-base.js:65"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-PRG-11",
+      "responsibility": "Content resolution for steps",
+      "owner": {
+        "path": "scripts/engine/progression/content/progression-content-authority.js",
+        "symbol": "ProgressionContentAuthority"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/progression/content/progression-content-authority.js:43"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-PRG-12",
+      "responsibility": "Progression rule-setting reads",
+      "owner": {
+        "path": "scripts/engine/progression/ProgressionRules.js",
+        "symbol": "ProgressionRules"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/progression/ProgressionRules.js:13"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-PRG-13",
+      "responsibility": "Snapshots for rollback / statblock conversion",
+      "owner": {
+        "path": "scripts/engine/progression/utils/snapshot-manager.js",
+        "symbol": "SnapshotManager"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/progression/utils/snapshot-manager.js:49"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-PRG-14",
+      "responsibility": "Chargen starting-credit staging for chargen store",
+      "owner": {
+        "path": "scripts/apps/progression-framework/steps/summary-step.js",
+        "symbol": "SummaryStep._stageStartingCreditsForStore"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/apps/progression-framework/steps/summary-step.js:1768",
+        "scripts/apps/progression-framework/steps/summary-step.js:1786"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-PRG-15",
+      "responsibility": "Legacy static ProgressionEngine API",
+      "owner": {
+        "path": "scripts/engine/progression/engine/progression-engine.js",
+        "symbol": "ProgressionEngine"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/engine/progression/engine/progression-engine.js:23",
+        "scripts/engine/mentor/mentor-dialogues.js:1"
+      ],
+      "tests": [],
+      "notes": "Legacy B: imported by 5 modules, invoked by none"
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "ProgressionFinalizer",
+      "path": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+      "line": 296,
+      "consumers": 21,
+      "contract": "finalize/finalizeSingleStep/dryRun; no mutation before validation; one transactional applyMutationPlan"
+    },
+    {
+      "symbol": "launchProgression",
+      "path": "scripts/apps/progression-framework/progression-entry.js",
+      "line": 243,
+      "consumers": 13,
+      "contract": "open correct shell for actor; NPC statblock guard"
+    },
+    {
+      "symbol": "launchNewProgression",
+      "path": "scripts/apps/progression-framework/progression-entry.js",
+      "line": 204,
+      "consumers": 13,
+      "contract": "new character chargen"
+    },
+    {
+      "symbol": "ProgressionShell",
+      "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+      "line": 97,
+      "consumers": 8,
+      "contract": "ApplicationV2 wizard host"
+    },
+    {
+      "symbol": "ChargenShell",
+      "path": "scripts/apps/progression-framework/chargen-shell.js",
+      "line": 50,
+      "consumers": 3,
+      "contract": "chargen mode"
+    },
+    {
+      "symbol": "LevelupShell",
+      "path": "scripts/apps/progression-framework/levelup-shell.js",
+      "line": 31,
+      "consumers": 2,
+      "contract": "level-up mode"
+    },
+    {
+      "symbol": "ProgressionSession",
+      "path": "scripts/apps/progression-framework/shell/progression-session.js",
+      "line": 30,
+      "consumers": 3,
+      "contract": "draft selections"
+    },
+    {
+      "symbol": "ProgressionReconciler",
+      "path": "scripts/apps/progression-framework/shell/progression-reconciler.js",
+      "line": 392,
+      "consumers": 31,
+      "contract": "read-only entitlement report"
+    },
+    {
+      "symbol": "ProgressionStepPlugin",
+      "path": "scripts/apps/progression-framework/steps/step-plugin-base.js",
+      "line": 65,
+      "consumers": 26,
+      "contract": "step lifecycle"
+    },
+    {
+      "symbol": "SnapshotManager",
+      "path": "scripts/engine/progression/utils/snapshot-manager.js",
+      "line": 49,
+      "consumers": 34,
+      "contract": "snapshot/restore"
+    },
+    {
+      "symbol": "ProgressionContentAuthority",
+      "path": "scripts/engine/progression/content/progression-content-authority.js",
+      "line": 43,
+      "consumers": 20,
+      "contract": "content resolution"
+    },
+    {
+      "symbol": "ProgressionRules",
+      "path": "scripts/engine/progression/ProgressionRules.js",
+      "line": 13,
+      "consumers": 16,
+      "contract": "setting reads via HouseRuleService"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "infrastructure",
+      "data-registries",
+      "governance (ActorEngine)",
+      "classes/species/feats/talents/force/skills/droids/abilities-effects/houserules as read-only rule providers",
+      "mentor-suggestion (advisory, steps only)"
+    ],
+    "prohibited": [
+      "engine-layer imports of progression UI (A-07)",
+      "reassignment of progression class methods (A-09)",
+      "credit writes outside TransactionEngine (A-10)",
+      "mid-wizard actor mutation (A-15)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+        "to": "scripts/apps/progression-framework/steps/talent-step.js",
+        "evidence": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:11"
+      },
+      {
+        "from": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js",
+        "to": "scripts/apps/progression-framework/steps/feat-step.js",
+        "evidence": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:1"
+      },
+      {
+        "from": "scripts/talents/squad-actions-init.js",
+        "to": "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js",
+        "evidence": "scripts/talents/squad-actions-init.js:7"
+      },
+      {
+        "from": "scripts/engine/mentor/mentor-dialogues.js",
+        "to": "scripts/engine/progression/engine/progression-engine.js",
+        "evidence": "scripts/engine/mentor/mentor-dialogues.js:1"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-PRG-1",
+      "boundary": "Shell <-> step plugin",
+      "interface": "ProgressionStepPlugin lifecycle; plugins write only ProgressionSession",
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ]
+    },
+    {
+      "id": "C-PRG-2",
+      "boundary": "Finalizer <-> PlanBuilders",
+      "interface": "pure builders return set/add/delete/postApply fragments",
+      "status": [
+        "APPROVED",
+        "CONFLICT"
+      ]
+    },
+    {
+      "id": "C-PRG-3",
+      "boundary": "Finalizer <-> ActorEngine",
+      "interface": "one applyMutationPlan(actor, plan, {transactional, validate, rederive}) plus post-commit updateActor bookkeeping",
+      "status": [
+        "OBSERVED"
+      ]
+    },
+    {
+      "id": "C-PRG-4",
+      "boundary": "Session <-> durable draft store",
+      "interface": "single debounced store (proposed)",
+      "status": [
+        "PROPOSED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-PRG-01",
+      "existingSource": "docs/architecture/progression-architecture.md §ProgressionFinalizer",
+      "claim": "There is no runtime patching",
+      "observed": "Five live files reassign progression class methods (finalizer statics, step prototypes, PrerequisiteChecker/AbilityEngine statics)",
+      "evidence": [
+        "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:90",
+        "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js:112",
+        "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:102",
+        "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:260",
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:301"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-PRG-02",
+      "existingSource": "docs/architecture/progression-architecture.md §Enforcement",
+      "claim": "squad-actions-init.js no longer imports any finalizer patch file",
+      "observed": "It imports two finalizer patch files",
+      "evidence": [
+        "scripts/talents/squad-actions-init.js:7",
+        "scripts/talents/squad-actions-init.js:12"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-PRG-03",
+      "existingSource": "docs/architecture/progression-architecture.md §ProgressionFinalizer; A-15",
+      "claim": "Finalization commits once",
+      "observed": "One transactional plan plus post-commit updateActor writes (ability-increase verification, maneuver sync, certification)",
+      "evidence": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:3991",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:3801",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:519"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-PRG-04",
+      "existingSource": "OSI (progression); A-15",
+      "claim": "Temporary choices live in session/draft state",
+      "observed": "Summary step writes system.credits and a flag mid-wizard; drafts persisted to actor flags on navigation",
+      "evidence": [
+        "scripts/apps/progression-framework/steps/summary-step.js:1786",
+        "scripts/apps/progression-framework/shell/session-storage.js:285"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-PRG-05",
+      "existingSource": "scripts/engine/progression/engine/progression-engine.js:1 header",
+      "claim": "Legacy API delegates to the live SWSEProgressionEngine",
+      "observed": "Neither is invoked by any runtime path",
+      "evidence": [
+        "scripts/engine/progression/engine/progression-engine.js:63",
+        "scripts/engine/progression.js:6"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-PRG-01",
+      "item": "ClassPlanBuilder not wired; class compiled inline",
+      "source": "docs/architecture/progression-architecture.md §Intentionally inline domains",
+      "status": "UNIMPLEMENTED"
+    },
+    {
+      "id": "U-PRG-02",
+      "item": "Single durable draft store",
+      "source": "this contract (PROPOSED)",
+      "status": "UNIMPLEMENTED"
+    },
+    {
+      "id": "U-PRG-03",
+      "item": "SWSELanguageModule.init() never called; its updateActor and swse:progression:completed listeners are dormant",
+      "source": "scripts/engine/progression/modules/language-module.js:12",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [
+    {
+      "item": "Telekinetic Prodigy: runtime-hardcoded talent text and retroactive-slot suppression differ from canonical reference text (new entry required; not created by this audit)",
+      "registerRef": "RECON-006 (related); new ID pending"
+    },
+    {
+      "item": "Hard-coded fallback starting credits by class when content lacks a value",
+      "registerRef": "none (new entry required)"
+    },
+    {
+      "item": "Talent/feat/ability/skill entitlement cadence for multiclass, droid, Nonheroic, house rules",
+      "registerRef": "RECON-001..RECON-007"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "Full chargen and level-up finalize through ActorEngine.applyMutationPlan",
+      "source": "docs/architecture/progression-architecture.md §Verification status"
+    },
+    {
+      "item": "Chargen store purchase, then abandon / resume chargen",
+      "source": "F-PRG-003"
+    },
+    {
+      "item": "Single-step finalize from sheet/Holonet",
+      "source": "R-PRG-06"
+    },
+    {
+      "item": "Rollback indeterminate path surfaced to the player",
+      "source": "scripts/apps/progression-framework/shell/progression-finalizer.js:4028"
+    },
+    {
+      "item": "System boots and finalizes Force techniques if squad-actions-init.js stops importing the patch",
+      "source": "F-PRG-002"
+    }
+  ],
+  "findings": [
+    {
+      "category": "legacy-compat",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Runtime prototype/static monkey-patches of progression steps and prerequisite authorities",
+      "affectedFiles": [
+        "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+        "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js",
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:102",
+        "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:150",
+        "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:260",
+        "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:335",
+        "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:382",
+        "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:431",
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:301",
+        "index.js:242",
+        "index.js:252",
+        "scripts/engine/feats/register-feat-runtime.js:97"
+      ],
+      "observed": "At init, TalentStep (_getTalent, _getTalentDescription, _getTalentBenefit, _getTalentPrerequisiteText, _buildCanonicalTalentSelection, _buildPendingAbilityData, _getOwnedTalentKeys, _getTreeInvestmentCount, onStepEnter, _getAvailableTrees, _getTree, _getTalentsForTree), ForcePowerStep._getTelekineticProdigyResolution, FeatStep (_isFeatSelected, _buildPendingAbilityData, _getLegalFeats), PrerequisiteChecker (5 statics) and AbilityEngine.evaluateAcquisition are wrapped by reassignment. Behavior of these classes depends on registration order; reading the class source does not show actual behavior.",
+      "intendedOwnership": "Each behavior lives in its owning class or an injected strategy (house-rule grant provider, custom-tree provider) that the class calls explicitly.",
+      "contractRef": "A-09 | CR-PRG-01 | R-PRG-02",
+      "proposedSolution": "Fold each wrapper into its target as an explicit call to a named provider: HouseRuleGrantProvider consulted by PrerequisiteChecker/AbilityEngine/FeatStep/TalentStep; CustomTalentTreeProvider consulted by TalentStep tree lookup; Telekinetic correction moved to talent data (after rules review F-PRG-009). Then delete the patch files and add a CI guard rejecting `.prototype.X =` / `Class.method =` assignments on progression/prerequisite classes.",
+      "alternatives": "Keep patches but document them in progression-architecture.md (does not satisfy A-09).",
+      "dependencies": [
+        "F-PRG-009",
+        "talents domain (custom trees)",
+        "houserules domain"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Existing feat/talent step tests plus new tests constructing TalentStep/FeatStep without registering patches and asserting house-rule grants and custom trees still appear.",
+      "foundryAcceptance": "Talent and feat picker with house-rule grants and custom talent trees",
+      "scope": "M",
+      "simplificationBenefit": "Removes 3 init-order-dependent execution paths; step behavior readable from source",
+      "risk": "Medium: wrapper ordering effects (e.g. telekinetic wrapping housekeeping) must be preserved",
+      "perfImpact": "none",
+      "id": "F-PRG-001"
+    },
+    {
+      "category": "dependency",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "ProgressionFinalizer method exists only through a side-effect import in the talents domain",
+      "affectedFiles": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js",
+        "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js",
+        "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js",
+        "scripts/talents/squad-actions-init.js"
+      ],
+      "evidence": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:1851",
+        "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js:112",
+        "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js:145",
+        "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:90",
+        "scripts/talents/squad-actions-init.js:7",
+        "scripts/talents/squad-actions-init.js:12",
+        "index.js:91"
+      ],
+      "observed": "_compileMutationPlanBase calls this._applyForceKnowledgePostApply unconditionally, but the finalizer class does not define it; it is assigned when progression-finalizer-force-knowledge-patch.js is evaluated, which happens only because squad-actions-init.js (Squad Actions macro menu) imports it. choice-resolution-finalization-patch.js similarly wraps _canonicalSkillKey and _extractSkillFocusKeysFromSelections. Tests import the patch explicitly to make the finalizer work.",
+      "intendedOwnership": "ProgressionFinalizer or ForcePlanBuilder owns Force-knowledge post-apply; SkillsLanguagesPlanBuilder/FeatChoiceResolver owns skill-key canonicalization.",
+      "contractRef": "A-09 | A-07 | CR-PRG-01 | CR-PRG-02 | C-PRG-2",
+      "proposedSolution": "Move _applyForceKnowledgePostApply/_buildForceKnowledgePostApplyEntry into ForcePlanBuilder (pure) and the choice-resolution fallbacks into _canonicalSkillKey/_extractSkillFocusKeysFromSelections; remove both imports from squad-actions-init.js and delete the patch files.",
+      "alternatives": "Minimal: import the patch from progression-finalizer.js itself (removes cross-domain coupling but keeps patching).",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "tests/galactic-profile-mutation-plan.test.mjs and tests/galactic-profile-end-to-end.test.mjs without calling registerProgressionFinalizerForceKnowledgePatch; a test that ProgressionFinalizer has no undefined own-method references.",
+      "foundryAcceptance": "Level-up selecting a Force Technique/Secret",
+      "scope": "S",
+      "simplificationBenefit": "Finalizer self-contained; removes hidden cross-domain load-order dependency",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-PRG-002"
+    },
+    {
+      "category": "bypass-engine",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Chargen Summary stages credits and a store flag on the actor before finalization, outside TransactionEngine",
+      "affectedFiles": [
+        "scripts/apps/progression-framework/steps/summary-step.js",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js",
+        "scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js",
+        "scripts/engine/store/ledger-service.js"
+      ],
+      "evidence": [
+        "scripts/apps/progression-framework/steps/summary-step.js:1786",
+        "scripts/apps/progression-framework/steps/summary-step.js:1801",
+        "scripts/apps/progression-framework/steps/summary-step.js:1809",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:1535",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:2702",
+        "scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js:261",
+        "scripts/engine/store/ledger-service.js:36"
+      ],
+      "observed": "enterStore() calls ActorEngine.updateActor with system.credits and flags.swse.chargenStore mid-wizard, then opens the live store against the actor. Finalization later reads the actor balance back through two copies of the same reconciliation (ProgressionFinalizer._resolveFinalStartingCredits and economy builder resolveFinalStartingCredits). The code comment at summary-step.js:1801-1803 states this violates no-actor-mutation-before-confirmation and blocks it only for Galactic Profile sessions. Abandoning chargen leaves the staged credits and any purchases on the actor. Goes through ActorEngine (A-02 satisfied) but not TransactionEngine (A-10) and not through the finalizer (A-15).",
+      "intendedOwnership": "Starting credits are draft economy state in ProgressionSession; purchases during chargen are a draft cart priced by TransactionEngine and committed atomically with (or immediately after) the finalization plan.",
+      "contractRef": "A-10 | A-15 | R-PRG-14 | CR-PRG-04",
+      "proposedSolution": "Owner decision: either (a) chargen store operates on a draft cart in the session and the finalizer emits a TransactionEngine purchase as part of commit, or (b) store opens only after finalization (as Galactic Profile already does). Either way delete _stageStartingCreditsForStore and the duplicated resolveFinalStartingCredits.",
+      "alternatives": "Keep staging but route through a TransactionEngine \"grant starting credits\" operation with an abandon-rollback (still mid-wizard mutation).",
+      "dependencies": [
+        "store-economy domain (TransactionEngine)"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Test that SummaryStep never calls ActorEngine before finalize; economy builder test for starting credits with and without store purchases.",
+      "foundryAcceptance": "Chargen: open store, buy, close, change class (budget change), finalize; and abandon after purchase",
+      "scope": "M",
+      "simplificationBenefit": "Removes a parallel credit path and two duplicated reconciliation functions",
+      "risk": "Medium (runtime-risk area: credit movement, trade/store)",
+      "perfImpact": "none",
+      "id": "F-PRG-003"
+    },
+    {
+      "category": "unauthorized-persistence",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Draft persistence via raw setFlag in two parallel stores, including UI step position",
+      "affectedFiles": [
+        "scripts/apps/progression-framework/shell/session-storage.js",
+        "scripts/apps/progression-framework/shell/chargen-persistence.js",
+        "scripts/apps/progression-framework/shell/progression-shell.js"
+      ],
+      "evidence": [
+        "scripts/apps/progression-framework/shell/session-storage.js:285",
+        "scripts/apps/progression-framework/shell/session-storage.js:329",
+        "scripts/apps/progression-framework/shell/session-storage.js:516",
+        "scripts/apps/progression-framework/shell/session-storage.js:518",
+        "scripts/apps/progression-framework/shell/chargen-persistence.js:118",
+        "scripts/apps/progression-framework/shell/chargen-persistence.js:195",
+        "scripts/apps/progression-framework/shell/progression-shell.js:1700",
+        "scripts/apps/progression-framework/shell/progression-shell.js:3982",
+        "scripts/apps/progression-framework/shell/progression-shell.js:302"
+      ],
+      "observed": "Chargen persists the draft twice: SessionStorage (flags foundryvtt-swse.progression.<mode>.session, debounced write-behind, semantic dedupe) and ChargenPersistence (flags foundryvtt-swse.chargen.checkpoint on every forward step exit). Both call actor.setFlag/unsetFlag directly. The snapshot includes currentStepId, so navigation alone causes an actor document update (updateActor hooks, sheet re-render). Completion marker also raw setFlag. Draft data in flags is legitimate durability, but bypasses ActorEngine without an exception comment.",
+      "intendedOwnership": "One draft store behind ActorEngine flag helper (or a documented Foundry-only exception comment), excluding UI-only position from change detection.",
+      "contractRef": "A-02 | A-04 | OSI performance | R-PRG-04",
+      "proposedSolution": "Merge ChargenPersistence into SessionStorage (it already carries recovery data); write through ActorEngine.updateActorFlags with a guardKey or annotate as documented exception; exclude currentStepId/timestamps from the dedupe key so navigation does not write.",
+      "alternatives": "Persist drafts in a user flag or client storage keyed by actor id (no actor update hooks at all).",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "tests/progression-session-persistence-writebehind.test.mjs extended: navigation-only change produces no write; resume works from single store.",
+      "foundryAcceptance": "Reload mid-chargen and resume",
+      "scope": "M",
+      "simplificationBenefit": "Two persistence/recovery paths become one",
+      "risk": "Low-medium (existing saved checkpoints need a read fallback)",
+      "perfImpact": "medium",
+      "id": "F-PRG-004"
+    },
+    {
+      "category": "dead-code",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Legacy static ProgressionEngine stack is loaded by unused imports and never invoked",
+      "affectedFiles": [
+        "scripts/engine/progression/engine/progression-engine.js",
+        "scripts/engine/progression.js",
+        "scripts/engine/progression/engine/progression-engine-instance.js",
+        "scripts/engine/progression/integration/finalize-integration.js",
+        "scripts/engine/progression/engine/template-engine.js",
+        "scripts/engine/progression/engine/progression-actor-updater.js",
+        "scripts/engine/progression/engine/force-progression.js",
+        "scripts/engine/progression/utils/apply-handlers.js",
+        "scripts/engine/progression/utils/level-diff-inspector.js",
+        "scripts/engine/progression/engine/feature-dispatcher.js",
+        "scripts/progression-engine.js"
+      ],
+      "evidence": [
+        "scripts/infrastructure/hooks/actor-hooks.js:1",
+        "scripts/infrastructure/hooks/combat-hooks.js:2",
+        "scripts/engine/mentor/mentor-dialogues.js:1",
+        "scripts/drag-drop/drop-handler.js:1",
+        "scripts/utils/force-points.js:1",
+        "scripts/engine/progression/engine/progression-engine.js:63",
+        "scripts/engine/progression/engine/progression-engine-instance.js:304",
+        "scripts/engine/progression/utils/level-diff-inspector.js:202"
+      ],
+      "observed": "Each of the five importers references ProgressionEngine only on its import line. The closure (ProgressionEngine -> SWSEProgressionEngine instance -> FinalizeIntegration -> ForceProgressionEngine/ApplyHandlers/LevelDiffInspector/feature-dispatcher; TemplateEngine) has no other runtime importer and no pack/macro reference (grep packs). ~2.6k lines evaluated at boot. Contains its own write paths (ActorEngine.updateActor per step, ChatMessage.create in LevelDiffInspector).",
+      "intendedOwnership": "ProgressionShell + ProgressionFinalizer (A-15).",
+      "contractRef": "A-09 | A-15 | R-PRG-15 | CR-PRG-05",
+      "proposedSolution": "Legacy class B -> C: remove the five unused imports, then delete the closure. feature-dispatcher.js is referenced by tests/class-phase-6d-officer-improviser-unlocks.test.mjs and feats/feat-dispatcher.js (orphan): confirm whether the test exercises live behavior before deleting it.",
+      "alternatives": "Keep progression-engine.js as an explicit macro facade (class E) if the owner wants a scripting API.",
+      "dependencies": [
+        "F-PRG-006"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Boot-graph test asserting none of the closure files is reachable from index.js; full suite.",
+      "foundryAcceptance": "System boot",
+      "scope": "S",
+      "simplificationBenefit": "~2.6k lines and a second finalize path removed",
+      "risk": "Low",
+      "perfImpact": "low",
+      "id": "F-PRG-005"
+    },
+    {
+      "category": "dependency",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "11-file import cycle progression engine <-> mentor dialogues <-> suggestion is closed by one unused import",
+      "affectedFiles": [
+        "scripts/engine/mentor/mentor-dialogues.js",
+        "scripts/engine/suggestion/SuggestionScorer.js",
+        "scripts/engine/progression/engine/progression-engine-instance.js"
+      ],
+      "evidence": [
+        "scripts/engine/mentor/mentor-dialogues.js:1",
+        "scripts/engine/suggestion/SuggestionScorer.js:27",
+        "scripts/engine/progression/engine/progression-engine-instance.js:17",
+        "scripts/engine/progression.js:6"
+      ],
+      "observed": "mentor-dialogues.js imports ProgressionEngine (unused) -> progression.js -> progression-engine-instance.js -> SuggestionService -> SuggestionEngineCoordinator -> SuggestionEngine -> SuggestionScorer -> mentor-dialogues.js (getMentorForClass). Removing mentor-dialogues.js:1 breaks this SCC; SuggestionService<->Coordinator and SuggestionEngine<->Coordinator mutual imports remain inside mentor-suggestion.",
+      "intendedOwnership": "Mentor/suggestion are advisory providers below progression orchestration (A-P1).",
+      "contractRef": "A-07",
+      "proposedSolution": "Delete the unused import at mentor-dialogues.js:1 (and F-PRG-005).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "P-A07-static-cycles probe count drops by one SCC; mentor tests.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "Removes one static SCC (11 files)",
+      "risk": "Very low",
+      "perfImpact": "none",
+      "id": "F-PRG-006"
+    },
+    {
+      "category": "oversized-module",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "ProgressionFinalizer computes each wired domain inline and then replaces it with builder output",
+      "affectedFiles": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js",
+        "scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js",
+        "scripts/apps/progression-framework/shell/mutation/skills-languages-plan-builder.js"
+      ],
+      "evidence": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:1356",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:1535",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:2218",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:2702",
+        "scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js:261",
+        "scripts/apps/progression-framework/shell/mutation/skills-languages-plan-builder.js:13"
+      ],
+      "observed": "Documented in progression-architecture.md (base compilation remains and is clobbered). Census clones: finalizer vs economy builder collectSelectionEntries, finalizer vs skills-languages builder skill key canonicalization; duplicated chargen-store credit reconciliation. Module is 4,057 lines mixing orchestration, inline class compilation, post-apply sync, ability-increase guard, certification.",
+      "intendedOwnership": "Builders are the single implementation per domain; finalizer only orchestrates (C-PRG-2).",
+      "contractRef": "A-01 | C-PRG-2 | R-PRG-07",
+      "proposedSolution": "Per domain, delete the inline base branch once a plan-equivalence test (inline vs builder) exists; extract FinalizationCertification and PostApplySync seams. Not a file-count merge.",
+      "alternatives": "Leave as-is until a Foundry harness exists (status quo documented).",
+      "dependencies": [
+        "F-PRG-002"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Golden mutation-plan snapshots per domain before/after removal.",
+      "foundryAcceptance": "Chargen + level-up finalize",
+      "scope": "L",
+      "simplificationBenefit": "One implementation per plan domain",
+      "risk": "Medium",
+      "perfImpact": "low",
+      "id": "F-PRG-007"
+    },
+    {
+      "category": "duplicate-authority",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Three independent BAB calculations in progression with divergent behavior on sparse class tables",
+      "affectedFiles": [
+        "scripts/apps/levelup/levelup-shared.js",
+        "scripts/engine/progression/utils/class-suggestion-utilities.js",
+        "scripts/engine/progression/data/progression-data.js",
+        "scripts/apps/progression-framework/steps/summary-step.js"
+      ],
+      "evidence": [
+        "scripts/apps/levelup/levelup-shared.js:256",
+        "scripts/engine/progression/utils/class-suggestion-utilities.js:162",
+        "scripts/engine/progression/data/progression-data.js:255",
+        "scripts/apps/progression-framework/steps/summary-step.js:854"
+      ],
+      "observed": "levelup-shared.calculateTotalBAB matches lp.level === classLevel exactly; class-suggestion-utilities.calculateTotalBAB uses the highest row <= classLevel and accepts more field spellings; progression-data.calculateBAB indexes level_progression[level-1] from class-data-loader. The Summary step preview uses the old-app helper. actor-prerequisite-snapshot calculateBab reads prepared actor values (consumer, not duplicate).",
+      "intendedOwnership": "actor-core derived calculator (A-03) or a single class-table BAB function in classes domain.",
+      "contractRef": "A-01 | A-03",
+      "proposedSolution": "Choose one class-table BAB function (classes domain), make the other two delegate, and have previews read it.",
+      "alternatives": "",
+      "dependencies": [
+        "B-CLS"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Table test over all class records comparing the three outputs (should be identical for complete tables).",
+      "foundryAcceptance": "Level-up summary BAB preview",
+      "scope": "S",
+      "simplificationBenefit": "3 -> 1",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-PRG-008"
+    },
+    {
+      "category": "presentation-rules",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Telekinetic Savant/Prodigy text and slot rule hard-coded in a runtime patch, diverging from canonical reference text",
+      "affectedFiles": [
+        "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:16",
+        "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:153",
+        "docs/audits/talent-canonical-production-reference.md:13573"
+      ],
+      "observed": "The patch replaces picker description/benefit/prerequisite text for two talents with in-code strings and filters the ForcePowerStep Prodigy resolution (suppressProdigyOnlyRetroactiveSlot). The in-code Prodigy text says the extra power must have the [Telekinetic] descriptor and adds a Wisdom-increase clause; the canonical reference (FUCG p.88) says it must be one of the powers affected by Telekinetic Savant. Which text/behavior is authoritative is a rules question; the audit does not decide it.",
+      "intendedOwnership": "Talent text in talent data (talents domain); Prodigy entitlement in FeatGrantEntitlementResolver / force-suite-resolution.",
+      "contractRef": "A-11 | A-09",
+      "proposedSolution": "Record a register entry (DEFERRED_RULES_REVIEW) with both texts; after a ruling, move text into data and the slot rule into the entitlement resolver; delete the patch.",
+      "alternatives": "",
+      "dependencies": [
+        "F-PRG-001",
+        "RECON-006"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": true,
+      "regressionTests": "Force Training with/without Move Object, with Prodigy, at chargen and on later WIS increase.",
+      "foundryAcceptance": "Force power step with Telekinetic Prodigy",
+      "scope": "S",
+      "simplificationBenefit": "Removes a hidden text/mechanic authority",
+      "risk": "Rules",
+      "perfImpact": "none",
+      "id": "F-PRG-009"
+    },
+    {
+      "category": "contract-contradiction",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Finalization is one transactional plan plus non-atomic post-commit writes",
+      "affectedFiles": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js",
+        "scripts/engine/progression/utils/progression-evidence.js"
+      ],
+      "evidence": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:3801",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:3991",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:519",
+        "scripts/engine/progression/utils/progression-evidence.js:357"
+      ],
+      "observed": "After applyMutationPlan, maneuver suite sync, ability-increase verification marker and certification are separate ActorEngine.updateActor calls; failures are surfaced (postApplyIncomplete / committed-unverified), not rolled back. All go through ActorEngine. This is a deliberate, documented design (comments at progression-finalizer.js:3970-3975) but contradicts the \"commits once\" wording.",
+      "intendedOwnership": "ActorEngine",
+      "contractRef": "A-15 | CR-PRG-03",
+      "proposedSolution": "Amend A-15/progression-architecture wording to \"one transactional plan + idempotent post-commit evidence writes\"; optionally fold maneuver sync into the plan.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "Level-up with starship maneuvers",
+      "scope": "S",
+      "simplificationBenefit": "Contract matches code",
+      "risk": "Low",
+      "perfImpact": "low",
+      "id": "F-PRG-010"
+    },
+    {
+      "category": "wrapper-indirection",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Finalizer resolves ActorEngine through a global fallback chain",
+      "affectedFiles": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js"
+      ],
+      "evidence": [
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:3906",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:3919"
+      ],
+      "observed": "_resolveActorEngine prefers globalThis.SWSE.ActorEngine / game.swse.ActorEngine / globalThis.ActorEngine before the imported canonical module, falling back to engines exposing applyProgression or updateActor (\"older global facade\").",
+      "intendedOwnership": "Imported canonical ActorEngine",
+      "contractRef": "A-02 | A-09",
+      "proposedSolution": "Use the imported CanonicalActorEngine; allow a test seam only via explicit injection.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Finalizer tests inject an engine explicitly",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "One resolution path",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-PRG-011"
+    },
+    {
+      "category": "bypass-engine",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "AttributeIncreaseHandler.clearPendingGains mixes ActorEngine and raw unsetFlag",
+      "affectedFiles": [
+        "scripts/engine/progression/engine/attribute-increase-handler.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/engine/attribute-increase-handler.js:258",
+        "scripts/engine/progression/engine/attribute-increase-handler.js:260",
+        "scripts/infrastructure/hooks/actor-hooks.js:637"
+      ],
+      "observed": "One branch uses ActorEngine.updateActorFlags, the other actor.unsetFlag directly.",
+      "intendedOwnership": "ActorEngine",
+      "contractRef": "A-02",
+      "proposedSolution": "Use the ActorEngine flag helper for both branches.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "unit test of clearPendingGains with a stub engine",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-PRG-012"
+    },
+    {
+      "category": "unauthorized-persistence",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Per-user onboarding-prompt preference stored on the actor",
+      "affectedFiles": [
+        "scripts/sheets/v2/character-sheet/chargen-onboarding.js"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/character-sheet/chargen-onboarding.js:92",
+        "scripts/sheets/v2/character-sheet/chargen-onboarding.js:275"
+      ],
+      "observed": "setPromptDisabledForUser writes a per-user map into an actor flag with raw setFlag; the module also listens to createActor/updateActor/canvasReady.",
+      "intendedOwnership": "User flag (UI preference), not actor state",
+      "contractRef": "A-02 | OSI performance",
+      "proposedSolution": "Store in game.user flags; no actor update.",
+      "alternatives": "ActorEngine flag helper",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "Onboarding prompt dismiss",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low",
+      "perfImpact": "low",
+      "id": "F-PRG-013"
+    },
+    {
+      "category": "ownership-violation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Chat output outside swse-chat",
+      "affectedFiles": [
+        "scripts/apps/progression-framework/steps/attribute-step.js",
+        "scripts/engine/progression/utils/level-diff-inspector.js"
+      ],
+      "evidence": [
+        "scripts/apps/progression-framework/steps/attribute-step.js:417",
+        "scripts/engine/progression/utils/level-diff-inspector.js:202",
+        "scripts/engine/progression/utils/level-diff-inspector.js:214"
+      ],
+      "observed": "attribute-step whispers a GM-approval notice (operational, not gameplay). LevelDiffInspector chat is in the dead legacy closure (F-PRG-005).",
+      "intendedOwnership": "scripts/chat/swse-chat.js or a notification service",
+      "contractRef": "A-05",
+      "proposedSolution": "Route the GM notice through swse-chat/notification helper; delete LevelDiffInspector with F-PRG-005.",
+      "alternatives": "Declare GM operational whispers an A-05 exception",
+      "dependencies": [
+        "F-PRG-005"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-PRG-014"
+    },
+    {
+      "category": "ownership-violation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Direct game.settings.get in engine registries (A-06); ProgressionEngineV2 hits are false positives",
+      "affectedFiles": [
+        "scripts/engine/progression/prerequisites/legacy-prereq-registry.js",
+        "scripts/engine/progression/skills/skill-registry.js",
+        "scripts/engine/progression/ProgressionEngineV2.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/prerequisites/legacy-prereq-registry.js:89",
+        "scripts/engine/progression/skills/skill-registry.js:85",
+        "scripts/engine/progression/ProgressionEngineV2.js:14"
+      ],
+      "observed": "athleticsConsolidation is read directly in two places; ProgressionEngineV2 lines 14/18 are comments forbidding the call.",
+      "intendedOwnership": "HouseRuleService",
+      "contractRef": "A-06",
+      "proposedSolution": "Read athleticsConsolidation through HouseRuleService/SkillRules.",
+      "alternatives": "",
+      "dependencies": [
+        "B-SKL"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-PRG-015"
+    },
+    {
+      "category": "contract-contradiction",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "A-03 xp-engine derived writes are a legitimate delegated calculator",
+      "affectedFiles": [
+        "scripts/engine/progression/xp-engine.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/xp-engine.js:106",
+        "scripts/engine/progression/xp-engine.js:123",
+        "scripts/actors/v2/base-actor.js:111"
+      ],
+      "observed": "computeXpDerived writes system.derived.xp on the in-memory system object and is called only from the V2 base actor prepare. Legitimate; A-03 path wording should include delegated calculators.",
+      "intendedOwnership": "actor-core prepare (delegated)",
+      "contractRef": "A-03",
+      "proposedSolution": "Amend A-03 path to \"invoked from V2 actor prepare\"; optionally move file to scripts/actors/derived.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-PRG-016"
+    },
+    {
+      "category": "performance",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Probe false positives and legitimate caches",
+      "affectedFiles": [
+        "scripts/apps/progression-framework/shell/progression-shell.js",
+        "scripts/apps/progression-framework/steps/force-power-step.js",
+        "scripts/engine/progression/utils/enforcer-resources-transaction-guard.js",
+        "scripts/apps/progression-framework/steps/talent-step.js"
+      ],
+      "evidence": [
+        "scripts/apps/progression-framework/shell/progression-shell.js:1138",
+        "scripts/apps/progression-framework/shell/progression-shell.js:3068",
+        "scripts/apps/progression-framework/steps/force-power-step.js:367",
+        "scripts/apps/progression-framework/steps/force-power-step.js:403",
+        "scripts/engine/progression/utils/enforcer-resources-transaction-guard.js:24",
+        "scripts/apps/progression-framework/steps/talent-step.js:342",
+        "scripts/apps/progression-framework/steps/talent-step.js:1389"
+      ],
+      "observed": "P-A02/A-04 hits in progression-shell, force-power-step and the enforcer guard are Map/Set.delete. talent-step caches are reset on every onStepEnter and keyed by Block/Deflect mode (invalidation present; probe flag \"no invalidate\" is a false positive).",
+      "intendedOwnership": "",
+      "contractRef": "A-02 | A-16",
+      "proposedSolution": "Refine probes to ignore Map/Set .delete and constructor resets.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-PRG-017"
+    },
+    {
+      "category": "dead-code",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Unreachable module clusters (75 census-unreachable modules, ~12k SLOC)",
+      "affectedFiles": [
+        "scripts/apps/progression-framework/ux/",
+        "scripts/apps/progression-framework/content/",
+        "scripts/engine/progression/forecast/",
+        "scripts/engine/progression/talents/",
+        "scripts/apps/progression-framework/steps/confirm-step.js",
+        "scripts/engine/chargen/CharacterGenerationEngine.js",
+        "scripts/apps/progression-framework/shell/progression-rail-resizer.js"
+      ],
+      "evidence": [
+        "scripts/apps/progression-framework/chargen-shell.js:462",
+        "templates/apps/progression-framework/progression-shell.hbs:159",
+        "scripts/apps/progression-framework/registries/progression-node-registry.js:23",
+        "scripts/engine/progression/talents/TalentTreeGraph.js:1"
+      ],
+      "observed": "Repository-wide grep (scripts, index.js, templates, packs, system.json) per module: ux/* (explainability, recovery, diagnostics, summary-step-enhancement: importers only among themselves) - dead C; content/* (bridge-to-store, faction-kit-bridge, packaged-build-registry, target-path-definitions, campaign-preset-bridge, template-personalization-engine, content-growth-validator, domain-support-closure, advisory-domain-profiles) - no importers, unwired-but-intended features (UNIMPLEMENTED) or dead; forecast/* - unwired; talents slot-*/TalentTree*/tree-unlock-manager, feats feat-slot-migrator/feat-dispatcher/*-registry-ui, engine/tools/*, validators/*, autocalc, autogrants - dead C; confirm-step.js test-only (\"ConfirmStep merged into Summary\", chargen-shell.js:462) - dead C; follower-details/feat/human-bonus steps and name-step orphan - dead C; apps/registries/progression-node-registry.js - re-export shim D; CharacterGenerationEngine.js mentioned only in comments/validator - C. FALSE POSITIVE: progression-rail-resizer.js is live via inline dynamic import() in progression-shell.hbs.",
+      "intendedOwnership": "",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete C clusters in one PR per directory after a boot-graph check; owner triage of content/ and forecast/ (wire vs delete); mark rail-resizer reachable in the census (template dynamic import).",
+      "alternatives": "Move experiments to an archive branch",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Full suite + boot-graph reachability",
+      "foundryAcceptance": "System boot",
+      "scope": "M",
+      "simplificationBenefit": "~12k SLOC removed from the tree",
+      "risk": "Low (not loaded)",
+      "perfImpact": "none",
+      "id": "F-PRG-018"
+    },
+    {
+      "category": "unimplemented",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Hard-coded fallback starting credits by class",
+      "affectedFiles": [
+        "scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js"
+      ],
+      "evidence": [
+        "scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js:252"
+      ],
+      "observed": "When neither content authority nor class/background records yield credits, a fixed table (soldier/scout/scoundrel 3000, jedi/force_adept 1200, noble 4800) is used - a default for missing published data (CLAUDE.md §3).",
+      "intendedOwnership": "Class data (classes domain)",
+      "contractRef": "A-11",
+      "proposedSolution": "DEFERRED_RULES_REVIEW entry; prefer failing visibly when class data lacks starting credits.",
+      "alternatives": "",
+      "dependencies": [
+        "B-CLS"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": true,
+      "regressionTests": "",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Rules",
+      "perfImpact": "none",
+      "id": "F-PRG-019"
+    },
+    {
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "SWSELanguageModule hooks are dormant (init never called)",
+      "affectedFiles": [
+        "scripts/engine/progression/modules/language-module.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/modules/language-module.js:12",
+        "scripts/engine/progression/modules/language-module.js:35",
+        "scripts/engine/progression/engine/attribute-increase-handler.js:104"
+      ],
+      "observed": "init() registers a chargen/level-up language writer and an updateActor listener but has no caller; only static helpers are used by AttributeIncreaseHandler. If ever initialized it would be a second languages writer competing with SkillsLanguagesPlanBuilder.",
+      "intendedOwnership": "SkillsLanguagesPlanBuilder",
+      "contractRef": "A-01",
+      "proposedSolution": "Delete init() and listeners; keep helpers or move them to the language engine.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "Removes a latent second writer",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-PRG-020"
+    },
+    {
+      "category": "dependency",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Engine-layer progression modules import progression UI (15 edges)",
+      "affectedFiles": [
+        "scripts/engine/progression/profile/galactic-profile-service.js",
+        "scripts/engine/progression/engine/suite-reselection-engine.js",
+        "scripts/engine/progression/utils/acquisition-authority.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:10",
+        "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:12"
+      ],
+      "observed": "Patch files (F-PRG-001) account for 5 edges; the rest are services importing shell/session or reconciler helpers that live under apps/.",
+      "intendedOwnership": "Pure helpers live under engine/; apps import engine",
+      "contractRef": "A-07",
+      "proposedSolution": "After F-PRG-001, move the shared pure helpers (session shape, reconciler invalidation, step normalizers) to engine/progression.",
+      "alternatives": "",
+      "dependencies": [
+        "F-PRG-001"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "P-A07 probe ratchet",
+      "foundryAcceptance": "none",
+      "scope": "M",
+      "simplificationBenefit": "Clear layering",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-PRG-021"
+    },
+    {
+      "category": "documentation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "progression-architecture.md is stale on patching and squad-actions-init",
+      "affectedFiles": [
+        "docs/architecture/progression-architecture.md"
+      ],
+      "evidence": [
+        "docs/architecture/progression-architecture.md:40",
+        "docs/architecture/progression-architecture.md:96"
+      ],
+      "observed": "See CR-PRG-01..03. Other candidates linked as historical evidence: docs/audits/progression-runtime-integrity-audit.md, docs/audits/reconciliation-v2-progression-authority-audit.md, docs/systems/PROGRESSION_COMPILER_UNIFICATION.md, docs/systems/V2-PROGRESSION-UI.md.",
+      "intendedOwnership": "This contract (B-PRG) as current home; progression-architecture.md kept and corrected",
+      "contractRef": "A-P2",
+      "proposedSolution": "Correct the two sentences and link B-PRG; do not delete audit docs (certifications/owner decisions).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-PRG-022"
+    },
+    {
+      "category": "legacy-compat",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Retired chargen/level-up app directories still host live helpers",
+      "affectedFiles": [
+        "scripts/apps/chargen/chargen-shared.js",
+        "scripts/apps/levelup/levelup-shared.js",
+        "scripts/apps/levelup/npc-levelup-entry.js"
+      ],
+      "evidence": [
+        "scripts/apps/progression-framework/steps/summary-step.js:22",
+        "scripts/apps/progression-framework/steps/summary-step.js:1748",
+        "scripts/apps/progression-framework/progression-entry.js:286",
+        "scripts/sheets/v2/npc-actor-sheet.js:290"
+      ],
+      "observed": "No old chargen/level-up application remains; the directories hold helpers (hit die, BAB, defense bonuses, random names, ChargenDataCache) and SWSENpcLevelUpEntry (a chooser launched from progression-entry and the NPC sheet). Legacy class B (referenced).",
+      "intendedOwnership": "engine/progression or classes domain",
+      "contractRef": "OSI progression | A-09",
+      "proposedSolution": "Move helpers into engine/progression/utils (BAB per F-PRG-008); keep SWSENpcLevelUpEntry as a progression-framework entry dialog or route to launchProgression.",
+      "alternatives": "",
+      "dependencies": [
+        "F-PRG-008"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "NPC level-up entry",
+      "scope": "S",
+      "simplificationBenefit": "Retired directories can be removed",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-PRG-023"
+    }
+  ]
+}

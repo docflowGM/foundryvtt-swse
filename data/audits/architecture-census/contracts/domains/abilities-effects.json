@@ -1,0 +1,674 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-ABL",
+  "domain": "abilities-effects",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "abilities-effects owns modifier collection/aggregation (ModifierEngine, single aggregator with signature-keyed caches), acquisition evaluation (AbilityEngine), the PASSIVE/ACTIVE/RULE execution model, rule enums and managed effect intents. Two live bypasses: managed-effect expiry writes owned ActiveEffects directly, and lineage credit awards write credits and chat outside TransactionEngine/SWSEChat. A dead legacy rule framework still carries a D&D crit-confirm rule contrary to A-18.",
+  "responsibilities": [
+    {
+      "id": "R-ABL-01",
+      "responsibility": "Collect all modifiers for an actor",
+      "owner": {
+        "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+        "symbol": "ModifierEngine.getAllModifiers/collectModifiers"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/engine/effects/modifiers/ModifierEngine.js:308",
+        "scripts/engine/effects/modifiers/ModifierEngine.js:393"
+      ],
+      "tests": [
+        "tests/modifier-engine-signature-reuse.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-ABL-02",
+      "responsibility": "Aggregate/resolve modifier totals with stacking rules",
+      "owner": {
+        "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+        "symbol": "ModifierEngine.aggregateAll/resolveTarget"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/engine/effects/modifiers/ModifierEngine.js:548",
+        "scripts/engine/effects/modifiers/ModifierEngine.js:575",
+        "scripts/engine/effects/modifiers/ModifierEngine.js:644"
+      ],
+      "tests": [
+        "tests/modifier-total-breakdown-parity.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-ABL-03",
+      "responsibility": "Modifier breakdown/ledger for UI",
+      "owner": {
+        "path": "scripts/engine/effects/modifiers/modifier-breakdown-builder.js",
+        "symbol": "buildModifierLedger"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/engine/effects/modifiers/ModifierEngine.js:756"
+      ],
+      "tests": [
+        "tests/modifier-breakdown-builder.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-ABL-04",
+      "responsibility": "Signature-keyed modifier caches with explicit invalidation (A-16)",
+      "owner": {
+        "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+        "symbol": "ModifierEngine.clearCaches"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/effects/modifiers/ModifierEngine.js:38",
+        "scripts/engine/effects/modifiers/ModifierEngine.js:74",
+        "scripts/engine/effects/modifiers/ModifierEngine.js:121"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ABL-05",
+      "responsibility": "Feat/talent/prestige acquisition evaluation",
+      "owner": {
+        "path": "scripts/engine/abilities/AbilityEngine.js",
+        "symbol": "AbilityEngine.evaluateAcquisition"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/engine/abilities/AbilityEngine.js:204"
+      ],
+      "tests": [
+        "tests/ability-engine-acquisition.test.mjs",
+        "tests/ability-engine-acquisition-cache-derived-coherency.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-ABL-06",
+      "responsibility": "Passive ability registration before derived calc",
+      "owner": {
+        "path": "scripts/engine/abilities/ability-execution-coordinator.js",
+        "symbol": "AbilityExecutionCoordinator.registerActorAbilities"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/actors/v2/base-actor.js:79"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ABL-07",
+      "responsibility": "ADD-only derived overrides",
+      "owner": {
+        "path": "scripts/engine/abilities/passive/derived-override-engine.js",
+        "symbol": "DerivedOverrideEngine"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/abilities/passive/derived-override-engine.js:125"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ABL-08",
+      "responsibility": "Managed effect intents to modifier data; turn/combat-end expiry",
+      "owner": {
+        "path": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+        "symbol": "EffectIntentEngine"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/dialogs/entity-dialog/effect-intent-engine.js:991",
+        "scripts/dialogs/entity-dialog/effect-intent-engine.js:1459",
+        "scripts/infrastructure/hooks/combat-hooks.js:305"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ABL-09",
+      "responsibility": "Rule enum and rule parameter definitions",
+      "owner": {
+        "path": "scripts/engine/execution/rules/rule-enum.js",
+        "symbol": "RULES"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/execution/rules/rule-enum.js:78",
+        "scripts/engine/execution/rules/rule-definitions.js:242"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ABL-10",
+      "responsibility": "Progression-event ability effects (lineage credit awards etc.)",
+      "owner": {
+        "path": "scripts/engine/abilities/progression/progression-event-processor.js",
+        "symbol": "ProgressionEventProcessor"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/abilities/progression/progression-event-processor.js:405",
+        "scripts/engine/abilities/progression/progression-event-processor.js:422"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ABL-11",
+      "responsibility": "Runtime ActiveEffect change normalization",
+      "owner": {
+        "path": "scripts/utils/active-effect-change-utils.js",
+        "symbol": "normalizeActiveEffectDataForRuntime"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:28"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ABL-12",
+      "responsibility": "In-memory activation limits and durations",
+      "owner": {
+        "path": "scripts/engine/abilities/active/duration-engine.js",
+        "symbol": "DurationEngine"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/abilities/active/duration-engine.js:78"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "ModifierEngine.getAllModifiers",
+      "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+      "line": 308,
+      "consumers": 31,
+      "contract": "async; cached by source signature; returns clones"
+    },
+    {
+      "symbol": "ModifierEngine.aggregateAll",
+      "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+      "line": 548,
+      "consumers": 31,
+      "contract": "totals per target"
+    },
+    {
+      "symbol": "ModifierEngine.resolveTarget",
+      "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+      "line": 644,
+      "consumers": 31,
+      "contract": ""
+    },
+    {
+      "symbol": "ModifierEngine.clearCaches",
+      "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+      "line": 74,
+      "consumers": 31,
+      "contract": "invalidation"
+    },
+    {
+      "symbol": "AbilityEngine.evaluateAcquisition",
+      "path": "scripts/engine/abilities/AbilityEngine.js",
+      "line": 204,
+      "consumers": 45,
+      "contract": "pure evaluation with acquisition cache"
+    },
+    {
+      "symbol": "AbilityEngine.canAcquire",
+      "path": "scripts/engine/abilities/AbilityEngine.js",
+      "line": 357,
+      "consumers": 45,
+      "contract": ""
+    },
+    {
+      "symbol": "RULES",
+      "path": "scripts/engine/execution/rules/rule-enum.js",
+      "line": 78,
+      "consumers": 11,
+      "contract": "rule type ids"
+    },
+    {
+      "symbol": "EffectIntentEngine.expireManagedEffectsForActor",
+      "path": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+      "line": 1459,
+      "consumers": 11,
+      "contract": "GM-only expiry"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "infrastructure",
+      "data-registries",
+      "actor-core reads",
+      "equipment/droid/vehicle read gates"
+    ],
+    "prohibited": [
+      "ModifierEngine -> combat engines (ENGINE-ARCH \u00a74)",
+      "engines -> scripts/dialogs/** (A-07)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/effects/modifiers/ModifierEngine.js",
+        "to": "scripts/engine/combat/weapons-engine.js",
+        "evidence": "scripts/engine/effects/modifiers/ModifierEngine.js:19"
+      },
+      {
+        "from": "scripts/engine/effects/modifiers/ModifierEngine.js",
+        "to": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+        "evidence": "scripts/engine/effects/modifiers/ModifierEngine.js:31"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-ABL-1",
+      "boundary": "ModifierEngine <-> modifier sources",
+      "interface": "sources produce createModifier() objects; ModifierEngine owns stacking/totals; weapon source pulled via WeaponsEngine.getWeaponModifiers",
+      "status": [
+        "OBSERVED"
+      ]
+    },
+    {
+      "id": "C-ABL-2",
+      "boundary": "EffectIntentEngine <-> ModifierEngine",
+      "interface": "hasIntent / toModifierData / toContextualModifierData",
+      "status": [
+        "OBSERVED",
+        "PROPOSED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-ABL-01",
+      "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md \u00a74",
+      "claim": "ModifierEngine depends only on ActorEngine",
+      "observed": "Imports WeaponsEngine, EncumbranceEngine, droid/vehicle gates and dialogs/effect-intent-engine (global CR-05)",
+      "evidence": [
+        "scripts/engine/effects/modifiers/ModifierEngine.js:19",
+        "scripts/engine/effects/modifiers/ModifierEngine.js:31"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-ABL-03",
+      "existingSource": "A-18 / OSI",
+      "claim": "No D&D critical confirmation",
+      "observed": "RULES.CRITICAL_CONFIRM_BONUS is a live rule type with definition; unreachable rule module and unused roll-config rollCriticalConfirmation implement it",
+      "evidence": [
+        "scripts/engine/execution/rules/rule-enum.js:78",
+        "scripts/engine/rules/modules/core/critical-confirm-bonus-rule.js:26",
+        "scripts/rolls/roll-config.js:2168"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [],
+  "deferredRules": [],
+  "foundryAcceptance": [
+    {
+      "item": "Managed-effect expiry at turn start/combat end (GM client)",
+      "source": "scripts/infrastructure/hooks/combat-hooks.js:305"
+    },
+    {
+      "item": "Lineage credit award flow after rerouting to TransactionEngine",
+      "source": "scripts/engine/abilities/progression/progression-event-processor.js:374"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-ABL-001",
+      "category": "bypass-engine",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Managed-effect expiry writes owned ActiveEffects directly",
+      "affectedFiles": [
+        "scripts/dialogs/entity-dialog/effect-intent-engine.js"
+      ],
+      "evidence": [
+        "scripts/dialogs/entity-dialog/effect-intent-engine.js:991",
+        "scripts/dialogs/entity-dialog/effect-intent-engine.js:1470",
+        "scripts/dialogs/entity-dialog/effect-intent-engine.js:1479",
+        "scripts/infrastructure/hooks/combat-hooks.js:305"
+      ],
+      "observed": "disableExpiredEffectsOnDocument calls document.updateEmbeddedDocuments(\"ActiveEffect\", ...) on the actor and on each owned item, from combat turn-start/combat-end hooks (GM only). This bypasses ActorEngine.updateActiveEffects (actor-engine.js:4203) and its normalization/recalc; no @mutation-exception comment.",
+      "intendedOwnership": "Owned AE changes go through ActorEngine (A-02).",
+      "contractRef": "A-02; R-ABL-08",
+      "proposedSolution": "Route actor effects through ActorEngine.updateActiveEffects(actor, updates) and owned-item effects through an ActorEngine owned-item effect helper (add one if missing) with source \"swse-basic-effect-*\".",
+      "alternatives": "Document as exception (not recommended: owned docs).",
+      "dependencies": [
+        "B-ACT"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Unit test with fake ActorEngine: expiry calls updateActiveEffects, never document.updateEmbeddedDocuments.",
+      "foundryAcceptance": "Turn-start expiry in a live combat with GM and player clients.",
+      "scope": "S",
+      "simplificationBenefit": "One AE write path.",
+      "risk": "Low; active effects are a runtime-risk area.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ABL-002",
+      "category": "bypass-engine",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Lineage credit awards bypass TransactionEngine and SWSEChat",
+      "affectedFiles": [
+        "scripts/engine/abilities/progression/progression-event-processor.js"
+      ],
+      "evidence": [
+        "scripts/engine/abilities/progression/progression-event-processor.js:325",
+        "scripts/engine/abilities/progression/progression-event-processor.js:374",
+        "scripts/engine/abilities/progression/progression-event-processor.js:405",
+        "scripts/engine/abilities/progression/progression-event-processor.js:409",
+        "scripts/engine/abilities/progression/progression-event-processor.js:422"
+      ],
+      "observed": "_applyCreditsUpdate reads system.credits and writes credits+N through ActorEngine.updateActor; _notifyCreditsGranted posts ChatMessage.create directly. TransactionEngine.executeCreditAdjustment exists (scripts/engine/store/transaction-engine.js:557). Live via progression-engine.js and finalize-integration.js.",
+      "intendedOwnership": "Credit movement through TransactionEngine (A-10); gameplay chat through SWSEChat (A-05).",
+      "contractRef": "A-10; A-05; R-ABL-10",
+      "proposedSolution": "Replace _applyCreditsUpdate with TransactionEngine.executeCreditAdjustment (grant, source = ability) and _notifyCreditsGranted with SWSEChat (or the store receipt hook swseCreditGrantComplete which already renders a card, scripts/chat/store-receipt-chat.js:414). Amount and trigger unchanged.",
+      "alternatives": "",
+      "dependencies": [
+        "B-store-economy",
+        "B-CHT"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Test: lineage grant creates one TransactionEngine adjustment and no direct updateActor credit write.",
+      "foundryAcceptance": "Level-up with Lineage talent in Foundry.",
+      "scope": "S",
+      "simplificationBenefit": "Removes a parallel credit writer.",
+      "risk": "Medium: credits and progression finalization are runtime-risk areas.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ABL-003",
+      "category": "dependency",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "EffectIntentEngine is an engine filed under scripts/dialogs/ (A-07 hits are a filing error)",
+      "affectedFiles": [
+        "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+        "scripts/engine/effects/modifiers/ModifierEngine.js",
+        "scripts/engine/effects/adapters/active-effect-adapter.js"
+      ],
+      "evidence": [
+        "scripts/engine/effects/modifiers/ModifierEngine.js:31",
+        "scripts/dialogs/entity-dialog/effect-intent-engine.js:993"
+      ],
+      "observed": "A 1,691-line engine (intent schema, modifier conversion, lifecycle expiry, persistence) with 11 importers, imported by ModifierEngine and active-effect-adapter, lives in the dialog folder next to its editor UI.",
+      "intendedOwnership": "Engine code in scripts/engine/effects/; dialog keeps only presentation.",
+      "contractRef": "A-07; C-ABL-2",
+      "proposedSolution": "Move EffectIntentEngine (and its pure helpers) to scripts/engine/effects/effect-intent-engine.js; leave the dialog importing it. Split lifecycle/expiry (writer) from intent<->modifier conversion (pure).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Census: no engine -> scripts/dialogs edge.",
+      "foundryAcceptance": "None.",
+      "scope": "M",
+      "simplificationBenefit": "Two A-07 edges removed; clearer ownership.",
+      "risk": "Low (path move).",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ABL-004",
+      "category": "dead-code",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Dead legacy rule framework including a D&D critical-confirmation rule",
+      "affectedFiles": [
+        "scripts/engine/rules/rules-registry.js",
+        "scripts/engine/rules/modules/core/critical-confirm-bonus-rule.js",
+        "scripts/engine/rules/modules/core/index.js",
+        "scripts/engine/rules/modules/talents/index.js"
+      ],
+      "evidence": [
+        "scripts/engine/rules/modules/core/critical-confirm-bonus-rule.js:26",
+        "scripts/engine/execution/rules/rule-enum.js:78",
+        "scripts/combat/utils/combat-utils.js:104",
+        "scripts/rolls/roll-config.js:2185"
+      ],
+      "observed": "scripts/engine/rules/** (rules-registry + 12 rule modules) has no runtime importer (registry: unreachable-importers-only/orphan). The CRITICAL_CONFIRM_BONUS rule type remains live in rule-enum/rule-definitions and is consumed by combat-utils.getCriticalConfirmBonus, used only by roll-config.rollCriticalConfirmation which has no caller. A-18 excludes D&D crit confirmation.",
+      "intendedOwnership": "No dead rule framework; no D&D crit-confirm mechanics (A-18).",
+      "contractRef": "A-18; A-09",
+      "proposedSolution": "Delete scripts/engine/rules/** (legacy C). Delete rollCriticalConfirmation/getCriticalConfirmBonus (ROL F-ROL-002). Retiring the CRITICAL_CONFIRM_BONUS rule type requires confirming no item data uses it (packs grep found none).",
+      "alternatives": "",
+      "dependencies": [
+        "B-ROL F-ROL-002"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Full CI; pack scan for CRITICAL_CONFIRM_BONUS.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "-~470 SLOC; removes a rule contradicting A-18.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ABL-005",
+      "category": "duplicate-authority",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "DerivedOverrideEngine computes HALF_LEVEL and ability mod independently of actor-core helpers",
+      "affectedFiles": [
+        "scripts/engine/abilities/passive/derived-override-engine.js"
+      ],
+      "evidence": [
+        "scripts/engine/abilities/passive/derived-override-engine.js:149",
+        "scripts/engine/abilities/passive/derived-override-engine.js:177",
+        "scripts/actors/derived/level-split.js:68"
+      ],
+      "observed": "_getHalfLevel uses floor(system.level/2); level-split provides getHeroicHalfLevel/getEffectiveHalfLevel. _getAbilityMod recomputes from attributes as fallback. HALF_LEVEL is referenced only by orphan phase-3-feat-definitions.js and the contract, so no live feature uses it.",
+      "intendedOwnership": "Level and ability-mod arithmetic from one owner (actor-core level-split, derived attributes).",
+      "contractRef": "A-01",
+      "proposedSolution": "Delegate _getAbilityMod to derived attributes only and leave HALF_LEVEL unimplemented (throw/deny) until a feature needs it; which level (heroic vs character) a generic HALF_LEVEL means is a rules question to raise at that time.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": true,
+      "regressionTests": "Unit test for ABILITY_MOD override.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "Removes a divergent formula.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ABL-006",
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Unreachable abilities-effects modules",
+      "affectedFiles": [
+        "scripts/engine/effects/modifiers/ModifierEngineExtensions.js",
+        "scripts/engine/effects/modifiers/ModifierDomainResolver.js",
+        "scripts/engine/abilities/active/species-ability-handlers.js",
+        "scripts/engine/abilities/active/active-migration-validator.js",
+        "scripts/engine/abilities/passive/phase-1b-feat-definitions.js",
+        "scripts/engine/abilities/passive/phase-2-feat-definitions.js",
+        "scripts/engine/abilities/passive/phase-3-feat-definitions.js",
+        "scripts/engine/abilities/passive/phase-4-feat-definitions.js",
+        "scripts/engine/effects/modifiers/modifier-unification-schema.js",
+        "scripts/engine/effects/active-effects-engine.js",
+        "scripts/apps/modifier-inspector-app.js",
+        "scripts/apps/dialogs/modifier-breakdown-dialog.js",
+        "scripts/sheets/v2/character-sheet/abilities-ui.js",
+        "scripts/core/effect-sanitizer.js",
+        "scripts/utils/destiny-effects.js",
+        "scripts/engine/abilities/AbilityExecutionRouter.js",
+        "scripts/engine/abilities/ability-usage.js",
+        "scripts/engine/abilities/passive/rule-types.js"
+      ],
+      "evidence": [
+        "scripts/engine/effects/modifiers/ModifierEngine.js:383",
+        "scripts/core/effect-sanitizer.js:81",
+        "scripts/governance/sentinel/v2-comprehensive-audit.js:1"
+      ],
+      "observed": "Static orphans or importers-only. Name mentions: ModifierEngineExtensions only in a ModifierEngine comment; AbilityExecutionRouter mentioned by force-power-adapter/ActivationLimitEngine (comments, no import); ModifierInspector referenced by orphan v2-comprehensive-audit and a template; effect-sanitizer self-registers hooks but nothing imports it; destiny-effects imported by unreachable destiny-hooks/destiny-spending-dialog.",
+      "intendedOwnership": "No unreachable runtime modules.",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete orphans with static proof (legacy C). Investigate effect-sanitizer (preCreate/preUpdate hooks were intended sanitation) and destiny-effects (Destiny effects UI) as UNIMPLEMENTED integrations before deleting; owner decides.",
+      "alternatives": "",
+      "dependencies": [
+        "B-INF"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Full CI.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "~2,300 SLOC removable.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ABL-007",
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Probe false positives and non-duplicate leads",
+      "affectedFiles": [
+        "scripts/engine/abilities/active/duration-engine.js",
+        "scripts/engine/effects/modifiers/ModifierUtils.js",
+        "scripts/engine/effects/adapters/immunity-resistance-adapter.js"
+      ],
+      "evidence": [
+        "scripts/engine/abilities/active/duration-engine.js:85",
+        "scripts/engine/abilities/active/duration-engine.js:102",
+        "scripts/engine/effects/modifiers/ModifierEngine.js:575",
+        "scripts/engine/effects/adapters/immunity-resistance-adapter.js:100"
+      ],
+      "observed": "duration-engine A-02 hits are Map.delete on a private in-memory map (false positive). modifier-aggregation lead: ModifierEngine delegates summation to ModifierUtils.sumModifiers (delegation). damage-reduction lead getActorShieldRating reads derived.shield then stored system.shields with a documented legacy fallback (read-only, not a second authority).",
+      "intendedOwnership": "",
+      "contractRef": "A-02; A-01",
+      "proposedSolution": "Allow-list duration-engine in the probe.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ABL-008",
+      "category": "oversized-module",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "ModifierEngine (2,085 lines) holds source collectors for every domain",
+      "affectedFiles": [
+        "scripts/engine/effects/modifiers/ModifierEngine.js"
+      ],
+      "evidence": [
+        "scripts/engine/effects/modifiers/ModifierEngine.js:14",
+        "scripts/engine/effects/modifiers/ModifierEngine.js:342",
+        "scripts/engine/effects/modifiers/ModifierEngine.js:1170",
+        "scripts/engine/effects/modifiers/ModifierEngine.js:1640"
+      ],
+      "observed": "Collection of item, effect-intent, weapon, encumbrance, armor-usage, droid, vehicle and passive modifiers is hard-coded in one class, which is why it imports combat/equipment/droid/vehicle modules.",
+      "intendedOwnership": "ModifierEngine owns aggregation; domains register sources.",
+      "contractRef": "C-ABL-1",
+      "proposedSolution": "Introduce a source-registration seam (ModifierSourceRegistry) and move each collector next to its domain; ModifierEngine iterates registered sources. Keep output order and stacking identical.",
+      "alternatives": "",
+      "dependencies": [
+        "B-ACT F-ACT-001"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "modifier-total-breakdown-parity and signature-reuse tests unchanged.",
+      "foundryAcceptance": "None.",
+      "scope": "L",
+      "simplificationBenefit": "Breaks the ModifierEngine<->combat cycle.",
+      "risk": "Medium: ordering of sources affects breakdown display.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ABL-009",
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Documentation consolidation candidates",
+      "affectedFiles": [
+        "docs/systems/ABILITY_SCHEMA_AUTHORITY.md",
+        "docs/audits/effects-modifier-derived-audit.md",
+        "scripts/engine/abilities/active/ACTIVE-GUIDE.md"
+      ],
+      "evidence": [
+        "scripts/engine/abilities/active/ACTIVE-GUIDE.md:137"
+      ],
+      "observed": "ACTIVE-GUIDE.md (in scripts/) describes ActorEngine.apply() for FP spend; current path is ActorEngine.spendForcePoints.",
+      "intendedOwnership": "This contract links the schema authority doc; guides corrected.",
+      "contractRef": "A-P2",
+      "proposedSolution": "Link; correct ACTIVE-GUIDE reference. Do not delete.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None.",
+      "perfImpact": "none"
+    }
+  ]
+}

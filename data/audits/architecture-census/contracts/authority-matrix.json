@@ -2,5 +2,1959 @@
  "schema": "swse.v2-contract.authority-matrix/1",
  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
  "generator": "tools/architecture-census/assemble-contracts.mjs",
- "rows": []
+ "rows": [
+  {
+   "id": "R-ABL-01",
+   "domain": "abilities-effects",
+   "responsibility": "Collect all modifiers for an actor",
+   "owner": {
+    "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+    "symbol": "ModifierEngine.getAllModifiers/collectModifiers"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/modifier-engine-signature-reuse.test.mjs"
+   ]
+  },
+  {
+   "id": "R-ABL-02",
+   "domain": "abilities-effects",
+   "responsibility": "Aggregate/resolve modifier totals with stacking rules",
+   "owner": {
+    "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+    "symbol": "ModifierEngine.aggregateAll/resolveTarget"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/modifier-total-breakdown-parity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-ABL-03",
+   "domain": "abilities-effects",
+   "responsibility": "Modifier breakdown/ledger for UI",
+   "owner": {
+    "path": "scripts/engine/effects/modifiers/modifier-breakdown-builder.js",
+    "symbol": "buildModifierLedger"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/modifier-breakdown-builder.test.mjs"
+   ]
+  },
+  {
+   "id": "R-ABL-04",
+   "domain": "abilities-effects",
+   "responsibility": "Signature-keyed modifier caches with explicit invalidation (A-16)",
+   "owner": {
+    "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+    "symbol": "ModifierEngine.clearCaches"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-ABL-05",
+   "domain": "abilities-effects",
+   "responsibility": "Feat/talent/prestige acquisition evaluation",
+   "owner": {
+    "path": "scripts/engine/abilities/AbilityEngine.js",
+    "symbol": "AbilityEngine.evaluateAcquisition"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/ability-engine-acquisition.test.mjs",
+    "tests/ability-engine-acquisition-cache-derived-coherency.test.mjs"
+   ]
+  },
+  {
+   "id": "R-ABL-06",
+   "domain": "abilities-effects",
+   "responsibility": "Passive ability registration before derived calc",
+   "owner": {
+    "path": "scripts/engine/abilities/ability-execution-coordinator.js",
+    "symbol": "AbilityExecutionCoordinator.registerActorAbilities"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-ABL-07",
+   "domain": "abilities-effects",
+   "responsibility": "ADD-only derived overrides",
+   "owner": {
+    "path": "scripts/engine/abilities/passive/derived-override-engine.js",
+    "symbol": "DerivedOverrideEngine"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-ABL-08",
+   "domain": "abilities-effects",
+   "responsibility": "Managed effect intents to modifier data; turn/combat-end expiry",
+   "owner": {
+    "path": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+    "symbol": "EffectIntentEngine"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-ABL-09",
+   "domain": "abilities-effects",
+   "responsibility": "Rule enum and rule parameter definitions",
+   "owner": {
+    "path": "scripts/engine/execution/rules/rule-enum.js",
+    "symbol": "RULES"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-ABL-10",
+   "domain": "abilities-effects",
+   "responsibility": "Progression-event ability effects (lineage credit awards etc.)",
+   "owner": {
+    "path": "scripts/engine/abilities/progression/progression-event-processor.js",
+    "symbol": "ProgressionEventProcessor"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-ABL-11",
+   "domain": "abilities-effects",
+   "responsibility": "Runtime ActiveEffect change normalization",
+   "owner": {
+    "path": "scripts/utils/active-effect-change-utils.js",
+    "symbol": "normalizeActiveEffectDataForRuntime"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-ABL-12",
+   "domain": "abilities-effects",
+   "responsibility": "In-memory activation limits and durations",
+   "owner": {
+    "path": "scripts/engine/abilities/active/duration-engine.js",
+    "symbol": "DurationEngine"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-ACT-01",
+   "domain": "actor-core",
+   "responsibility": "Actor document class for all actor types",
+   "owner": {
+    "path": "scripts/actors/v2/base-actor.js",
+    "symbol": "SWSEV2BaseActor"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-ACT-02",
+   "domain": "actor-core",
+   "responsibility": "Synchronous derived pass in prepareDerivedData (per-type mirrors, condition track, XP)",
+   "owner": {
+    "path": "scripts/actors/v2/base-actor.js",
+    "symbol": "SWSEV2BaseActor._performDerivedCalculation"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-ACT-03",
+   "domain": "actor-core",
+   "responsibility": "Asynchronous derived pass (HP, BAB, defenses, skills, modifiers)",
+   "owner": {
+    "path": "scripts/actors/derived/derived-calculator.js",
+    "symbol": "DerivedCalculator.computeAll"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/derived-calculator-signature-reuse.test.mjs"
+   ]
+  },
+  {
+   "id": "R-ACT-04",
+   "domain": "actor-core",
+   "responsibility": "Derived-generation stamp used as invalidation key for derived/view caches",
+   "owner": {
+    "path": "scripts/actors/derived/derived-generation.js",
+    "symbol": "stampDerivedGeneration"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/v2-derived-async-applied-signature-coherency.test.mjs"
+   ]
+  },
+  {
+   "id": "R-ACT-05",
+   "domain": "actor-core",
+   "responsibility": "Actor and owned-document mutation gate (A-02)",
+   "owner": {
+    "path": "scripts/governance/actor-engine/actor-engine.js",
+    "symbol": "ActorEngine.updateActor/updateEmbeddedDocuments/createEmbeddedDocuments/deleteEmbeddedDocuments"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-ACT-06",
+   "domain": "actor-core",
+   "responsibility": "Multi-bucket mutation plans with optional verified rollback",
+   "owner": {
+    "path": "scripts/governance/actor-engine/actor-engine.js",
+    "symbol": "ActorEngine.applyMutationPlan"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/ti4c0-g06-rollback-verification.test.mjs",
+    "tests/ti4c0-g06s1-exact-snapshot.test.mjs"
+   ]
+  },
+  {
+   "id": "R-ACT-07",
+   "domain": "actor-core",
+   "responsibility": "Post-mutation recompute and in-memory fold of derived snapshot",
+   "owner": {
+    "path": "scripts/governance/actor-engine/actor-engine.js",
+    "symbol": "ActorEngine.recalcAll/_applyDerivedUpdates"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-ACT-08",
+   "domain": "actor-core",
+   "responsibility": "Orchestrated resource mutations (damage, healing, condition step, Force/Destiny ledgers, Second Wind); rules delegated to combat/force engines",
+   "owner": {
+    "path": "scripts/governance/actor-engine/actor-engine.js",
+    "symbol": "ActorEngine.applyDamage/setConditionStep/spendForcePoints/spendDestinyPoints/applySecondWind"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-ACT-09",
+   "domain": "actor-core",
+   "responsibility": "Level split and heroic half-level helpers",
+   "owner": {
+    "path": "scripts/actors/derived/level-split.js",
+    "symbol": "getHeroicHalfLevel/getEffectiveHalfLevel"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-ACT-10",
+   "domain": "actor-core",
+   "responsibility": "Defense totals for character-like actors",
+   "owner": {
+    "path": "scripts/actors/derived/defense-calculator.js",
+    "symbol": "DefenseCalculator"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/v2-golden-defense-lifecycle.test.mjs"
+   ]
+  },
+  {
+   "id": "R-ACT-11",
+   "domain": "actor-core",
+   "responsibility": "Vehicle derived values",
+   "owner": {
+    "path": "scripts/actors/v2/vehicle-derived-builder.js",
+    "symbol": "buildVehicleDerived"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/vehicle-hp-hull-dt-authority.test.mjs"
+   ]
+  },
+  {
+   "id": "R-ACT-12",
+   "domain": "actor-core",
+   "responsibility": "NPC/droid calculation-mode adapters",
+   "owner": {
+    "path": "scripts/actors/npc/npc-mode-adapter.js",
+    "symbol": "getNpcMode / resolveDroidCalculationMode"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/npc-mode-adapter.test.mjs",
+    "tests/droid-mode-adapter.test.mjs"
+   ]
+  },
+  {
+   "id": "R-ACT-13",
+   "domain": "actor-core",
+   "responsibility": "HP ledger accounting and recompute",
+   "owner": {
+    "path": "scripts/engine/HP/hp-accounting.js",
+    "symbol": "planHpRecompute; ActorEngine.recomputeHP"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/hp-preservation-authority.test.mjs"
+   ]
+  },
+  {
+   "id": "R-ACT-14",
+   "domain": "actor-core",
+   "responsibility": "XP derived block system.derived.xp",
+   "owner": {
+    "path": "scripts/engine/progression/xp-engine.js",
+    "symbol": "computeXpDerived"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-ACT-15",
+   "domain": "actor-core",
+   "responsibility": "Vehicle pre-create / pre-update guards",
+   "owner": {
+    "path": "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+    "symbol": "registerVehiclePreCreateHooks"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CLS-01",
+   "domain": "classes",
+   "responsibility": "Load classes compendium, normalize, O(1) lookup",
+   "owner": {
+    "path": "scripts/data/classes-db.js",
+    "symbol": "ClassesDB"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/class-pack-protected-guard.test.mjs"
+   ]
+  },
+  {
+   "id": "R-CLS-02",
+   "domain": "classes",
+   "responsibility": "Public enumeration API",
+   "owner": {
+    "path": "scripts/engine/registries/classes-registry.js",
+    "symbol": "ClassesRegistry"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CLS-03",
+   "domain": "classes",
+   "responsibility": "Class record normalization",
+   "owner": {
+    "path": "scripts/data/class-normalizer.js",
+    "symbol": "normalizeClass"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CLS-04",
+   "domain": "classes",
+   "responsibility": "Legacy-shaped class cache for derived calculators",
+   "owner": {
+    "path": "scripts/engine/progression/utils/class-data-loader.js",
+    "symbol": "getClassData"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/class-hit-die-defense-source.test.mjs"
+   ]
+  },
+  {
+   "id": "R-CLS-05",
+   "domain": "classes",
+   "responsibility": "Class identity resolution for progression",
+   "owner": {
+    "path": "scripts/engine/progression/utils/class-resolution.js",
+    "symbol": "resolveClassModel"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CLS-06",
+   "domain": "classes",
+   "responsibility": "Nonheroic synthetic class model",
+   "owner": {
+    "path": "scripts/engine/progression/utils/nonheroic-class-model.js",
+    "symbol": "NONHEROIC_CLASS_MODEL"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-CLS-07",
+   "domain": "classes",
+   "responsibility": "Prestige-class prerequisite data",
+   "owner": {
+    "path": "scripts/data/prestige-prerequisites.js",
+    "symbol": "PRESTIGE_PREREQUISITES"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CLS-08",
+   "domain": "classes",
+   "responsibility": "Class tag / relationship metadata",
+   "owner": {
+    "path": "scripts/data/class-tag-metadata.js",
+    "symbol": "CLASS_TAG_METADATA"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-CLS-09",
+   "domain": "classes",
+   "responsibility": "Prestige identity weighting for suggestions",
+   "owner": {
+    "path": "scripts/engine/prestige/identity-engine.js",
+    "symbol": "IdentityEngine"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-FEA-01",
+   "domain": "feats",
+   "responsibility": "Canonical feat content",
+   "owner": {
+    "path": "data/canonical/feats.json",
+    "symbol": "(data)"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/feat-catalog-validity-regression.test.mjs"
+   ]
+  },
+  {
+   "id": "R-FEA-02",
+   "domain": "feats",
+   "responsibility": "Runtime feat lookup/identity",
+   "owner": {
+    "path": "scripts/registries/feat-registry.js",
+    "symbol": "FeatRegistry"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/feat-registry-canonical-identity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-FEA-03",
+   "domain": "feats",
+   "responsibility": "Runtime pack seeding and icon repair (GM)",
+   "owner": {
+    "path": "scripts/registries/feat-pack-seeder.js",
+    "symbol": "FeatPackSeeder"
+   },
+   "status": [
+    "OBSERVED",
+    "FOUNDRY_ACCEPTANCE_REQUIRED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-FEA-04",
+   "domain": "feats",
+   "responsibility": "Feat prerequisite data",
+   "owner": {
+    "path": "scripts/data/authority/feat-prerequisite-authority.js",
+    "symbol": "FEAT_PREREQUISITE_AUTHORITY"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-FEA-05",
+   "domain": "feats",
+   "responsibility": "Feat/talent domain guard",
+   "owner": {
+    "path": "scripts/data/feat-domain-guard.js",
+    "symbol": "filterFeatDomainDocuments"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-FEA-06",
+   "domain": "feats",
+   "responsibility": "Feat choice persistence",
+   "owner": {
+    "path": "scripts/apps/choices/feat-choice-dialog.js",
+    "symbol": "FeatChoiceDialog.promptAndApply"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/feat-choice-persistence-and-scoped-prerequisites.test.mjs"
+   ]
+  },
+  {
+   "id": "R-FEA-07",
+   "domain": "feats",
+   "responsibility": "Feat rule metadata stamping (18 live normalization families)",
+   "owner": {
+    "path": "scripts/engine/feats/register-feat-runtime.js",
+    "symbol": "registerFeatRuntime"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-FEA-08",
+   "domain": "feats",
+   "responsibility": "Feat runtime effects via resolver wrapping",
+   "owner": {
+    "path": "scripts/engine/feats/*-runtime-patches.js",
+    "symbol": "register*RuntimePatches"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-FEA-09",
+   "domain": "feats",
+   "responsibility": "Meta-resource feat rules and reroll supersession",
+   "owner": {
+    "path": "scripts/engine/feats/meta-resource-feat-resolver.js",
+    "symbol": "MetaResourceFeatResolver"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/grab-grapple-resistance-channel-split.test.mjs"
+   ]
+  },
+  {
+   "id": "R-FEA-10",
+   "domain": "feats",
+   "responsibility": "Weapon-scoped feat bonuses",
+   "owner": {
+    "path": "scripts/engine/feat/scoped-combat-feat-resolver.js",
+    "symbol": "ScopedCombatFeatResolver"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/combat-feat-attack-modifier-regression.test.mjs"
+   ]
+  },
+  {
+   "id": "R-FEA-11",
+   "domain": "feats",
+   "responsibility": "Feat ActiveEffect lifecycle",
+   "owner": {
+    "path": "scripts/engine/features/feat-effect-applier.js",
+    "symbol": "FeatEffectApplier"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-FEA-12",
+   "domain": "feats",
+   "responsibility": "Encounter-limited use tracking",
+   "owner": {
+    "path": "scripts/engine/feats/encounter-use-tracker.js",
+    "symbol": "EncounterUseTracker"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-FEA-13",
+   "domain": "feats",
+   "responsibility": "Core attack-option action economy",
+   "owner": {
+    "path": "scripts/engine/feats/core-attack-option-action-economy.js",
+    "symbol": "getCoreAttackOptionEconomy"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-FEA-14",
+   "domain": "feats",
+   "responsibility": "Condition-track feat actions",
+   "owner": {
+    "path": "scripts/engine/feats/condition-track-feat-actions.js",
+    "symbol": "ConditionTrackFeatActions"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-FEA-15",
+   "domain": "feats",
+   "responsibility": "Force Point feat rules/actions",
+   "owner": {
+    "path": "scripts/engine/feats/force-point-feat-rules.js",
+    "symbol": "ForcePointFeatRules"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-GAL-01",
+   "domain": "galactic-profiles",
+   "responsibility": "Pure RNG-injectable draft generators (location/planet/POI, faction, NPC concept, job, reward)",
+   "owner": {
+    "path": "scripts/generation/",
+    "symbol": "generator library"
+   },
+   "status": [
+    "OBSERVED",
+    "UNIMPLEMENTED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/gm-generation-phase8d1-foundation.test.mjs",
+    "tests/gm-generation-phase8d3c-jobs-production.test.mjs"
+   ]
+  },
+  {
+   "id": "R-GAL-02",
+   "domain": "galactic-profiles",
+   "responsibility": "Drafts never create or upsert canonical records",
+   "owner": {
+    "path": "tests/gm-generation-phase8d1-foundation.test.mjs",
+    "symbol": "forbiddenCallPatterns source guard"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/gm-generation-phase8d1-foundation.test.mjs"
+   ]
+  },
+  {
+   "id": "R-GAL-03",
+   "domain": "galactic-profiles",
+   "responsibility": "Canonical Location registry (world setting)",
+   "owner": {
+    "path": "scripts/locations/location-registry-service.js",
+    "symbol": "LocationRegistryService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/gm-locations-identity-and-hierarchy-integrity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-GAL-04",
+   "domain": "galactic-profiles",
+   "responsibility": "Location identity: id-only, collision-safe slug minting",
+   "owner": {
+    "path": "scripts/locations/location-registry-service.js",
+    "symbol": "upsertLocation / _uniqueLocationSlug"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/gm-locations-identity-and-hierarchy-integrity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-GAL-05",
+   "domain": "galactic-profiles",
+   "responsibility": "Per-actor Atlas state (pins, notes, revealed facts, lead discoveries)",
+   "owner": {
+    "path": "scripts/locations/location-registry-service.js",
+    "symbol": "setActorAtlasState / patchActorLocationState / revealFactToActor / recordAtlasLeadDiscovery / resolveAtlasLeadDiscovery"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/gm-intel-location-fact-identity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-GAL-06",
+   "domain": "galactic-profiles",
+   "responsibility": "Location Library seed catalog",
+   "owner": {
+    "path": "scripts/locations/location-library-seeds.js",
+    "symbol": "LOCATION_LIBRARY_SEEDS"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/gm-locations-library-catalog-contract.test.mjs"
+   ]
+  },
+  {
+   "id": "R-GAL-07",
+   "domain": "galactic-profiles",
+   "responsibility": "Scene creation/activation from a Location",
+   "owner": {
+    "path": "scripts/ui/shell/gm/LocationSceneBridgeService.js",
+    "symbol": "LocationSceneBridgeService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/gm-locations-scene-creation-safety.test.mjs"
+   ]
+  },
+  {
+   "id": "R-GAL-08",
+   "domain": "galactic-profiles",
+   "responsibility": "Faction/Location to Job/Intel draft adapters",
+   "owner": {
+    "path": "scripts/ui/shell/gm/FactionJobBridgeService.js",
+    "symbol": "FactionJobBridgeService (+LocationJob, FactionIntel, LocationIntel)"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/pre8d4-faction-contact-identity-hardening.test.mjs"
+   ]
+  },
+  {
+   "id": "R-GAL-09",
+   "domain": "galactic-profiles",
+   "responsibility": "Compound draft commit orchestration",
+   "owner": {
+    "path": "",
+    "symbol": "CampaignMutationCoordinator / JobEngine (not built)"
+   },
+   "status": [
+    "UNIMPLEMENTED",
+    "PROPOSED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-MEN-01",
+   "domain": "mentor-suggestion",
+   "responsibility": "Suggestion request facade, caching, DTO validation",
+   "owner": {
+    "path": "scripts/engine/suggestion/SuggestionService.js",
+    "symbol": "SuggestionService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/mentor-suggestion-picker-reasons.test.mjs"
+   ]
+  },
+  {
+   "id": "R-MEN-02",
+   "domain": "mentor-suggestion",
+   "responsibility": "Engine coordination and build-intent analysis",
+   "owner": {
+    "path": "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "symbol": "SuggestionEngineCoordinator"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-MEN-03",
+   "domain": "mentor-suggestion",
+   "responsibility": "Feat/talent/class/force/attribute advisory scoring",
+   "owner": {
+    "path": "scripts/engine/suggestion/SuggestionEngine.js",
+    "symbol": "SuggestionEngine (+ClassSuggestionEngine, SuggestionScorer, attribute-planner)"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/candidate-pool-builder-derived-coherency.test.mjs"
+   ]
+  },
+  {
+   "id": "R-MEN-04",
+   "domain": "mentor-suggestion",
+   "responsibility": "Reason/explanation packet construction",
+   "owner": {
+    "path": "scripts/engine/suggestion/ReasonFactory.js",
+    "symbol": "ReasonFactory.create"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/mentor-suggestion-picker-reasons.test.mjs"
+   ]
+  },
+  {
+   "id": "R-MEN-05",
+   "domain": "mentor-suggestion",
+   "responsibility": "Suggestion analytics persistence (shown/accepted history, anchors, pivot, metadata, last-shown state)",
+   "owner": {
+    "path": "scripts/engine/suggestion/SuggestionStateService.js",
+    "symbol": "SuggestionStateService (intended); actually split across SelectionRecorder, AnchorRepository, SuggestionService._setSuggestionState"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-MEN-06",
+   "domain": "mentor-suggestion",
+   "responsibility": "Mentor identity, class-to-Mentor routing, greetings",
+   "owner": {
+    "path": "scripts/engine/mentor/mentor-dialogues.js",
+    "symbol": "getMentorForClass / getActiveMentor / MENTORS"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/mentor-survey-canonical-authority.test.mjs",
+    "tests/progression-mentor-portrait-fit.test.mjs"
+   ]
+  },
+  {
+   "id": "R-MEN-07",
+   "domain": "mentor-suggestion",
+   "responsibility": "Mentor relationship memory (commitments, decay, inferred role)",
+   "owner": {
+    "path": "scripts/engine/mentor/mentor-memory.js",
+    "symbol": "setMentorMemory / decayAllMentorCommitments"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-MEN-08",
+   "domain": "mentor-suggestion",
+   "responsibility": "Survey V2 vocabulary and contract constants",
+   "owner": {
+    "path": "scripts/mentor/mentor-survey-v2/contract.js",
+    "symbol": "SURVEY_KINDS, LEDGER_SET_PATH, ..."
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/mentor-survey-contract.test.mjs"
+   ]
+  },
+  {
+   "id": "R-MEN-09",
+   "domain": "mentor-suggestion",
+   "responsibility": "Survey draft state machine (no actor writes during navigation)",
+   "owner": {
+    "path": "scripts/mentor/mentor-survey-v2/survey-session.js",
+    "symbol": "survey session + survey-controller + MentorSurveyStep"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/mentor-survey-session.test.mjs",
+    "tests/mentor-survey-step.test.mjs"
+   ]
+  },
+  {
+   "id": "R-MEN-10",
+   "domain": "mentor-suggestion",
+   "responsibility": "Survey event ledger shape and atomic commit",
+   "owner": {
+    "path": "scripts/mentor/mentor-survey-v2/finalization.js",
+    "symbol": "buildSurveyLedgerPatch (+ intent-ledger.buildLedgerSetPatch)"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/mentor-survey-ledger.test.mjs",
+    "tests/mentor-survey-id-ledger.test.mjs"
+   ]
+  },
+  {
+   "id": "R-MEN-11",
+   "domain": "mentor-suggestion",
+   "responsibility": "Survey influence on identity through an inert tag boundary",
+   "owner": {
+    "path": "scripts/mentor/mentor-survey-v2/survey-influence.js",
+    "symbol": "computeSurveyInfluence; tag-boundary.mapResponseToIntent"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": [
+    "tests/mentor-survey-influence.test.mjs",
+    "tests/mentor-survey-influence-integration.test.mjs"
+   ]
+  },
+  {
+   "id": "R-MEN-12",
+   "domain": "mentor-suggestion",
+   "responsibility": "Read-only finalized actor evidence projection",
+   "owner": {
+    "path": "scripts/mentor/mentor-survey-v2/actor-evidence.js",
+    "symbol": "projectActorEvidence"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/mentor-survey-q6-evidence-identity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-MEN-13",
+   "domain": "mentor-suggestion",
+   "responsibility": "Canonical archetype registry",
+   "owner": {
+    "path": "scripts/engine/archetype/archetype-registry.js",
+    "symbol": "ArchetypeRegistry"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/archetype-registry-ssot-lane.test.mjs",
+    "tests/archetype-phase-12a-runtime-ssot.test.mjs"
+   ]
+  },
+  {
+   "id": "R-MEN-14",
+   "domain": "mentor-suggestion",
+   "responsibility": "Equipment loadout projection for advisory scoring",
+   "owner": {
+    "path": "scripts/engine/suggestion/equipment-loadout-profile.js",
+    "symbol": "buildEquipmentLoadoutProfile"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/armor-axis-b-shield-authority.test.mjs"
+   ]
+  },
+  {
+   "id": "R-MEN-15",
+   "domain": "mentor-suggestion",
+   "responsibility": "Mentor translation (Aurebesh) preference",
+   "owner": {
+    "path": "scripts/mentor/mentor-translation-integration.js",
+    "symbol": "MentorTranslationIntegration"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/mentor-translator-cancellation.test.mjs"
+   ]
+  },
+  {
+   "id": "R-PRG-01",
+   "domain": "progression",
+   "responsibility": "Launch/route progression",
+   "owner": {
+    "path": "scripts/apps/progression-framework/progression-entry.js",
+    "symbol": "launchProgression"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-PRG-02",
+   "domain": "progression",
+   "responsibility": "Step shell lifecycle",
+   "owner": {
+    "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+    "symbol": "ProgressionShell"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-PRG-03",
+   "domain": "progression",
+   "responsibility": "Draft (temporary) selections",
+   "owner": {
+    "path": "scripts/apps/progression-framework/shell/progression-session.js",
+    "symbol": "ProgressionSession"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-PRG-04",
+   "domain": "progression",
+   "responsibility": "Draft durability across reloads",
+   "owner": {
+    "path": "scripts/apps/progression-framework/shell/session-storage.js",
+    "symbol": "SessionStorage + ChargenPersistence"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/progression-session-persistence-writebehind.test.mjs"
+   ]
+  },
+  {
+   "id": "R-PRG-05",
+   "domain": "progression",
+   "responsibility": "Single finalization (compile, validate, prereq re-check, transactional apply)",
+   "owner": {
+    "path": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+    "symbol": "ProgressionFinalizer.finalize"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/galactic-profile-mutation-plan.test.mjs"
+   ]
+  },
+  {
+   "id": "R-PRG-06",
+   "domain": "progression",
+   "responsibility": "Scoped single-step finalization",
+   "owner": {
+    "path": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+    "symbol": "ProgressionFinalizer.finalizeSingleStep"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-PRG-07",
+   "domain": "progression",
+   "responsibility": "Domain plan fragments",
+   "owner": {
+    "path": "scripts/apps/progression-framework/shell/mutation/",
+    "symbol": "*PlanBuilder"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-PRG-08",
+   "domain": "progression",
+   "responsibility": "Class domain compilation (inline)",
+   "owner": {
+    "path": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+    "symbol": "_compileMutationPlanBase"
+   },
+   "status": [
+    "OBSERVED",
+    "UNIMPLEMENTED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-PRG-09",
+   "domain": "progression",
+   "responsibility": "Reconciliation of existing actors",
+   "owner": {
+    "path": "scripts/apps/progression-framework/shell/progression-reconciler.js",
+    "symbol": "ProgressionReconciler"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/reconciliation-phase5-integration.test.mjs"
+   ]
+  },
+  {
+   "id": "R-PRG-10",
+   "domain": "progression",
+   "responsibility": "Step plugin contract",
+   "owner": {
+    "path": "scripts/apps/progression-framework/steps/step-plugin-base.js",
+    "symbol": "ProgressionStepPlugin"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-PRG-11",
+   "domain": "progression",
+   "responsibility": "Content resolution for steps",
+   "owner": {
+    "path": "scripts/engine/progression/content/progression-content-authority.js",
+    "symbol": "ProgressionContentAuthority"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-PRG-12",
+   "domain": "progression",
+   "responsibility": "Progression rule-setting reads",
+   "owner": {
+    "path": "scripts/engine/progression/ProgressionRules.js",
+    "symbol": "ProgressionRules"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-PRG-13",
+   "domain": "progression",
+   "responsibility": "Snapshots for rollback / statblock conversion",
+   "owner": {
+    "path": "scripts/engine/progression/utils/snapshot-manager.js",
+    "symbol": "SnapshotManager"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-PRG-14",
+   "domain": "progression",
+   "responsibility": "Chargen starting-credit staging for chargen store",
+   "owner": {
+    "path": "scripts/apps/progression-framework/steps/summary-step.js",
+    "symbol": "SummaryStep._stageStartingCreditsForStore"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-PRG-15",
+   "domain": "progression",
+   "responsibility": "Legacy static ProgressionEngine API",
+   "owner": {
+    "path": "scripts/engine/progression/engine/progression-engine.js",
+    "symbol": "ProgressionEngine"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-STO-01",
+   "domain": "store-economy",
+   "responsibility": "Single authority for credit movement",
+   "owner": {
+    "path": "scripts/engine/store/transaction-engine.js",
+    "symbol": "TransactionEngine"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/ti2-commerce-integrity.test.mjs",
+    "tests/ti4c0-te-credit-adjustment-safety.test.mjs"
+   ]
+  },
+  {
+   "id": "R-STO-02",
+   "domain": "store-economy",
+   "responsibility": "Canonical credit ledger",
+   "owner": {
+    "path": "scripts/engine/store/transaction-engine.js",
+    "symbol": "TransactionEngine.getActorTransactions"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/ti4c0-g20-rollback-replay.test.mjs"
+   ]
+  },
+  {
+   "id": "R-STO-03",
+   "domain": "store-economy",
+   "responsibility": "Pure credit arithmetic and credit-delta plan building",
+   "owner": {
+    "path": "scripts/engine/store/ledger-service.js",
+    "symbol": "LedgerService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/ti2-commerce-integrity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-STO-04",
+   "domain": "store-economy",
+   "responsibility": "Atomic store purchase (credits + grants + audit + stock)",
+   "owner": {
+    "path": "scripts/engine/store/store-engine.js",
+    "symbol": "StoreEngine.purchase"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/store-v2-purchase-integrity.test.mjs",
+    "tests/store-v2-s2-commerce-closure.test.mjs"
+   ]
+  },
+  {
+   "id": "R-STO-05",
+   "domain": "store-economy",
+   "responsibility": "Store catalog, pricing and policy",
+   "owner": {
+    "path": "scripts/engine/store/cost-registry.js",
+    "symbol": "resolveStoreCost"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/store-v2-s1-catalog.test.mjs"
+   ]
+  },
+  {
+   "id": "R-STO-06",
+   "domain": "store-economy",
+   "responsibility": "Resale authority",
+   "owner": {
+    "path": "scripts/engine/store/resale-service.js",
+    "symbol": "ResaleService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/store-v2-s9-resale-authority.test.mjs"
+   ]
+  },
+  {
+   "id": "R-STO-07",
+   "domain": "store-economy",
+   "responsibility": "Store acquisition provenance and owner linking",
+   "owner": {
+    "path": "scripts/engine/store/acquisition-service.js",
+    "symbol": "StoreAcquisitionService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-STO-08",
+   "domain": "store-economy",
+   "responsibility": "Store UI (window and Holopad surface)",
+   "owner": {
+    "path": "scripts/apps/store/store-main.js",
+    "symbol": "SWSEStore"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/store-v2-s8-architecture.test.mjs"
+   ]
+  },
+  {
+   "id": "R-UIS-01",
+   "domain": "ui-shell",
+   "responsibility": "Actor sheet registration per actor type",
+   "owner": {
+    "path": "index.js",
+    "symbol": "Actors.registerSheet"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-UIS-02",
+   "domain": "ui-shell",
+   "responsibility": "Universal actor shell base",
+   "owner": {
+    "path": "scripts/sheets/v2/actor-sheet-base.js",
+    "symbol": "SWSEV2ActorSheetBase"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/phase4-sheet-architecture-contract.test.mjs"
+   ]
+  },
+  {
+   "id": "R-UIS-03",
+   "domain": "ui-shell",
+   "responsibility": "Character-like shared behavior for character/npc/droid",
+   "owner": {
+    "path": "scripts/sheets/v2/character-like-sheet.js",
+    "symbol": "SWSEV2CharacterLikeSheet"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-UIS-04",
+   "domain": "ui-shell",
+   "responsibility": "Single shell template branching by actor mode",
+   "owner": {
+    "path": "templates/actors/character/v2-concept/character-sheet.hbs",
+    "symbol": "(template)"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-UIS-05",
+   "domain": "ui-shell",
+   "responsibility": "Holopad Shell Host surface/overlay/drawer state",
+   "owner": {
+    "path": "scripts/ui/shell/ShellHost.js",
+    "symbol": "ShellHostMixin"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-UIS-06",
+   "domain": "ui-shell",
+   "responsibility": "Shell mutation queue and repaint",
+   "owner": {
+    "path": "scripts/ui/shell/mutate-and-repaint.js",
+    "symbol": "mutateAndRepaint"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-UIS-07",
+   "domain": "ui-shell",
+   "responsibility": "GM Datapad shell",
+   "owner": {
+    "path": "scripts/apps/gm-datapad.js",
+    "symbol": "GMDatapad"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/gm-datapad-wizard-contract.test.mjs"
+   ]
+  },
+  {
+   "id": "R-UIS-08",
+   "domain": "ui-shell",
+   "responsibility": "Dialog base",
+   "owner": {
+    "path": "scripts/apps/dialogs/swse-dialog-v2.js",
+    "symbol": "SWSEDialogV2"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-UIS-09",
+   "domain": "ui-shell",
+   "responsibility": "Panel view models",
+   "owner": {
+    "path": "scripts/sheets/v2/context/PanelContextBuilder.js",
+    "symbol": "PanelContextBuilder"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/v2-derived-panel-cache-coherency.test.mjs"
+   ]
+  },
+  {
+   "id": "R-UIS-10",
+   "domain": "ui-shell",
+   "responsibility": "Tooltip/discovery binding",
+   "owner": {
+    "path": "scripts/ui/discovery/index.js",
+    "symbol": "onDiscoveryReady"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-UIS-11",
+   "domain": "ui-shell",
+   "responsibility": "Sheet mode UI-only state in localStorage",
+   "owner": {
+    "path": "scripts/sheets/v2/actor-sheet-base.js",
+    "symbol": "setStoredSheetMode"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-UIS-12",
+   "domain": "ui-shell",
+   "responsibility": "Theme/motion/help preference",
+   "owner": {
+    "path": "scripts/ui/shell/SettingsSurfaceController.js",
+    "symbol": "SettingsSurfaceController"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-UIS-13",
+   "domain": "ui-shell",
+   "responsibility": "Template preload registry",
+   "owner": {
+    "path": "scripts/load-templates.js",
+    "symbol": "SWSE_TEMPLATES"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-VEH-01",
+   "domain": "vehicles",
+   "responsibility": "Canonical vehicle catalog to 11 Actor packs at release build",
+   "owner": {
+    "path": "tools/build-universal-vehicle-pack-sources.mjs",
+    "symbol": "buildUniversalVehiclePackSources"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/vehicle-universal-phase4c-runtime-consumers.test.mjs"
+   ]
+  },
+  {
+   "id": "R-VEH-02",
+   "domain": "vehicles",
+   "responsibility": "Runtime compendium index/document loading, fail-closed",
+   "owner": {
+    "path": "scripts/core/vehicle-pack-data-loader.js",
+    "symbol": "VehiclePackDataLoader"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-VEH-03",
+   "domain": "vehicles",
+   "responsibility": "Vehicle runtime projection and source classification",
+   "owner": {
+    "path": "scripts/domain/vehicles/vehicle-runtime-contract.js",
+    "symbol": "classifyVehicleActorRuntime"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-VEH-04",
+   "domain": "vehicles",
+   "responsibility": "Sealed Shipyard installation ledger (plan/seal/guarded writes)",
+   "owner": {
+    "path": "scripts/domain/vehicles/vehicle-installation-ledger.js",
+    "symbol": "planVehicleInstallation"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-VEH-05",
+   "domain": "vehicles",
+   "responsibility": "Installation/uninstall/job persistence via ActorEngine",
+   "owner": {
+    "path": "scripts/engine/vehicles/vehicle-installation-service.js",
+    "symbol": "VehicleInstallationService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-VEH-06",
+   "domain": "vehicles",
+   "responsibility": "Modification effects catalog (implemented effects only)",
+   "owner": {
+    "path": "scripts/domain/vehicles/vehicle-modification-effects.js",
+    "symbol": "EFFECTS"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-VEH-07",
+   "domain": "vehicles",
+   "responsibility": "Vehicle weapon damage spec feeding shared pipeline",
+   "owner": {
+    "path": "scripts/domain/vehicles/vehicle-weapon-damage.js",
+    "symbol": "resolveVehicleWeaponDamage"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": [
+    "tests/architecture-combat-authority.test.mjs"
+   ]
+  },
+  {
+   "id": "R-VEH-08",
+   "domain": "vehicles",
+   "responsibility": "Battery attack total",
+   "owner": {
+    "path": "scripts/domain/vehicles/vehicle-weapon-battery.js",
+    "symbol": "resolveBatteryAttackTotal"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-VEH-09",
+   "domain": "vehicles",
+   "responsibility": "Launcher ammunition ledger and purchases",
+   "owner": {
+    "path": "scripts/engine/vehicles/vehicle-ammunition-purchase-service.js",
+    "symbol": "VehicleAmmunitionPurchaseService"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-VEH-10",
+   "domain": "vehicles",
+   "responsibility": "Logistics: personal credits through TransactionEngine",
+   "owner": {
+    "path": "scripts/engine/vehicles/vehicle-logistics-service.js",
+    "symbol": "VehicleLogisticsService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-VEH-11",
+   "domain": "vehicles",
+   "responsibility": "Scene state for mines/interdiction (only Scene writer)",
+   "owner": {
+    "path": "scripts/engine/vehicles/vehicle-scene-state.js",
+    "symbol": "putSceneRecord"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-VEH-12",
+   "domain": "vehicles",
+   "responsibility": "Crew stations and crew assignment",
+   "owner": {
+    "path": "scripts/engine/crew/vehicle-crew-assignment-service.js",
+    "symbol": "VehicleCrewAssignmentService"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-VEH-13",
+   "domain": "vehicles",
+   "responsibility": "Vehicle-sheet prepared maneuver list and spend toggle",
+   "owner": {
+    "path": "scripts/engine/StarshipManeuversEngine.js",
+    "symbol": "StarshipManeuversEngine"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-VEH-14",
+   "domain": "vehicles",
+   "responsibility": "Starship Tactics maneuver grant on feat creation",
+   "owner": {
+    "path": "scripts/infrastructure/hooks/starship-maneuver-hooks.js",
+    "symbol": "initializeStarshipManeuverHooks"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-VEH-15",
+   "domain": "vehicles",
+   "responsibility": "Vehicle actor sheet vehicle-only context/wiring",
+   "owner": {
+    "path": "scripts/sheets/v2/vehicle-actor-sheet.js",
+    "symbol": "SWSEV2VehicleSheet"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": [
+    "tests/phase4-sheet-architecture-contract.test.mjs"
+   ]
+  },
+  {
+   "id": "R-VEH-16",
+   "domain": "vehicles",
+   "responsibility": "Vehicle import from canonical source Actor",
+   "owner": {
+    "path": "scripts/engine/import/vehicle-import-engine.js",
+    "symbol": "VehicleImportEngine"
+   },
+   "status": [
+    "OBSERVED",
+    "UNIMPLEMENTED"
+   ],
+   "verification": "dependency-traced",
+   "tests": [
+    "tests/vehicle-universal-phase4c-import-source.test.mjs"
+   ]
+  }
+ ]
 }

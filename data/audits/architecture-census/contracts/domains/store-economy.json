@@ -1,0 +1,758 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-STO",
+  "domain": "store-economy",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "TransactionEngine is the observed single commerce authority with a per-actor ledger in flags.foundryvtt-swse.transactions; LedgerService is a pure internal primitive (reads balance, validates, builds credit-delta plans) and is NOT a parallel ledger. Store checkout is routed StoreEngine.purchase -> TE.executeMutationTransaction with lock, verified recovery and post-write verification. Remaining conformance gaps: TE rollback of store purchases does not remove CREATE-bucket droid/vehicle world actors yet reports rolledBack:true (F-STO-001); credit charges outside TE in lightsaber construction, Force Alchemy, progression grants and manual sheet edits (F-STO-002..005); minor UI direct flag writes and a dead legacy TE.execute path.",
+  "responsibilities": [
+    {
+      "id": "R-STO-01",
+      "responsibility": "Single authority for credit movement",
+      "owner": {
+        "path": "scripts/engine/store/transaction-engine.js",
+        "symbol": "TransactionEngine"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/store/transaction-engine.js:57",
+        "scripts/engine/store/transaction-engine.js:308",
+        "scripts/engine/store/transaction-engine.js:557",
+        "scripts/engine/store/transaction-engine.js:719",
+        "scripts/engine/store/transaction-engine.js:1461"
+      ],
+      "tests": [
+        "tests/ti2-commerce-integrity.test.mjs",
+        "tests/ti4c0-te-credit-adjustment-safety.test.mjs"
+      ],
+      "notes": "APPROVED by OSI/A-10; CONFLICT because of F-STO-002..005 charge paths outside TE."
+    },
+    {
+      "id": "R-STO-02",
+      "responsibility": "Canonical credit ledger",
+      "owner": {
+        "path": "scripts/engine/store/transaction-engine.js",
+        "symbol": "TransactionEngine.getActorTransactions"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/store/transaction-engine.js:110",
+        "scripts/engine/store/transaction-engine.js:416"
+      ],
+      "tests": [
+        "tests/ti4c0-g20-rollback-replay.test.mjs"
+      ],
+      "notes": "Ledger record written in the same mutation plan as the charge. purchaseHistory is inert legacy data (scripts/apps/gm-datapad.js:799)."
+    },
+    {
+      "id": "R-STO-03",
+      "responsibility": "Pure credit arithmetic and credit-delta plan building",
+      "owner": {
+        "path": "scripts/engine/store/ledger-service.js",
+        "symbol": "LedgerService"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/store/ledger-service.js:21",
+        "scripts/engine/store/ledger-service.js:123",
+        "scripts/engine/store/ledger-service.js:149",
+        "scripts/engine/store/ledger-service.js:211"
+      ],
+      "tests": [
+        "tests/ti2-commerce-integrity.test.mjs"
+      ],
+      "notes": "No document access; returns {set:{system.credits}} plans. Internal TE primitive; P-A10 hits at :149/:211 are false positives."
+    },
+    {
+      "id": "R-STO-04",
+      "responsibility": "Atomic store purchase (credits + grants + audit + stock)",
+      "owner": {
+        "path": "scripts/engine/store/store-engine.js",
+        "symbol": "StoreEngine.purchase"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/store/store-engine.js:281",
+        "scripts/engine/store/store-engine.js:355",
+        "scripts/engine/store/transaction-engine.js:444",
+        "scripts/engine/store/transaction-engine.js:493"
+      ],
+      "tests": [
+        "tests/store-v2-purchase-integrity.test.mjs",
+        "tests/store-v2-s2-commerce-closure.test.mjs"
+      ],
+      "notes": "CONFLICT: F-STO-001."
+    },
+    {
+      "id": "R-STO-05",
+      "responsibility": "Store catalog, pricing and policy",
+      "owner": {
+        "path": "scripts/engine/store/cost-registry.js",
+        "symbol": "resolveStoreCost"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/store/cost-registry.js:46",
+        "scripts/engine/store/policy-service.js:1"
+      ],
+      "tests": [
+        "tests/store-v2-s1-catalog.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-STO-06",
+      "responsibility": "Resale authority",
+      "owner": {
+        "path": "scripts/engine/store/resale-service.js",
+        "symbol": "ResaleService"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/engine/store/resale-service.js:217",
+        "scripts/engine/store/transaction-engine.js:1461"
+      ],
+      "tests": [
+        "tests/store-v2-s9-resale-authority.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-STO-07",
+      "responsibility": "Store acquisition provenance and owner linking",
+      "owner": {
+        "path": "scripts/engine/store/acquisition-service.js",
+        "symbol": "StoreAcquisitionService"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/store/transaction-engine.js:508",
+        "scripts/engine/store/acquisition-service.js:192"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-STO-08",
+      "responsibility": "Store UI (window and Holopad surface)",
+      "owner": {
+        "path": "scripts/apps/store/store-main.js",
+        "symbol": "SWSEStore"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/apps/store/store-main.js:1040",
+        "scripts/apps/store/store-main.js:1437",
+        "scripts/ui/shell/StoreSurfaceService.js:44",
+        "index.js:297"
+      ],
+      "tests": [
+        "tests/store-v2-s8-architecture.test.mjs"
+      ],
+      "notes": "A-02/A-04 direct setFlag for cart and saved-for-later."
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "TransactionEngine",
+      "path": "scripts/engine/store/transaction-engine.js",
+      "line": 57,
+      "consumers": 36,
+      "contract": "execute* methods; refuse without verifiable recovery; outcome flags rolledBack/rollbackFailed/indeterminate"
+    },
+    {
+      "symbol": "TransactionEngine.executeMutationTransaction",
+      "path": "scripts/engine/store/transaction-engine.js",
+      "line": 308,
+      "consumers": 6,
+      "contract": "actor-scoped credits+plan; allowed contexts at :63"
+    },
+    {
+      "symbol": "TransactionEngine.executeCreditAdjustment",
+      "path": "scripts/engine/store/transaction-engine.js",
+      "line": 557,
+      "consumers": 6,
+      "contract": "credit grant/deduction with ledger; contexts at :73"
+    },
+    {
+      "symbol": "TransactionEngine.execute",
+      "path": "scripts/engine/store/transaction-engine.js",
+      "line": 2066,
+      "consumers": 0,
+      "contract": "legacy cart API, no lock/ledger; no caller"
+    },
+    {
+      "symbol": "LedgerService",
+      "path": "scripts/engine/store/ledger-service.js",
+      "line": 21,
+      "consumers": 23,
+      "contract": "pure balance read / validation / credit-delta plan"
+    },
+    {
+      "symbol": "StoreEngine.purchase",
+      "path": "scripts/engine/store/store-engine.js",
+      "line": 281,
+      "consumers": 7,
+      "contract": "validates price/stock, commits via TE"
+    },
+    {
+      "symbol": "game.swse.openStore",
+      "path": "index.js",
+      "line": 297,
+      "consumers": 9,
+      "contract": "opens SWSEStore"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "scripts/governance/actor-engine/actor-engine.js",
+      "scripts/engine/progression/utils/snapshot-manager.js",
+      "scripts/utils/credit-normalization.js",
+      "droid/vehicle factories (plan builders)"
+    ],
+    "prohibited": [
+      "engine -> UI imports (A-07)",
+      "credit writes outside TransactionEngine (A-10)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/crafting/lightsaber-construction-engine.js",
+        "to": "ActorEngine.applyMutationPlan (credits)",
+        "evidence": "scripts/engine/crafting/lightsaber-construction-engine.js:617"
+      },
+      {
+        "from": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+        "to": "ActorEngine.updateActor (credits)",
+        "evidence": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:443"
+      },
+      {
+        "from": "scripts/sheets/v2/character-like-sheet.js",
+        "to": "ActorEngine.updateActor (credits)",
+        "evidence": "scripts/sheets/v2/character-like-sheet.js:6087"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-STO-1",
+      "boundary": "LedgerService <-> TransactionEngine",
+      "interface": "LedgerService plans applied only inside TE methods",
+      "status": [
+        "PROPOSED"
+      ]
+    },
+    {
+      "id": "C-STO-2",
+      "boundary": "Store UI <-> StoreEngine",
+      "interface": "UI supplies cart and itemGrantCallback; StoreEngine validates and calls TE",
+      "status": [
+        "OBSERVED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-STO-01",
+      "existingSource": "docs/audits/transaction-integrity/authority-and-call-path-map.md §2.2/§3; tx-remediation-ledger.md TX-10",
+      "claim": "StoreTransactionEngine, DroidTransactionService, VehicleTransactionService exist as INACTIVE legacy",
+      "observed": "None exist in the tree; only a comment mention remains",
+      "evidence": [
+        "scripts/holonet/emitters/store-emitter.js:1"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-STO-02",
+      "existingSource": "docs/audits/transaction-integrity/ti4-c0-closure-report.md §2; tx-remediation-ledger.md TI-N3",
+      "claim": "scripts/talents/DarkSidePowers.js writes credits outside TE",
+      "observed": "File removed; live successor is force-alchemy-mechanics-service",
+      "evidence": [
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:441"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-STO-03",
+      "existingSource": "docs/audits/transaction-integrity/tx-remediation-ledger.md TX-01",
+      "claim": "UpgradeService writes the item before charging (open defect)",
+      "observed": "Routed through TE.executeMutationTransaction with verify",
+      "evidence": [
+        "scripts/engine/upgrades/UpgradeService.js:685"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-STO-04",
+      "existingSource": "docs/architecture/v2-contracts/A-global-invariants.md A-08 row",
+      "claim": "store-main.js:1437 is a mutation during render",
+      "observed": "Write is inside a click handler registered in _onRender (event time, not render time)",
+      "evidence": [
+        "scripts/apps/store/store-main.js:1152",
+        "scripts/apps/store/store-main.js:1437"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-STO-01",
+      "item": "TE operation identity / exactly-once (TI4-B G17)",
+      "source": "docs/audits/transaction-integrity/ti4-c0-closure-report.md §4",
+      "status": "UNIMPLEMENTED"
+    },
+    {
+      "id": "U-STO-02",
+      "item": "Cross-client credit lock / CAS",
+      "source": "docs/audits/transaction-integrity/ti4-c0-closure-report.md §3",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [],
+  "foundryAcceptance": [
+    {
+      "item": "Store checkout incl. droid/vehicle acquisition and failure rollback",
+      "source": "R-STO-04"
+    },
+    {
+      "item": "GM approval / resale / credit transfer under two clients",
+      "source": "ti4c0-closure-report §3"
+    }
+  ],
+  "findings": [
+    {
+      "category": "multiple-writers",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Store purchase rollback leaves CREATE-bucket droid/vehicle actors and reports rolledBack:true",
+      "affectedFiles": [
+        "scripts/engine/store/transaction-engine.js",
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/engine/droids/droid-factory.js",
+        "scripts/engine/vehicles/vehicle-factory.js"
+      ],
+      "evidence": [
+        "scripts/engine/store/transaction-engine.js:444",
+        "scripts/engine/store/transaction-engine.js:493",
+        "scripts/engine/store/transaction-engine.js:499",
+        "scripts/governance/actor-engine/actor-engine.js:3328",
+        "scripts/governance/actor-engine/actor-engine.js:3372",
+        "scripts/engine/droids/droid-factory.js:47",
+        "scripts/engine/vehicles/vehicle-factory.js:143"
+      ],
+      "observed": "executeMutationTransaction applies the merged plan non-transactionally (no transactional:true). ActorEngine applies CREATE (world actors) first; created-actor cleanup only runs when _txnSnapshot exists (transactional mode). On a later failure TE restores only the purchaser snapshot and returns rolledBack:true, so a purchased droid/vehicle world actor can remain without payment. Not covered by any test that injects a failure after CREATE.",
+      "intendedOwnership": "TransactionEngine guarantees the whole trade fails (OSI atomic trades).",
+      "contractRef": "A-10 | R-STO-04",
+      "proposedSolution": "In TE, track created actor ids (reuse ActorEngine tempIdMap via transactional:true, or a create-ids callback) and delete+verify them in the catch; report indeterminate unless cleanup is verified.",
+      "alternatives": "Create the asset actors only after the credit/ledger plan has committed (two-phase with compensating delete).",
+      "dependencies": [
+        "ActorEngine._rollbackTransactionalPlan"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Failure-injection test: store purchase with droid plan, fail ADD bucket; assert no orphan actor and outcome not rolledBack unless verified.",
+      "foundryAcceptance": "Live checkout of a droid with forced failure.",
+      "scope": "M",
+      "simplificationBenefit": "One rollback implementation (ActorEngine transactional) instead of TE snapshot + separate cleanup.",
+      "risk": "Whole-actor restore semantics (TX-07b) if transactional:true is reused.",
+      "perfImpact": "none",
+      "id": "F-STO-001"
+    },
+    {
+      "category": "bypass-engine",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "LedgerService credit-delta plans applied outside TransactionEngine",
+      "affectedFiles": [
+        "scripts/engine/crafting/lightsaber-construction-engine.js",
+        "scripts/engine/customization/install-remove-engine.js",
+        "scripts/engine/customization/structural-change-engine.js",
+        "scripts/engine/crafting/modification-intent-builder.js",
+        "scripts/engine/upgrades/UpgradeService.js"
+      ],
+      "evidence": [
+        "scripts/engine/crafting/lightsaber-construction-engine.js:617",
+        "scripts/engine/crafting/lightsaber-construction-engine.js:634",
+        "scripts/engine/customization/install-remove-engine.js:133",
+        "scripts/engine/customization/install-remove-engine.js:240",
+        "scripts/engine/customization/structural-change-engine.js:88",
+        "scripts/engine/customization/structural-change-engine.js:192",
+        "scripts/engine/crafting/modification-intent-builder.js:231",
+        "scripts/engine/upgrades/UpgradeService.js:707"
+      ],
+      "observed": "LIVE: lightsaber construction (workbench -> attemptConstruction) charges credits + creates the saber via ActorEngine.applyMutationPlan({transactional:true}) — atomic-ish via whole-actor restore but no TE lock, ledger record or post-charge verification. DORMANT: InstallRemoveEngine/StructuralChangeEngine apply methods have no live caller (only tests/weapon-phase-5d-i-d-b3-upgrades.test.mjs); ModificationIntentBuilder is orphan and its funds check `if (!hasCredits)` at :226 tests an always-truthy object; UpgradeService world-item branch :707 is documented unreachable.",
+      "intendedOwnership": "All paid customization through TE (A-10, C-STO-1).",
+      "contractRef": "A-10 | C-STO-1",
+      "proposedSolution": "Route lightsaber construction through TE.executeMutationTransaction(context owned-customization, verify=saber present). Delete or reroute the dormant writers when CUS cleanup happens (see F-CUS findings).",
+      "alternatives": "Add a lightsaber-construction TE context.",
+      "dependencies": [
+        "F-STO-001 (create/add rollback semantics)"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Static guard: buildCreditDelta only imported by TE (ti4a-authority-inventory ratchet); lightsaber construction ledger record test.",
+      "foundryAcceptance": "Build a lightsaber live; check ledger entry.",
+      "scope": "S",
+      "simplificationBenefit": "One charge path for all customization.",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-STO-002"
+    },
+    {
+      "category": "bypass-engine",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Force Alchemy charges credits through ActorEngine with its own compensation",
+      "affectedFiles": [
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js"
+      ],
+      "evidence": [
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:77",
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:441",
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:443"
+      ],
+      "observed": "Credits (and Dark Side Score) are written with ActorEngine.updateActor, with partial-application detection and inverse-delta compensation implemented locally; no TE ledger record. Atomicity is handled (tests class-force-v2-alchemy-atomicity) but this is a second credit-compensation implementation.",
+      "intendedOwnership": "TE single credit authority (A-10).",
+      "contractRef": "A-10",
+      "proposedSolution": "Owner decision whether crafting costs are TE scope; if yes, add an allowed TE context and charge through executeCreditAdjustment/executeMutationTransaction, keeping DSP/FP handling in Force.",
+      "alternatives": "Document as approved exception with code comment.",
+      "dependencies": [
+        "force domain contract"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Existing class-force-v2-alchemy-atomicity must stay green.",
+      "foundryAcceptance": "Live Force Alchemy craft.",
+      "scope": "M",
+      "simplificationBenefit": "Removes a parallel compensation implementation.",
+      "risk": "Medium — multi-resource cost.",
+      "perfImpact": "none",
+      "id": "F-STO-003"
+    },
+    {
+      "category": "bypass-engine",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Progression credit grants outside TE; GRANT_CREDITS writes credits before its idempotency record",
+      "affectedFiles": [
+        "scripts/engine/abilities/progression/progression-event-processor.js",
+        "scripts/engine/progression/engine/equipment-engine.js",
+        "scripts/apps/progression-framework/steps/summary-step.js"
+      ],
+      "evidence": [
+        "scripts/engine/abilities/progression/progression-event-processor.js:374",
+        "scripts/engine/abilities/progression/progression-event-processor.js:383",
+        "scripts/engine/abilities/progression/progression-event-processor.js:409",
+        "scripts/engine/progression/engine/equipment-engine.js:68",
+        "scripts/engine/progression/engine/equipment-engine.js:231",
+        "scripts/apps/progression-framework/steps/summary-step.js:1786"
+      ],
+      "observed": "progression-event-processor: credits written (:374/:409) then flags.swse.progressionHistory written in a separate update (:383); if the second write fails the next run grants again. equipment-engine.setCredits (absolute) runs from legacy finalize-integration then grants equipment in separate writes. summary-step stages starting credits + chargenStore flag on the actor before finalization (also an A-15 draft-state concern). None leave a TE ledger record. progression-economy-plan-builder/progression-finalizer credit sets are inside the single finalizer plan (legitimate).",
+      "intendedOwnership": "Grants: progression-owned; whether they must be TE-ledgered is unresolved (closure report §2).",
+      "contractRef": "A-10 | A-15",
+      "proposedSolution": "Minimum: write credits and progressionHistory in one ActorEngine.updateActor call (idempotency). Then owner decides whether grants go through TE.executeCreditAdjustment with a progression context.",
+      "alternatives": "Keep grants outside TE but documented as an exception.",
+      "dependencies": [
+        "progression domain contract"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Inject failure on history write; assert no double grant on retry.",
+      "foundryAcceptance": "Lineage GRANT_CREDITS level-up live.",
+      "scope": "S",
+      "simplificationBenefit": "Fewer credit writers.",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-STO-004"
+    },
+    {
+      "category": "bypass-engine",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Sheet credit add/subtract and raw system.credits form fields bypass the TE ledger",
+      "affectedFiles": [
+        "scripts/sheets/v2/character-like-sheet.js",
+        "scripts/sheets/v2/character-sheet/form.js"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/character-like-sheet.js:6083",
+        "scripts/sheets/v2/character-like-sheet.js:6087",
+        "scripts/sheets/v2/character-like-sheet.js:656",
+        "scripts/sheets/v2/character-sheet/form.js:111",
+        "templates/actors/character/v2/partials/inventory-panel.hbs:11"
+      ],
+      "observed": "Any owner can adjust credits from the sheet (ActorEngine.updateActor with a statusFeed entry, not a TE ledger record) or by editing the system.credits input (7 templates). TE has a gm-credit-adjustment context that is unused here.",
+      "intendedOwnership": "TE single credit authority, unless the owner approves manual editing as an exception.",
+      "contractRef": "A-10 | A-04",
+      "proposedSolution": "Owner decision: (a) route the add-credits button through TE.executeCreditAdjustment (ledger + lock), (b) keep direct field editing as a documented GM/owner override.",
+      "alternatives": "Make the credits field read-only for players.",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Ledger record present after sheet adjustment.",
+      "foundryAcceptance": "Sheet credit edit as player and GM.",
+      "scope": "S",
+      "simplificationBenefit": "Ledger becomes complete.",
+      "risk": "UX change.",
+      "perfImpact": "none",
+      "id": "F-STO-005"
+    },
+    {
+      "category": "ownership-violation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Store cart and saved-for-later persisted by direct actor.setFlag from UI (A-08 hit is a false positive)",
+      "affectedFiles": [
+        "scripts/apps/store/store-main.js"
+      ],
+      "evidence": [
+        "scripts/apps/store/store-main.js:1040",
+        "scripts/apps/store/store-main.js:1427",
+        "scripts/apps/store/store-main.js:1437"
+      ],
+      "observed": "Presentation writes actor flags directly (not via ActorEngine). :1437 runs in a click handler, not during render. getFlag result is mutated in place before setFlag (:1427-1437) — suspected that Foundry diffing may treat it as unchanged; not verified.",
+      "intendedOwnership": "ActorEngine (A-02); UI emits intents (A-04).",
+      "contractRef": "A-02 | A-04 | A-08",
+      "proposedSolution": "Use ActorEngine.updateActor (or a StoreEngine.persistCart helper) and clone the flag array before modifying.",
+      "alternatives": "Move cart to client-side session state (OSI UI-only state).",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Saved-for-later persists after reopen.",
+      "foundryAcceptance": "Saved-for-later live.",
+      "scope": "S",
+      "simplificationBenefit": "Removes a probe hit.",
+      "risk": "Low.",
+      "perfImpact": "low",
+      "id": "F-STO-006"
+    },
+    {
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Legacy TransactionEngine.execute cart API and PlacementRouter have no callers (legacy C)",
+      "affectedFiles": [
+        "scripts/engine/store/transaction-engine.js",
+        "scripts/engine/store/placement-router.js"
+      ],
+      "evidence": [
+        "scripts/engine/store/transaction-engine.js:2066",
+        "scripts/engine/store/transaction-engine.js:2153",
+        "scripts/engine/store/transaction-engine.js:2193",
+        "scripts/engine/store/placement-router.js:4"
+      ],
+      "observed": "No caller of TransactionEngine.execute in scripts/tests/packs; no global exposure. The path has no lock, no ledger record, no verified recovery; PlacementRouter is only imported by TE for it.",
+      "intendedOwnership": "executeMutationTransaction is the cart path.",
+      "contractRef": "A-09 | R-STO-01",
+      "proposedSolution": "Delete execute() and _compileCartItem/PlacementRouter after confirming no macro use with the owner (class C).",
+      "alternatives": "Make execute() delegate to executeMutationTransaction.",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "ti4a-authority-inventory guard.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "~210 lines and one unsafe credit path removed.",
+      "risk": "Low (macro use unverified).",
+      "perfImpact": "none",
+      "id": "F-STO-007"
+    },
+    {
+      "category": "performance",
+      "severity": "low",
+      "status": "suspected",
+      "title": "Store view switches re-render the whole app; Holopad caches live SWSEStore instances",
+      "affectedFiles": [
+        "scripts/apps/store/store-main.js",
+        "scripts/ui/shell/StoreSurfaceService.js"
+      ],
+      "evidence": [
+        "scripts/apps/store/store-main.js:1448",
+        "scripts/apps/store/store-main.js:1493",
+        "scripts/ui/shell/StoreSurfaceService.js:44",
+        "scripts/ui/shell/StoreSurfaceService.js:597"
+      ],
+      "observed": "currentView changes call this.render() (full AppV2 render). StoreSurfaceService keeps one app instance per actor as its view-model source (has invalidate()). Hypothesis only.",
+      "intendedOwnership": "OSI performance: UI-only state without full rerender.",
+      "contractRef": "A-16",
+      "proposedSolution": "Instrument render count/time per view switch; if significant, extract a StoreSessionModel (cart, filters, view) used by both window and Holopad, render partials.",
+      "alternatives": "Leave.",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "n/a",
+      "foundryAcceptance": "Measure in live Foundry.",
+      "scope": "M",
+      "simplificationBenefit": "Holopad stops instantiating a window class as a model.",
+      "risk": "Low.",
+      "perfImpact": "medium",
+      "id": "F-STO-008"
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Transaction-integrity evidence partly stale",
+      "affectedFiles": [
+        "docs/audits/transaction-integrity/authority-and-call-path-map.md",
+        "docs/audits/transaction-integrity/tx-remediation-ledger.md",
+        "docs/audits/transaction-integrity/ti4-c0-closure-report.md"
+      ],
+      "evidence": [
+        "docs/audits/transaction-integrity/authority-and-call-path-map.md:45",
+        "docs/audits/transaction-integrity/tx-remediation-ledger.md:145",
+        "docs/audits/transaction-integrity/ti4-c0-closure-report.md:41"
+      ],
+      "observed": "See CR-STO-01..03. Docs contain certifications and open items (G17, L2/L3) that must be preserved.",
+      "intendedOwnership": "B-STO links them as historical evidence.",
+      "contractRef": "CR-STO-01..03",
+      "proposedSolution": "Keep docs; add a status note pointing to B-STO; do not delete.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "n/a",
+      "foundryAcceptance": "n/a",
+      "scope": "S",
+      "simplificationBenefit": "Readers stop chasing removed files.",
+      "risk": "none",
+      "perfImpact": "none",
+      "id": "F-STO-009"
+    }
+  ],
+  "creditWriteSiteClassification": [
+    {
+      "site": "scripts/engine/store/ledger-service.js:149",
+      "class": "false-positive",
+      "note": "pure plan builder used by TE"
+    },
+    {
+      "site": "scripts/engine/store/ledger-service.js:211",
+      "class": "false-positive",
+      "note": "pure resale plan builder"
+    },
+    {
+      "site": "scripts/apps/progression-framework/steps/summary-step.js:1786",
+      "class": "violation-candidate",
+      "atomicWithItemTransfer": false,
+      "rollback": "none",
+      "note": "F-STO-004"
+    },
+    {
+      "site": "scripts/apps/progression-framework/steps/summary-step.js:740",
+      "class": "false-positive",
+      "note": "label map"
+    },
+    {
+      "site": "scripts/sheets/v2/character-like-sheet.js:6087",
+      "class": "violation-candidate",
+      "atomicWithItemTransfer": "n/a",
+      "rollback": "none",
+      "note": "F-STO-005"
+    },
+    {
+      "site": "scripts/sheets/v2/character-like-sheet.js:656",
+      "class": "form-schema",
+      "note": "enables raw form edit, F-STO-005"
+    },
+    {
+      "site": "scripts/sheets/v2/character-sheet/form.js:111",
+      "class": "form-schema",
+      "note": "F-STO-005"
+    },
+    {
+      "site": "scripts/engine/abilities/progression/progression-event-processor.js:409",
+      "class": "violation-candidate",
+      "atomicWithItemTransfer": "n/a",
+      "rollback": "none; idempotency record written separately",
+      "note": "F-STO-004"
+    },
+    {
+      "site": "scripts/engine/progression/engine/equipment-engine.js:68",
+      "class": "violation-candidate",
+      "atomicWithItemTransfer": false,
+      "rollback": "none (credits then equipment in separate writes)",
+      "note": "F-STO-004; legacy finalize-integration path"
+    },
+    {
+      "site": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:462",
+      "class": "violation-candidate",
+      "atomicWithItemTransfer": "local compensation",
+      "rollback": "inverse-delta compensation",
+      "note": "F-STO-003"
+    },
+    {
+      "site": "scripts/sheets/v2/actor-sheet-base.js:1958",
+      "class": "legitimate",
+      "note": "character reset to blank, not a transaction"
+    },
+    {
+      "site": "scripts/utils/actor-utils.js:397",
+      "class": "false-positive",
+      "note": "JSDoc example"
+    },
+    {
+      "site": "scripts/domain/vehicles/vehicle-modification-rules.js:121",
+      "class": "false-positive",
+      "note": "pure quote math"
+    },
+    {
+      "site": "scripts/engine/vehicles/vehicle-logistics-service.js:9",
+      "class": "false-positive",
+      "note": "comment; purchases go through TE at :134"
+    },
+    {
+      "site": "scripts/engine/vehicles/vehicle-logistics-service.js:120",
+      "class": "false-positive",
+      "note": "comment"
+    },
+    {
+      "site": "scripts/domain/vehicles/vehicle-modification-factory.js:203",
+      "class": "dead (orphan module, vehicles domain)",
+      "note": "not probe-listed"
+    },
+    {
+      "site": "scripts/engine/crafting/lightsaber-construction-engine.js:617",
+      "class": "violation",
+      "atomicWithItemTransfer": "transactional:true whole-actor restore",
+      "rollback": "ActorEngine verified restore",
+      "note": "F-STO-002, not probe-listed"
+    },
+    {
+      "site": "scripts/apps/follower-creator.js:956",
+      "class": "legitimate",
+      "note": "initial value on follower materialization"
+    },
+    {
+      "site": "scripts/apps/progression-framework/shell/progression-finalizer.js:1535",
+      "class": "legitimate",
+      "note": "single finalizer MutationPlan (A-15)"
+    }
+  ]
+}

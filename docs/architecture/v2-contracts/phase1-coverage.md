@@ -1,33 +1,33 @@
 # Phase 1 coverage (generated)
 
-Every taxonomy domain has a contract or an explicit disposition. Generated at `f734b4d`. Validation: 0 sidecars, 12 unique IDs, 0 evidence references checked against the audited commit, **0 unresolved**, 0 errors, 1 warnings (`data/audits/architecture-census/contracts/validation.json`).
+Every taxonomy domain has a contract or an explicit disposition. Generated at `f734b4d`. Validation: 10 sidecars, 345 unique IDs, 810 evidence references checked against the audited commit, **0 unresolved**, 0 errors, 1 warnings (`data/audits/architecture-census/contracts/validation.json`).
 
 | Domain | Kind | Files | Runtime modules | Disposition | Responsibilities | Findings |
 |---|---|---:|---:|---|---:|---:|
-| `actor-core` | mechanical | 133 | 37 | MISSING CONTRACT | 0 | 0 |
-| `abilities-effects` | mechanical | 129 | 91 | MISSING CONTRACT | 0 | 0 |
-| `progression` | mechanical | 571 | 367 | MISSING CONTRACT | 0 | 0 |
-| `classes` | mechanical | 134 | 11 | MISSING CONTRACT | 0 | 0 |
+| `actor-core` | mechanical | 133 | 37 | contract B-ACT | 15 | 15 |
+| `abilities-effects` | mechanical | 129 | 91 | contract B-ABL | 12 | 9 |
+| `progression` | mechanical | 571 | 367 | contract B-PRG | 15 | 23 |
+| `classes` | mechanical | 134 | 11 | contract B-CLS | 9 | 6 |
 | `species` | mechanical | 267 | 19 | MISSING CONTRACT | 0 | 0 |
 | `skills` | mechanical | 87 | 34 | MISSING CONTRACT | 0 | 0 |
-| `feats` | mechanical | 720 | 105 | MISSING CONTRACT | 0 | 0 |
+| `feats` | mechanical | 720 | 105 | contract B-FEA | 15 | 14 |
 | `talents` | mechanical | 440 | 36 | MISSING CONTRACT | 0 | 0 |
 | `force` | mechanical | 322 | 55 | MISSING CONTRACT | 0 | 0 |
 | `combat` | mechanical | 431 | 174 | MISSING CONTRACT | 0 | 0 |
 | `rolls` | mechanical | 36 | 24 | MISSING CONTRACT | 0 | 0 |
 | `equipment` | mechanical | 377 | 92 | MISSING CONTRACT | 0 | 0 |
 | `customization` | mechanical | 172 | 59 | MISSING CONTRACT | 0 | 0 |
-| `store-economy` | mechanical | 162 | 39 | MISSING CONTRACT | 0 | 0 |
-| `vehicles` | mechanical | 764 | 119 | MISSING CONTRACT | 0 | 0 |
+| `store-economy` | mechanical | 162 | 39 | contract B-STO | 8 | 9 |
+| `vehicles` | mechanical | 764 | 119 | contract B-VEH | 16 | 12 |
 | `droids` | mechanical | 472 | 47 | MISSING CONTRACT | 0 | 0 |
 | `npc-followers` | mechanical | 169 | 28 | MISSING CONTRACT | 0 | 0 |
-| `mentor-suggestion` | feature | 568 | 240 | MISSING CONTRACT | 0 | 0 |
-| `galactic-profiles` | feature | 211 | 167 | MISSING CONTRACT | 0 | 0 |
+| `mentor-suggestion` | feature | 568 | 240 | contract B-MEN | 15 | 15 |
+| `galactic-profiles` | feature | 211 | 167 | contract B-GAL | 9 | 9 |
 | `holonet` | feature | 94 | 75 | MISSING CONTRACT | 0 | 0 |
 | `games` | feature | 115 | 32 | MISSING CONTRACT | 0 | 0 |
 | `houserules` | feature | 43 | 25 | MISSING CONTRACT | 0 | 0 |
 | `chat` | infrastructure | 15 | 7 | MISSING CONTRACT | 0 | 0 |
-| `ui-shell` | presentation | 464 | 179 | MISSING CONTRACT | 0 | 0 |
+| `ui-shell` | presentation | 464 | 179 | contract B-UIS | 13 | 13 |
 | `governance` | infrastructure | 100 | 86 | MISSING CONTRACT | 0 | 0 |
 | `settings-config` | infrastructure | 11 | 4 | MISSING CONTRACT | 0 | 0 |
 | `data-registries` | infrastructure | 54 | 12 | MISSING CONTRACT | 0 | 0 |

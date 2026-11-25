@@ -22,5 +22,116 @@
   "A-17",
   "A-18"
  ],
- "contracts": []
+ "contracts": [
+  {
+   "contractId": "B-ABL",
+   "domain": "abilities-effects",
+   "doc": "docs/architecture/v2-contracts/B-ABL-abilities-effects.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/abilities-effects.json",
+   "responsibilities": 12,
+   "subsystemContracts": 2,
+   "contradictions": 2,
+   "unimplemented": 0,
+   "findings": 9
+  },
+  {
+   "contractId": "B-ACT",
+   "domain": "actor-core",
+   "doc": "docs/architecture/v2-contracts/B-ACT-actor-core.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/actor-core.json",
+   "responsibilities": 15,
+   "subsystemContracts": 3,
+   "contradictions": 5,
+   "unimplemented": 1,
+   "findings": 15
+  },
+  {
+   "contractId": "B-CLS",
+   "domain": "classes",
+   "doc": "docs/architecture/v2-contracts/B-CLS-classes.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/classes.json",
+   "responsibilities": 9,
+   "subsystemContracts": 1,
+   "contradictions": 2,
+   "unimplemented": 0,
+   "findings": 6
+  },
+  {
+   "contractId": "B-FEA",
+   "domain": "feats",
+   "doc": "docs/architecture/v2-contracts/B-FEA-feats.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/feats.json",
+   "responsibilities": 15,
+   "subsystemContracts": 3,
+   "contradictions": 3,
+   "unimplemented": 3,
+   "findings": 14
+  },
+  {
+   "contractId": "B-GAL",
+   "domain": "galactic-profiles",
+   "doc": "docs/architecture/v2-contracts/B-GAL-galactic-profiles.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/galactic-profiles.json",
+   "responsibilities": 9,
+   "subsystemContracts": 2,
+   "contradictions": 2,
+   "unimplemented": 3,
+   "findings": 9
+  },
+  {
+   "contractId": "B-MEN",
+   "domain": "mentor-suggestion",
+   "doc": "docs/architecture/v2-contracts/B-MEN-mentor-suggestion.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/mentor-suggestion.json",
+   "responsibilities": 15,
+   "subsystemContracts": 3,
+   "contradictions": 6,
+   "unimplemented": 3,
+   "findings": 15
+  },
+  {
+   "contractId": "B-PRG",
+   "domain": "progression",
+   "doc": "docs/architecture/v2-contracts/B-PRG-progression.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/progression.json",
+   "responsibilities": 15,
+   "subsystemContracts": 4,
+   "contradictions": 5,
+   "unimplemented": 3,
+   "findings": 23
+  },
+  {
+   "contractId": "B-STO",
+   "domain": "store-economy",
+   "doc": "docs/architecture/v2-contracts/B-STO-store-economy.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/store-economy.json",
+   "responsibilities": 8,
+   "subsystemContracts": 2,
+   "contradictions": 4,
+   "unimplemented": 2,
+   "findings": 9
+  },
+  {
+   "contractId": "B-UIS",
+   "domain": "ui-shell",
+   "doc": "docs/architecture/v2-contracts/B-UIS-ui-shell.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/ui-shell.json",
+   "responsibilities": 13,
+   "subsystemContracts": 2,
+   "contradictions": 4,
+   "unimplemented": 1,
+   "findings": 13
+  },
+  {
+   "contractId": "B-VEH",
+   "domain": "vehicles",
+   "doc": "docs/architecture/v2-contracts/B-VEH-vehicles.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/vehicles.json",
+   "responsibilities": 16,
+   "subsystemContracts": 3,
+   "contradictions": 5,
+   "unimplemented": 2,
+   "findings": 12
+  }
+ ]
 }

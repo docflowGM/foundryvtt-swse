@@ -1,0 +1,494 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-CLS",
+  "domain": "classes",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "Classes is a small data/registry domain with no mutation, chat, settings or cache probe hits. ClassesDB loads and normalizes the classes compendium and ClassesRegistry is the public enumeration API. Problems are duplicated authorities around it: class-data-loader (used by actor-core BAB/defense calculators) keeps its own cache and reads the pack directly when the registry is not ready, two class normalizers exist despite a one-normalizer rule, and the Nonheroic synthetic class is defined twice with divergent class-skill lists (rules question SWSE-NPC-RD-002 remains open). Prestige identity weighting (IdentityEngine) is a mentor-suggestion responsibility housed under scripts/engine/prestige.",
+  "responsibilities": [
+    {
+      "id": "R-CLS-01",
+      "responsibility": "Load classes compendium, normalize, O(1) lookup",
+      "owner": {
+        "path": "scripts/data/classes-db.js",
+        "symbol": "ClassesDB"
+      },
+      "status": [
+        "OBSERVED",
+        "APPROVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/data/classes-db.js:45",
+        "scripts/data/classes-db.js:125"
+      ],
+      "tests": [
+        "tests/class-pack-protected-guard.test.mjs"
+      ],
+      "notes": "APPROVED by file-header SSOT contract"
+    },
+    {
+      "id": "R-CLS-02",
+      "responsibility": "Public enumeration API",
+      "owner": {
+        "path": "scripts/engine/registries/classes-registry.js",
+        "symbol": "ClassesRegistry"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/registries/classes-registry.js:46",
+        "scripts/engine/registries/classes-registry.js:157"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-CLS-03",
+      "responsibility": "Class record normalization",
+      "owner": {
+        "path": "scripts/data/class-normalizer.js",
+        "symbol": "normalizeClass"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/data/class-normalizer.js:153",
+        "scripts/engine/progression/utils/class-normalizer.js:15"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-CLS-04",
+      "responsibility": "Legacy-shaped class cache for derived calculators",
+      "owner": {
+        "path": "scripts/engine/progression/utils/class-data-loader.js",
+        "symbol": "getClassData"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/progression/utils/class-data-loader.js:235",
+        "scripts/engine/progression/utils/class-data-loader.js:124",
+        "scripts/engine/progression/utils/class-data-loader.js:177",
+        "scripts/actors/derived/defense-calculator.js:21"
+      ],
+      "tests": [
+        "tests/class-hit-die-defense-source.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-CLS-05",
+      "responsibility": "Class identity resolution for progression",
+      "owner": {
+        "path": "scripts/engine/progression/utils/class-resolution.js",
+        "symbol": "resolveClassModel"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/progression/utils/class-resolution.js:61"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-CLS-06",
+      "responsibility": "Nonheroic synthetic class model",
+      "owner": {
+        "path": "scripts/engine/progression/utils/nonheroic-class-model.js",
+        "symbol": "NONHEROIC_CLASS_MODEL"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/progression/utils/nonheroic-class-model.js:161",
+        "scripts/engine/progression/utils/class-data-loader.js:26"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-CLS-07",
+      "responsibility": "Prestige-class prerequisite data",
+      "owner": {
+        "path": "scripts/data/prestige-prerequisites.js",
+        "symbol": "PRESTIGE_PREREQUISITES"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/data/prestige-prerequisites.js:34",
+        "scripts/data/prestige-prerequisites.js:640"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-CLS-08",
+      "responsibility": "Class tag / relationship metadata",
+      "owner": {
+        "path": "scripts/data/class-tag-metadata.js",
+        "symbol": "CLASS_TAG_METADATA"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/data/class-tag-metadata.js:1",
+        "scripts/data/class-relationship-registry.js:1"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-CLS-09",
+      "responsibility": "Prestige identity weighting for suggestions",
+      "owner": {
+        "path": "scripts/engine/prestige/identity-engine.js",
+        "symbol": "IdentityEngine"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/engine/prestige/identity-engine.js:29"
+      ],
+      "tests": [],
+      "notes": "Belongs to mentor-suggestion"
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "ClassesDB",
+      "path": "scripts/data/classes-db.js",
+      "line": 30,
+      "consumers": 25,
+      "contract": "build/get/byName/all/baseClasses/prestigeClasses/fromItem"
+    },
+    {
+      "symbol": "ClassesRegistry",
+      "path": "scripts/engine/registries/classes-registry.js",
+      "line": 46,
+      "consumers": 23,
+      "contract": "initialize/getAll/getById/getByName/getBySourceId/resolveModel"
+    },
+    {
+      "symbol": "normalizeClass",
+      "path": "scripts/data/class-normalizer.js",
+      "line": 153,
+      "consumers": 15,
+      "contract": "raw -> normalized class"
+    },
+    {
+      "symbol": "getClassData",
+      "path": "scripts/engine/progression/utils/class-data-loader.js",
+      "line": 235,
+      "consumers": 8,
+      "contract": "legacy-shaped model with _raw.level_progression"
+    },
+    {
+      "symbol": "PRESTIGE_PREREQUISITES",
+      "path": "scripts/data/prestige-prerequisites.js",
+      "line": 34,
+      "consumers": 9,
+      "contract": "prestige prerequisite records"
+    },
+    {
+      "symbol": "IdentityEngine",
+      "path": "scripts/engine/prestige/identity-engine.js",
+      "line": 29,
+      "consumers": 10,
+      "contract": "pure bias computation"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "infrastructure",
+      "data-registries"
+    ],
+    "prohibited": [
+      "UI",
+      "ActorEngine writes",
+      "mentor-suggestion (upward)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/prestige/identity-engine.js",
+        "to": "scripts/engine/archetype/archetype-registry.js",
+        "evidence": "scripts/engine/prestige/identity-engine.js:21"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-CLS-1",
+      "boundary": "ClassesRegistry <-> legacy loader adapter",
+      "interface": "class-data-loader adapts ClassesRegistry models via adaptClassForLoaderCompatibility; no own pack read",
+      "status": [
+        "PROPOSED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-CLS-01",
+      "existingSource": "scripts/data/classes-db.js:6 header",
+      "claim": "ClassesDB is the only authorized access point for class data",
+      "observed": "class-data-loader reads the classes pack index directly and caches separately",
+      "evidence": [
+        "scripts/engine/progression/utils/class-data-loader.js:124",
+        "scripts/engine/progression/utils/class-data-loader.js:185"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-CLS-02",
+      "existingSource": "scripts/engine/progression/engine/class-normalizer.js:4 header",
+      "claim": "Only one file should think about class normalization",
+      "observed": "Two independent normalizers in use",
+      "evidence": [
+        "scripts/data/class-normalizer.js:153",
+        "scripts/engine/progression/utils/class-normalizer.js:15"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [],
+  "deferredRules": [
+    {
+      "item": "Nonheroic class skill list (Ride)",
+      "registerRef": "SWSE-NPC-RD-002"
+    },
+    {
+      "item": "Galactic Profile Nonheroic starting feats",
+      "registerRef": "SWSE-NPC-RD-004"
+    },
+    {
+      "item": "Class features whose printed text could not be read",
+      "registerRef": "CF-RD-001"
+    },
+    {
+      "item": "Talent-tree access for Charlatan/Jedi Master/Sith Lord/Independent Droid",
+      "registerRef": "MSV-RD-006"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "Class enumeration when the classes pack is not yet indexed at boot (loader fallback)",
+      "source": "scripts/engine/progression/utils/class-data-loader.js:185"
+    },
+    {
+      "item": "Prestige class availability in level-up",
+      "source": "scripts/data/prestige-prerequisites.js:650"
+    }
+  ],
+  "findings": [
+    {
+      "category": "duplicate-authority",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Nonheroic class defined twice with divergent class skills",
+      "affectedFiles": [
+        "scripts/engine/progression/utils/class-data-loader.js",
+        "scripts/engine/progression/utils/nonheroic-class-model.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/utils/class-data-loader.js:26",
+        "scripts/engine/progression/utils/class-data-loader.js:48",
+        "scripts/engine/progression/utils/class-data-loader.js:206",
+        "scripts/engine/progression/utils/nonheroic-class-model.js:11",
+        "scripts/engine/progression/utils/nonheroic-class-model.js:161"
+      ],
+      "observed": "class-data-loader builds its own Nonheroic model (same BAB table and feat cadence, hitDie 4) with classSkills: [] and always seeds it into its cache; nonheroic-class-model.js defines NONHEROIC_CLASS_SKILLS (including the disputed ride). Consumers of getClassData see no Nonheroic class skills; ClassesRegistry consumers see the list.",
+      "intendedOwnership": "nonheroic-class-model.js as the only definition",
+      "contractRef": "A-01 | R-CLS-06",
+      "proposedSolution": "class-data-loader returns adaptClassForLoaderCompatibility(createNonheroicClassModel()) instead of its own literal. The content of the skill list stays as is pending SWSE-NPC-RD-002.",
+      "alternatives": "",
+      "dependencies": [
+        "SWSE-NPC-RD-002"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Test that getClassData(\"nonheroic\") and ClassesRegistry Nonheroic agree on hitDie, BAB, classSkills, feat cadence",
+      "foundryAcceptance": "Nonheroic NPC level-up skills",
+      "scope": "S",
+      "simplificationBenefit": "2 -> 1 definitions",
+      "risk": "Low (exposes class skills to derived consumers; verify no consumer relied on empty list)",
+      "perfImpact": "none",
+      "id": "F-CLS-001"
+    },
+    {
+      "category": "duplicate-authority",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Parallel class loader and cache bypassing ClassesDB",
+      "affectedFiles": [
+        "scripts/engine/progression/utils/class-data-loader.js",
+        "scripts/actors/derived/bab-calculator.js",
+        "scripts/actors/derived/defense-calculator.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/utils/class-data-loader.js:124",
+        "scripts/engine/progression/utils/class-data-loader.js:177",
+        "scripts/engine/progression/utils/class-data-loader.js:185",
+        "scripts/engine/progression/utils/class-data-loader.js:255",
+        "scripts/actors/derived/defense-calculator.js:21"
+      ],
+      "observed": "getClassData serves actor-core derived calculators from its own Map cache, sourced from ClassesRegistry when initialized, otherwise directly from the pack index with a separate normalize/adapt step. Two caches of the same compendium with separate invalidation.",
+      "intendedOwnership": "ClassesRegistry (ClassesDB) single cache; loader is a pure shape adapter",
+      "contractRef": "A-01 | A-16 | CR-CLS-01",
+      "proposedSolution": "Make getClassData await ClassesRegistry.initialize() and adapt; delete the pack-index fallback and the separate cache once boot ordering guarantees registry readiness before first prepare.",
+      "alternatives": "Keep fallback but share the registry cache",
+      "dependencies": [
+        "actor-core boot order"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "tests/class-hit-die-defense-source.test.mjs plus loader/registry equivalence test",
+      "foundryAcceptance": "Actor prepare before registries ready (world load)",
+      "scope": "M",
+      "simplificationBenefit": "One class cache, one invalidation",
+      "risk": "Medium (boot ordering for derived data)",
+      "perfImpact": "low",
+      "id": "F-CLS-002"
+    },
+    {
+      "category": "duplicate-normalization",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Two class normalizers plus a compatibility wrapper",
+      "affectedFiles": [
+        "scripts/data/class-normalizer.js",
+        "scripts/engine/progression/utils/class-normalizer.js",
+        "scripts/engine/progression/engine/class-normalizer.js",
+        "scripts/apps/progression-framework/steps/step-normalizers.js"
+      ],
+      "evidence": [
+        "scripts/data/class-normalizer.js:153",
+        "scripts/engine/progression/utils/class-normalizer.js:15",
+        "scripts/engine/progression/engine/class-normalizer.js:11",
+        "scripts/engine/progression/hooks/system-init-hooks.js:293",
+        "scripts/apps/progression-framework/steps/step-normalizers.js:74"
+      ],
+      "observed": "normalizeClass (data) and normalizeClassData (progression utils) normalize the same records differently; ClassNormalizer is a thin wrapper (legacy D). step-normalizers.normalizeClass shapes step view data (different purpose, same name).",
+      "intendedOwnership": "scripts/data/class-normalizer.js",
+      "contractRef": "A-01 | CR-CLS-02",
+      "proposedSolution": "Reroute chargen-shared and system-init-hooks to normalizeClass, delete scripts/engine/progression/utils/class-normalizer.js and the wrapper; rename the step normalizer to toClassStepView.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Normalization snapshot over all 37 class records",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "3 -> 1 normalizers",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-CLS-003"
+    },
+    {
+      "category": "ownership-violation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Prestige identity weighting lives in the classes domain",
+      "affectedFiles": [
+        "scripts/engine/prestige/identity-engine.js",
+        "scripts/engine/prestige/prestige-layer-registry.js",
+        "scripts/engine/prestige/bias-tag-projection.js"
+      ],
+      "evidence": [
+        "scripts/engine/prestige/identity-engine.js:29",
+        "scripts/engine/prestige/prestige-layer-registry.js:16"
+      ],
+      "observed": "1,086-line pure bias model consumed only by suggestion/mentor modules and mentor-survey-step; it imports archetype registry (mentor-suggestion), creating an upward edge from classes.",
+      "intendedOwnership": "mentor-suggestion",
+      "contractRef": "A-P1",
+      "proposedSolution": "Relocate scripts/engine/prestige to scripts/engine/suggestion/identity (no behavior change).",
+      "alternatives": "Re-tag domain in census only",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "mentor tests",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "Domain boundary matches responsibility",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-CLS-004"
+    },
+    {
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Unreachable sidebar-icon-class-audit is a UI diagnostic, misattributed to classes",
+      "affectedFiles": [
+        "scripts/core/sidebar-icon-class-audit.js",
+        "scripts/core/init.js"
+      ],
+      "evidence": [
+        "scripts/core/sidebar-icon-class-audit.js:14",
+        "scripts/core/init.js:10",
+        "index.js:216"
+      ],
+      "observed": "Only imported by scripts/core/init.js (and a holonet copy), which index.js itself notes nothing imports. Debug tool (CSS classes, not SWSE classes). Legacy C.",
+      "intendedOwnership": "dev-tooling",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete with scripts/core/init.js triage (infrastructure owner).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-CLS-005"
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "No invariant probe hits in classes",
+      "affectedFiles": [],
+      "evidence": [
+        "scripts/data/classes-db.js:45"
+      ],
+      "observed": "Domain-facts list 0 probe hits and 0 mechanical-responsibility leads; classes only read data. A domain with no mutation problems.",
+      "intendedOwnership": "",
+      "contractRef": "A-02 | A-05 | A-06",
+      "proposedSolution": "None",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "",
+      "perfImpact": "none",
+      "id": "F-CLS-006"
+    }
+  ]
+}
