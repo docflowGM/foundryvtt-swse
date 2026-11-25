@@ -1,0 +1,297 @@
+{
+ "schema": "swse.v2-audit.complexity/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "generator": "tools/architecture-census/assemble-findings.mjs",
+ "phase0": {
+  "duplicateExportedSymbolNames": 138,
+  "exactFunctionCloneGroups": {
+   "runtime": 33,
+   "all": 46
+  },
+  "structuralFunctionCloneGroups": {
+   "runtime": 34,
+   "all": 42
+  },
+  "reachableModulesWithUnusedNamedExports": 555,
+  "unusedNamedExports": 1700,
+  "compatPatchModules": 24,
+  "migrationModules": 28,
+  "runtimeFilesWithDeprecatedMarkers": 64,
+  "runtimeFilesWithLegacyMarkers": 424,
+  "runtimeFilesWithCompatMarkers": 244,
+  "runtimeFilesOver1500Sloc": [
+   {
+    "path": "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "sloc": 7055
+   },
+   {
+    "path": "scripts/sheets/v2/character-like-sheet.js",
+    "sloc": 6764
+   },
+   {
+    "path": "scripts/data/authority/talent-prerequisite-authority.js",
+    "sloc": 5985
+   },
+   {
+    "path": "scripts/locations/location-library-seeds.js",
+    "sloc": 5227
+   },
+   {
+    "path": "scripts/domain/vehicles/vehicle-cp22-source-catalog.generated.js",
+    "sloc": 3684
+   },
+   {
+    "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+    "sloc": 3436
+   },
+   {
+    "path": "scripts/apps/customization/item-customization-workbench.js",
+    "sloc": 3416
+   },
+   {
+    "path": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+    "sloc": 3301
+   },
+   {
+    "path": "scripts/governance/actor-engine/actor-engine.js",
+    "sloc": 3090
+   },
+   {
+    "path": "scripts/generation/objective-template.js",
+    "sloc": 3022
+   },
+   {
+    "path": "scripts/data/prerequisite-checker.js",
+    "sloc": 2988
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/talent-step.js",
+    "sloc": 2849
+   },
+   {
+    "path": "scripts/skills/skill-uses.js",
+    "sloc": 2617
+   },
+   {
+    "path": "scripts/items/swse-item-sheet.js",
+    "sloc": 2524
+   },
+   {
+    "path": "scripts/mentor/mentor-suggestion-data.js",
+    "sloc": 2279
+   },
+   {
+    "path": "scripts/engine/mentor/mentor-dialogues.data.js",
+    "sloc": 2246
+   },
+   {
+    "path": "scripts/houserules/houserules-manifest.js",
+    "sloc": 2229
+   },
+   {
+    "path": "scripts/engine/suggestion/SuggestionEngine.js",
+    "sloc": 2204
+   },
+   {
+    "path": "scripts/data/authority/feat-prerequisite-authority.js",
+    "sloc": 2131
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/feat-step.js",
+    "sloc": 2111
+   },
+   {
+    "path": "scripts/generation/data/location-population-profiles.js",
+    "sloc": 2032
+   },
+   {
+    "path": "scripts/apps/progression-framework/shell/progression-reconciler.js",
+    "sloc": 2026
+   },
+   {
+    "path": "scripts/apps/gm-datapad.js",
+    "sloc": 2011
+   },
+   {
+    "path": "scripts/sheets/v2/character-sheet/concept-context.js",
+    "sloc": 1942
+   },
+   {
+    "path": "scripts/sheets/v2/actor-sheet-base.js",
+    "sloc": 1834
+   },
+   {
+    "path": "scripts/engine/store/transaction-engine.js",
+    "sloc": 1818
+   },
+   {
+    "path": "scripts/ui/shell/AlliesSurfaceService.js",
+    "sloc": 1815
+   },
+   {
+    "path": "scripts/apps/store/store-main.js",
+    "sloc": 1724
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/summary-step.js",
+    "sloc": 1722
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/attribute-step.js",
+    "sloc": 1688
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/intro-step.js",
+    "sloc": 1639
+   },
+   {
+    "path": "scripts/houserules/houserule-settings.js",
+    "sloc": 1606
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/skills-step.js",
+    "sloc": 1571
+   },
+   {
+    "path": "scripts/rolls/roll-config.js",
+    "sloc": 1558
+   },
+   {
+    "path": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+    "sloc": 1549
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/species-step.js",
+    "sloc": 1527
+   }
+  ],
+  "todoMarkersRuntime": 4
+ },
+ "phase0Js": {
+  "slocRuntime": 525153,
+  "runtimeReachability": {
+   "reachable-static": 1483,
+   "orphan-unreferenced": 332,
+   "test-only-import": 178,
+   "unreachable-importers-only": 156,
+   "reachable-dynamic": 117,
+   "node-tool": 70,
+   "node-script": 23,
+   "string-referenced-only": 12,
+   "tool-only-import": 8
+  }
+ },
+ "phase0StateWrites": {
+  "runtimeDirectDocumentWriteSites": 357,
+  "runtimeDirectDocumentWriteFiles": 123,
+  "sitesInsideActorEngineHome": 21,
+  "sitesInReachableFiles": 316,
+  "byDomain": {
+   "talents": {
+    "sites": 74,
+    "files": 13
+   },
+   "mentor-suggestion": {
+    "sites": 27,
+    "files": 14
+   },
+   "actor-core": {
+    "sites": 25,
+    "files": 4
+   },
+   "combat": {
+    "sites": 25,
+    "files": 12
+   },
+   "force": {
+    "sites": 24,
+    "files": 4
+   },
+   "equipment": {
+    "sites": 24,
+    "files": 3
+   },
+   "npc-followers": {
+    "sites": 23,
+    "files": 8
+   },
+   "feats": {
+    "sites": 20,
+    "files": 13
+   },
+   "infrastructure": {
+    "sites": 18,
+    "files": 6
+   },
+   "ui-shell": {
+    "sites": 17,
+    "files": 8
+   },
+   "customization": {
+    "sites": 15,
+    "files": 4
+   },
+   "progression": {
+    "sites": 15,
+    "files": 8
+   },
+   "abilities-effects": {
+    "sites": 11,
+    "files": 3
+   },
+   "migration": {
+    "sites": 9,
+    "files": 6
+   },
+   "compat-patches": {
+    "sites": 8,
+    "files": 3
+   },
+   "galactic-profiles": {
+    "sites": 6,
+    "files": 2
+   },
+   "houserules": {
+    "sites": 6,
+    "files": 4
+   },
+   "store-economy": {
+    "sites": 3,
+    "files": 2
+   },
+   "holonet": {
+    "sites": 2,
+    "files": 2
+   },
+   "species": {
+    "sites": 2,
+    "files": 1
+   },
+   "vehicles": {
+    "sites": 1,
+    "files": 1
+   },
+   "skills": {
+    "sites": 1,
+    "files": 1
+   },
+   "governance": {
+    "sites": 1,
+    "files": 1
+   }
+  },
+  "actorEngineCallSitesRuntime": 938,
+  "systemDerivedAssignmentSites": 156,
+  "chatMessageCreateOutsideSwseChat": 42
+ },
+ "phase2": {
+  "findings": 274,
+  "confirmed": 248,
+  "confirmedDuplicateAuthorities": 25,
+  "deadCodeCandidateSloc": 52886,
+  "deadCodeConfirmedSloc": 52886,
+  "deadCodeConfirmedPctOfRuntime": 10.07,
+  "legacyCandidates": 25,
+  "consolidationOpportunities": 22
+ }
+}

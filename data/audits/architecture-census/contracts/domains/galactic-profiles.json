@@ -1,60 +1,605 @@
 {
-  "schema": "swse.v2-contract.domain/1",
-  "contractId": "B-GAL",
-  "domain": "galactic-profiles",
-  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
-  "summary": "The census domain 'galactic-profiles' is mislabelled. scripts/generation/** is the GM Datapad procedural generator (Phases 8D-1..8D-3C in docs/audits/gm-datapad-ecosystem-redesign.md). It is not the Galactic Profiles v3 character-build system, which lives in scripts/engine/progression/profile/** (progression domain) and is live. The 150 test-only generator modules are deliberately pure draft builders, and a source-level test enforces that they make no canonical mutations. Their UI and their Generate->Review->Commit path (CampaignMutationCoordinator/JobEngine, Phase 8D-4) are documented as not started. Classification: intended-but-unimplemented integration, not dead code. The live part of the domain is LocationRegistryService, which writes a world setting legitimately and writes per-actor Atlas flags directly without an exception comment. The domain also includes GM bridge adapters that only read, and a GM-only Scene factory that writes world documents legitimately. galactic-records-browser.js is a dead chain behind an orphan dialog. No credit movement or SWSE mechanics are implemented here.",
-  "responsibilities": [
-    { "id": "R-GAL-01", "responsibility": "Pure RNG-injectable draft generators (location/planet/POI, faction, NPC concept, job, reward)", "owner": { "path": "scripts/generation/", "symbol": "generator library" }, "status": ["OBSERVED", "UNIMPLEMENTED"], "verification": "test-verified", "evidence": ["scripts/generation/jobs/job-bundle.js:360", "docs/audits/gm-datapad-ecosystem-redesign.md:4948"], "tests": ["tests/gm-generation-phase8d1-foundation.test.mjs", "tests/gm-generation-phase8d3c-jobs-production.test.mjs"], "notes": "Both tests passed offline at HEAD. No runtime caller." },
-    { "id": "R-GAL-02", "responsibility": "Drafts never create or upsert canonical records", "owner": { "path": "tests/gm-generation-phase8d1-foundation.test.mjs", "symbol": "forbiddenCallPatterns source guard" }, "status": ["OBSERVED", "APPROVED"], "verification": "test-verified", "evidence": ["tests/gm-generation-phase8d1-foundation.test.mjs:775", "tests/gm-generation-phase8d1-foundation.test.mjs:791"], "tests": ["tests/gm-generation-phase8d1-foundation.test.mjs"], "notes": "APPROVED by gm-datapad-ecosystem-redesign §126/§199." },
-    { "id": "R-GAL-03", "responsibility": "Canonical Location registry (world setting)", "owner": { "path": "scripts/locations/location-registry-service.js", "symbol": "LocationRegistryService" }, "status": ["OBSERVED"], "verification": "behavior-code-verified", "evidence": ["scripts/locations/location-registry-service.js:427", "scripts/locations/location-registry-service.js:472", "scripts/locations/location-registry-service.js:593"], "tests": ["tests/gm-locations-identity-and-hierarchy-integrity.test.mjs"], "notes": "" },
-    { "id": "R-GAL-04", "responsibility": "Location identity: id-only, collision-safe slug minting", "owner": { "path": "scripts/locations/location-registry-service.js", "symbol": "upsertLocation / _uniqueLocationSlug" }, "status": ["OBSERVED"], "verification": "behavior-code-verified", "evidence": ["scripts/locations/location-registry-service.js:604", "scripts/locations/location-registry-service.js:647"], "tests": ["tests/gm-locations-identity-and-hierarchy-integrity.test.mjs"], "notes": "normalizeLocation still derives an id from the name for legacy records without one (:486)." },
-    { "id": "R-GAL-05", "responsibility": "Per-actor Atlas state (pins, notes, revealed facts, lead discoveries)", "owner": { "path": "scripts/locations/location-registry-service.js", "symbol": "setActorAtlasState / patchActorLocationState / revealFactToActor / recordAtlasLeadDiscovery / resolveAtlasLeadDiscovery" }, "status": ["OBSERVED", "CONFLICT"], "verification": "behavior-code-verified", "evidence": ["scripts/locations/location-registry-service.js:805", "scripts/locations/location-registry-service.js:826", "scripts/locations/location-registry-service.js:840", "scripts/locations/location-registry-service.js:880", "scripts/locations/location-registry-service.js:917"], "tests": ["tests/gm-intel-location-fact-identity.test.mjs"], "notes": "A-02: direct actor.setFlag, no exception comment." },
-    { "id": "R-GAL-06", "responsibility": "Location Library seed catalog", "owner": { "path": "scripts/locations/location-library-seeds.js", "symbol": "LOCATION_LIBRARY_SEEDS" }, "status": ["OBSERVED"], "verification": "source-inspected", "evidence": ["scripts/locations/location-registry-service.js:11"], "tests": ["tests/gm-locations-library-catalog-contract.test.mjs"], "notes": "5,227 SLOC of JS data." },
-    { "id": "R-GAL-07", "responsibility": "Scene creation/activation from a Location", "owner": { "path": "scripts/ui/shell/gm/LocationSceneBridgeService.js", "symbol": "LocationSceneBridgeService" }, "status": ["OBSERVED"], "verification": "behavior-code-verified", "evidence": ["scripts/ui/shell/gm/LocationSceneBridgeService.js:82", "scripts/ui/shell/gm/LocationSceneBridgeService.js:103"], "tests": ["tests/gm-locations-scene-creation-safety.test.mjs"], "notes": "World documents; create is GM-gated." },
-    { "id": "R-GAL-08", "responsibility": "Faction/Location to Job/Intel draft adapters", "owner": { "path": "scripts/ui/shell/gm/FactionJobBridgeService.js", "symbol": "FactionJobBridgeService (+LocationJob, FactionIntel, LocationIntel)" }, "status": ["OBSERVED"], "verification": "source-inspected", "evidence": ["scripts/ui/shell/gm/FactionJobBridgeService.js:169", "scripts/ui/shell/gm/LocationJobBridgeService.js:8"], "tests": ["tests/pre8d4-faction-contact-identity-hardening.test.mjs"], "notes": "Read and draft only; no writes." },
-    { "id": "R-GAL-09", "responsibility": "Compound draft commit orchestration", "owner": { "path": "", "symbol": "CampaignMutationCoordinator / JobEngine (not built)" }, "status": ["UNIMPLEMENTED", "PROPOSED"], "verification": "source-inspected", "evidence": ["docs/audits/gm-datapad-ecosystem-redesign.md:9174", "docs/audits/gm-datapad-ecosystem-redesign.md:9551"], "tests": [], "notes": "Design only." }
-  ],
-  "publicInterfaces": [
-    { "symbol": "registerLocationRegistrySettings", "path": "scripts/locations/location-registry-service.js", "line": 425, "consumers": 1, "contract": "Registers world setting (config:false); called at scripts/core/settings.js:504." },
-    { "symbol": "LocationRegistryService.upsertLocation", "path": "scripts/locations/location-registry-service.js", "line": 593, "consumers": 26, "contract": "id-only identity; invalid parent rejects the whole save." },
-    { "symbol": "LocationRegistryService.saveRegistry", "path": "scripts/locations/location-registry-service.js", "line": 472, "consumers": 0, "contract": "Whole-array world-setting write; emits swseLocationRegistryUpdated." },
-    { "symbol": "LocationRegistryService.patchActorLocationState", "path": "scripts/locations/location-registry-service.js", "line": 809, "consumers": 1, "contract": "Direct actor flag write (Atlas UI state)." },
-    { "symbol": "LocationRegistryService.resolveAtlasLeadDiscovery", "path": "scripts/locations/location-registry-service.js", "line": 897, "consumers": 1, "contract": "GM resolves a player's lead; writes that actor's flag." },
-    { "symbol": "LocationSceneBridgeService.createSceneFromLocation", "path": "scripts/ui/shell/gm/LocationSceneBridgeService.js", "line": 80, "consumers": 1, "contract": "GM-only Scene factory, links scene back to the Location." },
-    { "symbol": "FactionJobBridgeService.buildDraftFromFaction", "path": "scripts/ui/shell/gm/FactionJobBridgeService.js", "line": 170, "consumers": 6, "contract": "Pure job-draft builder." }
-  ],
-  "dependencies": {
-    "allowed": ["scripts/generation -> scripts/locations/location-library-seeds.js", "scripts/generation -> scripts/utils/stable-id.js", "bridges -> FactionRegistryService / LocationRegistryService reads"],
-    "prohibited": ["scripts/generation -> canonical create/upsert (upsertFaction, upsertLocation, createJobPosting, Actor.create, promoteFactionContactToActor, actorizePayload)", "scripts/generation -> TransactionEngine / credits", "scripts/generation -> UI"],
-    "observedViolations": []
+ "schema": "swse.v2-contract.domain/1",
+ "contractId": "B-GAL",
+ "domain": "galactic-profiles",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "summary": "The census domain 'galactic-profiles' is mislabelled. scripts/generation/** is the GM Datapad procedural generator (Phases 8D-1..8D-3C in docs/audits/gm-datapad-ecosystem-redesign.md). It is not the Galactic Profiles v3 character-build system, which lives in scripts/engine/progression/profile/** (progression domain) and is live. The 150 test-only generator modules are deliberately pure draft builders, and a source-level test enforces that they make no canonical mutations. Their UI and their Generate->Review->Commit path (CampaignMutationCoordinator/JobEngine, Phase 8D-4) are documented as not started. Classification: intended-but-unimplemented integration, not dead code. The live part of the domain is LocationRegistryService, which writes a world setting legitimately and writes per-actor Atlas flags directly without an exception comment. The domain also includes GM bridge adapters that only read, and a GM-only Scene factory that writes world documents legitimately. galactic-records-browser.js is a dead chain behind an orphan dialog. No credit movement or SWSE mechanics are implemented here.",
+ "responsibilities": [
+  {
+   "id": "R-GAL-01",
+   "responsibility": "Pure RNG-injectable draft generators (location/planet/POI, faction, NPC concept, job, reward)",
+   "owner": {
+    "path": "scripts/generation/",
+    "symbol": "generator library"
+   },
+   "status": [
+    "OBSERVED",
+    "UNIMPLEMENTED"
+   ],
+   "verification": "test-verified",
+   "evidence": [
+    "scripts/generation/jobs/job-bundle.js:360",
+    "docs/audits/gm-datapad-ecosystem-redesign.md:4948"
+   ],
+   "tests": [
+    "tests/gm-generation-phase8d1-foundation.test.mjs",
+    "tests/gm-generation-phase8d3c-jobs-production.test.mjs"
+   ],
+   "notes": "Both tests passed offline at HEAD. No runtime caller."
   },
-  "subsystemContracts": [
-    { "id": "C-GAL-1", "boundary": "Generator library <-> canonical authorities", "interface": "Drafts with draftId + provenance; committed only through a future CampaignMutationCoordinator that calls FactionRegistryService / LocationRegistryService / JobEngine / ActorEngine", "status": ["APPROVED", "UNIMPLEMENTED"] },
-    { "id": "C-GAL-2", "boundary": "Location registry (world setting) <-> actor Atlas state (actor flag)", "interface": "LocationRegistryService static API; ATLAS_ACTOR_FLAG", "status": ["OBSERVED", "CONFLICT"] }
+  {
+   "id": "R-GAL-02",
+   "responsibility": "Drafts never create or upsert canonical records",
+   "owner": {
+    "path": "tests/gm-generation-phase8d1-foundation.test.mjs",
+    "symbol": "forbiddenCallPatterns source guard"
+   },
+   "status": [
+    "OBSERVED",
+    "APPROVED"
+   ],
+   "verification": "test-verified",
+   "evidence": [
+    "tests/gm-generation-phase8d1-foundation.test.mjs:775",
+    "tests/gm-generation-phase8d1-foundation.test.mjs:791"
+   ],
+   "tests": [
+    "tests/gm-generation-phase8d1-foundation.test.mjs"
+   ],
+   "notes": "APPROVED by gm-datapad-ecosystem-redesign \u00a7126/\u00a7199."
+  },
+  {
+   "id": "R-GAL-03",
+   "responsibility": "Canonical Location registry (world setting)",
+   "owner": {
+    "path": "scripts/locations/location-registry-service.js",
+    "symbol": "LocationRegistryService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "evidence": [
+    "scripts/locations/location-registry-service.js:427",
+    "scripts/locations/location-registry-service.js:472",
+    "scripts/locations/location-registry-service.js:593"
+   ],
+   "tests": [
+    "tests/gm-locations-identity-and-hierarchy-integrity.test.mjs"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "R-GAL-04",
+   "responsibility": "Location identity: id-only, collision-safe slug minting",
+   "owner": {
+    "path": "scripts/locations/location-registry-service.js",
+    "symbol": "upsertLocation / _uniqueLocationSlug"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "evidence": [
+    "scripts/locations/location-registry-service.js:604",
+    "scripts/locations/location-registry-service.js:647"
+   ],
+   "tests": [
+    "tests/gm-locations-identity-and-hierarchy-integrity.test.mjs"
+   ],
+   "notes": "normalizeLocation still derives an id from the name for legacy records without one (:486)."
+  },
+  {
+   "id": "R-GAL-05",
+   "responsibility": "Per-actor Atlas state (pins, notes, revealed facts, lead discoveries)",
+   "owner": {
+    "path": "scripts/locations/location-registry-service.js",
+    "symbol": "setActorAtlasState / patchActorLocationState / revealFactToActor / recordAtlasLeadDiscovery / resolveAtlasLeadDiscovery"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "evidence": [
+    "scripts/locations/location-registry-service.js:805",
+    "scripts/locations/location-registry-service.js:826",
+    "scripts/locations/location-registry-service.js:840",
+    "scripts/locations/location-registry-service.js:880",
+    "scripts/locations/location-registry-service.js:917"
+   ],
+   "tests": [
+    "tests/gm-intel-location-fact-identity.test.mjs"
+   ],
+   "notes": "A-02: direct actor.setFlag, no exception comment."
+  },
+  {
+   "id": "R-GAL-06",
+   "responsibility": "Location Library seed catalog",
+   "owner": {
+    "path": "scripts/locations/location-library-seeds.js",
+    "symbol": "LOCATION_LIBRARY_SEEDS"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "evidence": [
+    "scripts/locations/location-registry-service.js:11"
+   ],
+   "tests": [
+    "tests/gm-locations-library-catalog-contract.test.mjs"
+   ],
+   "notes": "5,227 SLOC of JS data."
+  },
+  {
+   "id": "R-GAL-07",
+   "responsibility": "Scene creation/activation from a Location",
+   "owner": {
+    "path": "scripts/ui/shell/gm/LocationSceneBridgeService.js",
+    "symbol": "LocationSceneBridgeService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "evidence": [
+    "scripts/ui/shell/gm/LocationSceneBridgeService.js:82",
+    "scripts/ui/shell/gm/LocationSceneBridgeService.js:103"
+   ],
+   "tests": [
+    "tests/gm-locations-scene-creation-safety.test.mjs"
+   ],
+   "notes": "World documents; create is GM-gated."
+  },
+  {
+   "id": "R-GAL-08",
+   "responsibility": "Faction/Location to Job/Intel draft adapters",
+   "owner": {
+    "path": "scripts/ui/shell/gm/FactionJobBridgeService.js",
+    "symbol": "FactionJobBridgeService (+LocationJob, FactionIntel, LocationIntel)"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "evidence": [
+    "scripts/ui/shell/gm/FactionJobBridgeService.js:169",
+    "scripts/ui/shell/gm/LocationJobBridgeService.js:8"
+   ],
+   "tests": [
+    "tests/pre8d4-faction-contact-identity-hardening.test.mjs"
+   ],
+   "notes": "Read and draft only; no writes."
+  },
+  {
+   "id": "R-GAL-09",
+   "responsibility": "Compound draft commit orchestration",
+   "owner": {
+    "path": "",
+    "symbol": "CampaignMutationCoordinator / JobEngine (not built)"
+   },
+   "status": [
+    "UNIMPLEMENTED",
+    "PROPOSED"
+   ],
+   "verification": "source-inspected",
+   "evidence": [
+    "docs/audits/gm-datapad-ecosystem-redesign.md:9174",
+    "docs/audits/gm-datapad-ecosystem-redesign.md:9551"
+   ],
+   "tests": [],
+   "notes": "Design only."
+  }
+ ],
+ "publicInterfaces": [
+  {
+   "symbol": "registerLocationRegistrySettings",
+   "path": "scripts/locations/location-registry-service.js",
+   "line": 425,
+   "consumers": 1,
+   "contract": "Registers world setting (config:false); called at scripts/core/settings.js:504."
+  },
+  {
+   "symbol": "LocationRegistryService.upsertLocation",
+   "path": "scripts/locations/location-registry-service.js",
+   "line": 593,
+   "consumers": 26,
+   "contract": "id-only identity; invalid parent rejects the whole save."
+  },
+  {
+   "symbol": "LocationRegistryService.saveRegistry",
+   "path": "scripts/locations/location-registry-service.js",
+   "line": 472,
+   "consumers": 0,
+   "contract": "Whole-array world-setting write; emits swseLocationRegistryUpdated."
+  },
+  {
+   "symbol": "LocationRegistryService.patchActorLocationState",
+   "path": "scripts/locations/location-registry-service.js",
+   "line": 809,
+   "consumers": 1,
+   "contract": "Direct actor flag write (Atlas UI state)."
+  },
+  {
+   "symbol": "LocationRegistryService.resolveAtlasLeadDiscovery",
+   "path": "scripts/locations/location-registry-service.js",
+   "line": 897,
+   "consumers": 1,
+   "contract": "GM resolves a player's lead; writes that actor's flag."
+  },
+  {
+   "symbol": "LocationSceneBridgeService.createSceneFromLocation",
+   "path": "scripts/ui/shell/gm/LocationSceneBridgeService.js",
+   "line": 80,
+   "consumers": 1,
+   "contract": "GM-only Scene factory, links scene back to the Location."
+  },
+  {
+   "symbol": "FactionJobBridgeService.buildDraftFromFaction",
+   "path": "scripts/ui/shell/gm/FactionJobBridgeService.js",
+   "line": 170,
+   "consumers": 6,
+   "contract": "Pure job-draft builder."
+  }
+ ],
+ "dependencies": {
+  "allowed": [
+   "scripts/generation -> scripts/locations/location-library-seeds.js",
+   "scripts/generation -> scripts/utils/stable-id.js",
+   "bridges -> FactionRegistryService / LocationRegistryService reads"
   ],
-  "contradictions": [
-    { "id": "CR-GAL-01", "existingSource": "docs/audits/architecture-census/phase-0-census-report.md:115 (and census domain name)", "claim": "scripts/generation/** is the entire Galactic Profiles generator", "observed": "scripts/generation is the GM Datapad procedural generator; Galactic Profiles v3 runtime is scripts/engine/progression/profile/** (progression domain, live via galactic-profile-step)", "evidence": ["data/galactic-profiles/v3/README.md:1", "scripts/engine/progression/profile/galactic-profile-service.js:1", "scripts/apps/progression-framework/steps/galactic-profile-step.js:1", "docs/audits/gm-datapad-ecosystem-redesign.md:4948"], "status": "CONFLICT" },
-    { "id": "CR-GAL-02", "existingSource": "docs/repo-structure.md:164", "claim": "All actor mutations route through ActorEngine or carry @mutation-exception", "observed": "Five un-annotated actor.setFlag sites for Atlas state", "evidence": ["scripts/locations/location-registry-service.js:805", "scripts/locations/location-registry-service.js:917"], "status": "CONFLICT" }
+  "prohibited": [
+   "scripts/generation -> canonical create/upsert (upsertFaction, upsertLocation, createJobPosting, Actor.create, promoteFactionContactToActor, actorizePayload)",
+   "scripts/generation -> TransactionEngine / credits",
+   "scripts/generation -> UI"
   ],
-  "unimplemented": [
-    { "id": "U-GAL-01", "item": "Generator UI and Generate->Review->Commit (CampaignMutationCoordinator, JobEngine)", "source": "docs/audits/gm-datapad-ecosystem-redesign.md §199-201 (line 9551: not started)", "status": "UNIMPLEMENTED" },
-    { "id": "U-GAL-02", "item": "Applying generated rewards; credits must go through TransactionEngine (A-10); Store-index pricing adapter does not exist", "source": "docs/audits/gm-datapad-ecosystem-redesign.md §130", "status": "UNIMPLEMENTED" },
-    { "id": "U-GAL-03", "item": "NPC Opposition Catalog, species-specific names, encounter-balance math, rank/privilege mechanics (deferred; not to be invented)", "source": "docs/audits/gm-datapad-ecosystem-redesign.md §130", "status": "UNIMPLEMENTED" }
-  ],
-  "deferredRules": [],
-  "foundryAcceptance": [
-    { "item": "GM Locations / player Atlas surfaces, Scene factory, Location Library import", "source": "docs/audits/gm-datapad-ecosystem-redesign.md:4945 (live checklist not run)" }
-  ],
-  "findings": [
-    { "id": "F-GAL-001", "category": "unimplemented", "severity": "medium", "status": "confirmed", "title": "150 test-only generator modules are an intended-but-unimplemented integration, not dead code", "affectedFiles": ["scripts/generation/"], "evidence": ["docs/audits/gm-datapad-ecosystem-redesign.md:4948", "docs/audits/gm-datapad-ecosystem-redesign.md:8985", "docs/audits/gm-datapad-ecosystem-redesign.md:9551", "tests/gm-generation-phase8d1-foundation.test.mjs:775"], "observed": "Nothing outside scripts/generation imports it (only tests). The redesign log documents every phase as a generation-only layer awaiting its UI phase. It records the commit path (JobEngine, CampaignMutationCoordinator) as design only and not started. The repository has only one commit of history (shallow), so evidence comes from the docs, not from git log. About 28k SLOC is carried with no runtime use. CI tests keep it maintained.", "intendedOwnership": "GM Datapad generation layer, to be surfaced by a GM UI and committed through C-GAL-1.", "contractRef": "R-GAL-01 | R-GAL-09 | A-09", "proposedSolution": "Do not delete. Owner decides whether 8D-4 (UI + CampaignMutationCoordinator) is still planned. If yes, keep it as an offline library and label it so in the census (classification 'intended-unwired'). If no, archive the directory as a whole (legacy C).", "alternatives": "Move to a separate package/module until wired, to keep the system runtime lean.", "dependencies": [], "ownerDecisionRequired": true, "rulesQuestion": false, "regressionTests": "Keep tests/gm-generation-*.test.mjs; add census reachability label.", "foundryAcceptance": "Only once a UI exists.", "scope": "L", "simplificationBenefit": "Clarifies that ~29k SLOC is not live.", "risk": "Deleting would discard reviewed design work.", "perfImpact": "none" },
-    { "id": "F-GAL-002", "category": "documentation", "severity": "low", "status": "confirmed", "title": "Census and phase-0 report mislabel the generator as Galactic Profiles", "affectedFiles": ["docs/audits/architecture-census/phase-0-census-report.md"], "evidence": ["docs/audits/architecture-census/phase-0-census-report.md:115", "data/galactic-profiles/v3/README.md:1"], "observed": "The Galactic Profiles v3 docs never reference scripts/generation. The v3 runtime is under scripts/engine/progression/profile/.", "intendedOwnership": "Rename the census domain (e.g. 'gm-generation-locations') and leave Galactic Profiles v3 in progression.", "contractRef": "CR-GAL-01", "proposedSolution": "Change the census path rule and domain name at the next census run. Annotate the phase-0 report rather than rewrite it.", "alternatives": "", "dependencies": [], "ownerDecisionRequired": false, "rulesQuestion": false, "regressionTests": "Census --check.", "foundryAcceptance": "none", "scope": "S", "simplificationBenefit": "Correct ownership map.", "risk": "None.", "perfImpact": "none" },
-    { "id": "F-GAL-003", "category": "bypass-engine", "severity": "low", "status": "confirmed", "title": "Atlas actor-state flags written directly without exception comment", "affectedFiles": ["scripts/locations/location-registry-service.js"], "evidence": ["scripts/locations/location-registry-service.js:805", "scripts/locations/location-registry-service.js:826", "scripts/locations/location-registry-service.js:840", "scripts/locations/location-registry-service.js:880", "scripts/locations/location-registry-service.js:917", "scripts/ui/shell/AtlasSurfaceController.js:77", "scripts/ui/shell/gm/controllers/GMLocationsSurfaceController.js:586"], "observed": "Five actor.setFlag(ATLAS_ACTOR_FLAG) writes hold player Atlas pins, notes, revealed facts and lead discoveries. They are not game mechanics, but they write actor documents outside ActorEngine and carry no @mutation-exception comment. Players write their own actor from AtlasSurfaceController. The GM writes a player's actor when resolving a lead.", "intendedOwnership": "A-02: ActorEngine, or a documented exception class.", "contractRef": "A-02 | R-GAL-05 | CR-GAL-02", "proposedSolution": "Use the same owner decision as F-MEN-001 (advisory/UI metadata flag exception vs. an ActorEngine flag path without recalc). Then annotate or reroute all five sites.", "alternatives": "Store per-actor Atlas state in the world registry keyed by actor id.", "dependencies": ["F-MEN-001"], "ownerDecisionRequired": true, "rulesQuestion": false, "regressionTests": "Source guard for un-annotated setFlag in scripts/locations.", "foundryAcceptance": "Player pins a location and the GM resolves a lead; flags update once.", "scope": "S", "simplificationBenefit": "Consistent mutation policy.", "risk": "Low.", "perfImpact": "none" },
-    { "id": "F-GAL-004", "category": "ownership-violation", "severity": "info", "status": "confirmed", "title": "Scene create/update in LocationSceneBridgeService is a legitimate world-document exception", "affectedFiles": ["scripts/ui/shell/gm/LocationSceneBridgeService.js"], "evidence": ["scripts/ui/shell/gm/LocationSceneBridgeService.js:76", "scripts/ui/shell/gm/LocationSceneBridgeService.js:82", "scripts/ui/shell/gm/LocationSceneBridgeService.js:103"], "observed": "Scenes are world documents, not actor-owned. Create is gated on game.user.isGM. activateLinkedScene relies on Foundry permissions.", "intendedOwnership": "As observed.", "contractRef": "A-02 (exception)", "proposedSolution": "Add an '@mutation-exception: world-document' comment so the probe classifies it. No behavior change.", "alternatives": "", "dependencies": [], "ownerDecisionRequired": false, "rulesQuestion": false, "regressionTests": "tests/gm-locations-scene-creation-safety.test.mjs", "foundryAcceptance": "GM creates a Scene from a Location.", "scope": "S", "simplificationBenefit": "", "risk": "None.", "perfImpact": "none" },
-    { "id": "F-GAL-005", "category": "dead-code", "severity": "low", "status": "confirmed", "title": "galactic-records-browser.js and category registry reached only through an orphan dialog", "affectedFiles": ["scripts/apps/galactic-records-browser.js", "scripts/core/galactic-records-category-registry.js", "scripts/apps/actor-creation-entry-dialog.js", "templates/apps/galactic-records-browser.hbs"], "evidence": ["scripts/apps/galactic-records-browser.js:7", "scripts/apps/galactic-records-browser.js:12"], "observed": "The only importer is scripts/apps/actor-creation-entry-dialog.js, which has no importer (registry: orphan-unreferenced). The browser builds actors from NPC/droid template importers, so it belongs to npc/droid actor creation, not to this domain. OSI retires old floating creation UIs in favor of Holopad.", "intendedOwnership": "Actor creation via the progression/Holopad path.", "contractRef": "A-09 | A-14", "proposedSolution": "Legacy C after a pack/macro grep and confirmation by the npc-followers/droids owners. Delete the chain together with its template and CSS.", "alternatives": "Reroute if a GM import path still needs it.", "dependencies": [], "ownerDecisionRequired": false, "rulesQuestion": false, "regressionTests": "Full suite.", "foundryAcceptance": "none", "scope": "S", "simplificationBenefit": "Removes a stale actor-creation UI.", "risk": "Low.", "perfImpact": "none" },
-    { "id": "F-GAL-006", "category": "performance", "severity": "low", "status": "suspected", "title": "5.2k-SLOC JS seed catalog loaded at init through settings registration", "affectedFiles": ["scripts/core/settings.js", "scripts/locations/location-registry-service.js", "scripts/locations/location-library-seeds.js"], "evidence": ["scripts/core/settings.js:14", "scripts/core/settings.js:504", "scripts/locations/location-registry-service.js:11"], "observed": "settings.js statically imports location-registry-service.js to register one setting. That module statically imports the full Location Library seed catalog, so every client parses it at startup.", "intendedOwnership": "Setting registration should not pull content catalogs.", "contractRef": "A-16 (perf)", "proposedSolution": "Hypothesis. Measure module parse time. If material, move the registration function to a small module, or dynamic-import the seeds in the library-import path.", "alternatives": "Convert seeds to JSON loaded on demand.", "dependencies": [], "ownerDecisionRequired": false, "rulesQuestion": false, "regressionTests": "tests/gm-locations-library-catalog-contract.test.mjs", "foundryAcceptance": "Measure world load time before and after.", "scope": "S", "simplificationBenefit": "", "risk": "Low.", "perfImpact": "positive" },
-    { "id": "F-GAL-007", "category": "multiple-writers", "severity": "low", "status": "suspected", "title": "Location registry is a whole-array read-modify-write of one world setting", "affectedFiles": ["scripts/locations/location-registry-service.js"], "evidence": ["scripts/locations/location-registry-service.js:214", "scripts/locations/location-registry-service.js:472", "scripts/locations/location-registry-service.js:1050"], "observed": "Every mutation reads the full registry, edits it and rewrites the setting. Library imports are serialized per client. The code itself states there is no cross-GM or cross-tab locking (:1050-1053). upsertLocation calls are not queued. Two concurrent writers (two GM tabs, or overlapping async calls) can lose updates.", "intendedOwnership": "Single serialized writer.", "contractRef": "A-01", "proposedSolution": "Route every mutating method through the existing #importQueue pattern. Owner decides whether multi-GM editing is a supported scenario.", "alternatives": "Store locations as world documents (JournalEntry or Items) instead of one setting.", "dependencies": [], "ownerDecisionRequired": false, "rulesQuestion": false, "regressionTests": "Concurrent upsert unit test.", "foundryAcceptance": "Two GM tabs editing different locations.", "scope": "S", "simplificationBenefit": "", "risk": "Low.", "perfImpact": "none" },
-    { "id": "F-GAL-008", "category": "conflicting-interface", "severity": "low", "status": "confirmed", "title": "Duplicate exported symbol rerollPlanetName with different signatures", "affectedFiles": ["scripts/generation/names/planet-name-generator.js", "scripts/generation/planets/planet-draft.js"], "evidence": ["scripts/generation/names/planet-name-generator.js:80", "scripts/generation/planets/planet-draft.js:969"], "observed": "Two exports share a name but take different options ({rng, preferTags, excludeNames} vs {rng}). The planet-draft version wraps the name generator.", "intendedOwnership": "", "contractRef": "A-01", "proposedSolution": "Rename the draft-level wrapper (e.g. rerollPlanetDraftName) before any UI consumes both.", "alternatives": "", "dependencies": [], "ownerDecisionRequired": false, "rulesQuestion": false, "regressionTests": "Existing planet tests.", "foundryAcceptance": "none", "scope": "S", "simplificationBenefit": "", "risk": "None.", "perfImpact": "none" },
-    { "id": "F-GAL-009", "category": "documentation", "severity": "low", "status": "confirmed", "title": "A 9,854-line rolling redesign log is the only generator contract", "affectedFiles": ["docs/audits/gm-datapad-ecosystem-redesign.md"], "evidence": ["docs/audits/gm-datapad-ecosystem-redesign.md:4948", "docs/audits/gm-datapad-ecosystem-redesign.md:9174"], "observed": "Boundaries (§126, §199-202), deferrals (§130) and gate verdicts are spread across 200+ sections, with superseded gates struck through in place.", "intendedOwnership": "This B-GAL contract plus a short generator contract; keep the log as historical evidence.", "contractRef": "C-GAL-1", "proposedSolution": "Candidate only: extract the current boundary and deferral list into a short doc that links to log sections. Never delete the log, because it holds review verdicts and deferred tasks.", "alternatives": "", "dependencies": [], "ownerDecisionRequired": true, "rulesQuestion": false, "regressionTests": "none", "foundryAcceptance": "none", "scope": "S", "simplificationBenefit": "Discoverable contract.", "risk": "None.", "perfImpact": "none" }
-  ]
+  "observedViolations": []
+ },
+ "subsystemContracts": [
+  {
+   "id": "C-GAL-1",
+   "boundary": "Generator library <-> canonical authorities",
+   "interface": "Drafts with draftId + provenance; committed only through a future CampaignMutationCoordinator that calls FactionRegistryService / LocationRegistryService / JobEngine / ActorEngine",
+   "status": [
+    "APPROVED",
+    "UNIMPLEMENTED"
+   ]
+  },
+  {
+   "id": "C-GAL-2",
+   "boundary": "Location registry (world setting) <-> actor Atlas state (actor flag)",
+   "interface": "LocationRegistryService static API; ATLAS_ACTOR_FLAG",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ]
+  }
+ ],
+ "contradictions": [
+  {
+   "id": "CR-GAL-01",
+   "existingSource": "docs/audits/architecture-census/phase-0-census-report.md:115 (and census domain name)",
+   "claim": "scripts/generation/** is the entire Galactic Profiles generator",
+   "observed": "scripts/generation is the GM Datapad procedural generator; Galactic Profiles v3 runtime is scripts/engine/progression/profile/** (progression domain, live via galactic-profile-step)",
+   "evidence": [
+    "data/galactic-profiles/v3/README.md:1",
+    "scripts/engine/progression/profile/galactic-profile-service.js:1",
+    "scripts/apps/progression-framework/steps/galactic-profile-step.js:1",
+    "docs/audits/gm-datapad-ecosystem-redesign.md:4948"
+   ],
+   "status": "CONFLICT"
+  },
+  {
+   "id": "CR-GAL-02",
+   "existingSource": "docs/repo-structure.md:164",
+   "claim": "All actor mutations route through ActorEngine or carry @mutation-exception",
+   "observed": "Five un-annotated actor.setFlag sites for Atlas state",
+   "evidence": [
+    "scripts/locations/location-registry-service.js:805",
+    "scripts/locations/location-registry-service.js:917"
+   ],
+   "status": "CONFLICT"
+  }
+ ],
+ "unimplemented": [
+  {
+   "id": "U-GAL-01",
+   "item": "Generator UI and Generate->Review->Commit (CampaignMutationCoordinator, JobEngine)",
+   "source": "docs/audits/gm-datapad-ecosystem-redesign.md \u00a7199-201 (line 9551: not started)",
+   "status": "UNIMPLEMENTED"
+  },
+  {
+   "id": "U-GAL-02",
+   "item": "Applying generated rewards; credits must go through TransactionEngine (A-10); Store-index pricing adapter does not exist",
+   "source": "docs/audits/gm-datapad-ecosystem-redesign.md \u00a7130",
+   "status": "UNIMPLEMENTED"
+  },
+  {
+   "id": "U-GAL-03",
+   "item": "NPC Opposition Catalog, species-specific names, encounter-balance math, rank/privilege mechanics (deferred; not to be invented)",
+   "source": "docs/audits/gm-datapad-ecosystem-redesign.md \u00a7130",
+   "status": "UNIMPLEMENTED"
+  }
+ ],
+ "deferredRules": [],
+ "foundryAcceptance": [
+  {
+   "item": "GM Locations / player Atlas surfaces, Scene factory, Location Library import",
+   "source": "docs/audits/gm-datapad-ecosystem-redesign.md:4945 (live checklist not run)"
+  }
+ ],
+ "findings": [
+  {
+   "id": "F-GAL-001",
+   "category": "unimplemented",
+   "severity": "medium",
+   "status": "confirmed",
+   "title": "150 test-only generator modules are an intended-but-unimplemented integration, not dead code",
+   "affectedFiles": [
+    "scripts/generation/"
+   ],
+   "evidence": [
+    "docs/audits/gm-datapad-ecosystem-redesign.md:4948",
+    "docs/audits/gm-datapad-ecosystem-redesign.md:8985",
+    "docs/audits/gm-datapad-ecosystem-redesign.md:9551",
+    "tests/gm-generation-phase8d1-foundation.test.mjs:775"
+   ],
+   "observed": "Nothing outside scripts/generation imports it (only tests). The redesign log documents every phase as a generation-only layer awaiting its UI phase. It records the commit path (JobEngine, CampaignMutationCoordinator) as design only and not started. The repository has only one commit of history (shallow), so evidence comes from the docs, not from git log. About 28k SLOC is carried with no runtime use. CI tests keep it maintained.",
+   "intendedOwnership": "GM Datapad generation layer, to be surfaced by a GM UI and committed through C-GAL-1.",
+   "contractRef": "R-GAL-01 | R-GAL-09 | A-09",
+   "proposedSolution": "Do not delete. Owner decides whether 8D-4 (UI + CampaignMutationCoordinator) is still planned. If yes, keep it as an offline library and label it so in the census (classification 'intended-unwired'). If no, archive the directory as a whole (legacy C).",
+   "alternatives": "Move to a separate package/module until wired, to keep the system runtime lean.",
+   "dependencies": [],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": false,
+   "regressionTests": "Keep tests/gm-generation-*.test.mjs; add census reachability label.",
+   "foundryAcceptance": "Only once a UI exists.",
+   "scope": "L",
+   "simplificationBenefit": "Clarifies that ~29k SLOC is not live.",
+   "risk": "Deleting would discard reviewed design work.",
+   "perfImpact": "none"
+  },
+  {
+   "id": "F-GAL-002",
+   "category": "documentation",
+   "severity": "low",
+   "status": "confirmed",
+   "title": "Census and phase-0 report mislabel the generator as Galactic Profiles",
+   "affectedFiles": [
+    "docs/audits/architecture-census/phase-0-census-report.md"
+   ],
+   "evidence": [
+    "docs/audits/architecture-census/phase-0-census-report.md:115",
+    "data/galactic-profiles/v3/README.md:1"
+   ],
+   "observed": "The Galactic Profiles v3 docs never reference scripts/generation. The v3 runtime is under scripts/engine/progression/profile/.",
+   "intendedOwnership": "Rename the census domain (e.g. 'gm-generation-locations') and leave Galactic Profiles v3 in progression.",
+   "contractRef": "CR-GAL-01",
+   "proposedSolution": "Change the census path rule and domain name at the next census run. Annotate the phase-0 report rather than rewrite it.",
+   "alternatives": "",
+   "dependencies": [],
+   "ownerDecisionRequired": false,
+   "rulesQuestion": false,
+   "regressionTests": "Census --check.",
+   "foundryAcceptance": "none",
+   "scope": "S",
+   "simplificationBenefit": "Correct ownership map.",
+   "risk": "None.",
+   "perfImpact": "none",
+   "resolution": "Corrected by the coordinator in audit commit 4b317fe (taxonomy label + Phase 0 report correction note); domain key unchanged for stability."
+  },
+  {
+   "id": "F-GAL-003",
+   "category": "bypass-engine",
+   "severity": "low",
+   "status": "confirmed",
+   "title": "Atlas actor-state flags written directly without exception comment",
+   "affectedFiles": [
+    "scripts/locations/location-registry-service.js"
+   ],
+   "evidence": [
+    "scripts/locations/location-registry-service.js:805",
+    "scripts/locations/location-registry-service.js:826",
+    "scripts/locations/location-registry-service.js:840",
+    "scripts/locations/location-registry-service.js:880",
+    "scripts/locations/location-registry-service.js:917",
+    "scripts/ui/shell/AtlasSurfaceController.js:77",
+    "scripts/ui/shell/gm/controllers/GMLocationsSurfaceController.js:586"
+   ],
+   "observed": "Five actor.setFlag(ATLAS_ACTOR_FLAG) writes hold player Atlas pins, notes, revealed facts and lead discoveries. They are not game mechanics, but they write actor documents outside ActorEngine and carry no @mutation-exception comment. Players write their own actor from AtlasSurfaceController. The GM writes a player's actor when resolving a lead.",
+   "intendedOwnership": "A-02: ActorEngine, or a documented exception class.",
+   "contractRef": "A-02 | R-GAL-05 | CR-GAL-02",
+   "proposedSolution": "Use the same owner decision as F-MEN-001 (advisory/UI metadata flag exception vs. an ActorEngine flag path without recalc). Then annotate or reroute all five sites.",
+   "alternatives": "Store per-actor Atlas state in the world registry keyed by actor id.",
+   "dependencies": [
+    "F-MEN-001"
+   ],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": false,
+   "regressionTests": "Source guard for un-annotated setFlag in scripts/locations.",
+   "foundryAcceptance": "Player pins a location and the GM resolves a lead; flags update once.",
+   "scope": "S",
+   "simplificationBenefit": "Consistent mutation policy.",
+   "risk": "Low.",
+   "perfImpact": "none"
+  },
+  {
+   "id": "F-GAL-004",
+   "category": "ownership-violation",
+   "severity": "info",
+   "status": "confirmed",
+   "title": "Scene create/update in LocationSceneBridgeService is a legitimate world-document exception",
+   "affectedFiles": [
+    "scripts/ui/shell/gm/LocationSceneBridgeService.js"
+   ],
+   "evidence": [
+    "scripts/ui/shell/gm/LocationSceneBridgeService.js:76",
+    "scripts/ui/shell/gm/LocationSceneBridgeService.js:82",
+    "scripts/ui/shell/gm/LocationSceneBridgeService.js:103"
+   ],
+   "observed": "Scenes are world documents, not actor-owned. Create is gated on game.user.isGM. activateLinkedScene relies on Foundry permissions.",
+   "intendedOwnership": "As observed.",
+   "contractRef": "A-02 (exception)",
+   "proposedSolution": "Add an '@mutation-exception: world-document' comment so the probe classifies it. No behavior change.",
+   "alternatives": "",
+   "dependencies": [],
+   "ownerDecisionRequired": false,
+   "rulesQuestion": false,
+   "regressionTests": "tests/gm-locations-scene-creation-safety.test.mjs",
+   "foundryAcceptance": "GM creates a Scene from a Location.",
+   "scope": "S",
+   "simplificationBenefit": "",
+   "risk": "None.",
+   "perfImpact": "none"
+  },
+  {
+   "id": "F-GAL-005",
+   "category": "dead-code",
+   "severity": "low",
+   "status": "confirmed",
+   "title": "galactic-records-browser.js and category registry reached only through an orphan dialog",
+   "affectedFiles": [
+    "scripts/apps/galactic-records-browser.js",
+    "scripts/core/galactic-records-category-registry.js",
+    "scripts/apps/actor-creation-entry-dialog.js",
+    "templates/apps/galactic-records-browser.hbs"
+   ],
+   "evidence": [
+    "scripts/apps/galactic-records-browser.js:7",
+    "scripts/apps/galactic-records-browser.js:12"
+   ],
+   "observed": "The only importer is scripts/apps/actor-creation-entry-dialog.js, which has no importer (registry: orphan-unreferenced). The browser builds actors from NPC/droid template importers, so it belongs to npc/droid actor creation, not to this domain. OSI retires old floating creation UIs in favor of Holopad.",
+   "intendedOwnership": "Actor creation via the progression/Holopad path.",
+   "contractRef": "A-09 | A-14",
+   "proposedSolution": "Legacy C after a pack/macro grep and confirmation by the npc-followers/droids owners. Delete the chain together with its template and CSS.",
+   "alternatives": "Reroute if a GM import path still needs it.",
+   "dependencies": [],
+   "ownerDecisionRequired": false,
+   "rulesQuestion": false,
+   "regressionTests": "Full suite.",
+   "foundryAcceptance": "none",
+   "scope": "S",
+   "simplificationBenefit": "Removes a stale actor-creation UI.",
+   "risk": "Low.",
+   "perfImpact": "none"
+  },
+  {
+   "id": "F-GAL-006",
+   "category": "performance",
+   "severity": "low",
+   "status": "suspected",
+   "title": "5.2k-SLOC JS seed catalog loaded at init through settings registration",
+   "affectedFiles": [
+    "scripts/core/settings.js",
+    "scripts/locations/location-registry-service.js",
+    "scripts/locations/location-library-seeds.js"
+   ],
+   "evidence": [
+    "scripts/core/settings.js:14",
+    "scripts/core/settings.js:504",
+    "scripts/locations/location-registry-service.js:11"
+   ],
+   "observed": "settings.js statically imports location-registry-service.js to register one setting. That module statically imports the full Location Library seed catalog, so every client parses it at startup.",
+   "intendedOwnership": "Setting registration should not pull content catalogs.",
+   "contractRef": "A-16 (perf)",
+   "proposedSolution": "Hypothesis. Measure module parse time. If material, move the registration function to a small module, or dynamic-import the seeds in the library-import path.",
+   "alternatives": "Convert seeds to JSON loaded on demand.",
+   "dependencies": [],
+   "ownerDecisionRequired": false,
+   "rulesQuestion": false,
+   "regressionTests": "tests/gm-locations-library-catalog-contract.test.mjs",
+   "foundryAcceptance": "Measure world load time before and after.",
+   "scope": "S",
+   "simplificationBenefit": "",
+   "risk": "Low.",
+   "perfImpact": "positive"
+  },
+  {
+   "id": "F-GAL-007",
+   "category": "multiple-writers",
+   "severity": "low",
+   "status": "suspected",
+   "title": "Location registry is a whole-array read-modify-write of one world setting",
+   "affectedFiles": [
+    "scripts/locations/location-registry-service.js"
+   ],
+   "evidence": [
+    "scripts/locations/location-registry-service.js:214",
+    "scripts/locations/location-registry-service.js:472",
+    "scripts/locations/location-registry-service.js:1050"
+   ],
+   "observed": "Every mutation reads the full registry, edits it and rewrites the setting. Library imports are serialized per client. The code itself states there is no cross-GM or cross-tab locking (:1050-1053). upsertLocation calls are not queued. Two concurrent writers (two GM tabs, or overlapping async calls) can lose updates.",
+   "intendedOwnership": "Single serialized writer.",
+   "contractRef": "A-01",
+   "proposedSolution": "Route every mutating method through the existing #importQueue pattern. Owner decides whether multi-GM editing is a supported scenario.",
+   "alternatives": "Store locations as world documents (JournalEntry or Items) instead of one setting.",
+   "dependencies": [],
+   "ownerDecisionRequired": false,
+   "rulesQuestion": false,
+   "regressionTests": "Concurrent upsert unit test.",
+   "foundryAcceptance": "Two GM tabs editing different locations.",
+   "scope": "S",
+   "simplificationBenefit": "",
+   "risk": "Low.",
+   "perfImpact": "none"
+  },
+  {
+   "id": "F-GAL-008",
+   "category": "conflicting-interface",
+   "severity": "low",
+   "status": "confirmed",
+   "title": "Duplicate exported symbol rerollPlanetName with different signatures",
+   "affectedFiles": [
+    "scripts/generation/names/planet-name-generator.js",
+    "scripts/generation/planets/planet-draft.js"
+   ],
+   "evidence": [
+    "scripts/generation/names/planet-name-generator.js:80",
+    "scripts/generation/planets/planet-draft.js:969"
+   ],
+   "observed": "Two exports share a name but take different options ({rng, preferTags, excludeNames} vs {rng}). The planet-draft version wraps the name generator.",
+   "intendedOwnership": "",
+   "contractRef": "A-01",
+   "proposedSolution": "Rename the draft-level wrapper (e.g. rerollPlanetDraftName) before any UI consumes both.",
+   "alternatives": "",
+   "dependencies": [],
+   "ownerDecisionRequired": false,
+   "rulesQuestion": false,
+   "regressionTests": "Existing planet tests.",
+   "foundryAcceptance": "none",
+   "scope": "S",
+   "simplificationBenefit": "",
+   "risk": "None.",
+   "perfImpact": "none"
+  },
+  {
+   "id": "F-GAL-009",
+   "category": "documentation",
+   "severity": "low",
+   "status": "confirmed",
+   "title": "A 9,854-line rolling redesign log is the only generator contract",
+   "affectedFiles": [
+    "docs/audits/gm-datapad-ecosystem-redesign.md"
+   ],
+   "evidence": [
+    "docs/audits/gm-datapad-ecosystem-redesign.md:4948",
+    "docs/audits/gm-datapad-ecosystem-redesign.md:9174"
+   ],
+   "observed": "Boundaries (\u00a7126, \u00a7199-202), deferrals (\u00a7130) and gate verdicts are spread across 200+ sections, with superseded gates struck through in place.",
+   "intendedOwnership": "This B-GAL contract plus a short generator contract; keep the log as historical evidence.",
+   "contractRef": "C-GAL-1",
+   "proposedSolution": "Candidate only: extract the current boundary and deferral list into a short doc that links to log sections. Never delete the log, because it holds review verdicts and deferred tasks.",
+   "alternatives": "",
+   "dependencies": [],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": false,
+   "regressionTests": "none",
+   "foundryAcceptance": "none",
+   "scope": "S",
+   "simplificationBenefit": "Discoverable contract.",
+   "risk": "None.",
+   "perfImpact": "none"
+  }
+ ]
 }

@@ -1,0 +1,554 @@
+{
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "generator": "tools/architecture-census/assemble-findings.mjs",
+ "note": "Audit does not decide rules and does not edit the register. \"fresh\" items need owner review and an append-only register entry.",
+ "counts": {
+  "total": 90,
+  "alreadyInRegister": 59,
+  "notInRegister": 31
+ },
+ "alreadyInRegister": [
+  {
+   "domain": "classes",
+   "item": "Nonheroic class skill list (Ride)",
+   "ref": "SWSE-NPC-RD-002",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "classes",
+   "item": "Galactic Profile Nonheroic starting feats",
+   "ref": "SWSE-NPC-RD-004",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "classes",
+   "item": "Class features whose printed text could not be read",
+   "ref": "CF-RD-001",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "classes",
+   "item": "Talent-tree access for Charlatan/Jedi Master/Sith Lord/Independent Droid",
+   "ref": "MSV-RD-006",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "droids",
+   "item": "Stabilized Mount host",
+   "ref": "DROID-RD-001",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "droids",
+   "item": "Telescopic Appendage host",
+   "ref": "DROID-RD-002",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "droids",
+   "item": "Upgrade Workshop 10-system cap",
+   "ref": "DROID-RD-003",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "droids",
+   "item": "Re-installing size-default locomotion",
+   "ref": "DROID-BUILD-001",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "droids",
+   "item": "Droid-only evidence for action cards / cyborg hybrids",
+   "ref": "CAE-003",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "droids",
+   "item": "Ability increase count for droids/Nonheroic",
+   "ref": "RECON-002",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "equipment",
+   "item": "Action cost of reconfiguring a drawn weapon",
+   "ref": "EQ-001",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "force",
+   "item": "Last Grasp timing/cap exceptions; Emergency Patch failed-check charge",
+   "ref": "FP-RD-015 (OWNER_CONFIRMATION_PENDING)",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "force",
+   "item": "Uncertified contracted abilities",
+   "ref": "FP-RD-003",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "force",
+   "item": "Temptation of the Dark Side (Force Unleashed p.85)",
+   "ref": "FP-RD-013",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "mentor-suggestion",
+   "item": "L1 Q2 career ranking",
+   "ref": "MSV-RD-001",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "mentor-suggestion",
+   "item": "L1 Q4 child-specialization ranking by Q3 tags",
+   "ref": "MSV-RD-002",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "mentor-suggestion",
+   "item": "Multiclass Q5 milestone content/mapping",
+   "ref": "MSV-RD-003",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "mentor-suggestion",
+   "item": "Origin class keying with two or more prior foundation classes",
+   "ref": "MSV-RD-004",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "mentor-suggestion",
+   "item": "Prestige Q1 answer count/rotation/weights",
+   "ref": "MSV-RD-005",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "mentor-suggestion",
+   "item": "Talent-tree access for Charlatan, Jedi Master, Sith Lord, Independent Droid",
+   "ref": "MSV-RD-006",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "mentor-suggestion",
+   "item": "Multiclass Q2 build-integration inputs",
+   "ref": "MSV-RD-007",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "mentor-suggestion",
+   "item": "Q4/Q5 routing after 'I'm not sure yet' in Q1",
+   "ref": "MSV-RD-008",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "mentor-suggestion",
+   "item": "Q5 career_continuity milestone and {declared_goal} slot",
+   "ref": "MSV-RD-009",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "npc-followers",
+   "item": "Beast creation authority",
+   "ref": "GP-RD-010",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "npc-followers",
+   "item": "Beast readiness must block",
+   "ref": "GP-RD-011",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "npc-followers",
+   "item": "Ability increase count for droids/Nonheroic",
+   "ref": "RECON-002",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "npc-followers",
+   "item": "Which level drives entitlements for Nonheroic/mixed actors",
+   "ref": "RECON-003",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "progression",
+   "item": "Telekinetic Prodigy: runtime-hardcoded talent text and retroactive-slot suppression differ from canonical reference text (new entry required; not created by this audit)",
+   "ref": "RECON-006 (related); new ID pending",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "skills",
+   "item": "Trained-skill entitlement under skill house rules",
+   "ref": "RECON-007",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "skills",
+   "item": "Species skill reroll result",
+   "ref": "SPECIES-RD-013",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "skills",
+   "item": "Nonheroic class skill Ride",
+   "ref": "SWSE-NPC-RD-002",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-001",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-002",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-003",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-004",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-005",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-006",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-007",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-008",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-009",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-010",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-011",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-012",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-013",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-014",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-015",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-016",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-017",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-018",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-019",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-020",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-021",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-022",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "species",
+   "item": "See register entry",
+   "ref": "SPECIES-RD-023",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "talents",
+   "item": "Which trees are Force talent trees for class-slot substitution",
+   "ref": "TALENT-RD-001",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "talents",
+   "item": "Multiclass talent entitlement cadence",
+   "ref": "RECON-001 / RECON-005",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "talents",
+   "item": "Name-keyed talent prerequisite collision",
+   "ref": "GP-RD-017",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "vehicles",
+   "item": "Operator authorization for vehicle-mounted weapons",
+   "ref": "EQ-004",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "vehicles",
+   "item": "Vehicle Dodge stacking",
+   "ref": "CF-RD-006",
+   "from": "deferredRules"
+  }
+ ],
+ "notInRegister": [
+  {
+   "domain": "abilities-effects",
+   "item": "DerivedOverrideEngine computes HALF_LEVEL and ability mod independently of actor-core helpers — _getHalfLevel uses floor(system.level/2); level-split provides getHeroicHalfLevel/getEffectiveHalfLevel. _getAbilityMod recomputes from attributes as fallback. HALF_LEVEL is referenced only by orphan phase-3-feat-definitions.js and the contract, so no live feature uses it.",
+   "ref": null,
+   "from": "F-ABL-005"
+  },
+  {
+   "domain": "combat",
+   "item": "House-rule (enhanced massive damage) damage-threshold formula: DerivedCalculator adds size twice and keeps feat/Will-base/flat adjustments; ThresholdEngine uses fort+level+size only. Which is intended?",
+   "ref": "none found — new entry required (DEFERRED_RULES_REVIEW)",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "combat",
+   "item": "Whether poison damage must be excluded from the half-heroic-level bonus (not in ELEMENTAL_HALF_LEVEL_EXCLUSION_KEYS); not traced",
+   "ref": "none (UNVERIFIED, report only)",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "combat",
+   "item": "House-rule damage threshold computed independently by DerivedCalculator and ThresholdEngine with different formulas — RAW mode: ThresholdEngine reads system.derived.damageThreshold (single authority). With enableEnhancedMassiveDamage+modifyDamageThresholdFormula, DerivedCalculator stores base(incl. size, feat Will-base, flat/modifier adjustments)+level+size again, while ThresholdEngine.calculateDamageThreshold (used by evaluateThreshold on the live ActorEngine.applyDamage path) returns fort+level+size, ignoring the adjustments. Displayed DT and the DT used for the CT check differ under the house rule.",
+   "ref": null,
+   "from": "F-CMB-003"
+  },
+  {
+   "domain": "customization",
+   "item": "Whether removing an item upgrade refunds credits (droid removal refunds resale; item removal does not)",
+   "ref": "none found — candidate DEFERRED_RULES_REVIEW",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "customization",
+   "item": "Two live installed-upgrade representations; inconsistent removal refunds — UpgradeService writes system.installedUpgrades (paid via TE; removal writes without refund); workbench writes flags.swse.*Upgrades/gearMods and flags.foundryvtt-swse.customization via TE. Readers of one do not see the other (TX-02, still open). Droid removal refunds resale through DroidCustomizationEngine.",
+   "ref": null,
+   "from": "F-CUS-002"
+  },
+  {
+   "domain": "droids",
+   "item": "Whether a constructed droid requires an Armor component and at least one appendage for readiness (code paths disagree)",
+   "ref": "none (new; to be registered by owner)",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "droids",
+   "item": "23 component source HOLDs",
+   "ref": "docs/audits/droids/droid-component-mechanical-certification-closeout.md",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "droids",
+   "item": "Two droid readiness validators disagree on armor — DroidValidationEngine (sheet readiness and issues list) requires locomotion, >=1 appendage, processor and armor; the chargen droid builder requires locomotion, processor, >=1 appendage and resolved quotes but not armor; reconciliation notes the Store path does not require armor. A droid built legally in chargen/store shows 'not ready' on its sheet.",
+   "ref": null,
+   "from": "F-DRD-001"
+  },
+  {
+   "domain": "feats",
+   "item": "Confident Success (Rebellion Era Campaign Guide p.31): is \"FP gained upon reaching current level\" the same as the system FP maximum? Second cap not enforced.",
+   "ref": "NONE — new entry required (owner)",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "feats",
+   "item": "Meaning of a feat \"per day\" limit in a VTT (campaign day vs real-world day) for skill-feat daily uses",
+   "ref": "NONE — owner decision; may not be a rules question",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "feats",
+   "item": "Skill-feat daily uses keyed on real-world UTC date — todayKey() = new Date().toISOString().slice(0,10); Force Point receipts record game.time.worldTime for once-per-day contracts (actor-engine.js spendForcePoints). Two incompatible \"day\" clocks. Note the module register function is never called, so only directly imported helpers run.",
+   "ref": null,
+   "from": "F-FEA-007"
+  },
+  {
+   "domain": "feats",
+   "item": "Confident Success: second published cap not enforced; counter write not atomic — Canonical text: no more than 3 FP per level and cannot have more FP than gained upon reaching current level; canonical automation note says \"Needs ... both Force Point caps\". Code enforces maxPerLevel (default 3 when rule missing) and relies on ActorEngine.gainForcePoints max cap; capToLevelStartMax is written by the hook but never read.",
+   "ref": null,
+   "from": "F-FEA-008"
+  },
+  {
+   "domain": "force",
+   "item": "Whether the base-6/7 Force Point base persists after a prestige class is removed",
+   "ref": "NONE — new entry required (owner)",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "force",
+   "item": "scripts/data/force-points.js: write-in-calculation functions with no callers; stale header — The 6 A-02 probe hits are un-awaited actor.setFlag calls inside getForcePointBase / hasPrestigeForcePointBonus (mutation inside a calculation, A-08), reachable only from calculateMaxForcePoints, updateActorForcePoints, initializeActorForcePoints and debug helpers, none of which has a caller. The live export is calculateMaxForcePointsForBuildPlan (read-only). Consequently the persistent prestige markers that FRC and progression read are never written by live code (CR-FRC-02).",
+   "ref": null,
+   "from": "F-FRC-009"
+  },
+  {
+   "domain": "npc-followers",
+   "item": "Ability modifier for follower Fortitude Defense (hotfix uses CON, NPC sheet display uses max(STR, CON))",
+   "ref": "none (new; owner to register)",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "npc-followers",
+   "item": "Fidelity of MinionManager.MINION_TALENTS paraphrases to printed talents (no source/page)",
+   "ref": "none (new; owner to register)",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "npc-followers",
+   "item": "Minion modules write owner/minion flags directly from a createItem hook; minion talent flags are write-only uncited rule text — MinionManager.applyTalent/removeTalent/_removeStaleFlags call owner.setFlag / minion.setFlag / unsetFlag directly (8 sites), triggered from the follower createItem/deleteItem hooks. The written flags (minionTacticalAbilities, minionTalentRegistry, minionTalentBenefits) have no reader outside the module. MINION_TALENTS holds hand-written rule paraphrases (e.g. Bodyguard II, Fear Me) without book/page.",
+   "ref": null,
+   "from": "F-NPC-002"
+  },
+  {
+   "domain": "npc-followers",
+   "item": "Three follower defense computations disagree; one installed by monkey-patching DefenseCalculator — The hotfix wraps DefenseCalculator.calculate for followers and rebuilds Fortitude with CON; the NPC sheet helper independently computes Fortitude as 10 + level + max(STR, CON) for display; the deriver applies template bonuses. A follower with STR > CON can show a different Fortitude than the one used by derived/rolls.",
+   "ref": null,
+   "from": "F-NPC-003"
+  },
+  {
+   "domain": "progression",
+   "item": "Hard-coded fallback starting credits by class when content lacks a value",
+   "ref": "none (new entry required)",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "progression",
+   "item": "Talent/feat/ability/skill entitlement cadence for multiclass, droid, Nonheroic, house rules",
+   "ref": "RECON-001..RECON-007",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "progression",
+   "item": "Telekinetic Savant/Prodigy text and slot rule hard-coded in a runtime patch, diverging from canonical reference text — The patch replaces picker description/benefit/prerequisite text for two talents with in-code strings and filters the ForcePowerStep Prodigy resolution (suppressProdigyOnlyRetroactiveSlot). The in-code Prodigy text says the extra power must have the [Telekinetic] descriptor and adds a Wisdom-increase clause; the canonical reference (FUCG p.88) says it must be one of the powers affected by Telekinetic Savant. Which text/behavior is authoritative is a rules question; the audit does not decide it.",
+   "ref": null,
+   "from": "F-PRG-009"
+  },
+  {
+   "domain": "progression",
+   "item": "Hard-coded fallback starting credits by class — When neither content authority nor class/background records yield credits, a fixed table (soldier/scout/scoundrel 3000, jedi/force_adept 1200, noble 4800) is used - a default for missing published data (CLAUDE.md §3).",
+   "ref": null,
+   "from": "F-PRG-019"
+  },
+  {
+   "domain": "rolls",
+   "item": "Custom skill bonus uses half of system.level (custom-skill-roller.js:35) while derived skills use actor-core level-split helpers; aligning changes results for multiclass/nonheroic actors",
+   "ref": "none yet - to be registered by owner (DEFERRED_RULES_REVIEW)",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "rolls",
+   "item": "Local skill-total formulas in the rolls domain — getSkillTotal returns a locally rebuilt component total (ability + half level + trained + focus + misc) for useTheForce, and otherwise prefers derived totals with a component fallback. calculateCustomSkillBonus computes ability + 5 trained + 5 focus + floor(system.level/2) + misc. skills.calculateSkillModifier (exported, no importer) omits half level entirely. The derived skill pipeline (actor-core/ABL) is the authority for normal skills.",
+   "ref": null,
+   "from": "F-ROL-001"
+  },
+  {
+   "domain": "talents",
+   "item": "Contracted Force Point talent uses",
+   "ref": "FP-RD-001..FP-RD-013",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "vehicles",
+   "item": "Stock launcher printed Payload as canonical ammunition pool",
+   "ref": "V-P6C-21",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "vehicles",
+   "item": "Non-starship vehicles",
+   "ref": "V-P5-03",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "vehicles",
+   "item": "Derived statistics depending on crew quality",
+   "ref": "V-P5-04",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "vehicles",
+   "item": "Whether a maneuver may be marked spent without the Pilot activation check (vehicle sheet path) — owner/rules question raised by F-VEH-003, not registered",
+   "ref": "none (new; owner to register if a rules question)",
+   "from": "deferredRules"
+  },
+  {
+   "domain": "vehicles",
+   "item": "Two spend paths for starship maneuvers with different semantics — Vehicle sheet useManeuver writes system.discarded=true on the crew/vehicle item without a roll; the character sheet uses StarshipManeuverSuite.activateManeuver (Pilot activation check, then discarded). Regain on the vehicle sheet already delegates to the suite.",
+   "ref": null,
+   "from": "F-VEH-003"
+  }
+ ]
+}
