@@ -1642,11 +1642,15 @@ export function registerForceExecutorChatHooks() {
   if (forceExecutorChatHooksRegistered) return;
   forceExecutorChatHooksRegistered = true;
 
-  Hooks.on('deleteCombat', async (combat) => {
+  // F-FRC-006: deleteCombat fires on EVERY connected client; each ran up to 10 writes per combatant. Only the client whose user ended the
+  // combat performs the cleanup, and only for actors that user may modify.
+  Hooks.on('deleteCombat', async (combat, _options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return;
     try {
       const combatants = Array.from(combat?.combatants ?? []);
       const actors = [...new Map(combatants.map(c => [c?.actor?.id, c?.actor]).filter(([id, actor]) => id && actor)).values()];
       for (const actor of actors) {
+        if (actor.isOwner === false) continue;
         await ForceExecutor.resetForceFlowTemporaryForcePoints(actor, { encounterId: combat?.id ?? null });
         await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'telekineticSavantUses', { recalc: false });
         await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'influenceSavantUses', { recalc: false });
