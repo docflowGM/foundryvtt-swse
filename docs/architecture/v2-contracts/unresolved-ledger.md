@@ -1,6 +1,6 @@
 # Unimplemented and unresolved requirement ledger (generated)
 
-Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIRED 54 · UNIMPLEMENTED 28 · DEFERRED_RULES_REVIEW 64. Rules questions are never decided here; they belong in `docs/audits/swse-rules-decisions-pending.md`.
+Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIRED 86 · UNIMPLEMENTED 32 · DEFERRED_RULES_REVIEW 69. Rules questions are never decided here; they belong in `docs/audits/swse-rules-decisions-pending.md`.
 
 | Kind | Domain | ID | Item | Source |
 |---|---|---|---|---|
@@ -37,6 +37,10 @@ Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIR
 | FOUNDRY_ACCEPTANCE_REQUIRED | `droids` | — | Droid sheet readiness card and component browser | scripts/sheets/v2/droid-sheet/context-builder.js:438 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `droids` | — | Self-destruct MeasuredTemplate placement | scripts/sheets/v2/droid-actor-sheet.js:37 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `droids` | — | GM natural healing excludes droids including NPC-type droid followers | scripts/holonet/subsystems/gm-healing-trigger.js:97 |
+| UNIMPLEMENTED | `equipment` | U-EQP-01 | Player remote equipment mutation route (E4-P4 WP3) — modules test-only by design | docs/architecture/equipment-ecosystem-e4c0-ssot-persistence-contract.md:15 |
+| DEFERRED_RULES_REVIEW | `equipment` | EQ-001 | Action cost of reconfiguring a drawn weapon | docs/audits/swse-rules-decisions-pending.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `equipment` | — | Posture/occupancy cutover final gate | E4-P5 |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `equipment` | — | Ammo spend/reload, lightsaber ignite and token light | R-EQP-06 |
 | UNIMPLEMENTED | `feats` | U-FEA-01 | Team feat skill bonuses: prompt is live, bonus patch and producer never registered | scripts/rolls/skills.js:243; scripts/engine/feats/team-feat-runtime-patches.js:172 |
 | UNIMPLEMENTED | `feats` | U-FEA-02 | Skill-feat reroll/substitution/temporary-defense runtime patches never registered | scripts/engine/feats/skill-feat-runtime-patches.js:361 |
 | UNIMPLEMENTED | `feats` | U-FEA-03 | Advisory/defense-avoidance riders need a per-attack selected-advisory UI context | docs/audits/combat-feat-runtime-architecture.md:64 |
@@ -46,6 +50,41 @@ Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIR
 | FOUNDRY_ACCEPTANCE_REQUIRED | `feats` | — | Cleave availability chat card posts once per drop | F-FEA-006 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `feats` | — | GM empty-pack seeding and icon repair on a migrated v13 world | R-FEA-03 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `feats` | — | Attack bonus composition with Riflemaster+Pistoleer+Sniper+Dual Weapon+droid+core attack options wrappers | F-FEA-002 |
+| UNIMPLEMENTED | `force` | U-FRC-01 | Force power resolution schema v1 not used at runtime | docs/architecture/force-power-resolution-v1.md:3 |
+| UNIMPLEMENTED | `force` | U-FRC-02 | Forceful Recovery picker unreachable (only importer is an orphan feat module) | scripts/apps/dialogs/forceful-recovery-picker.js |
+| UNIMPLEMENTED | `force` | U-FRC-03 | dailyForcePoints house rule has no effect on the stored maximum | scripts/core/settings.js:240; scripts/engine/force/force-points-service.js:82 |
+| DEFERRED_RULES_REVIEW | `force` | FP-RD-015 (OWNER_CONFIRMATION_PENDING) | Last Grasp timing/cap exceptions; Emergency Patch failed-check charge | docs/audits/swse-rules-decisions-pending.md |
+| DEFERRED_RULES_REVIEW | `force` | FP-RD-003 | Uncertified contracted abilities | docs/audits/swse-rules-decisions-pending.md |
+| DEFERRED_RULES_REVIEW | `force` | FP-RD-013 | Temptation of the Dark Side (Force Unleashed p.85) | docs/audits/swse-rules-decisions-pending.md |
+| DEFERRED_RULES_REVIEW | `force` | NONE — new entry required (owner) | Whether the base-6/7 Force Point base persists after a prestige class is removed | docs/audits/swse-rules-decisions-pending.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | A1 Force Point spend + finalize | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | A2 Failed paid roll rollback | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | A3 Round cap | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | B1 Destiny spend separate ledger | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | C1 Temptation mark (needs live roll stack) | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | C2 Temptation spend window, owner prompted | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | C3 Initiative reorder | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | C4 Late delivery / reload | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | C5 Concurrent FP + Destiny receipts | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | C6 Two Sith Lords mark each other (live needed) | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | C7 Capped condition track | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | D1 GM world time only | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | E1 Serenity | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | E2 Prophet review | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | F1 Immunities | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | G1 Reactions (verified event, non-owner refused) | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | G2 Reaction settlement on finalize failure | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | H1 WatchCircle Initiate | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | H2 Drain Force | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | I1 Last Grasp / Emergency Patch (provisional FP-RD-015) | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | J1 Force Alchemy multi-resource costs with injected failures (not atomic) | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | J2 Receipt reconciliation | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | K1 Retired legacy entry points absent | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | L1 Cross-client repeat of C2/C4/G1 (cannot be proven offline) | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | Not covered by matrix: Alchemy multi-resource atomicity; Last Grasp timing/cap; unresolved reaction receipts after client close; reactions other than Block/Deflect/Force Fortification via chat-dataset context | docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | Proposed: Guardian Spirit claim then Force Point spend, reload | F-FRC-003 |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | Proposed: dailyForcePoints on/off at level-up | F-FRC-002 |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `force` | — | Proposed: end combat with two clients; Force talent cleanup once | F-FRC-006 |
 | UNIMPLEMENTED | `galactic-profiles` | U-GAL-01 | Generator UI and Generate->Review->Commit (CampaignMutationCoordinator, JobEngine) | docs/audits/gm-datapad-ecosystem-redesign.md §199-201 (line 9551: not started) |
 | UNIMPLEMENTED | `galactic-profiles` | U-GAL-02 | Applying generated rewards; credits must go through TransactionEngine (A-10); Store-index pricing adapter does not exist | docs/audits/gm-datapad-ecosystem-redesign.md §130 |
 | UNIMPLEMENTED | `galactic-profiles` | U-GAL-03 | NPC Opposition Catalog, species-specific names, encounter-balance math, rank/privilege mechanics (deferred; not to be invented) | docs/audits/gm-datapad-ecosystem-redesign.md §130 |
@@ -58,6 +97,8 @@ Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIR
 | FOUNDRY_ACCEPTANCE_REQUIRED | `holonet` | — | Credit/item/asset trades including forced rollback; job payouts; Party Fund contribution/payout | OSI runtime-risk areas (trade/store, credit movement) |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `holonet` | — | Emitter notifications (droid/ship/follower HP) after F-HOL-004 fix | this contract |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `holonet` | — | Socket relay of GM-authority actions from a player client | this contract |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `infrastructure` | — | Boot order after moving hotfix registration into index.js | index.js:91 |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `infrastructure` | — | Foundry v13 acceptance of settings namespace 'swse' | index.js:361 |
 | UNIMPLEMENTED | `mentor-suggestion` | U-MEN-01 | Certified answer-to-tag crosswalk for survey responses | docs/design/mentor-survey-v2/01-SHARED-ARCHITECTURE-CONTRACT.md §9 (SV-16) |
 | UNIMPLEMENTED | `mentor-suggestion` | U-MEN-02 | Single suggestion analytics service (PlayerAnalytics / SuggestionStateService as sole writer) | docs/architecture/ENGINE-ARCHITECTURE.md §10 |
 | UNIMPLEMENTED | `mentor-suggestion` | U-MEN-03 | Prestige Q6 Mentor dialogue package (not in Git) | docs/design/mentor-survey-v2/06-CONTENT-STATUS-AND-BLOCKERS.md §3 |

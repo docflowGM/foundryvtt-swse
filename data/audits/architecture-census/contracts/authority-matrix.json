@@ -983,6 +983,110 @@
    "tests": []
   },
   {
+   "id": "R-EQP-01",
+   "domain": "equipment",
+   "responsibility": "Weapon posture and occupancy (single writer)",
+   "owner": {
+    "path": "scripts/engine/equipment/equipment-state-coordinator.js",
+    "symbol": "executeEquipmentIntent"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/equipment-e4c1-wp4-writer-convergence.test.mjs",
+    "tests/equipment-e4c1-wp3a-coordinator.test.mjs"
+   ]
+  },
+  {
+   "id": "R-EQP-02",
+   "domain": "equipment",
+   "responsibility": "Worn-state (armor/shield) toggle",
+   "owner": {
+    "path": "scripts/engine/inventory/InventoryEngine.js",
+    "symbol": "InventoryEngine.toggleEquip"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-EQP-03",
+   "domain": "equipment",
+   "responsibility": "Weapon runtime profile",
+   "owner": {
+    "path": "scripts/items/weapon-runtime/index.js",
+    "symbol": "weapon-runtime"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-EQP-04",
+   "domain": "equipment",
+   "responsibility": "Armor data SSOT",
+   "owner": {
+    "path": "scripts/items/armor-data-resolver.js",
+    "symbol": "resolveArmorData"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-EQP-05",
+   "domain": "equipment",
+   "responsibility": "Encumbrance",
+   "owner": {
+    "path": "scripts/engine/encumbrance/EncumbranceEngine.js",
+    "symbol": "EncumbranceEngine.calculateEncumbrance"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-EQP-06",
+   "domain": "equipment",
+   "responsibility": "Ammunition",
+   "owner": {
+    "path": "scripts/engine/inventory/ammo-system.js",
+    "symbol": "AmmoSystem"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-EQP-07",
+   "domain": "equipment",
+   "responsibility": "Item sheet presentation",
+   "owner": {
+    "path": "scripts/items/swse-item-sheet.js",
+    "symbol": "SWSEItemSheet"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
    "id": "R-FEA-01",
    "domain": "feats",
    "responsibility": "Canonical feat content",
@@ -1201,6 +1305,239 @@
    "owner": {
     "path": "scripts/engine/feats/force-point-feat-rules.js",
     "symbol": "ForcePointFeatRules"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-FRC-01",
+   "domain": "force",
+   "responsibility": "Force Point spend mutation",
+   "owner": {
+    "path": "scripts/governance/actor-engine/actor-engine.js",
+    "symbol": "ActorEngine.spendForcePoints"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/force-point-transaction-integrity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-FRC-02",
+   "domain": "force",
+   "responsibility": "FP spend authorization",
+   "owner": {
+    "path": "scripts/engine/force/force-points-service.js",
+    "symbol": "ForcePointsService.authorizeSpend"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/force-v2-03b-transaction-behavior.test.mjs"
+   ]
+  },
+  {
+   "id": "R-FRC-03",
+   "domain": "force",
+   "responsibility": "FP settlement and reconciliation",
+   "owner": {
+    "path": "scripts/governance/actor-engine/actor-engine.js",
+    "symbol": "finalizeForcePointSpend/rollbackForcePointSpend"
+   },
+   "status": [
+    "OBSERVED",
+    "FOUNDRY_ACCEPTANCE_REQUIRED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/class-force-v2-receipt-reconciliation.test.mjs"
+   ]
+  },
+  {
+   "id": "R-FRC-04",
+   "domain": "force",
+   "responsibility": "FP gain",
+   "owner": {
+    "path": "scripts/governance/actor-engine/actor-engine.js",
+    "symbol": "ActorEngine.gainForcePoints"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-FRC-05",
+   "domain": "force",
+   "responsibility": "FP maximum formula",
+   "owner": {
+    "path": "scripts/data/force-points.js",
+    "symbol": "calculateMaxForcePointsForBuildPlan (+ ForcePointsService.getMax, no callers)"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-FRC-06",
+   "domain": "force",
+   "responsibility": "Bonus FP pool",
+   "owner": {
+    "path": "(none)",
+    "symbol": "(six builders)"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-FRC-07",
+   "domain": "force",
+   "responsibility": "Dark Side Score read/caps",
+   "owner": {
+    "path": "scripts/engine/darkside/dsp-engine.js",
+    "symbol": "DSPEngine"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/dsp-engine-behavior.test.mjs"
+   ]
+  },
+  {
+   "id": "R-FRC-08",
+   "domain": "force",
+   "responsibility": "Dark Side Score mutation",
+   "owner": {
+    "path": "(none)",
+    "symbol": "(7 live writer modules)"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-FRC-09",
+   "domain": "force",
+   "responsibility": "Force power execution",
+   "owner": {
+    "path": "scripts/engine/force/force-executor.js",
+    "symbol": "ForceExecutor.executeForcePower"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/force-v2-game-night-integration.test.mjs"
+   ]
+  },
+  {
+   "id": "R-FRC-10",
+   "domain": "force",
+   "responsibility": "Force power lifecycle hooks",
+   "owner": {
+    "path": "scripts/infrastructure/hooks/force-power-hooks.js",
+    "symbol": "(module)"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-FRC-11",
+   "domain": "force",
+   "responsibility": "Force catalog lookup",
+   "owner": {
+    "path": "scripts/engine/registries/force-registry.js",
+    "symbol": "ForceRegistry"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-FRC-12",
+   "domain": "force",
+   "responsibility": "Force Alchemy",
+   "owner": {
+    "path": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+    "symbol": "applyResourceCosts"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/class-force-v2-alchemy-atomicity.test.mjs"
+   ]
+  },
+  {
+   "id": "R-FRC-13",
+   "domain": "force",
+   "responsibility": "Force traditions",
+   "owner": {
+    "path": "scripts/apps/force-tradition/force-tradition-picker.js",
+    "symbol": "registerForceTraditionPickerHooks"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-FRC-14",
+   "domain": "force",
+   "responsibility": "Force power resolution schema v1",
+   "owner": {
+    "path": "scripts/engine/force/force-power-resolution-schema.js",
+    "symbol": "getForcePowerResolution"
+   },
+   "status": [
+    "APPROVED",
+    "UNIMPLEMENTED"
+   ],
+   "verification": "dependency-traced",
+   "tests": [
+    "tests/force-power-resolution-schema.test.mjs"
+   ]
+  },
+  {
+   "id": "R-FRC-15",
+   "domain": "force",
+   "responsibility": "Runtime repairs (patches)",
+   "owner": {
+    "path": "scripts/engine/force/force-suite-runtime-repairs.js",
+    "symbol": "registerForceSuiteRuntimeRepairs"
    },
    "status": [
     "OBSERVED",
@@ -1670,6 +2007,165 @@
    "owner": {
     "path": "scripts/holonet/holonet-preferences.js",
     "symbol": "HolonetPreferences; HolonetStateService"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-INF-01",
+   "domain": "infrastructure",
+   "responsibility": "Composition root",
+   "owner": {
+    "path": "index.js",
+    "symbol": "init/ready hooks"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-INF-02",
+   "domain": "infrastructure",
+   "responsibility": "System settings registration",
+   "owner": {
+    "path": "scripts/core/settings.js",
+    "symbol": "registerSystemSettings"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-INF-03",
+   "domain": "infrastructure",
+   "responsibility": "Hook registry",
+   "owner": {
+    "path": "scripts/infrastructure/hooks/hooks-registry.js",
+    "symbol": "HooksRegistry"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-INF-04",
+   "domain": "infrastructure",
+   "responsibility": "Actor/combat/item hook wiring",
+   "owner": {
+    "path": "scripts/infrastructure/hooks/actor-hooks.js",
+    "symbol": "registerActorHooks"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-INF-05",
+   "domain": "infrastructure",
+   "responsibility": "v13 document facade routing actor/owned-item writes to ActorEngine",
+   "owner": {
+    "path": "scripts/core/document-api-v13.js",
+    "symbol": "patchDocument/createActor/createChatMessage"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-INF-06",
+   "domain": "infrastructure",
+   "responsibility": "Logging",
+   "owner": {
+    "path": "scripts/utils/logger.js",
+    "symbol": "SWSELogger"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-INF-07",
+   "domain": "infrastructure",
+   "responsibility": "Schema read adapters",
+   "owner": {
+    "path": "scripts/utils/schema-adapters.js",
+    "symbol": "SchemaAdapters"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": [
+    "tests/schema-adapters-ability-authority.test.mjs"
+   ]
+  },
+  {
+   "id": "R-INF-08",
+   "domain": "infrastructure",
+   "responsibility": "Flag scope compatibility bridge",
+   "owner": {
+    "path": "scripts/utils/flags/swse-flags.js",
+    "symbol": "installSwseFlagScopeCompatibility"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-INF-09",
+   "domain": "infrastructure",
+   "responsibility": "Template preload",
+   "owner": {
+    "path": "scripts/load-templates.js",
+    "symbol": "preloadHandlebarsTemplates"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-INF-10",
+   "domain": "infrastructure",
+   "responsibility": "World data autoload/clear",
+   "owner": {
+    "path": "scripts/core/world-data-loader.js",
+    "symbol": "WorldDataLoader"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-INF-11",
+   "domain": "infrastructure",
+   "responsibility": "Data cache manager",
+   "owner": {
+    "path": "scripts/core/cache-manager.js",
+    "symbol": "CacheManager"
    },
    "status": [
     "OBSERVED"

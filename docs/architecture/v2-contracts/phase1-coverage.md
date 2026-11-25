@@ -1,6 +1,6 @@
 # Phase 1 coverage (generated)
 
-Every taxonomy domain has a contract or an explicit disposition. Generated at `f734b4d`. Validation: 18 sidecars, 544 unique IDs, 1376 evidence references checked against the audited commit, **0 unresolved**, 0 errors, 1 warnings (`data/audits/architecture-census/contracts/validation.json`).
+Every taxonomy domain has a contract or an explicit disposition. Generated at `f734b4d`. Validation: 21 sidecars, 623 unique IDs, 1645 evidence references checked against the audited commit, **0 unresolved**, 0 errors, 1 warnings (`data/audits/architecture-census/contracts/validation.json`).
 
 | Domain | Kind | Files | Runtime modules | Disposition | Responsibilities | Findings |
 |---|---|---:|---:|---|---:|---:|
@@ -12,10 +12,10 @@ Every taxonomy domain has a contract or an explicit disposition. Generated at `f
 | `skills` | mechanical | 87 | 34 | contract B-SKL | 10 | 7 |
 | `feats` | mechanical | 720 | 105 | contract B-FEA | 15 | 14 |
 | `talents` | mechanical | 440 | 36 | contract B-TAL | 13 | 13 |
-| `force` | mechanical | 322 | 55 | MISSING CONTRACT | 0 | 0 |
+| `force` | mechanical | 322 | 55 | contract B-FRC | 15 | 12 |
 | `combat` | mechanical | 431 | 174 | contract B-CMB | 11 | 12 |
 | `rolls` | mechanical | 36 | 24 | MISSING CONTRACT | 0 | 0 |
-| `equipment` | mechanical | 377 | 92 | MISSING CONTRACT | 0 | 0 |
+| `equipment` | mechanical | 377 | 92 | contract B-EQP | 7 | 8 |
 | `customization` | mechanical | 172 | 59 | MISSING CONTRACT | 0 | 0 |
 | `store-economy` | mechanical | 162 | 39 | contract B-STO | 8 | 9 |
 | `vehicles` | mechanical | 764 | 119 | contract B-VEH | 16 | 12 |
@@ -31,7 +31,7 @@ Every taxonomy domain has a contract or an explicit disposition. Generated at `f
 | `governance` | infrastructure | 100 | 86 | contract B-GOV | 9 | 7 |
 | `settings-config` | infrastructure | 11 | 4 | MISSING CONTRACT | 0 | 0 |
 | `data-registries` | infrastructure | 54 | 12 | MISSING CONTRACT | 0 | 0 |
-| `infrastructure` | infrastructure | 117 | 110 | MISSING CONTRACT | 0 | 0 |
+| `infrastructure` | infrastructure | 117 | 110 | contract B-INF | 11 | 8 |
 | `migration` | infrastructure | 31 | 24 | MISSING CONTRACT | 0 | 0 |
 | `compat-patches` | infrastructure | 19 | 17 | contract B-PAT | 6 | 7 |
 | `dev-tooling` | tooling | 280 | 23 | non-runtime disposition — Tooling, not a runtime authority. Governed by A-13 (offline evidence only) and by the rule that tools never write production data unless explicitly scoped. Contract: none beyond A-level; individual tools are attributed to the domain they audit. | 0 | 0 |

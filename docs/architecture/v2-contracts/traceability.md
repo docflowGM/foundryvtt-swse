@@ -2,7 +2,7 @@
 
 Level A invariants trace to probes (see `A-global-invariants.md`). Domain requirements trace to the owning module and its tests. **No requirement is live-Foundry-verified.** Generated at `f734b4d`.
 
-- Domain requirements: 212; with a named test or a direct test of the owner module: 146; **test gaps: 66**.
+- Domain requirements: 245; with a named test or a direct test of the owner module: 163; **test gaps: 82**.
 
 | Requirement | Domain | Code | Reachability | Named tests | Owner direct tests | Owner CI tests (transitive) |
 |---|---|---|---|---:|---:|---:|
@@ -71,6 +71,13 @@ Level A invariants trace to probes (see `A-global-invariants.md`). Domain requir
 | R-DRD-10 | `droids` | `scripts/domain/droids/droid-statblock-conversion-service.js :: (service)` | reachable-dynamic | 0 | 2 | 3 |
 | R-DRD-11 | `droids` | `scripts/sheets/v2/droid-actor-sheet.js :: SWSEV2DroidSheet` | reachable-static | 0 | 1 | 1 |
 | R-DRD-12 | `droids` | `scripts/holonet/subsystems/gm-healing-trigger.js :: isEligibleForHealing` | reachable-static | 0 | 1 | 10 |
+| R-EQP-01 | `equipment` | `scripts/engine/equipment/equipment-state-coordinator.js :: executeEquipmentIntent` | reachable-static | 2 | 4 | 353 |
+| R-EQP-02 | `equipment` | `scripts/engine/inventory/InventoryEngine.js :: InventoryEngine.toggleEquip` | reachable-static | 0 | 13 | 353 |
+| R-EQP-03 | `equipment` | `scripts/items/weapon-runtime/index.js :: weapon-runtime` | reachable-static | 0 | 61 | 360 |
+| R-EQP-04 | `equipment` | `scripts/items/armor-data-resolver.js :: resolveArmorData` | reachable-static | 0 | 2 | 355 |
+| R-EQP-05 | `equipment` | `scripts/engine/encumbrance/EncumbranceEngine.js :: EncumbranceEngine.calculateEncumbrance` | reachable-static | 0 | 3 | 353 |
+| R-EQP-06 | `equipment` | `scripts/engine/inventory/ammo-system.js :: AmmoSystem` | reachable-static | 0 | 28 | 353 |
+| R-EQP-07 ⚠ | `equipment` | `scripts/items/swse-item-sheet.js :: SWSEItemSheet` | reachable-static | 0 | 0 | 0 |
 | R-FEA-01 | `feats` | `data/canonical/feats.json :: (data)` | runtime-referenced | 1 | 0 | 0 |
 | R-FEA-02 | `feats` | `scripts/registries/feat-registry.js :: FeatRegistry` | reachable-static | 1 | 6 | 369 |
 | R-FEA-03 ⚠ | `feats` | `scripts/registries/feat-pack-seeder.js :: FeatPackSeeder` | reachable-static | 0 | 0 | 369 |
@@ -86,6 +93,21 @@ Level A invariants trace to probes (see `A-global-invariants.md`). Domain requir
 | R-FEA-13 | `feats` | `scripts/engine/feats/core-attack-option-action-economy.js :: getCoreAttackOptionEconomy` | reachable-static | 0 | 1 | 353 |
 | R-FEA-14 ⚠ | `feats` | `scripts/engine/feats/condition-track-feat-actions.js :: ConditionTrackFeatActions` | reachable-static | 0 | 0 | 0 |
 | R-FEA-15 ⚠ | `feats` | `scripts/engine/feats/force-point-feat-rules.js :: ForcePointFeatRules` | reachable-static | 0 | 0 | 353 |
+| R-FRC-01 | `force` | `scripts/governance/actor-engine/actor-engine.js :: ActorEngine.spendForcePoints` | reachable-static | 1 | 91 | 353 |
+| R-FRC-02 | `force` | `scripts/engine/force/force-points-service.js :: ForcePointsService.authorizeSpend` | reachable-static | 1 | 7 | 353 |
+| R-FRC-03 | `force` | `scripts/governance/actor-engine/actor-engine.js :: finalizeForcePointSpend/rollbackForcePointSpend` | reachable-static | 1 | 91 | 353 |
+| R-FRC-04 | `force` | `scripts/governance/actor-engine/actor-engine.js :: ActorEngine.gainForcePoints` | reachable-static | 0 | 91 | 353 |
+| R-FRC-05 ⚠ | `force` | `scripts/data/force-points.js :: calculateMaxForcePointsForBuildPlan (+ ForcePointsService.getMax, no callers)` | reachable-static | 0 | 0 | 79 |
+| R-FRC-06 ⚠ | `force` | `(none) :: (six builders)` | — | 0 | 0 | 0 |
+| R-FRC-07 | `force` | `scripts/engine/darkside/dsp-engine.js :: DSPEngine` | reachable-static | 1 | 2 | 372 |
+| R-FRC-08 ⚠ | `force` | `(none) :: (7 live writer modules)` | — | 0 | 0 | 0 |
+| R-FRC-09 | `force` | `scripts/engine/force/force-executor.js :: ForceExecutor.executeForcePower` | reachable-static | 1 | 4 | 353 |
+| R-FRC-10 ⚠ | `force` | `scripts/infrastructure/hooks/force-power-hooks.js :: (module)` | reachable-static | 0 | 0 | 0 |
+| R-FRC-11 ⚠ | `force` | `scripts/engine/registries/force-registry.js :: ForceRegistry` | reachable-static | 0 | 0 | 364 |
+| R-FRC-12 | `force` | `scripts/apps/force-alchemy/force-alchemy-mechanics-service.js :: applyResourceCosts` | reachable-static | 1 | 2 | 8 |
+| R-FRC-13 ⚠ | `force` | `scripts/apps/force-tradition/force-tradition-picker.js :: registerForceTraditionPickerHooks` | reachable-static | 0 | 0 | 0 |
+| R-FRC-14 | `force` | `scripts/engine/force/force-power-resolution-schema.js :: getForcePowerResolution` | test-only-import | 1 | 1 | 1 |
+| R-FRC-15 ⚠ | `force` | `scripts/engine/force/force-suite-runtime-repairs.js :: registerForceSuiteRuntimeRepairs` | reachable-static | 0 | 0 | 0 |
 | R-GAL-01 | `galactic-profiles` | `scripts/generation/ :: generator library` | — | 2 | 0 | 0 |
 | R-GAL-02 | `galactic-profiles` | `tests/gm-generation-phase8d1-foundation.test.mjs :: forbiddenCallPatterns source guard` | test-file | 1 | 0 | 0 |
 | R-GAL-03 | `galactic-profiles` | `scripts/locations/location-registry-service.js :: LocationRegistryService` | reachable-static | 1 | 9 | 38 |
@@ -116,6 +138,17 @@ Level A invariants trace to probes (see `A-global-invariants.md`). Domain requir
 | R-HOL-10 | `holonet` | `scripts/holonet/subsystems/gm-combat-recovery-service.js :: GMCombatRecoveryService` | reachable-static | 0 | 2 | 10 |
 | R-HOL-11 | `holonet` | `scripts/holonet/subsystems/holonet-socket-service.js :: HolonetSocketService; HolonetMessengerService._isRequesterGm` | reachable-static | 0 | 1 | 353 |
 | R-HOL-12 ⚠ | `holonet` | `scripts/holonet/holonet-preferences.js :: HolonetPreferences; HolonetStateService` | reachable-static | 0 | 0 | 353 |
+| R-INF-01 ⚠ | `infrastructure` | `index.js :: init/ready hooks` | reachable-static | 0 | 0 | 0 |
+| R-INF-02 ⚠ | `infrastructure` | `scripts/core/settings.js :: registerSystemSettings` | reachable-static | 0 | 0 | 0 |
+| R-INF-03 | `infrastructure` | `scripts/infrastructure/hooks/hooks-registry.js :: HooksRegistry` | reachable-static | 0 | 1 | 1 |
+| R-INF-04 ⚠ | `infrastructure` | `scripts/infrastructure/hooks/actor-hooks.js :: registerActorHooks` | reachable-static | 0 | 0 | 0 |
+| R-INF-05 ⚠ | `infrastructure` | `scripts/core/document-api-v13.js :: patchDocument/createActor/createChatMessage` | reachable-static | 0 | 0 | 353 |
+| R-INF-06 | `infrastructure` | `scripts/utils/logger.js :: SWSELogger` | reachable-static | 0 | 15 | 426 |
+| R-INF-07 | `infrastructure` | `scripts/utils/schema-adapters.js :: SchemaAdapters` | reachable-static | 1 | 6 | 385 |
+| R-INF-08 ⚠ | `infrastructure` | `scripts/utils/flags/swse-flags.js :: installSwseFlagScopeCompatibility` | reachable-static | 0 | 0 | 354 |
+| R-INF-09 ⚠ | `infrastructure` | `scripts/load-templates.js :: preloadHandlebarsTemplates` | reachable-static | 0 | 0 | 0 |
+| R-INF-10 ⚠ | `infrastructure` | `scripts/core/world-data-loader.js :: WorldDataLoader` | reachable-static | 0 | 0 | 0 |
+| R-INF-11 ⚠ | `infrastructure` | `scripts/core/cache-manager.js :: CacheManager` | reachable-dynamic | 0 | 0 | 51 |
 | R-MEN-01 | `mentor-suggestion` | `scripts/engine/suggestion/SuggestionService.js :: SuggestionService` | reachable-static | 1 | 4 | 51 |
 | R-MEN-02 ⚠ | `mentor-suggestion` | `scripts/engine/suggestion/SuggestionEngineCoordinator.js :: SuggestionEngineCoordinator` | reachable-static | 0 | 0 | 51 |
 | R-MEN-03 | `mentor-suggestion` | `scripts/engine/suggestion/SuggestionEngine.js :: SuggestionEngine (+ClassSuggestionEngine, SuggestionScorer, attribute-planner)` | reachable-static | 1 | 0 | 51 |

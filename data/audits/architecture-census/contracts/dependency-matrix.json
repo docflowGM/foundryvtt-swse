@@ -231,7 +231,8 @@
    "edges": 33,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "mentor-suggestion",
@@ -284,7 +285,8 @@
    "edges": 30,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -301,7 +303,8 @@
    "edges": 26,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -380,7 +383,8 @@
    "edges": 22,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 1,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "ui-shell",
@@ -484,7 +488,8 @@
    "edges": 17,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -527,7 +532,8 @@
    "edges": 16,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -737,7 +743,8 @@
    "edges": 12,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "progression",
@@ -816,7 +823,8 @@
    "edges": 11,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "equipment",
@@ -824,7 +832,8 @@
    "edges": 11,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "governance",
@@ -841,7 +850,8 @@
    "edges": 11,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -849,7 +859,8 @@
    "edges": 11,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "mentor-suggestion",
@@ -928,7 +939,8 @@
    "edges": 10,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "force",
@@ -936,7 +948,8 @@
    "edges": 10,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "npc-followers",
@@ -996,7 +1009,8 @@
    "edges": 9,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "force",
@@ -1004,7 +1018,8 @@
    "edges": 9,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "holonet",
@@ -1029,7 +1044,8 @@
    "edges": 9,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "mentor-suggestion",
@@ -1115,7 +1131,8 @@
    "edges": 8,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "equipment",
@@ -1123,7 +1140,8 @@
    "edges": 8,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "games",
@@ -1139,7 +1157,8 @@
    "edges": 8,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "mentor-suggestion",
@@ -1268,7 +1287,8 @@
    "edges": 7,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -1276,7 +1296,8 @@
    "edges": 7,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "migration",
@@ -1398,7 +1419,8 @@
    "edges": 6,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "force",
@@ -1406,7 +1428,8 @@
    "edges": 6,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "galactic-profiles",
@@ -1432,7 +1455,8 @@
    "edges": 6,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -1440,7 +1464,8 @@
    "edges": 6,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "mentor-suggestion",
@@ -1561,7 +1586,8 @@
    "edges": 5,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "holonet",
@@ -1674,7 +1700,8 @@
    "edges": 4,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "feats",
@@ -1700,7 +1727,8 @@
    "edges": 4,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "force",
@@ -1708,7 +1736,8 @@
    "edges": 4,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "games",
@@ -1733,7 +1762,8 @@
    "edges": 4,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "mentor-suggestion",
@@ -1878,7 +1908,8 @@
    "edges": 3,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "equipment",
@@ -1886,7 +1917,8 @@
    "edges": 3,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "feats",
@@ -1921,7 +1953,8 @@
    "edges": 3,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "holonet",
@@ -1955,14 +1988,16 @@
    "edges": 3,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
    "to": "dev-tooling",
    "edges": 3,
    "proposedLayerFrom": 0,
-   "kind": "unlayered"
+   "kind": "unlayered",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -1970,7 +2005,8 @@
    "edges": 3,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 1,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -1978,7 +2014,8 @@
    "edges": 3,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -1986,7 +2023,8 @@
    "edges": 3,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "mentor-suggestion",
@@ -2301,7 +2339,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "equipment",
@@ -2309,14 +2348,16 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "equipment",
    "to": "dev-tooling",
    "edges": 2,
    "proposedLayerFrom": 2,
-   "kind": "unlayered"
+   "kind": "unlayered",
+   "declaredAllowed": false
   },
   {
    "from": "equipment",
@@ -2324,7 +2365,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "feats",
@@ -2341,7 +2383,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "force",
@@ -2349,7 +2392,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "force",
@@ -2357,7 +2401,8 @@
    "edges": 2,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "galactic-profiles",
@@ -2419,7 +2464,8 @@
    "edges": 2,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 1,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -2427,7 +2473,8 @@
    "edges": 2,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -2435,7 +2482,8 @@
    "edges": 2,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -2443,7 +2491,8 @@
    "edges": 2,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -2451,7 +2500,8 @@
    "edges": 2,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "mentor-suggestion",
@@ -3011,7 +3061,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "force",
@@ -3019,7 +3070,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "galactic-profiles",
@@ -3180,7 +3232,8 @@
    "edges": 1,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -3188,7 +3241,8 @@
    "edges": 1,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -3196,7 +3250,8 @@
    "edges": 1,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 5,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -3204,7 +3259,8 @@
    "edges": 1,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "mentor-suggestion",

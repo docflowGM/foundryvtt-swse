@@ -88,10 +88,10 @@
    "kind": "mechanical",
    "files": 322,
    "runtimeModules": 55,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-FRC",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 15,
+   "findings": 12
   },
   {
    "domain": "combat",
@@ -118,10 +118,10 @@
    "kind": "mechanical",
    "files": 377,
    "runtimeModules": 92,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-EQP",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 7,
+   "findings": 8
   },
   {
    "domain": "customization",
@@ -278,10 +278,10 @@
    "kind": "infrastructure",
    "files": 117,
    "runtimeModules": 110,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-INF",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 11,
+   "findings": 8
   },
   {
    "domain": "migration",
@@ -375,9 +375,7 @@
   }
  ],
  "missingContracts": [
-  "force",
   "rolls",
-  "equipment",
   "customization",
   "npc-followers",
   "games",
@@ -385,7 +383,6 @@
   "chat",
   "settings-config",
   "data-registries",
-  "infrastructure",
   "migration"
  ]
 }

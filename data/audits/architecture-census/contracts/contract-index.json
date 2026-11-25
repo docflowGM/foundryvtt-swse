@@ -90,6 +90,17 @@
    "findings": 6
   },
   {
+   "contractId": "B-EQP",
+   "domain": "equipment",
+   "doc": "docs/architecture/v2-contracts/B-EQP-equipment.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/equipment.json",
+   "responsibilities": 7,
+   "subsystemContracts": 1,
+   "contradictions": 2,
+   "unimplemented": 1,
+   "findings": 8
+  },
+  {
    "contractId": "B-FEA",
    "domain": "feats",
    "doc": "docs/architecture/v2-contracts/B-FEA-feats.md",
@@ -99,6 +110,17 @@
    "contradictions": 3,
    "unimplemented": 3,
    "findings": 14
+  },
+  {
+   "contractId": "B-FRC",
+   "domain": "force",
+   "doc": "docs/architecture/v2-contracts/B-FRC-force.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/force.json",
+   "responsibilities": 15,
+   "subsystemContracts": 4,
+   "contradictions": 3,
+   "unimplemented": 3,
+   "findings": 12
   },
   {
    "contractId": "B-GAL",
@@ -132,6 +154,17 @@
    "contradictions": 3,
    "unimplemented": 2,
    "findings": 9
+  },
+  {
+   "contractId": "B-INF",
+   "domain": "infrastructure",
+   "doc": "docs/architecture/v2-contracts/B-INF-infrastructure.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/infrastructure.json",
+   "responsibilities": 11,
+   "subsystemContracts": 1,
+   "contradictions": 3,
+   "unimplemented": 0,
+   "findings": 8
   },
   {
    "contractId": "B-MEN",

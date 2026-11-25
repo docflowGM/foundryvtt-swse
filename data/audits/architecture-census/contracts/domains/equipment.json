@@ -1,0 +1,563 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-EQP",
+  "domain": "equipment",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "Weapon posture/occupancy has one writer (equipment-state coordinator via InventoryEngine.requestWeaponPosture), consistent with owner decisions E4-P1/P2 and OA-11..13; legacy writers A9/A10 are gone and A8 refuses weapons. Encumbrance has one live authority. Remaining issues are presentation-layer direct writes in the 2.8k-line item sheet (ActiveEffects and draft flags on items; the item.update sites are documented world-item exceptions), a 5-file static import cycle in weapon-runtime caused by a re-export, a prototype monkey-patch of the item sheet, and orphan/dead modules. Multi-domain attack/damage leads are profile inputs, not competing calculators.",
+  "responsibilities": [
+    {
+      "id": "R-EQP-01",
+      "responsibility": "Weapon posture and occupancy (single writer)",
+      "owner": {
+        "path": "scripts/engine/equipment/equipment-state-coordinator.js",
+        "symbol": "executeEquipmentIntent"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/engine/equipment/equipment-state-coordinator.js:38",
+        "scripts/engine/equipment/equipment-state-coordinator.js:45",
+        "scripts/engine/inventory/InventoryEngine.js:99",
+        "scripts/engine/inventory/InventoryEngine.js:246",
+        "scripts/actors/base/swse-actor-base.js:170"
+      ],
+      "tests": [
+        "tests/equipment-e4c1-wp4-writer-convergence.test.mjs",
+        "tests/equipment-e4c1-wp3a-coordinator.test.mjs"
+      ],
+      "notes": "APPROVED: E4-P1, E4-P2, OA-12, OA-13"
+    },
+    {
+      "id": "R-EQP-02",
+      "responsibility": "Worn-state (armor/shield) toggle",
+      "owner": {
+        "path": "scripts/engine/inventory/InventoryEngine.js",
+        "symbol": "InventoryEngine.toggleEquip"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/inventory/InventoryEngine.js:94",
+        "scripts/engine/inventory/InventoryEngine.js:138"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-EQP-03",
+      "responsibility": "Weapon runtime profile",
+      "owner": {
+        "path": "scripts/items/weapon-runtime/index.js",
+        "symbol": "weapon-runtime"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/items/weapon-runtime/attack-consumer.js:10",
+        "scripts/items/weapon-runtime/attack-consumer.js:19",
+        "scripts/items/weapon-runtime/talent-identity.js:8"
+      ],
+      "tests": [],
+      "notes": "A-07 cycle F-EQP-002"
+    },
+    {
+      "id": "R-EQP-04",
+      "responsibility": "Armor data SSOT",
+      "owner": {
+        "path": "scripts/items/armor-data-resolver.js",
+        "symbol": "resolveArmorData"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/items/armor-data-resolver.js:1"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-EQP-05",
+      "responsibility": "Encumbrance",
+      "owner": {
+        "path": "scripts/engine/encumbrance/EncumbranceEngine.js",
+        "symbol": "EncumbranceEngine.calculateEncumbrance"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/encumbrance/EncumbranceEngine.js:35",
+        "scripts/actors/v2/character-actor.js:968",
+        "scripts/engine/effects/modifiers/ModifierEngine.js:1174"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-EQP-06",
+      "responsibility": "Ammunition",
+      "owner": {
+        "path": "scripts/engine/inventory/ammo-system.js",
+        "symbol": "AmmoSystem"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/inventory/ammo-system.js:212",
+        "scripts/engine/inventory/ammo-system.js:277",
+        "scripts/engine/inventory/ammo-system.js:434"
+      ],
+      "tests": [],
+      "notes": "world-item fallbacks lack @mutation-exception comments"
+    },
+    {
+      "id": "R-EQP-07",
+      "responsibility": "Item sheet presentation",
+      "owner": {
+        "path": "scripts/items/swse-item-sheet.js",
+        "symbol": "SWSEItemSheet"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/items/swse-item-sheet.js:1135",
+        "scripts/items/swse-item-sheet.js:2133",
+        "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js:199"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "weapon-runtime barrel",
+      "path": "scripts/items/weapon-runtime/index.js",
+      "line": 1,
+      "consumers": 71,
+      "contract": "runtime profile API"
+    },
+    {
+      "symbol": "weapon-branch-resolver",
+      "path": "scripts/items/weapon-branch-resolver.js",
+      "line": 1,
+      "consumers": 36,
+      "contract": "melee/ranged classification"
+    },
+    {
+      "symbol": "combat-readiness",
+      "path": "scripts/engine/equipment/combat-readiness.js",
+      "line": 1,
+      "consumers": 35,
+      "contract": "effective readiness (OA-12)"
+    },
+    {
+      "symbol": "AmmoSystem",
+      "path": "scripts/engine/inventory/ammo-system.js",
+      "line": 1,
+      "consumers": 33,
+      "contract": "ammo spend/reload"
+    },
+    {
+      "symbol": "InventoryEngine",
+      "path": "scripts/engine/inventory/InventoryEngine.js",
+      "line": 88,
+      "consumers": 23,
+      "contract": "equip toggle, requestWeaponPosture"
+    },
+    {
+      "symbol": "EncumbranceEngine",
+      "path": "scripts/engine/encumbrance/EncumbranceEngine.js",
+      "line": 35,
+      "consumers": 10,
+      "contract": "load state"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "ActorEngine",
+      "data registries",
+      "species anatomy resolvers"
+    ],
+    "prohibited": [
+      "import cycles (A-07)",
+      "presentation direct writes (A-04)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/items/weapon-runtime/talent-identity.js",
+        "to": "scripts/items/weapon-runtime/ability-selector.js",
+        "evidence": "scripts/items/weapon-runtime/talent-identity.js:8"
+      },
+      {
+        "from": "scripts/items/weapon-runtime/proficiency-resolver.js",
+        "to": "scripts/items/weapon-runtime/ability-selector.js",
+        "evidence": "scripts/items/weapon-runtime/proficiency-resolver.js:7"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-EQP-1",
+      "boundary": "Equipment coordinator <-> other writers",
+      "interface": "only coordinator writes OWNED_PATHS; IGNITE_PATHS within ready-ignite",
+      "status": [
+        "APPROVED",
+        "OBSERVED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-EQP-01",
+      "existingSource": "docs/architecture/equipment-ecosystem-e3a4-clean-break-posture-contract.md raw/legacy writers row",
+      "claim": "ui/inventory-handlers.js (A9) and ui/weapon-config-dialog.js (A10) are live legacy equip writers",
+      "observed": "files removed; setItemEquipped refuses weapons",
+      "evidence": [
+        "docs/architecture/equipment-ecosystem-e3a4-clean-break-posture-contract.md:70",
+        "scripts/actors/base/swse-actor-base.js:172"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-EQP-02",
+      "existingSource": "scripts/items/swse-item-sheet.js header",
+      "claim": "No mutation outside ActorEngine-owned APIs",
+      "observed": "direct ActiveEffect and flag writes on items",
+      "evidence": [
+        "scripts/items/swse-item-sheet.js:7",
+        "scripts/items/swse-item-sheet.js:226",
+        "scripts/items/swse-item-sheet.js:1689"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-EQP-01",
+      "item": "Player remote equipment mutation route (E4-P4 WP3) — modules test-only by design",
+      "source": "docs/architecture/equipment-ecosystem-e4c0-ssot-persistence-contract.md:15",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [
+    {
+      "item": "Action cost of reconfiguring a drawn weapon",
+      "registerRef": "EQ-001"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "Posture/occupancy cutover final gate",
+      "source": "E4-P5"
+    },
+    {
+      "item": "Ammo spend/reload, lightsaber ignite and token light",
+      "source": "R-EQP-06"
+    }
+  ],
+  "findings": [
+    {
+      "category": "ownership-violation",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Item sheet writes ActiveEffects and effect-wizard draft flags directly on items",
+      "affectedFiles": [
+        "scripts/items/swse-item-sheet.js"
+      ],
+      "evidence": [
+        "scripts/items/swse-item-sheet.js:226",
+        "scripts/items/swse-item-sheet.js:233",
+        "scripts/items/swse-item-sheet.js:1135",
+        "scripts/items/swse-item-sheet.js:1144",
+        "scripts/items/swse-item-sheet.js:1228",
+        "scripts/items/swse-item-sheet.js:1689",
+        "scripts/items/swse-item-sheet.js:1956",
+        "scripts/items/swse-item-sheet.js:2133",
+        "scripts/items/swse-item-sheet.js:2456",
+        "scripts/items/swse-item-sheet.js:2477",
+        "scripts/items/swse-item-sheet.js:2492",
+        "scripts/items/swse-item-sheet.js:2582",
+        "scripts/items/swse-item-sheet.js:2809",
+        "scripts/governance/actor-engine/actor-engine.js:4203"
+      ],
+      "observed": "8 sites write item ActiveEffects / flags with this.item.* regardless of whether the item is embedded in an actor (A-02/A-04); the effect-wizard draft (UI-only state) is persisted on the document. The 7 item.update sites (2456, 2477, 2485, 2510, 2544, 2568, 2809) are world-item fallbacks with @mutation-exception comments (legitimate). Token light updates (2492, 2515, 2582, 2598) are scene-token documents (Foundry-only exception, uncommented).",
+      "intendedOwnership": "ActorEngine owned-item helpers (A-02); UI-only state in session (OSI).",
+      "contractRef": "A-02 | A-04 | R-EQP-07",
+      "proposedSolution": "Add ActorEngine owned-item ActiveEffect helpers (or route via updateEmbeddedDocuments on the owning actor) and branch like the existing item.update sites; keep wizard drafts in sheet memory/sessionStorage.",
+      "alternatives": "Treat item-effect edits as documented Foundry-only exception with comments.",
+      "dependencies": [
+        "ActorEngine API"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Effect create/edit/delete on owned and world items.",
+      "foundryAcceptance": "Effect wizard on an owned item live.",
+      "scope": "M",
+      "simplificationBenefit": "One mutation path; removes 8 probe hits.",
+      "risk": "Medium (effect editor).",
+      "perfImpact": "low",
+      "id": "F-EQP-001"
+    },
+    {
+      "category": "dependency",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "weapon-runtime 5-file static import cycle via canonicalFeatSlug re-export",
+      "affectedFiles": [
+        "scripts/items/weapon-runtime/ability-selector.js",
+        "scripts/items/weapon-runtime/attack-consumer.js",
+        "scripts/items/weapon-runtime/proficiency-resolver.js",
+        "scripts/items/weapon-runtime/talent-identity.js",
+        "scripts/items/weapon-runtime/weapon-runtime-resolver.js"
+      ],
+      "evidence": [
+        "scripts/items/weapon-runtime/ability-selector.js:9",
+        "scripts/items/weapon-runtime/ability-selector.js:18",
+        "scripts/items/weapon-runtime/attack-consumer.js:10",
+        "scripts/items/weapon-runtime/attack-consumer.js:11",
+        "scripts/items/weapon-runtime/attack-consumer.js:14",
+        "scripts/items/weapon-runtime/proficiency-resolver.js:7",
+        "scripts/items/weapon-runtime/talent-identity.js:8",
+        "scripts/items/weapon-runtime/weapon-runtime-resolver.js:10"
+      ],
+      "observed": "ability-selector imports attack-consumer (shapeOfWeapon); attack-consumer imports proficiency-resolver, talent-identity and weapon-runtime-resolver, which import canonicalFeatSlug back from ability-selector (a re-export of utils/canonical-ability-identity.js).",
+      "intendedOwnership": "A-07",
+      "contractRef": "A-07",
+      "proposedSolution": "Import canonicalFeatSlug from scripts/utils/canonical-ability-identity.js in proficiency-resolver and talent-identity; cycle disappears without moving code.",
+      "alternatives": "Move shapeOfWeapon to attack-shape.js.",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "build-census cycle check / existing weapon-runtime tests.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "Removes one of 9 static cycles.",
+      "risk": "Very low.",
+      "perfImpact": "none",
+      "id": "F-EQP-002"
+    },
+    {
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Orphan equipment modules",
+      "affectedFiles": [
+        "scripts/apps/custom-item-dialog.js",
+        "scripts/sheets/v2/character-sheet/inventory-ui.js",
+        "scripts/utils/item-filters.js"
+      ],
+      "evidence": [
+        "scripts/apps/custom-item-dialog.js:30",
+        "scripts/sheets/v2/character-sheet/inventory-ui.js:1",
+        "scripts/utils/item-filters.js:1"
+      ],
+      "observed": "static-proof-no-runtime-path, no tests; custom-item-dialog has a normalizer clone (scalarFormValue) of safe-item-factory/item-defaults. Pack/macro use not found by name grep (verify before delete).",
+      "intendedOwnership": "n/a",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete after owner confirms no macro use (legacy C).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "n/a",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "~1.0k SLOC.",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-EQP-003"
+    },
+    {
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "GearTemplatesEngine write methods unused; engine located in scripts/apps",
+      "affectedFiles": [
+        "scripts/apps/gear-templates-engine.js"
+      ],
+      "evidence": [
+        "scripts/apps/gear-templates-engine.js:116",
+        "scripts/apps/gear-templates-engine.js:137",
+        "scripts/apps/gear-templates-engine.js:156",
+        "scripts/apps/customization/item-customization-workbench.js:611"
+      ],
+      "observed": "applyTemplate/remove write flags.swse.appliedTemplates (ActorEngine for embedded; commented world-item fallback) and record costPaid without charging; no caller. The workbench uses only read methods and commits templates through TE.",
+      "intendedOwnership": "Workbench + TE (A-17, A-10)",
+      "contractRef": "A-10 | A-17",
+      "proposedSolution": "Remove the write methods; move the read-only rules to scripts/engine/customization.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "workbench template tests.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "Removes an unpaid template writer.",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-EQP-004"
+    },
+    {
+      "category": "multiple-writers",
+      "severity": "low",
+      "status": "suspected",
+      "title": "Lightsaber activation written outside the coordinator",
+      "affectedFiles": [
+        "scripts/items/swse-item-sheet.js",
+        "scripts/actors/base/swse-actor-base.js",
+        "scripts/engine/equipment/equipment-state-coordinator.js"
+      ],
+      "evidence": [
+        "scripts/items/swse-item-sheet.js:2474",
+        "scripts/items/swse-item-sheet.js:2482",
+        "scripts/actors/base/swse-actor-base.js:209",
+        "scripts/engine/equipment/equipment-state-coordinator.js:45",
+        "scripts/engine/equipment/equipment-state-coordinator.js:478"
+      ],
+      "observed": "Coordinator owns IGNITE_PATHS during ready-ignite; the item sheet / actor.activateItem write system.activated and emitLight separately. OA-12 keeps activation a separate fact, so this may be intended; not traced whether activateItem checks posture.",
+      "intendedOwnership": "OA-12 single readiness authority",
+      "contractRef": "C-EQP-1 | OA-12",
+      "proposedSolution": "Confirm with owner whether standalone ignite belongs to the coordinator; if yes route through an ignite intent.",
+      "alternatives": "Document as separate activation authority.",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Ignite while stowed is refused (if that is the policy).",
+      "foundryAcceptance": "Ignite/extinguish live.",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-EQP-005"
+    },
+    {
+      "category": "performance",
+      "severity": "low",
+      "status": "suspected",
+      "title": "Encumbrance computed twice per actor prepare",
+      "affectedFiles": [
+        "scripts/actors/v2/character-actor.js",
+        "scripts/engine/effects/modifiers/ModifierEngine.js"
+      ],
+      "evidence": [
+        "scripts/actors/v2/character-actor.js:968",
+        "scripts/engine/effects/modifiers/ModifierEngine.js:1174"
+      ],
+      "observed": "mirrorEncumbrance and ModifierEngine._getEncumbranceModifiers each call calculateEncumbrance (iterates items).",
+      "intendedOwnership": "derived once (A-03)",
+      "contractRef": "A-16",
+      "proposedSolution": "Instrument; if measurable, compute once per prepare and pass the state to ModifierEngine (cache keyed on prepare cycle).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "n/a",
+      "foundryAcceptance": "measure",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "low",
+      "id": "F-EQP-006"
+    },
+    {
+      "category": "oversized-module",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "swse-item-sheet.js mixes effect wizard, activation, token lighting and form handling; prototype-patched",
+      "affectedFiles": [
+        "scripts/items/swse-item-sheet.js",
+        "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js"
+      ],
+      "evidence": [
+        "scripts/items/swse-item-sheet.js:1689",
+        "scripts/items/swse-item-sheet.js:2464",
+        "scripts/items/swse-item-sheet.js:2582",
+        "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js:199"
+      ],
+      "observed": "2,856 lines; another module replaces SWSEItemSheet.prototype._onRender at runtime (A-09).",
+      "intendedOwnership": "A-04, A-09",
+      "contractRef": "A-04 | A-09",
+      "proposedSolution": "Seams: (1) item effect editor controller, (2) item activation service (shield/lightsaber, token light) in engine/equipment, (3) sheet extension hook instead of prototype patch.",
+      "alternatives": "",
+      "dependencies": [
+        "F-EQP-001"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Item sheet render/activation tests.",
+      "foundryAcceptance": "Item sheet live.",
+      "scope": "L",
+      "simplificationBenefit": "Smaller sheet; removes monkey-patch.",
+      "risk": "Medium.",
+      "perfImpact": "low",
+      "id": "F-EQP-007"
+    },
+    {
+      "category": "duplicate-authority",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Dead carrying-capacity rule in progression EquipmentEngine",
+      "affectedFiles": [
+        "scripts/engine/progression/engine/equipment-engine.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/engine/equipment-engine.js:268",
+        "scripts/engine/progression/engine/equipment-engine.js:276",
+        "scripts/utils/math-utils.js:83"
+      ],
+      "observed": "getCarryingCapacity = Str x 10 (no size) and isOverEncumbered have no caller; EncumbranceEngine uses math-utils.calculateCarryingCapacity with size.",
+      "intendedOwnership": "EncumbranceEngine",
+      "contractRef": "A-01 | R-EQP-05",
+      "proposedSolution": "Delete the two methods (progression domain owner).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "n/a",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Very low.",
+      "perfImpact": "none",
+      "id": "F-EQP-008"
+    }
+  ],
+  "multiDomainLeadVerdicts": [
+    {
+      "lead": "attack-bonus",
+      "verdict": "not a duplicate",
+      "note": "ability attack-bonus inputs consumed by combat-roll-math"
+    },
+    {
+      "lead": "damage-formula/damage-application",
+      "verdict": "not a duplicate",
+      "note": "resolveCanonicalDamage resolves the profile; no HP write"
+    },
+    {
+      "lead": "price-computation",
+      "verdict": "distinct prices",
+      "note": "ammo, resource, template costs"
+    },
+    {
+      "lead": "encumbrance",
+      "verdict": "single authority",
+      "note": "F-EQP-006 perf, F-EQP-008 dead copy"
+    }
+  ]
+}

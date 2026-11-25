@@ -2,12 +2,12 @@
  "schema": "swse.v2-contract.validation/1",
  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
  "generator": "tools/architecture-census/assemble-contracts.mjs",
- "sidecars": 18,
- "uniqueIds": 544,
- "evidenceRefsChecked": 1376,
+ "sidecars": 21,
+ "uniqueIds": 623,
+ "evidenceRefsChecked": 1645,
  "evidenceFailures": [],
  "errors": [],
  "warnings": [
-  "domains without contract: force, rolls, equipment, customization, npc-followers, games, houserules, chat, settings-config, data-registries, infrastructure, migration"
+  "domains without contract: rolls, customization, npc-followers, games, houserules, chat, settings-config, data-registries, migration"
  ]
 }

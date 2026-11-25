@@ -1194,6 +1194,117 @@
    "foundry": "not live-verified"
   },
   {
+   "requirement": "R-EQP-01",
+   "domain": "equipment",
+   "responsibility": "Weapon posture and occupancy (single writer)",
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/equipment/equipment-state-coordinator.js :: executeEquipmentIntent",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/equipment-e4c1-wp4-writer-convergence.test.mjs",
+    "tests/equipment-e4c1-wp3a-coordinator.test.mjs"
+   ],
+   "ownerDirectTests": 4,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-EQP-02",
+   "domain": "equipment",
+   "responsibility": "Worn-state (armor/shield) toggle",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/inventory/InventoryEngine.js :: InventoryEngine.toggleEquip",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 13,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-EQP-03",
+   "domain": "equipment",
+   "responsibility": "Weapon runtime profile",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/items/weapon-runtime/index.js :: weapon-runtime",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 61,
+   "ownerCiTests": 360,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-EQP-04",
+   "domain": "equipment",
+   "responsibility": "Armor data SSOT",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/items/armor-data-resolver.js :: resolveArmorData",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 355,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-EQP-05",
+   "domain": "equipment",
+   "responsibility": "Encumbrance",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/encumbrance/EncumbranceEngine.js :: EncumbranceEngine.calculateEncumbrance",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 3,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-EQP-06",
+   "domain": "equipment",
+   "responsibility": "Ammunition",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/inventory/ammo-system.js :: AmmoSystem",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 28,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-EQP-07",
+   "domain": "equipment",
+   "responsibility": "Item sheet presentation",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/items/swse-item-sheet.js :: SWSEItemSheet",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
    "requirement": "R-FEA-01",
    "domain": "feats",
    "responsibility": "Canonical feat content",
@@ -1432,6 +1543,254 @@
    "namedTests": [],
    "ownerDirectTests": 0,
    "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-01",
+   "domain": "force",
+   "responsibility": "Force Point spend mutation",
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "code": "scripts/governance/actor-engine/actor-engine.js :: ActorEngine.spendForcePoints",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/force-point-transaction-integrity.test.mjs"
+   ],
+   "ownerDirectTests": 91,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-02",
+   "domain": "force",
+   "responsibility": "FP spend authorization",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/force/force-points-service.js :: ForcePointsService.authorizeSpend",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/force-v2-03b-transaction-behavior.test.mjs"
+   ],
+   "ownerDirectTests": 7,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-03",
+   "domain": "force",
+   "responsibility": "FP settlement and reconciliation",
+   "status": [
+    "OBSERVED",
+    "FOUNDRY_ACCEPTANCE_REQUIRED"
+   ],
+   "code": "scripts/governance/actor-engine/actor-engine.js :: finalizeForcePointSpend/rollbackForcePointSpend",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/class-force-v2-receipt-reconciliation.test.mjs"
+   ],
+   "ownerDirectTests": 91,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-04",
+   "domain": "force",
+   "responsibility": "FP gain",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/governance/actor-engine/actor-engine.js :: ActorEngine.gainForcePoints",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 91,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-05",
+   "domain": "force",
+   "responsibility": "FP maximum formula",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/data/force-points.js :: calculateMaxForcePointsForBuildPlan (+ ForcePointsService.getMax, no callers)",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 79,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-06",
+   "domain": "force",
+   "responsibility": "Bonus FP pool",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "(none) :: (six builders)",
+   "codeReachability": null,
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-07",
+   "domain": "force",
+   "responsibility": "Dark Side Score read/caps",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/darkside/dsp-engine.js :: DSPEngine",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/dsp-engine-behavior.test.mjs"
+   ],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 372,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-08",
+   "domain": "force",
+   "responsibility": "Dark Side Score mutation",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "(none) :: (7 live writer modules)",
+   "codeReachability": null,
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-09",
+   "domain": "force",
+   "responsibility": "Force power execution",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/force/force-executor.js :: ForceExecutor.executeForcePower",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/force-v2-game-night-integration.test.mjs"
+   ],
+   "ownerDirectTests": 4,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-10",
+   "domain": "force",
+   "responsibility": "Force power lifecycle hooks",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/infrastructure/hooks/force-power-hooks.js :: (module)",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-11",
+   "domain": "force",
+   "responsibility": "Force catalog lookup",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/registries/force-registry.js :: ForceRegistry",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 364,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-12",
+   "domain": "force",
+   "responsibility": "Force Alchemy",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js :: applyResourceCosts",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/class-force-v2-alchemy-atomicity.test.mjs"
+   ],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 8,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-13",
+   "domain": "force",
+   "responsibility": "Force traditions",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/apps/force-tradition/force-tradition-picker.js :: registerForceTraditionPickerHooks",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-14",
+   "domain": "force",
+   "responsibility": "Force power resolution schema v1",
+   "status": [
+    "APPROVED",
+    "UNIMPLEMENTED"
+   ],
+   "code": "scripts/engine/force/force-power-resolution-schema.js :: getForcePowerResolution",
+   "codeReachability": "test-only-import",
+   "namedTests": [
+    "tests/force-power-resolution-schema.test.mjs"
+   ],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 1,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-FRC-15",
+   "domain": "force",
+   "responsibility": "Runtime repairs (patches)",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/engine/force/force-suite-runtime-repairs.js :: registerForceSuiteRuntimeRepairs",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
    "testGap": true,
    "foundry": "not live-verified"
   },
@@ -1930,6 +2289,176 @@
    "namedTests": [],
    "ownerDirectTests": 0,
    "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-INF-01",
+   "domain": "infrastructure",
+   "responsibility": "Composition root",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "index.js :: init/ready hooks",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-INF-02",
+   "domain": "infrastructure",
+   "responsibility": "System settings registration",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/core/settings.js :: registerSystemSettings",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-INF-03",
+   "domain": "infrastructure",
+   "responsibility": "Hook registry",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/infrastructure/hooks/hooks-registry.js :: HooksRegistry",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 1,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-INF-04",
+   "domain": "infrastructure",
+   "responsibility": "Actor/combat/item hook wiring",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/infrastructure/hooks/actor-hooks.js :: registerActorHooks",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-INF-05",
+   "domain": "infrastructure",
+   "responsibility": "v13 document facade routing actor/owned-item writes to ActorEngine",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/core/document-api-v13.js :: patchDocument/createActor/createChatMessage",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-INF-06",
+   "domain": "infrastructure",
+   "responsibility": "Logging",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/utils/logger.js :: SWSELogger",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 15,
+   "ownerCiTests": 426,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-INF-07",
+   "domain": "infrastructure",
+   "responsibility": "Schema read adapters",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/utils/schema-adapters.js :: SchemaAdapters",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/schema-adapters-ability-authority.test.mjs"
+   ],
+   "ownerDirectTests": 6,
+   "ownerCiTests": 385,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-INF-08",
+   "domain": "infrastructure",
+   "responsibility": "Flag scope compatibility bridge",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/utils/flags/swse-flags.js :: installSwseFlagScopeCompatibility",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 354,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-INF-09",
+   "domain": "infrastructure",
+   "responsibility": "Template preload",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/load-templates.js :: preloadHandlebarsTemplates",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-INF-10",
+   "domain": "infrastructure",
+   "responsibility": "World data autoload/clear",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/core/world-data-loader.js :: WorldDataLoader",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-INF-11",
+   "domain": "infrastructure",
+   "responsibility": "Data cache manager",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/core/cache-manager.js :: CacheManager",
+   "codeReachability": "reachable-dynamic",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 51,
    "testGap": true,
    "foundry": "not live-verified"
   },

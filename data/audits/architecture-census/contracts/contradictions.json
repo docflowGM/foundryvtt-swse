@@ -349,6 +349,31 @@
    "domain": "droids"
   },
   {
+   "id": "CR-EQP-01",
+   "existingSource": "docs/architecture/equipment-ecosystem-e3a4-clean-break-posture-contract.md raw/legacy writers row",
+   "claim": "ui/inventory-handlers.js (A9) and ui/weapon-config-dialog.js (A10) are live legacy equip writers",
+   "observed": "files removed; setItemEquipped refuses weapons",
+   "evidence": [
+    "docs/architecture/equipment-ecosystem-e3a4-clean-break-posture-contract.md:70",
+    "scripts/actors/base/swse-actor-base.js:172"
+   ],
+   "status": "CONFLICT",
+   "domain": "equipment"
+  },
+  {
+   "id": "CR-EQP-02",
+   "existingSource": "scripts/items/swse-item-sheet.js header",
+   "claim": "No mutation outside ActorEngine-owned APIs",
+   "observed": "direct ActiveEffect and flag writes on items",
+   "evidence": [
+    "scripts/items/swse-item-sheet.js:7",
+    "scripts/items/swse-item-sheet.js:226",
+    "scripts/items/swse-item-sheet.js:1689"
+   ],
+   "status": "CONFLICT",
+   "domain": "equipment"
+  },
+  {
    "id": "CR-FEA-01",
    "existingSource": "docs/audits/chat-feat-implementation-addendum-2026-07-06.json (purpose, runtimeHomes)",
    "claim": "Batch feats are implemented with a known consumer; runtime homes listed",
@@ -386,6 +411,44 @@
    ],
    "status": "CONFLICT",
    "domain": "feats"
+  },
+  {
+   "id": "CR-FRC-01",
+   "existingSource": "docs/audits/class-force-v2-integration-matrix-2026-11-22.md header and §status",
+   "claim": "branch not for main; main untouched; not authorized for merge",
+   "observed": "audited commit f734b4d is \"Merge integration/class-force-v2-20261122 into main\"",
+   "evidence": [
+    "docs/audits/class-force-v2-integration-matrix-2026-11-22.md:3",
+    "docs/audits/class-force-v2-integration-matrix-2026-11-22.md:14"
+   ],
+   "status": "CONFLICT",
+   "domain": "force"
+  },
+  {
+   "id": "CR-FRC-02",
+   "existingSource": "scripts/data/force-points.js header",
+   "claim": "prestige FP base never downgrades (persistent flag); recalculation in chargen-class.js / levelup-class.js",
+   "observed": "flag writers are in functions with no callers; named trigger files are retired; progression uses the build-plan variant which only reads the flags",
+   "evidence": [
+    "scripts/data/force-points.js:13",
+    "scripts/data/force-points.js:36",
+    "scripts/data/force-points.js:53",
+    "scripts/data/force-points.js:232"
+   ],
+   "status": "CONFLICT",
+   "domain": "force"
+  },
+  {
+   "id": "CR-FRC-03",
+   "existingSource": "tests/class-force-v2-direct-fp-writer-classification.test.mjs header",
+   "claim": "pins every direct Force Point writer",
+   "observed": "bonus pool writers are outside the scan patterns",
+   "evidence": [
+    "tests/class-force-v2-direct-fp-writer-classification.test.mjs:1",
+    "tests/class-force-v2-direct-fp-writer-classification.test.mjs:12"
+   ],
+   "status": "CONFLICT",
+   "domain": "force"
   },
   {
    "id": "CR-GAL-01",
@@ -481,6 +544,42 @@
    ],
    "status": "CONFLICT",
    "domain": "holonet"
+  },
+  {
+   "id": "CR-INF-01",
+   "existingSource": "index.js:216 comment / scripts/core/init.js",
+   "claim": "scripts/core/init.js is dead",
+   "observed": "Agreement on reachability; it and its orphan copy scripts/holonet/scripts/core/init.js still register maxTemplatesPerItem/enableEnhancedMassiveDamage; the copy imports a missing file",
+   "evidence": [
+    "scripts/core/init.js:32",
+    "scripts/holonet/scripts/core/init.js:30",
+    "scripts/holonet/scripts/core/init.js:10"
+   ],
+   "status": "CONFLICT",
+   "domain": "infrastructure"
+  },
+  {
+   "id": "CR-INF-02",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md §3",
+   "claim": "House-rule settings read through HouseRuleService (foundryvtt-swse)",
+   "observed": "index.js registers 5 settings in an unread swse namespace",
+   "evidence": [
+    "index.js:361"
+   ],
+   "status": "CONFLICT",
+   "domain": "infrastructure"
+  },
+  {
+   "id": "CR-INF-03",
+   "existingSource": "scripts/utils/flags/swse-flags.js:10",
+   "claim": "Actors do not need the helper; SWSEV2BaseActor bridges the swse scope",
+   "observed": "Both bridges active for actors",
+   "evidence": [
+    "scripts/utils/flags/swse-flags.js:48",
+    "scripts/actors/base/swse-actor-base.js:463"
+   ],
+   "status": "CONFLICT",
+   "domain": "infrastructure"
   },
   {
    "id": "CR-MEN-01",
