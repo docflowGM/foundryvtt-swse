@@ -2363,19 +2363,21 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3B",
-   "status": "PARTIALLY_COMPLETE_BLOCKED",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": "None needed; remaining work is the deleteCombat gating/batching (behavior change, separate test).",
    "dependencies": [],
    "commits": [
-    "fb4fb109b"
+    "fb4fb109b",
+    "ae31f1396"
    ],
    "tests": [
-    "tests/actor-engine-flag-governance.test.mjs"
+    "tests/actor-engine-flag-governance.test.mjs",
+    "tests/force-encounter-cleanup-originating-client.test.mjs"
    ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "all 16 direct flag writes in force-executor.js now use the governed flag API (recalc:false, old semantics). Remaining executable step (no decision needed): gate the deleteCombat cleanup with the responsible-GM check and batch deletions per actor; it changes which client runs the cleanup, so it needs its own test. Foundry acceptance NOT run."
+   "notes": "all 16 direct flag writes in force-executor.js now use the governed flag API (recalc:false, old semantics). Remaining executable step (no decision needed): gate the deleteCombat cleanup with the responsible-GM check and batch deletions per actor; it changes which client runs the cleanup, so it needs its own test. Foundry acceptance NOT run. | Originating-client + isOwner gate on the deleteCombat cleanup; writes already go through ActorEngine.unsetActorFlag. Per-combatant write batching not done (each key still its own unset). Needs 2-client Foundry check."
   },
   {
    "id": "F-MEN-001",
