@@ -4362,17 +4362,21 @@
    "auditStatus": "confirmed",
    "wave": 5,
    "plannedPhase": "3F",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "F-FEA-003"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "4936025e5"
+   ],
+   "tests": [
+    "tests/feat-normalization-hooks-originating-client.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Option 'minimal' from the finding: userId gate on all 45 listener modules (90 listeners). Consolidation into a single dispatcher not done; the gate removes the multiplied writes. No no-op diff added: each handler already short-circuits when metadata is present. Needs live two-client Foundry check."
   },
   {
    "id": "F-PRG-002",
