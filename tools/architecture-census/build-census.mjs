@@ -46,9 +46,14 @@ const git = (...a) => execFileSync('git', a, { cwd: ROOT, encoding: 'utf8', maxB
 // The audited commit is the last commit that touched anything OUTSIDE the audit's own
 // paths, so committing audit outputs never changes what is being audited.
 const SELF_PREFIXES = ['data/audits/architecture-census/', 'tools/architecture-census/', 'docs/audits/architecture-census/', 'docs/architecture/v2-contracts/'];
-const HEAD = git('log', '-1', '--format=%H', '--', '.', ...SELF_PREFIXES.map(p => `:(exclude)${p}`)).trim();
+// Repository registries that must list the audit's own new evidence files (the Phase 5C
+// classification test requires every data/audits/** file to be classified). Changes to
+// these files only register audit outputs; the census reads them as of the audited commit.
+const REGISTRY_SIDE_EFFECTS = ['data/audits/phase-5c-authority-classification.json', 'docs/audits/phase-5c-authority-classification.md'];
+const EXCLUDE = [...SELF_PREFIXES, ...REGISTRY_SIDE_EFFECTS].map(p => `:(exclude)${p}`);
+const HEAD = git('log', '-1', '--format=%H', '--', '.', ...EXCLUDE).trim();
 {
-  const drift = git('diff', '--name-only', HEAD, '--', '.', ...SELF_PREFIXES.map(p => `:(exclude)${p}`)).trim();
+  const drift = git('diff', '--name-only', HEAD, '--', '.', ...EXCLUDE).trim();
   if (drift) { console.error(`Working tree differs from audited commit ${HEAD.slice(0, 7)} outside audit paths:\n${drift}`); process.exit(3); }
 }
 const ALL_TRACKED = git('ls-tree', '-r', '--name-only', '-z', HEAD).split('\0').filter(Boolean);
@@ -67,6 +72,9 @@ for (const f of FILES) {
   const abs = path.join(ROOT, f);
   let st; try { st = fs.statSync(abs); } catch { sizeOf.set(f, -1); continue; }
   sizeOf.set(f, st.size);
+  if (REGISTRY_SIDE_EFFECTS.includes(f)) {
+    const t = git('show', `${HEAD}:${f}`); content.set(f, t); sizeOf.set(f, Buffer.byteLength(t)); continue;
+  }
   if (isText(f) && st.size < 40_000_000) content.set(f, fs.readFileSync(abs, 'utf8'));
 }
 const sha1 = s => crypto.createHash('sha1').update(s).digest('hex');
