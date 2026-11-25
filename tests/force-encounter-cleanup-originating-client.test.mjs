@@ -25,4 +25,12 @@ assert.equal(calls.length, 0, 'a foreign user\'s combat deletion performs no cle
 await handler(combat([mine, notMine]), {}, 'me');
 assert.ok(calls.some((c) => c.startsWith('a1:')), 'originating client cleans the actors it owns');
 assert.ok(!calls.some((c) => c.startsWith('a2:')), 'actors the user cannot modify are skipped');
+// threshold-engine registers its own deleteCombat listener at import time
+const before = handlers.deleteCombat.length;
+await import('/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js');
+const th = handlers.deleteCombat[before]; assert.ok(th, 'threshold-engine deleteCombat listener registered');
+calls.length = 0;
+await th(combat([mine, notMine]), {}, 'someone-else'); assert.equal(calls.length, 0, 'threshold cleanup ignores a foreign user\'s combat deletion');
+await th(combat([mine, notMine]), {}, 'me');
+assert.deepEqual(calls, ['a1:foundryvtt-swse.damageThresholdExceededThisEncounter'], 'threshold cleanup touches only the owned actor');
 console.log('force-encounter-cleanup-originating-client: ok');

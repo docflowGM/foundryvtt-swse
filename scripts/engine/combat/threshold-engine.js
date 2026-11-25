@@ -45,11 +45,13 @@ import { wornArmorStunThresholdBonus } from "/systems/foundryvtt-swse/scripts/en
 /* -------------------------------------------------------------------------- */
 
 // Clear per-encounter feat flags when combat ends
-Hooks.on('deleteCombat', async (combat) => {
+Hooks.on('deleteCombat', async (combat, _options, userId) => {
+  // Runs on every client; only the originating user's client clears the flags (and only on actors it may modify).
+  if (userId !== undefined && userId !== game.user?.id) return;
   // Clear threshold exceeded flags for Galactic Alliance Military Training feat
   for (const combatant of combat?.combatants || []) {
     const actor = combatant.actor;
-    if (actor) {
+    if (actor && actor.isOwner !== false) {
       await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'damageThresholdExceededThisEncounter', { recalc: false });
     }
   }

@@ -835,11 +835,14 @@ export class SithTalentActions {
       }
     });
 
-    Hooks.on('deleteCombat', async (combat) => {
+    // deleteCombat fires on every client: only the originating user's client cleans up, and only actors it may modify (a restore of
+    // temp HP must not run once per connected client).
+    Hooks.on('deleteCombat', async (combat, _options, userId) => {
+      if (userId !== undefined && userId !== game.user?.id) return;
       try {
         for (const combatant of combat?.combatants ?? []) {
           const actor = combatant?.actor;
-          if (!actor) continue;
+          if (!actor || actor.isOwner === false) continue;
           const power = actor.getFlag?.(NS, 'sithCommander.powerOfHatred') ?? null;
           if (power?.encounterId === combat?.id) {
             const currentTemp = Number(actor?.system?.hp?.temp ?? 0) || 0;
