@@ -263,6 +263,8 @@ export class HPRecomputeHooks {
 
   static _registerActorUpdateHook() {
     Hooks.on("updateActor", async (actor, data, options, userId) => {
+      // Hooks fire on every connected client; only the client whose user made the change recomputes (and writes) HP.
+      if (userId !== undefined && userId !== game.user?.id) return;
       if (!actor || actor.isToken) return;
       if (options?.meta?.guardKey === "hp-recompute") return;
 
@@ -293,9 +295,11 @@ export class HPRecomputeHooks {
   }
 
   static _registerItemHooks() {
-    Hooks.on("createItem", async (item, options) => this._handleItemChange(item, options, "createItem"));
-    Hooks.on("updateItem", async (item, data, options) => this._handleItemChange(item, options, "updateItem"));
-    Hooks.on("deleteItem", async (item, options) => this._handleItemChange(item, options, "deleteItem"));
+    // Originating-client gate: these listeners run on every client and each would issue the same HP write.
+    const mine = (userId) => userId === undefined || userId === game.user?.id;
+    Hooks.on("createItem", async (item, options, userId) => mine(userId) ? this._handleItemChange(item, options, "createItem") : undefined);
+    Hooks.on("updateItem", async (item, data, options, userId) => mine(userId) ? this._handleItemChange(item, options, "updateItem") : undefined);
+    Hooks.on("deleteItem", async (item, options, userId) => mine(userId) ? this._handleItemChange(item, options, "deleteItem") : undefined);
   }
 
   static async _handleItemChange(item, options, source) {
