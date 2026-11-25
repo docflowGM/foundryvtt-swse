@@ -170,7 +170,7 @@ export class ForcePointFeatActions {
       id: `jedi-familiarity-${encounterId}`,
       postChat: context.postChat
     });
-    await actor.setFlag?.('foundryvtt-swse', 'jediFamiliarityUsedThisEncounter', encounterId);
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'jediFamiliarityUsedThisEncounter', encounterId, { recalc: false });
     return result;
   }
 
@@ -211,7 +211,7 @@ export class ForcePointFeatActions {
     const amount = Math.max(1, Number(rule?.amount ?? 1) || 1);
     const result = await ActorEngine.gainForcePoints(actor, amount);
     if (result?.gained > 0) {
-      await actor.setFlag?.('foundryvtt-swse', 'confidentSuccessForcePointGains', { level, count: used + result.gained });
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'confidentSuccessForcePointGains', { level, count: used + result.gained }, { recalc: false });
       if (context.postChat !== false) {
         await postForcePointFeatMessage(actor, 'Confident Success', `<p>${actor.name} gains <strong>${result.gained}</strong> Force Point after successfully learning secret information.</p>`, { source: 'Confident Success', amount: result.gained, level, count: used + result.gained });
       }

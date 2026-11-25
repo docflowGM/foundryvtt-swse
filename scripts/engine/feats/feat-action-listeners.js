@@ -119,7 +119,7 @@ function stayUpAlreadyUsed(actor) {
 
 async function markStayUpUsed(actor) {
   const combatId = activeCombatId();
-  if (combatId) await actor?.setFlag?.('foundryvtt-swse', 'stayUpUsedThisEncounter', combatId);
+  if (combatId) await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'stayUpUsedThisEncounter', combatId, { recalc: false });
 }
 
 export class FeatActionListeners {

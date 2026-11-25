@@ -143,7 +143,7 @@ async function setComboState(actor, state) {
     });
     return;
   }
-  await actor.setFlag?.('foundryvtt-swse', 'attackComboState', state);
+  await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'attackComboState', state, { recalc: false });
 }
 
 function skipPending(state = {}, ruleId = '') {

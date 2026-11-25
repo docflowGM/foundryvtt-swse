@@ -50,7 +50,7 @@ Hooks.on('deleteCombat', async (combat) => {
   for (const combatant of combat?.combatants || []) {
     const actor = combatant.actor;
     if (actor) {
-      await actor.unsetFlag?.('foundryvtt-swse', 'damageThresholdExceededThisEncounter');
+      await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'damageThresholdExceededThisEncounter', { recalc: false });
     }
   }
 });
@@ -595,7 +595,7 @@ export class ThresholdEngine {
     // began, so exactly this receipt is returned; when it did land the attempt stands and the point is finalized (no double charge).
     let marked = false;
     try {
-      await vehicle.setFlag('foundryvtt-swse', 'emergencyPatchUsed', true);
+      await ActorEngine.updateActorFlags(vehicle, 'foundryvtt-swse', 'emergencyPatchUsed', true, { recalc: false });
       marked = true;
     } catch (err) {
       marked = vehicle.getFlag?.('foundryvtt-swse', 'emergencyPatchUsed') === true;
@@ -759,7 +759,7 @@ export class ThresholdEngine {
       if (!actor || actor.type !== 'vehicle') continue;
 
       try {
-        await actor.unsetFlag('foundryvtt-swse', 'emergencyPatchUsed');
+        await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'emergencyPatchUsed', { recalc: false });
       } catch {
         // Flag might not exist; ignore
       }

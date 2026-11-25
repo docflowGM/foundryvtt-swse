@@ -10,12 +10,11 @@
   "exactFunctionCloneGroupsRuntime": 31,
   "compatPatchModules": 24,
   "chatMessageCreateOutsideSwseChat": 42,
-  "runtimeDirectDocumentWriteSites": 291
+  "runtimeDirectDocumentWriteSites": 261
  },
  "perKey": {
   "P-A02": {
    "scripts/items/swse-item-sheet.js": 19,
-   "scripts/engine/force/force-executor.js": 16,
    "scripts/apps/minion-manager.js": 8,
    "scripts/allies/faction-registry-service.js": 6,
    "scripts/data/force-points.js": 6,
@@ -33,9 +32,6 @@
    "scripts/utils/hardening.js": 4,
    "scripts/combat/rolls/damage.js": 3,
    "scripts/engine/combat/SWSEInitiative.js": 3,
-   "scripts/engine/combat/threshold-engine.js": 3,
-   "scripts/engine/crafting/lightsaber-construction-engine.js": 3,
-   "scripts/engine/feats/condition-track-feat-actions.js": 3,
    "scripts/engine/import/npc-template-importer-engine.js": 3,
    "scripts/engine/inventory/ammo-system.js": 3,
    "scripts/engine/mentor/mentor-dialogues.js": 3,
@@ -56,7 +52,6 @@
    "scripts/engine/abilities/active/duration-engine.js": 2,
    "scripts/engine/combat/action/action-economy-persistence.js": 2,
    "scripts/engine/feats/encounter-use-tracker.js": 2,
-   "scripts/engine/feats/force-point-feat-actions.js": 2,
    "scripts/engine/poison/poison-engine.js": 2,
    "scripts/engine/suggestion/AnchorRepository.js": 2,
    "scripts/engine/suggestion/WishlistEngine.js": 2,
@@ -80,8 +75,6 @@
    "scripts/dialogs/entity-dialog/entity-create-browser.js": 1,
    "scripts/domain/vehicles/vehicle-phase4d-scratch-import.js": 1,
    "scripts/engine/combat/fire-state-store.js": 1,
-   "scripts/engine/feats/combat-feat-damage-rule-resolver.js": 1,
-   "scripts/engine/feats/feat-action-listeners.js": 1,
    "scripts/engine/feats/meta-resource-feat-resolver.js": 1,
    "scripts/engine/feats/skill-feat-runtime-patches.js": 1,
    "scripts/engine/import/npc-damage-hydration-hooks.js": 1,

@@ -316,12 +316,12 @@ function patchSecondWindEncounterUsage() {
     if (result?.success && activeCombatId) {
       const rules = MetaResourceFeatResolver.getSecondWindRules(actor);
       const count = beforeCount + 1;
-      await actor.setFlag?.('foundryvtt-swse', 'secondWindEncounterUsed', {
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'secondWindEncounterUsed', {
         combatId: activeCombatId,
         count,
         max: Number(rules.encounterUseCap ?? rules.encounterUses ?? 1) || 1,
         lastUsedAt: Date.now()
-      });
+      }, { recalc: false });
       result.encounterUsesThisEncounter = count;
       result.encounterUseCap = Number(rules.encounterUseCap ?? rules.encounterUses ?? 1) || 1;
     }
