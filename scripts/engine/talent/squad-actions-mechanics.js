@@ -1,3 +1,4 @@
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 /**
  * Squad Actions Mechanics (Followers)
  *
@@ -64,15 +65,12 @@ export default class SquadActionsMechanics {
   }
 
   static async _toChat(actor, title, bodyHtml) {
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `
+    await SWSEChat.postHTML({ actor, content: `
         <div class="swse-squad-actions-card">
           <h3>${title}</h3>
           ${bodyHtml}
         </div>
-      `
-    });
+      ` });
   }
 
   static async openFire(actor, followers = []) {

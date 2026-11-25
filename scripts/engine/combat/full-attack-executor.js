@@ -45,6 +45,7 @@ import {
   collectPlanAnswers,
   FULL_ATTACK_PACKAGES,
 } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal: cost/ammo helpers
@@ -194,18 +195,14 @@ async function _postCombinedCard(actor, sequence, results, target, sequenceId = 
 
   const content = renderFullAttackCardContent(actor, target, sequence.packageType, attackEntries, sequence.breakdown, reactionContextsByAttackInstanceId);
 
-  await ChatMessage.create({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    content,
-    flags: { swse: {
+  await SWSEChat.postHTML({ actor, content, flags: { swse: {
       schemaVersion: FULL_ATTACK_SCHEMA_VERSION,
       fullAttack: true,
       packageType: sequence.packageType,
       sequenceId,
       breakdown: sequence.breakdown,
       attacks: attackEntries.map(({ sequenceId: _s, criticalThreshold: _c, ...rest }) => rest)
-    } },
-  });
+    } } });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

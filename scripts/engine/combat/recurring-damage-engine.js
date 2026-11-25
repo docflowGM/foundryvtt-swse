@@ -1,5 +1,6 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-engine.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 const TURN_TICK_HOOKS = ["combatTurn", "combatTurnChange"];
 const FLAG_PATH = "flags.swse.pendingRecurringDamage";
@@ -304,7 +305,7 @@ export class RecurringDamageEngine {
       instance.removalCondition ? `<p><strong>Ends:</strong> ${escapeHtml(instance.removalCondition)}</p>` : "",
       amount
     ].filter(Boolean).join("");
-    return ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content });
+    return SWSEChat.postHTML({ actor, content });
   }
 }
 

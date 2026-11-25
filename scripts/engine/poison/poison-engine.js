@@ -7,6 +7,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { PoisonRegistry, normalizePoisonKey } from './poison-registry.js';
 import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 const TURN_TICK_HOOKS = ['combatTurn', 'combatTurnChange'];
 
@@ -780,7 +781,7 @@ export class PoisonEngine {
   }
 
   static async _postUtilityChat(actor, content) {
-    return ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content });
+    return SWSEChat.postHTML({ actor, content });
   }
 
   static _actorFromCombatHook(...args) {

@@ -2,6 +2,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { readBonusPool, bonusPoolUpdate, normalizeBonusEntries } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 const NS = 'swse';
 const GUARDIAN_PATH = 'guardianSpirit';
@@ -244,11 +245,7 @@ export class GuardianSpiritActions {
   }
 
   static async _post(actor, title, body) {
-    return ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<section class="swse-chat-card"><header><strong>${esc(title)}</strong></header><p>${esc(body)}</p></section>`,
-      flags: { swse: { guardianSpirit: true } }
-    });
+    return SWSEChat.postHTML({ actor, content: `<section class="swse-chat-card"><header><strong>${esc(title)}</strong></header><p>${esc(body)}</p></section>`, flags: { swse: { guardianSpirit: true } } });
   }
 }
 

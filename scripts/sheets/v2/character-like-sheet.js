@@ -7052,11 +7052,7 @@ const forcePoints = [];
       }
       ui?.notifications?.info?.(`${weapon.name} reloaded by ${result.chargedTo.name ?? 'the second crew member'} (${result.action} action).`);
       try {
-        await ChatMessage.create({
-          speaker: ChatMessage.getSpeaker({ actor: mode.crew }),
-          content: `<section class="swse-chat-card"><header><strong>${mode.crew.name} reloads ${weapon.name}</strong></header><p>${result.action} action by the second crew member; ${result.reload?.message ?? 'reloaded.'}</p></section>`,
-          flags: { swse: { combatAction: 'reload', weaponId: weapon.id, secondCrew: true, chargedTo: result.chargedTo.id } }
-        });
+        await SWSEChat.postHTML({ actor: mode.crew, content: `<section class="swse-chat-card"><header><strong>${mode.crew.name} reloads ${weapon.name}</strong></header><p>${result.action} action by the second crew member; ${result.reload?.message ?? 'reloaded.'}</p></section>`, flags: { swse: { combatAction: 'reload', weaponId: weapon.id, secondCrew: true, chargedTo: result.chargedTo.id } } });
       } catch (err) { console.warn('[SWSE] Failed to post reload chat card:', err); }
       return result;
     }
@@ -7090,11 +7086,7 @@ const forcePoints = [];
 
     ui?.notifications?.info?.(result.message || `${weapon.name} reloaded.`);
     try {
-      await ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        content: `<section class="swse-chat-card"><header><strong>${this.actor.name} reloads ${weapon.name}</strong></header><p>${result.message ?? 'Weapon reloaded.'}</p></section>`,
-        flags: { swse: { combatAction: 'reload', weaponId: weapon.id, workflowContext: context } }
-      });
+      await SWSEChat.postHTML({ actor: this.actor, content: `<section class="swse-chat-card"><header><strong>${this.actor.name} reloads ${weapon.name}</strong></header><p>${result.message ?? 'Weapon reloaded.'}</p></section>`, flags: { swse: { combatAction: 'reload', weaponId: weapon.id, workflowContext: context } } });
     } catch (err) {
       console.warn('[SWSE] Failed to post reload chat card:', err);
     }
@@ -7829,10 +7821,7 @@ const forcePoints = [];
       </section>`;
 
     try {
-      return await ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        content
-      });
+      return await SWSEChat.postHTML({ actor: this.actor, content });
     } catch (err) {
       console.warn('[SWSE] Failed to create manual combat action chat card:', err);
       ui?.notifications?.info?.(`${actionData?.name ?? actionId}: ${actionData?.description ?? actionData?.notes ?? 'Resolve manually.'}`);

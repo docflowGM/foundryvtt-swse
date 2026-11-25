@@ -3,6 +3,7 @@
 import { LocationRegistryService } from '/systems/foundryvtt-swse/scripts/locations/location-registry-service.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { SWSERoll } from '/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js';
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 function text(value, fallback = '') {
   const out = String(value ?? fallback ?? '').trim();
@@ -164,11 +165,7 @@ export class AtlasSurfaceController {
     const gmUsers = game.users?.filter?.(user => user.isGM)?.map(user => user.id) || [];
     const actorName = this.actor?.name || game.user?.name || 'A player';
     const actions = [wantsJob ? 'Job Draft' : '', wantsIntel ? 'Intel Draft' : '', hasRevealLinks ? 'Reveal Links' : ''].filter(Boolean).join(' / ');
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      whisper: gmUsers,
-      content: `<strong>Atlas Lead Uncovered</strong><br>${actorName} revealed <em>${fact.title}</em> at <em>${location.name}</em> with ${skill || 'research'} ${total} vs DC ${dc}.<br>Suggested follow-up: ${actions}. Open GM Locations → Actionable Leads${discovery?.id ? ` (#${discovery.id})` : ''}.`
-    });
+    await SWSEChat.postHTML({ actor: this.actor, content: `<strong>Atlas Lead Uncovered</strong><br>${actorName} revealed <em>${fact.title}</em> at <em>${location.name}</em> with ${skill || 'research'} ${total} vs DC ${dc}.<br>Suggested follow-up: ${actions}. Open GM Locations → Actionable Leads${discovery?.id ? ` (#${discovery.id})` : ''}.`, whisper: gmUsers });
   }
 
   async _refresh(reason = 'atlas-refresh') {
