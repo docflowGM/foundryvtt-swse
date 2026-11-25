@@ -108,10 +108,10 @@
    "kind": "mechanical",
    "files": 36,
    "runtimeModules": 24,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-ROL",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 8,
+   "findings": 5
   },
   {
    "domain": "equipment",
@@ -375,7 +375,6 @@
   }
  ],
  "missingContracts": [
-  "rolls",
   "customization",
   "houserules",
   "chat",

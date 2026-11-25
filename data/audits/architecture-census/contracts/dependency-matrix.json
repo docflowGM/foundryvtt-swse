@@ -428,7 +428,8 @@
    "edges": 20,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "ui-shell",
@@ -507,7 +508,8 @@
    "edges": 17,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "talents",
@@ -763,7 +765,8 @@
    "edges": 12,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "talents",
@@ -1066,7 +1069,8 @@
    "edges": 9,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "talents",
@@ -1489,7 +1493,8 @@
    "edges": 6,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "store-economy",
@@ -1638,7 +1643,8 @@
    "edges": 5,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "talents",
@@ -1807,7 +1813,8 @@
    "edges": 4,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "rolls",
@@ -1815,7 +1822,8 @@
    "edges": 4,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "skills",
@@ -2584,7 +2592,8 @@
    "edges": 2,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "rolls",
@@ -2592,7 +2601,8 @@
    "edges": 2,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "rolls",
@@ -2600,7 +2610,8 @@
    "edges": 2,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "rolls",
@@ -2608,7 +2619,8 @@
    "edges": 2,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "species",
@@ -3376,7 +3388,8 @@
    "edges": 1,
    "proposedLayerFrom": 1,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "settings-config",

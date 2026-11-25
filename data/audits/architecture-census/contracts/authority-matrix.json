@@ -3053,6 +3053,124 @@
    "tests": []
   },
   {
+   "id": "R-ROL-01",
+   "domain": "rolls",
+   "responsibility": "Execute dice formulas",
+   "owner": {
+    "path": "scripts/engine/roll/roll-core.js",
+    "symbol": "RollCore.execute"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-ROL-02",
+   "domain": "rolls",
+   "responsibility": "Formula roll facade without rule math",
+   "owner": {
+    "path": "scripts/engine/roll-engine.js",
+    "symbol": "RollEngine.safeRoll"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-ROL-03",
+   "domain": "rolls",
+   "responsibility": "Roll expression contributions/transforms",
+   "owner": {
+    "path": "scripts/engine/roll/expression/roll-transform-resolver.js",
+    "symbol": "resolveRollTransforms"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/roll-expression-transform-authority.test.mjs"
+   ]
+  },
+  {
+   "id": "R-ROL-04",
+   "domain": "rolls",
+   "responsibility": "Roll configuration dialog model and hooks",
+   "owner": {
+    "path": "scripts/rolls/roll-config.js",
+    "symbol": "showRollModifiersDialog/getSkillTotal"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-ROL-05",
+   "domain": "rolls",
+   "responsibility": "Skill roll entry points",
+   "owner": {
+    "path": "scripts/rolls/skills.js",
+    "symbol": "rollSkill"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/skill-roll-dialog-base-authority.test.mjs"
+   ]
+  },
+  {
+   "id": "R-ROL-06",
+   "domain": "rolls",
+   "responsibility": "Custom skill rolls",
+   "owner": {
+    "path": "scripts/rolls/custom-skill-roller.js",
+    "symbol": "rollCustomSkill"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "behavior-code-verified",
+   "tests": []
+  },
+  {
+   "id": "R-ROL-07",
+   "domain": "rolls",
+   "responsibility": "Roll chat-card rendering",
+   "owner": {
+    "path": "scripts/engine/rolls/swse-roll-engine.js",
+    "symbol": "SWSERollEngine"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-ROL-08",
+   "domain": "rolls",
+   "responsibility": "Force-point add-on in rolls (delegates spend)",
+   "owner": {
+    "path": "scripts/engine/roll/roll-core.js",
+    "symbol": "RollCore.applyForcePointLogic"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
    "id": "R-SKL-01",
    "domain": "skills",
    "responsibility": "Canonical skill definitions and key canonicalization",

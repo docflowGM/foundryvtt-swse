@@ -52,7 +52,7 @@ Per-domain runtime baseline (`*` direct document-write sites = `update/setFlag/u
 | `ui-shell` | presentation | 464 | 179 | 55,411 | 135 | 44 (6,012) | 0 | 105 (59%) | 17 | 69 |
 | `mentor-suggestion` | feature | 568 | 239 | 51,792 | 166 | 69 (10,740) | 2 | 164 (69%) | 27 | 2 |
 | `combat` | mechanical | 431 | 174 | 34,726 | 151 | 14 (2,213) | 5 | 141 (81%) | 25 | 128 |
-| `galactic-profiles` | feature | 211 | 159 | 28,878 | 7 | 2 (275) | **150** | 157 (99%) | 6 | 0 |
+| `galactic-profiles`† | feature | 211 | 159 | 28,878 | 7 | 2 (275) | **150** | 157 (99%) | 6 | 0 |
 | `feats` | mechanical | 720 | 105 | 22,888 | 56 | 49 (9,828) | 0 | 19 (18%) | 22 | 75 |
 | `vehicles` | mechanical | 764 | 119 | 19,968 | 109 | 6 (1,485) | 4 | 100 (84%) | 1 | 66 |
 | `holonet` | feature | 94 | 75 | 18,683 | 65 | 10 (632) | 0 | 47 (63%) | 2 | 50 |
@@ -78,6 +78,8 @@ Per-domain runtime baseline (`*` direct document-write sites = `update/setFlag/u
 | `chat` | infrastructure | 15 | 7 | 1,365 | 6 | 1 (215) | 0 | 4 (57%) | 0 | 8 |
 | `migration` | infrastructure | 31 | 7 | 917 | 1 | 5 (710) | 0 | 1 (14%) | 4 | 6 |
 | `settings-config` | infrastructure | 11 | 4 | 288 | 4 | 0 (0) | 0 | 4 (100%) | 0 | 0 |
+
+† Domain key kept for stability; it holds the GM Datapad procedural generator (`scripts/generation/**`), not Galactic Profiles v3 (see `B-GAL`).
 
 Non-runtime domains: `documentation` 102, `assets` 109, `compendium-packs` 77, `testing` 44, `localization` 25, `repo-config` 16, `dev-tooling` 280 (most tooling is attributed to the domain it audits).
 
@@ -112,7 +114,7 @@ Runtime modules (`index.js` + `scripts/**`, 2,379):
 
 Unreachable modules are graded: `static-proof-no-runtime-path` (no import, no stem mention in any reachable JS/template/data text, no self-registration), `unverified-self-registering` (assigns globals or registers hooks, so it would be live **if** something loaded it), `unverified-name-mentioned-at-runtime`. Totals for orphan + unreachable-cluster modules: 271 static-proof, 132 self-registering, 85 name-mentioned; **79,240 SLOC**. A ten-file random sample of the static-proof grade was re-checked by repository-wide search; none had a runtime consumer.
 
-Largest concentrations of unreachable code: `scripts/generation/**` (the entire Galactic Profiles generator, 150 modules run only by tests), `scripts/engine/feats` (48), `scripts/engine/progression` (42), `scripts/governance/sentinel` (36), `scripts/engine/suggestion` (30), `scripts/apps/progression-framework` (26), `scripts/sheets/v2` (24).
+Largest concentrations of unreachable code: `scripts/generation/**` (150 modules run only by tests: the GM Datapad procedural world/NPC/location generator, a planned integration whose UI and commit phase are not built; see `B-GAL`. **Correction:** an earlier version of this report called it the Galactic Profiles generator; Galactic Profiles v3 runtime code lives in progression and is live), `scripts/engine/feats` (48), `scripts/engine/progression` (42), `scripts/governance/sentinel` (36), `scripts/engine/suggestion` (30), `scripts/apps/progression-framework` (26), `scripts/sheets/v2` (24).
 
 Non-JS reachability: templates 429 runtime-referenced, 43 unreferenced, 44 referenced only from docs/audit data; styles 127 manifest + 34 imported, 67 unreferenced; assets 420 runtime-referenced, 139 unreferenced (1.98 MB), 362 referenced only from docs or audit data. `data/**`: 159 directly referenced, 104 by a specific path pattern, the rest only reachable through two **generic loaders** (`systems/foundryvtt-swse/data/${filename}`), so their runtime use cannot be proven statically.
 

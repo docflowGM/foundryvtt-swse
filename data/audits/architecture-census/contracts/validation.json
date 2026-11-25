@@ -2,12 +2,12 @@
  "schema": "swse.v2-contract.validation/1",
  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
  "generator": "tools/architecture-census/assemble-contracts.mjs",
- "sidecars": 24,
- "uniqueIds": 679,
- "evidenceRefsChecked": 1778,
+ "sidecars": 25,
+ "uniqueIds": 693,
+ "evidenceRefsChecked": 1811,
  "evidenceFailures": [],
  "errors": [],
  "warnings": [
-  "domains without contract: rolls, customization, houserules, chat, settings-config, migration"
+  "domains without contract: customization, houserules, chat, settings-config, migration"
  ]
 }

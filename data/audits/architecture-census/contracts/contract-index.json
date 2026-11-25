@@ -222,6 +222,17 @@
    "findings": 23
   },
   {
+   "contractId": "B-ROL",
+   "domain": "rolls",
+   "doc": "docs/architecture/v2-contracts/B-ROL-rolls.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/rolls.json",
+   "responsibilities": 8,
+   "subsystemContracts": 0,
+   "contradictions": 1,
+   "unimplemented": 0,
+   "findings": 5
+  },
+  {
    "contractId": "B-SKL",
    "domain": "skills",
    "doc": "docs/architecture/v2-contracts/B-SKL-skills.md",

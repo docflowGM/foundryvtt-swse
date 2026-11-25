@@ -1,6 +1,6 @@
 # Unimplemented and unresolved requirement ledger (generated)
 
-Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIRED 93 · UNIMPLEMENTED 35 · DEFERRED_RULES_REVIEW 75. Rules questions are never decided here; they belong in `docs/audits/swse-rules-decisions-pending.md`.
+Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIRED 94 · UNIMPLEMENTED 35 · DEFERRED_RULES_REVIEW 76. Rules questions are never decided here; they belong in `docs/audits/swse-rules-decisions-pending.md`.
 
 | Kind | Domain | ID | Item | Source |
 |---|---|---|---|---|
@@ -141,6 +141,8 @@ Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIR
 | FOUNDRY_ACCEPTANCE_REQUIRED | `progression` | — | Single-step finalize from sheet/Holonet | R-PRG-06 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `progression` | — | Rollback indeterminate path surfaced to the player | scripts/apps/progression-framework/shell/progression-finalizer.js:4028 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `progression` | — | System boots and finalizes Force techniques if squad-actions-init.js stops importing the patch | F-PRG-002 |
+| DEFERRED_RULES_REVIEW | `rolls` | none yet - to be registered by owner (DEFERRED_RULES_REVIEW) | Custom skill bonus uses half of system.level (custom-skill-roller.js:35) while derived skills use actor-core level-split helpers; aligning changes results for multiclass/nonheroic actors | docs/audits/swse-rules-decisions-pending.md |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `rolls` | — | Roll dialogs (skill/UTF/custom skill) after consolidation | scripts/rolls/roll-config.js:746 |
 | DEFERRED_RULES_REVIEW | `skills` | RECON-007 | Trained-skill entitlement under skill house rules | docs/audits/swse-rules-decisions-pending.md |
 | DEFERRED_RULES_REVIEW | `skills` | SPECIES-RD-013 | Species skill reroll result | docs/audits/swse-rules-decisions-pending.md |
 | DEFERRED_RULES_REVIEW | `skills` | SWSE-NPC-RD-002 | Nonheroic class skill Ride | docs/audits/swse-rules-decisions-pending.md |

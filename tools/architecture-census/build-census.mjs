@@ -43,11 +43,15 @@ const { acorn, walk } = AC;
 
 // ---------- repository snapshot ----------
 const git = (...a) => execFileSync('git', a, { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 });
-const HEAD = git('rev-parse', 'HEAD').trim();
-// Census the committed tree of HEAD, but exclude the census outputs themselves so the
-// snapshot is stable whether or not they are committed.
+// The audited commit is the last commit that touched anything OUTSIDE the audit's own
+// paths, so committing audit outputs never changes what is being audited.
 const SELF_PREFIXES = ['data/audits/architecture-census/', 'tools/architecture-census/', 'docs/audits/architecture-census/', 'docs/architecture/v2-contracts/'];
-const ALL_TRACKED = git('ls-files', '-z').split('\0').filter(Boolean);
+const HEAD = git('log', '-1', '--format=%H', '--', '.', ...SELF_PREFIXES.map(p => `:(exclude)${p}`)).trim();
+{
+  const drift = git('diff', '--name-only', HEAD, '--', '.', ...SELF_PREFIXES.map(p => `:(exclude)${p}`)).trim();
+  if (drift) { console.error(`Working tree differs from audited commit ${HEAD.slice(0, 7)} outside audit paths:\n${drift}`); process.exit(3); }
+}
+const ALL_TRACKED = git('ls-tree', '-r', '--name-only', '-z', HEAD).split('\0').filter(Boolean);
 const FILES = ALL_TRACKED.filter(f => !SELF_PREFIXES.some(p => f.startsWith(p))).sort();
 const FILESET = new Set(FILES);
 

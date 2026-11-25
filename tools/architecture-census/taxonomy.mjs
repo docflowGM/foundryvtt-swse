@@ -33,7 +33,7 @@ export const DOMAINS = {
   'droids':                { name: 'Droid mechanics and construction', kind: 'mechanical' },
   'npc-followers':         { name: 'NPCs, nonheroic, followers, minions, allies, beasts', kind: 'mechanical' },
   'mentor-suggestion':     { name: 'Mentor, surveys, suggestion and build analysis', kind: 'feature' },
-  'galactic-profiles':     { name: 'Galactic profiles and world/content generation', kind: 'feature' },
+  'galactic-profiles':     { name: 'GM Datapad procedural world/NPC/location generator (scripts/generation; key kept for stability). Galactic Profiles v3 runtime is attributed to progression', kind: 'feature' },
   'holonet':               { name: 'Holonet messaging and notifications', kind: 'feature' },
   'games':                 { name: 'Holopad games and wagers', kind: 'feature' },
   'houserules':            { name: 'House rules', kind: 'feature' },

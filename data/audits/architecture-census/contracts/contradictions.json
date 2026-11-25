@@ -779,6 +779,18 @@
    "domain": "progression"
   },
   {
+   "id": "CR-ROL-01",
+   "existingSource": "A-18 / OSI",
+   "claim": "No D&D critical confirmation",
+   "observed": "rollCriticalConfirmation and getCriticalConfirmBonus implement confirmation; no callers",
+   "evidence": [
+    "scripts/rolls/roll-config.js:2168",
+    "scripts/combat/utils/combat-utils.js:104"
+   ],
+   "status": "CONFLICT",
+   "domain": "rolls"
+  },
+  {
    "id": "CR-SKL-01",
    "existingSource": "docs/audits/class-phase-6f10-quick-sabotage.md:26; docs/audits/class-phase-6f11-saboteur-convergence.md:18; docs/audits/class-feature-contract-wave-a-matrix.md:13",
    "claim": "Quick Sabotage implemented in MechanicsUses.disableDevice (skill-uses.js)",

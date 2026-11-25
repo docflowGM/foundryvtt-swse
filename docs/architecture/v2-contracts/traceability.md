@@ -2,7 +2,7 @@
 
 Level A invariants trace to probes (see `A-global-invariants.md`). Domain requirements trace to the owning module and its tests. **No requirement is live-Foundry-verified.** Generated at `f734b4d`.
 
-- Domain requirements: 272; with a named test or a direct test of the owner module: 177; **test gaps: 95**.
+- Domain requirements: 280; with a named test or a direct test of the owner module: 184; **test gaps: 96**.
 
 | Requirement | Domain | Code | Reachability | Named tests | Owner direct tests | Owner CI tests (transitive) |
 |---|---|---|---|---:|---:|---:|
@@ -206,6 +206,14 @@ Level A invariants trace to probes (see `A-global-invariants.md`). Domain requir
 | R-PRG-13 | `progression` | `scripts/engine/progression/utils/snapshot-manager.js :: SnapshotManager` | reachable-static | 0 | 21 | 353 |
 | R-PRG-14 | `progression` | `scripts/apps/progression-framework/steps/summary-step.js :: SummaryStep._stageStartingCreditsForStore` | reachable-dynamic | 0 | 1 | 51 |
 | R-PRG-15 ⚠ | `progression` | `scripts/engine/progression/engine/progression-engine.js :: ProgressionEngine` | reachable-static | 0 | 0 | 51 |
+| R-ROL-01 | `rolls` | `scripts/engine/roll/roll-core.js :: RollCore.execute` | reachable-static | 0 | 9 | 353 |
+| R-ROL-02 | `rolls` | `scripts/engine/roll-engine.js :: RollEngine.safeRoll` | reachable-static | 0 | 48 | 353 |
+| R-ROL-03 | `rolls` | `scripts/engine/roll/expression/roll-transform-resolver.js :: resolveRollTransforms` | reachable-static | 1 | 1 | 354 |
+| R-ROL-04 | `rolls` | `scripts/rolls/roll-config.js :: showRollModifiersDialog/getSkillTotal` | reachable-static | 0 | 14 | 353 |
+| R-ROL-05 | `rolls` | `scripts/rolls/skills.js :: rollSkill` | reachable-static | 1 | 2 | 353 |
+| R-ROL-06 ⚠ | `rolls` | `scripts/rolls/custom-skill-roller.js :: rollCustomSkill` | reachable-static | 0 | 0 | 4 |
+| R-ROL-07 | `rolls` | `scripts/engine/rolls/swse-roll-engine.js :: SWSERollEngine` | reachable-static | 0 | 1 | 353 |
+| R-ROL-08 | `rolls` | `scripts/engine/roll/roll-core.js :: RollCore.applyForcePointLogic` | reachable-static | 0 | 9 | 353 |
 | R-SKL-01 ⚠ | `skills` | `scripts/utils/skill-normalization.js :: canonicalizeSkillKey` | reachable-static | 0 | 0 | 364 |
 | R-SKL-02 ⚠ | `skills` | `scripts/engine/progression/skills/skill-registry.js :: SkillRegistry` | reachable-static | 0 | 0 | 366 |
 | R-SKL-03 ⚠ | `skills` | `scripts/engine/skills/SkillRules.js :: SkillRules` | reachable-static | 0 | 0 | 353 |

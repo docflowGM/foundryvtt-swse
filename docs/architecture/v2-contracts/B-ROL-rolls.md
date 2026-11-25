@@ -72,5 +72,5 @@ None beyond R-ROL-01/02.
 
 ## 12. Unimplemented, deferred, acceptance-required
 
-- DEFERRED_RULES_REVIEW (not yet in register; owner to register): custom skill bonus uses ½ of `system.level` (`custom-skill-roller.js:34`) while derived skills use actor-core level-split helpers — aligning them changes results for multiclass/nonheroic actors, which is a rules decision (CLAUDE.md §3).
+- DEFERRED_RULES_REVIEW (not yet in register; owner to register): custom skill bonus uses ½ of `system.level` (`custom-skill-roller.js:35`) while derived skills use actor-core level-split helpers — aligning them changes results for multiclass/nonheroic actors, which is a rules decision (CLAUDE.md §3).
 - FOUNDRY_ACCEPTANCE_REQUIRED: roll dialogs after F-ROL-001.

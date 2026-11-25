@@ -3,9 +3,9 @@
  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
  "generator": "tools/architecture-census/assemble-contracts.mjs",
  "counts": {
-  "FOUNDRY_ACCEPTANCE_REQUIRED": 93,
+  "FOUNDRY_ACCEPTANCE_REQUIRED": 94,
   "UNIMPLEMENTED": 35,
-  "DEFERRED_RULES_REVIEW": 75
+  "DEFERRED_RULES_REVIEW": 76
  },
  "items": [
   {
@@ -966,6 +966,20 @@
    "id": null,
    "item": "System boots and finalizes Force techniques if squad-actions-init.js stops importing the patch",
    "source": "F-PRG-002"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "rolls",
+   "id": "none yet - to be registered by owner (DEFERRED_RULES_REVIEW)",
+   "item": "Custom skill bonus uses half of system.level (custom-skill-roller.js:35) while derived skills use actor-core level-split helpers; aligning changes results for multiclass/nonheroic actors",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "rolls",
+   "id": null,
+   "item": "Roll dialogs (skill/UTF/custom skill) after consolidation",
+   "source": "scripts/rolls/roll-config.js:746"
   },
   {
    "kind": "DEFERRED_RULES_REVIEW",

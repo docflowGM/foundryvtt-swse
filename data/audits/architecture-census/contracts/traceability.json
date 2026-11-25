@@ -3399,6 +3399,132 @@
    "foundry": "not live-verified"
   },
   {
+   "requirement": "R-ROL-01",
+   "domain": "rolls",
+   "responsibility": "Execute dice formulas",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/roll/roll-core.js :: RollCore.execute",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 9,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-ROL-02",
+   "domain": "rolls",
+   "responsibility": "Formula roll facade without rule math",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/roll-engine.js :: RollEngine.safeRoll",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 48,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-ROL-03",
+   "domain": "rolls",
+   "responsibility": "Roll expression contributions/transforms",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/roll/expression/roll-transform-resolver.js :: resolveRollTransforms",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/roll-expression-transform-authority.test.mjs"
+   ],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 354,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-ROL-04",
+   "domain": "rolls",
+   "responsibility": "Roll configuration dialog model and hooks",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/rolls/roll-config.js :: showRollModifiersDialog/getSkillTotal",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 14,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-ROL-05",
+   "domain": "rolls",
+   "responsibility": "Skill roll entry points",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/rolls/skills.js :: rollSkill",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/skill-roll-dialog-base-authority.test.mjs"
+   ],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-ROL-06",
+   "domain": "rolls",
+   "responsibility": "Custom skill rolls",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/rolls/custom-skill-roller.js :: rollCustomSkill",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 4,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-ROL-07",
+   "domain": "rolls",
+   "responsibility": "Roll chat-card rendering",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/rolls/swse-roll-engine.js :: SWSERollEngine",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-ROL-08",
+   "domain": "rolls",
+   "responsibility": "Force-point add-on in rolls (delegates spend)",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/roll/roll-core.js :: RollCore.applyForcePointLogic",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 9,
+   "ownerCiTests": 353,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
    "requirement": "R-SKL-01",
    "domain": "skills",
    "responsibility": "Canonical skill definitions and key canonicalization",

@@ -1,6 +1,6 @@
 # Phase 1 coverage (generated)
 
-Every taxonomy domain has a contract or an explicit disposition. Generated at `f734b4d`. Validation: 24 sidecars, 679 unique IDs, 1778 evidence references checked against the audited commit, **0 unresolved**, 0 errors, 1 warnings (`data/audits/architecture-census/contracts/validation.json`).
+Every taxonomy domain has a contract or an explicit disposition. Generated at `f734b4d`. Validation: 25 sidecars, 693 unique IDs, 1811 evidence references checked against the audited commit, **0 unresolved**, 0 errors, 1 warnings (`data/audits/architecture-census/contracts/validation.json`).
 
 | Domain | Kind | Files | Runtime modules | Disposition | Responsibilities | Findings |
 |---|---|---:|---:|---|---:|---:|
@@ -14,7 +14,7 @@ Every taxonomy domain has a contract or an explicit disposition. Generated at `f
 | `talents` | mechanical | 440 | 36 | contract B-TAL | 13 | 13 |
 | `force` | mechanical | 322 | 55 | contract B-FRC | 15 | 12 |
 | `combat` | mechanical | 431 | 174 | contract B-CMB | 11 | 12 |
-| `rolls` | mechanical | 36 | 24 | MISSING CONTRACT | 0 | 0 |
+| `rolls` | mechanical | 36 | 24 | contract B-ROL | 8 | 5 |
 | `equipment` | mechanical | 377 | 92 | contract B-EQP | 7 | 8 |
 | `customization` | mechanical | 172 | 59 | MISSING CONTRACT | 0 | 0 |
 | `store-economy` | mechanical | 162 | 39 | contract B-STO | 8 | 9 |
