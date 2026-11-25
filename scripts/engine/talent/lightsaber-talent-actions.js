@@ -12,6 +12,7 @@ import { accruedPenalty, withRecordedUse, withCreditedBackUse } from "/systems/f
 import { isWeaponReadied } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { resolveReactionWeapon, selectedReactionModifiers, canonicalLightsaberGroupOf } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-weapon-context.js";
+import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/utils/responsible-gm.js";
 
 // seam for the two roll collaborators (a test injects its own; production uses the real roll dialog and skill roll)
 export const LIGHTSABER_TALENT_IO = { showRollModifiersDialog, rollSkillCheck };
@@ -735,6 +736,7 @@ export class LightsaberTalentActions {
     globalThis.SWSE.__lightsaberTalentActionsRegistered = true;
 
     Hooks.on('combatTurn', async (combat, _prior, current) => {
+      if (!isResponsibleGM()) return; // fires on every client; one client resets the use state
       try {
         const actor = current?.combatant?.actor ?? combat?.combatant?.actor ?? null;
         if (!actor) return;

@@ -9,6 +9,7 @@ import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/forc
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { getTalentAbilityMod as abilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
+import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/utils/responsible-gm.js";
 
 const NS = 'swse';
 
@@ -457,6 +458,7 @@ export class JediPrestigeTalentActions {
     globalThis.SWSE = globalThis.SWSE ?? {};
     globalThis.SWSE.__jediPrestigeTalentActionsRegistered = true;
     Hooks.on('combatTurn', async (combat, prior) => {
+      if (!isResponsibleGM()) return; // fires on every client; the Force Point grant must happen once
       try {
         const priorActor = prior?.combatant?.actor ?? prior?.actor ?? null;
         if (!priorActor) return;

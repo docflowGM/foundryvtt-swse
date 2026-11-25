@@ -10,6 +10,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { normalizeActiveEffectChangeForRuntime } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
+import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/utils/responsible-gm.js";
 
 export class SWSEActiveEffectsManager {
 
@@ -370,6 +371,7 @@ export class SWSEActiveEffectsManager {
     });
 
     Hooks.on('combatTurn', async combat => {
+      if (!isResponsibleGM()) return; // fires on every client; expire effects once
       const actor = combat.combatant?.actor;
       if (!actor) return;
 

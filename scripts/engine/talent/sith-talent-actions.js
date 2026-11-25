@@ -8,6 +8,7 @@ import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 import { getTalentAbilityMod as abilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
 import { isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/utils/responsible-gm.js";
 
 const NS = 'swse';
 
@@ -793,6 +794,7 @@ export class SithTalentActions {
     globalThis.SWSE.__sithTalentActionsRegistered = true;
 
     Hooks.on('combatTurn', async (combat) => {
+      if (!isResponsibleGM()) return; // fires on every client; Affliction damage must be applied once
       try {
         const actor = combat?.combatant?.actor ?? null;
         if (!actor) return;
