@@ -2146,17 +2146,21 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3F",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "None needed for the actor flag reroute. Remaining item writes: choose the governed owned-item flag helper (ActorEngine.updateOwnedItems vs a flag-specific helper).",
    "dependencies": [
     "F-TAL-002 (cross-actor writes need a relay first)"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "5f402f077"
+   ],
+   "tests": [
+    "tests/actor-engine-flag-governance.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "65 actor flag writes in 9 talent files now use ActorEngine.updateActorFlags/unsetActorFlag with recalc:false (old semantics). Remaining: 3 owned-item flag writes (force-adept weapon forceItem x2, TalentNormalizerEngine talentMeta) await the owned-item helper review (3I). F-TAL-002 (cross-actor GM relay) separate. Foundry acceptance NOT run."
   },
   {
    "id": "F-TAL-005",
