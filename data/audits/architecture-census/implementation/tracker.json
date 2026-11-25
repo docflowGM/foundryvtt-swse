@@ -108,10 +108,10 @@
    "auditStatus": "confirmed",
    "wave": 1,
    "plannedPhase": "3C",
-   "status": "OPEN",
+   "status": "OWNER_DECISION_REQUIRED",
    "ownerDecisionRequired": true,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "Party Fund transaction semantics: may ammunition purchases debit the Party Fund outside TransactionEngine as an approved exception, or must the fund become a TransactionEngine-governed ledger (AD-004)? Also covers the Holonet Party Fund ledger.",
    "dependencies": [
     "B-STO store-economy",
     "holonet domain"
@@ -119,7 +119,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "owner-approved Party Fund workflow (V-P6C-19) conflicts with A-10; not changed"
   },
   {
    "id": "F-X-003",
@@ -1972,10 +1972,10 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3C",
-   "status": "OPEN",
+   "status": "OWNER_DECISION_REQUIRED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "See F-STO-004: should Lineage credit awards go through TransactionEngine and SWSEChat?",
    "dependencies": [
     "B-store-economy",
     "B-CHT"
@@ -1983,7 +1983,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "lineage award routing unchanged (idempotency fixed under F-STO-004)"
   },
   {
    "id": "F-CHT-001",
@@ -2015,17 +2015,17 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3C",
-   "status": "OPEN",
+   "status": "OWNER_DECISION_REQUIRED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "Is Force Alchemy's own atomic multi-resource cost + compensation an accepted exception to A-10, or must the credit leg move into TransactionEngine (changing a certified flow)?",
    "dependencies": [
     "B-STO contract"
    ],
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Force Alchemy has its own certified recoverable multi-resource compensation (class-force-v2-alchemy-atomicity tests); not changed"
   },
   {
    "id": "F-NPC-001",
@@ -2188,17 +2188,17 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3C",
-   "status": "OPEN",
+   "status": "OWNER_DECISION_REQUIRED",
    "ownerDecisionRequired": true,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "Should direct sheet credit edits (Add/Subtract credits, raw system.credits fields) become TransactionEngine credit adjustments (ledgered, permission-checked), and may a player edit their own credits?",
    "dependencies": [
     "B-STO store-economy"
    ],
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "sheet credit edits unchanged"
   },
   {
    "id": "F-VEH-002",
@@ -2563,17 +2563,17 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3C",
-   "status": "OPEN",
+   "status": "OWNER_DECISION_REQUIRED",
    "ownerDecisionRequired": true,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "See F-FRC-005.",
    "dependencies": [
     "force domain contract"
    ],
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "same decision as F-FRC-005"
   },
   {
    "id": "F-STO-004",
@@ -2609,15 +2609,15 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3C",
-   "status": "OPEN",
+   "status": "OWNER_DECISION_REQUIRED",
    "ownerDecisionRequired": true,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "See F-UIS-001.",
    "dependencies": [],
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "same decision as F-UIS-001"
   },
   {
    "id": "F-TAL-004",
@@ -3597,15 +3597,15 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3E",
-   "status": "OPEN",
+   "status": "OWNER_DECISION_REQUIRED",
    "ownerDecisionRequired": true,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "Retire the old combat action browser (owner standing instructions list it as a retirement candidate; removes init hook, Token HUD/sidebar launchers, template, styles) or route execution to the combat-feature action router? Confirm the Holopad/Shell Host covers its use case before retiring.",
    "dependencies": [],
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "verified by reading code: combat-action-browser.js:298 calls SWSECombat.runCombatAction; the only definition is in the unregistered aid-another adapter, so clicking an action throws. Not changed."
   },
   {
    "id": "F-FRC-002",
@@ -3639,15 +3639,15 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3C",
-   "status": "OPEN",
+   "status": "OWNER_DECISION_REQUIRED",
    "ownerDecisionRequired": true,
    "rulesQuestion": false,
-   "requiredDecision": null,
+   "requiredDecision": "Choose: (a) move multi-actor trade/payout settlement into a TransactionEngine operation with targeted inverse operations and exact verification, or (b) minimum fix: restore only the fields/items the operation touched, keepId:true, verify. Either needs a live Foundry acceptance run.",
    "dependencies": [],
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "not started: scope L, high risk (credit movement and item identity); fix depends on Foundry keepId behavior that cannot be verified offline"
   },
   {
    "id": "F-NPC-003",
