@@ -18,9 +18,9 @@ assert.doesNotMatch(enhancedRolls, /\bmode === "take10" \? 10 : roll\.dice\[0\]/
 const outcomeCalls = enhancedRolls.match(/AttackOutcomeResolver\.resolve\(/g) || [];
 assert.ok(outcomeCalls.length >= 2, 'Expected AttackOutcomeResolver.resolve() in both rollAutofire() and rollFullAttack().');
 
-// roll-config.js keeps the deprecated definitions (compatibility exports,
-// zero active callers) but they must be clearly marked deprecated.
+// roll-config.js keeps the deprecated analyzeCriticalThreat() export (zero active callers), clearly marked deprecated.
 assert.match(rollConfig, /@deprecated[\s\S]{0,1200}export function analyzeCriticalThreat/);
-assert.match(rollConfig, /@deprecated[\s\S]{0,1200}export async function rollCriticalConfirmation/);
+// F-ROL-002 (V2 realignment 3O): the dead rollCriticalConfirmation() and its hook ids / CRITICAL_CONFIRM bonus helper are deleted (A-18).
+assert.doesNotMatch(rollConfig, /rollCriticalConfirmation|PRE_CRIT_CONFIRM|POST_CRIT_CONFIRM|getCriticalConfirmBonus/, 'the critical-confirmation roll must not exist.');
 
 console.log('Phase 2 critical-confirmation removal guards passed.');

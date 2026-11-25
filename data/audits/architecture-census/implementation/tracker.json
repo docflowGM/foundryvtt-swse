@@ -1119,17 +1119,19 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "F-PRG-006"
    ],
-   "commits": [],
+   "commits": [
+    "pending"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Deleted 10 modules of the legacy static ProgressionEngine stack and 5 unused imports. feature-dispatcher.js kept: tests/class-phase-6d-officer-improviser-unlocks.test.mjs asserts its share_talent_choice mapping (needs a decision on whether that test covers live behavior). Cascade orphans (force-technique-engine, suite-reselection-*, skill-engine/validator, multiclass-policy*) retained as possibly unwired mechanics; ratchet unreachable limit set to 471 with this cascade. progression-event-processor.js is now test-only (see F-STO-004 note)."
   },
   {
    "id": "F-PRG-018",
@@ -1159,17 +1161,21 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "B-ABL F-ABL-004"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "pending"
+   ],
+   "tests": [
+    "tests/phase2-critical-confirmation-removal.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Deleted rollCriticalConfirmation, PRE/POST_CRIT_CONFIRM hook ids, getCriticalConfirmBonus. RULES.CRITICAL_CONFIRM_BONUS rule type left for F-ABL-004 coordination."
   },
   {
    "id": "F-SKL-001",
@@ -1285,15 +1291,17 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": true,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "7756c7d33"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Deleted 1 statically-proven dead file(s); 4 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section."
   },
   {
    "id": "F-CHT-003",
@@ -1384,15 +1392,17 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "7756c7d33"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Deleted 3 statically-proven dead file(s); 10 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section."
   },
   {
    "id": "F-DAT-002",
@@ -1403,15 +1413,17 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "7756c7d33"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Deleted 4 statically-proven dead file(s); 1 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section."
   },
   {
    "id": "F-DRD-004",
@@ -1443,15 +1455,17 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "7756c7d33"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Deleted 1 statically-proven dead file(s); 2 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section."
   },
   {
    "id": "F-EQP-004",
@@ -1521,15 +1535,17 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "7756c7d33"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Deleted 1 statically-proven dead file(s); 2 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section."
   },
   {
    "id": "F-HOL-006",
@@ -1559,15 +1575,17 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "7756c7d33"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Deleted 3 statically-proven dead file(s); 3 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section."
   },
   {
    "id": "F-INF-004",
@@ -1755,15 +1773,17 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "7756c7d33"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Deleted 1 statically-proven dead file(s); 2 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section."
   },
   {
    "id": "F-SPC-003",
@@ -1774,15 +1794,17 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "7756c7d33"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Deleted 1 statically-proven dead file(s); 1 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section."
   },
   {
    "id": "F-STO-007",
@@ -1852,15 +1874,17 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "7756c7d33"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Deleted 10 statically-proven dead file(s); 4 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section."
   },
   {
    "id": "F-VEH-007",
@@ -1892,17 +1916,19 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "F-VEH-001 decision (wizard)"
    ],
-   "commits": [],
+   "commits": [
+    "7756c7d33"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Deleted 1 statically-proven dead file(s); 4 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section."
   },
   {
    "id": "F-X-006",
@@ -2600,13 +2626,14 @@
     "progression domain contract"
    ],
    "commits": [
-    "c957dd1fd"
+    "c957dd1fd",
+    "23affa09b"
    ],
    "tests": [
     "tests/progression-credit-grant-idempotency.test.mjs"
    ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "GRANT_CREDITS (Lineage) idempotency fixed: credits + progressionHistory in one write. Remaining: grants/starting credits still bypass TransactionEngine (equipment-engine.setCredits, summary-step staging); legacy numeric-value branch of _grantCredits is not idempotent. Foundry acceptance NOT run."
+   "notes": "GRANT_CREDITS (Lineage) idempotency fixed: credits + progressionHistory in one write. Remaining: grants/starting credits still bypass TransactionEngine (equipment-engine.setCredits, summary-step staging); legacy numeric-value branch of _grantCredits is not idempotent. Foundry acceptance NOT run. | GRANT_CREDITS idempotency fixed in progression-event-processor.js, but census now shows that module is test-only (its only importer was the deleted legacy ProgressionEngine stack): the fix guards code with no live runtime caller. Whether Lineage awards are wired elsewhere is part of the F-ABL-002 owner decision. TE-routing remains a decision."
   },
   {
    "id": "F-STO-005",

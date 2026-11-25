@@ -1,4 +1,3 @@
-import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 import { AbilityExecutionCoordinator } from "/systems/foundryvtt-swse/scripts/engine/abilities/ability-execution-coordinator.js";
 /**
  * Actor Lifecycle Hooks

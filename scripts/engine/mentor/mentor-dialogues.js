@@ -1,4 +1,3 @@
-import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.data.js";
 import { localizeMentorData, localizeMentorDialogueValue } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-localization.js";
