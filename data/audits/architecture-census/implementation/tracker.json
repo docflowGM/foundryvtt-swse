@@ -3534,13 +3534,14 @@
     "F-TAL-007"
    ],
    "commits": [
-    "15ea0c7cc"
+    "15ea0c7cc",
+    "813f73dd0"
    ],
    "tests": [
     "tests/force-point-bonus-pool-single-authority.test.mjs"
    ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "two flag scopes resolved; 10 readers/9 writers on one module; 2 proven verbatim clone pairs consolidated. Residual: feat-actions bonusPoolEntries (differs for legacy aggregate source label) and Guardian _buildPool (different default note) intentionally retained; direct-FP-writer guard test does not scan the pool (follow-up)"
+   "notes": "two flag scopes resolved; 10 readers/9 writers on one module; 2 proven verbatim clone pairs consolidated. Residual: feat-actions bonusPoolEntries (differs for legacy aggregate source label) and Guardian _buildPool (different default note) intentionally retained; direct-FP-writer guard test does not scan the pool (follow-up) | review follow-up: historical dual-scope reconciliation now uses spend receipts so spent entries are not resurrected from a stale copy (tests 5a-5h); entries without createdAt are kept by design"
   },
   {
    "id": "F-TAL-007",
@@ -3559,7 +3560,8 @@
     "F-FRC-003"
    ],
    "commits": [
-    "15ea0c7cc"
+    "15ea0c7cc",
+    "813f73dd0"
    ],
    "tests": [
     "tests/force-point-bonus-pool-single-authority.test.mjs"
