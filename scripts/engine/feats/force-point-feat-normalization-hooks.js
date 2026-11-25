@@ -190,8 +190,8 @@ async function normalizeForcePointFeat(item, options = {}) {
 }
 
 export function registerForcePointFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeForcePointFeat(item, options));
-  Hooks.on('updateItem', async (item, _data, options) => normalizeForcePointFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeForcePointFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, _data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeForcePointFeat(item, options) : false);
   SWSELogger.log('[ForcePointFeatNormalization] Hooks registered');
 }
 

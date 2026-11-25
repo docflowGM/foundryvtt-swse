@@ -116,8 +116,8 @@ async function normalizeCriticalStrikeFeat(item, options = {}) {
 }
 
 export function registerWeaponCriticalFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeCriticalStrikeFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeCriticalStrikeFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeCriticalStrikeFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeCriticalStrikeFeat(item, options) : false);
   SWSELogger.log('[WeaponCriticalNormalization] Hooks registered');
 }
 

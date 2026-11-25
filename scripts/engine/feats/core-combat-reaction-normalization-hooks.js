@@ -182,8 +182,8 @@ async function normalizeCoreCombatReactionFeat(item, options = {}) {
 }
 
 export function registerCoreCombatReactionNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeCoreCombatReactionFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeCoreCombatReactionFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeCoreCombatReactionFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeCoreCombatReactionFeat(item, options) : false);
   SWSELogger.log('[CoreCombatReactionFeats] Normalization hooks registered');
 }
 

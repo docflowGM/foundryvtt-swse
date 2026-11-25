@@ -158,8 +158,8 @@ async function normalizeAttackOptionsFeat(item, options = {}) {
 }
 
 export function registerAttackOptionsFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeAttackOptionsFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeAttackOptionsFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeAttackOptionsFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeAttackOptionsFeat(item, options) : false);
   SWSELogger.log('[AttackOptionsFeatNormalization] Hooks registered');
 }
 

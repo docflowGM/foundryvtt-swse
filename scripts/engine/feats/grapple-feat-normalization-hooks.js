@@ -287,8 +287,8 @@ async function normalizeGrappleFeat(item, options = {}) {
 }
 
 export function registerGrappleFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeGrappleFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeGrappleFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeGrappleFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeGrappleFeat(item, options) : false);
   SWSELogger.log('[GrappleFeatNormalization] Hooks registered');
 }
 

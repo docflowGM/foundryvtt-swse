@@ -204,8 +204,8 @@ async function normalizeWeaponFoundationFeat(item, options = {}) {
 }
 
 export function registerWeaponFoundationFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeWeaponFoundationFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeWeaponFoundationFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeWeaponFoundationFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeWeaponFoundationFeat(item, options) : false);
   SWSELogger.log('[WeaponFoundationNormalization] Hooks registered');
 }
 

@@ -355,8 +355,8 @@ async function normalizeSkillFeat(item, options = {}) {
 }
 
 export function registerSkillFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeSkillFeat(item, options));
-  Hooks.on('updateItem', async (item, _data, options) => normalizeSkillFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeSkillFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, _data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeSkillFeat(item, options) : false);
   SWSELogger.log('[SkillFeats] Normalization hooks registered');
 }
 

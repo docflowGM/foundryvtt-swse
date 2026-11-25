@@ -96,8 +96,8 @@ async function normalizeAttackNegationFeat(item, options = {}) {
 }
 
 export function registerAttackNegationFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeAttackNegationFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeAttackNegationFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeAttackNegationFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeAttackNegationFeat(item, options) : false);
   SWSELogger.log('[AttackNegationFeatNormalization] Hooks registered');
 }
 

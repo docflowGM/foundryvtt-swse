@@ -89,8 +89,8 @@ async function normalizeMeleeCloseCombatFeat(item, options = {}) {
 }
 
 export function registerMeleeCloseCombatFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeMeleeCloseCombatFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeMeleeCloseCombatFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeMeleeCloseCombatFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeMeleeCloseCombatFeat(item, options) : false);
   SWSELogger.log('[MeleeCloseCombatFeatNormalization] Hooks registered');
 }
 

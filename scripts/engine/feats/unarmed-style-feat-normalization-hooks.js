@@ -386,8 +386,8 @@ async function normalizeUnarmedStyleFeat(item, options = {}) {
 }
 
 export function registerUnarmedStyleFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeUnarmedStyleFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeUnarmedStyleFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeUnarmedStyleFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeUnarmedStyleFeat(item, options) : false);
   SWSELogger.log('[UnarmedStyleNormalization] Hooks registered');
 }
 

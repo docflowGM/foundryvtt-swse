@@ -132,8 +132,8 @@ async function normalizeMartialArtsFeat(item, options = {}) {
 }
 
 export function registerMartialArtsFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeMartialArtsFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeMartialArtsFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeMartialArtsFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeMartialArtsFeat(item, options) : false);
   SWSELogger.log('[MartialArtsNormalization] Hooks registered');
 }
 

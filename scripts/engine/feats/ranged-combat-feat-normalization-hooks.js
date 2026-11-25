@@ -132,8 +132,8 @@ async function normalizeRangedCombatFeat(item, options = {}) {
 }
 
 export function registerRangedCombatFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeRangedCombatFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeRangedCombatFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeRangedCombatFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeRangedCombatFeat(item, options) : false);
   SWSELogger.log('[RangedCombatFeatNormalization] Hooks registered');
 }
 

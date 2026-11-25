@@ -295,8 +295,8 @@ async function normalizeAreaExplosivesFeat(item, options = {}) {
 }
 
 export function registerAreaExplosivesFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeAreaExplosivesFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeAreaExplosivesFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeAreaExplosivesFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeAreaExplosivesFeat(item, options) : false);
   SWSELogger.log('[AreaExplosivesFeatNormalization] Hooks registered');
 }
 

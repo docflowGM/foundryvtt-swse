@@ -130,8 +130,8 @@ async function normalizeSpeciesOriginFeat(item, options = {}) {
 }
 
 export function registerSpeciesOriginFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeSpeciesOriginFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeSpeciesOriginFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeSpeciesOriginFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeSpeciesOriginFeat(item, options) : false);
   SWSELogger.log('[SpeciesOriginFeatNormalization] Hooks registered');
 }
 

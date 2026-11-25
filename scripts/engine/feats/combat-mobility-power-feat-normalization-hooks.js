@@ -134,8 +134,8 @@ async function normalizeCombatMobilityPowerFeat(item, options = {}) {
 }
 
 export function registerCombatMobilityPowerFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeCombatMobilityPowerFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeCombatMobilityPowerFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeCombatMobilityPowerFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeCombatMobilityPowerFeat(item, options) : false);
   SWSELogger.log('[CombatMobilityPowerFeatNormalization] Hooks registered');
 }
 

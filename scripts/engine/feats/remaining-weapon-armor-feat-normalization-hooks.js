@@ -275,11 +275,13 @@ async function normalizeGrandArmyTraining(item, options = {}) {
 }
 
 export function registerRemainingWeaponArmorFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => {
+  Hooks.on('createItem', async (item, options, userId) => {
+    if (!(userId === undefined || userId === game.user?.id)) return false;
     await normalizeChoiceFeat(item, options);
     await normalizeGrandArmyTraining(item, options);
   });
-  Hooks.on('updateItem', async (item, data, options) => {
+  Hooks.on('updateItem', async (item, data, options, userId) => {
+    if (!(userId === undefined || userId === game.user?.id)) return false;
     await normalizeChoiceFeat(item, options);
     await normalizeGrandArmyTraining(item, options);
   });

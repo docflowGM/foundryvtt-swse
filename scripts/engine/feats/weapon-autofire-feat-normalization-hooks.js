@@ -191,8 +191,8 @@ async function normalizeAutofireWeaponFeat(item, options = {}) {
 }
 
 export function registerWeaponAutofireFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeAutofireWeaponFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeAutofireWeaponFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeAutofireWeaponFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeAutofireWeaponFeat(item, options) : false);
   SWSELogger.log('[WeaponAutofireNormalization] Hooks registered');
 }
 
