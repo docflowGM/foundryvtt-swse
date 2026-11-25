@@ -807,7 +807,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Reviewed 3E: combat-ui-behavior-hotfix (680 lines) monkey-patches SWSEChat.postRoll and installs a delegated multi-attack/combat-option click handler. Folding the postRoll patch into SWSEChat and the handler into the combat UI is combat-runtime-risky and its action surface depends on the F-CMB-004 Combat Action Browser decision; deferred until a combat parity test exists (needs live acceptance). No change made."
   },
   {
    "id": "F-CUS-001",

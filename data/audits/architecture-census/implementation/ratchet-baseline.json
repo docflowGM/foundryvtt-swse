@@ -4,7 +4,7 @@
  "seededFromCommit": "b6b7923ad76ffc8eb079f69254eff20f55aaff95",
  "aggregate": {
   "staticImportCycles": 9,
-  "filesInStaticCycles": 47,
+  "filesInStaticCycles": 46,
   "unreachableRuntimeModules": 471,
   "testOnlyRuntimeModules": 180,
   "exactFunctionCloneGroupsRuntime": 30,
