@@ -5,12 +5,12 @@
  "aggregate": {
   "staticImportCycles": 9,
   "filesInStaticCycles": 52,
-  "unreachableRuntimeModules": 488,
+  "unreachableRuntimeModules": 463,
   "testOnlyRuntimeModules": 178,
-  "exactFunctionCloneGroupsRuntime": 31,
+  "exactFunctionCloneGroupsRuntime": 30,
   "compatPatchModules": 24,
   "chatMessageCreateOutsideSwseChat": 42,
-  "runtimeDirectDocumentWriteSites": 191
+  "runtimeDirectDocumentWriteSites": 187
  },
  "perKey": {
   "P-A02": {
