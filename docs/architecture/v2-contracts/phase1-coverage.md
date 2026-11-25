@@ -1,6 +1,6 @@
 # Phase 1 coverage (generated)
 
-Every taxonomy domain has a contract or an explicit disposition. Generated at `f734b4d`. Validation: 27 sidecars, 726 unique IDs, 1887 evidence references checked against the audited commit, **0 unresolved**, 0 errors, 1 warnings (`data/audits/architecture-census/contracts/validation.json`).
+Every taxonomy domain has a contract or an explicit disposition. Generated at `f734b4d`. Validation: 30 sidecars, 756 unique IDs, 1946 evidence references checked against the audited commit, **0 unresolved**, 0 errors, 0 warnings (`data/audits/architecture-census/contracts/validation.json`).
 
 | Domain | Kind | Files | Runtime modules | Disposition | Responsibilities | Findings |
 |---|---|---:|---:|---|---:|---:|
@@ -25,14 +25,14 @@ Every taxonomy domain has a contract or an explicit disposition. Generated at `f
 | `galactic-profiles` | feature | 211 | 167 | contract B-GAL | 9 | 9 |
 | `holonet` | feature | 94 | 75 | contract B-HOL | 12 | 9 |
 | `games` | feature | 115 | 32 | contract B-GAM | 8 | 6 |
-| `houserules` | feature | 43 | 25 | MISSING CONTRACT | 0 | 0 |
+| `houserules` | feature | 43 | 25 | contract B-HRL | 7 | 5 |
 | `chat` | infrastructure | 15 | 7 | contract B-CHT | 5 | 4 |
 | `ui-shell` | presentation | 464 | 179 | contract B-UIS | 13 | 13 |
 | `governance` | infrastructure | 100 | 86 | contract B-GOV | 9 | 7 |
-| `settings-config` | infrastructure | 11 | 4 | MISSING CONTRACT | 0 | 0 |
+| `settings-config` | infrastructure | 11 | 4 | contract B-SET | 4 | 2 |
 | `data-registries` | infrastructure | 54 | 12 | contract B-DAT | 6 | 4 |
 | `infrastructure` | infrastructure | 117 | 110 | contract B-INF | 11 | 8 |
-| `migration` | infrastructure | 31 | 24 | MISSING CONTRACT | 0 | 0 |
+| `migration` | infrastructure | 31 | 24 | contract B-MIG | 3 | 4 |
 | `compat-patches` | infrastructure | 19 | 17 | contract B-PAT | 6 | 7 |
 | `dev-tooling` | tooling | 280 | 23 | non-runtime disposition — Tooling, not a runtime authority. Governed by A-13 (offline evidence only) and by the rule that tools never write production data unless explicitly scoped. Contract: none beyond A-level; individual tools are attributed to the domain they audit. | 0 | 0 |
 | `testing` | tooling | 44 | 0 | non-runtime disposition — Test infrastructure. Tests establish only the behaviour they exercise (A-13). CI runs top-level tests/*.test.mjs only; nested tests are not run. | 0 | 0 |

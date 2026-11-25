@@ -2,7 +2,7 @@
 
 **Contract level:** A (global). **Audited commit:** `f734b4d`. **Status of this document:** each invariant carries its own label. An `APPROVED` invariant is restated from an existing authoritative source and is the single home for that rule; domain contracts reference it by ID instead of restating it. `PROPOSED` items are recommendations awaiting the project owner.
 
-**Measured by:** `tools/architecture-census/probe-invariants.mjs` → `data/audits/architecture-census/contracts/invariant-probes.json`. A probe *hit* is a candidate; Phase 2 (`findings/`) classifies each hit as violation, legitimate exception or false positive.
+**Measured by:** `tools/architecture-census/probe-invariants.mjs` → `data/audits/architecture-census/contracts/invariant-probes.json`. A probe *hit* is a candidate, and probe counts are **lower bounds**: the domain audits found more by reading code (e.g. 108 live monkey-patch sites in 41 modules versus 20 from `P-A09`; 74 chat bypasses versus 43 from `P-A05`, because `createChatMessage` helpers were not probed). Authoritative per-site classification is in the domain sidecars; Phase 2 (`findings/`) classifies each hit as violation, legitimate exception or false positive.
 
 ## Sources of authority (precedence)
 

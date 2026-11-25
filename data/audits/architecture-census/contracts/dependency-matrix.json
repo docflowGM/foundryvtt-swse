@@ -357,7 +357,8 @@
    "edges": 24,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "store-economy",
@@ -1049,7 +1050,8 @@
    "edges": 9,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -1289,7 +1291,8 @@
    "edges": 7,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "houserules",
@@ -1297,7 +1300,8 @@
    "edges": 7,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 4,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -1323,7 +1327,8 @@
    "edges": 7,
    "proposedLayerFrom": 5,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "migration",
@@ -1331,7 +1336,8 @@
    "edges": 7,
    "proposedLayerFrom": 5,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": true
   },
   {
    "from": "npc-followers",
@@ -2009,7 +2015,8 @@
    "edges": 3,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -2553,7 +2560,8 @@
    "edges": 2,
    "proposedLayerFrom": 5,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "migration",
@@ -2561,7 +2569,8 @@
    "edges": 2,
    "proposedLayerFrom": 5,
    "proposedLayerTo": 3,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "npc-followers",
@@ -3226,7 +3235,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "houserules",
@@ -3234,7 +3244,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "houserules",
@@ -3242,7 +3253,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "houserules",
@@ -3250,7 +3262,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 3,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "houserules",
@@ -3258,7 +3271,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 1,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "houserules",
@@ -3266,7 +3280,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "houserules",
@@ -3274,7 +3289,8 @@
    "edges": 1,
    "proposedLayerFrom": 2,
    "proposedLayerTo": 2,
-   "kind": "peer"
+   "kind": "peer",
+   "declaredAllowed": false
   },
   {
    "from": "infrastructure",
@@ -3345,7 +3361,8 @@
    "edges": 1,
    "proposedLayerFrom": 5,
    "proposedLayerTo": 0,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "migration",
@@ -3353,7 +3370,8 @@
    "edges": 1,
    "proposedLayerFrom": 5,
    "proposedLayerTo": 2,
-   "kind": "downward-or-same"
+   "kind": "downward-or-same",
+   "declaredAllowed": false
   },
   {
    "from": "npc-followers",
@@ -3414,7 +3432,8 @@
    "edges": 1,
    "proposedLayerFrom": 0,
    "proposedLayerTo": 2,
-   "kind": "upward"
+   "kind": "upward",
+   "declaredAllowed": false
   },
   {
    "from": "skills",

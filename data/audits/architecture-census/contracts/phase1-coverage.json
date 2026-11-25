@@ -218,10 +218,10 @@
    "kind": "feature",
    "files": 43,
    "runtimeModules": 25,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-HRL",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 7,
+   "findings": 5
   },
   {
    "domain": "chat",
@@ -258,10 +258,10 @@
    "kind": "infrastructure",
    "files": 11,
    "runtimeModules": 4,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-SET",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 4,
+   "findings": 2
   },
   {
    "domain": "data-registries",
@@ -288,10 +288,10 @@
    "kind": "infrastructure",
    "files": 31,
    "runtimeModules": 24,
-   "disposition": "MISSING CONTRACT",
+   "disposition": "contract B-MIG",
    "note": null,
-   "responsibilities": 0,
-   "findings": 0
+   "responsibilities": 3,
+   "findings": 4
   },
   {
    "domain": "compat-patches",
@@ -374,9 +374,5 @@
    "findings": 0
   }
  ],
- "missingContracts": [
-  "houserules",
-  "settings-config",
-  "migration"
- ]
+ "missingContracts": []
 }

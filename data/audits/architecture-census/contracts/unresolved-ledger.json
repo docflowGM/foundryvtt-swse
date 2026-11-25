@@ -3,8 +3,8 @@
  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
  "generator": "tools/architecture-census/assemble-contracts.mjs",
  "counts": {
-  "FOUNDRY_ACCEPTANCE_REQUIRED": 97,
-  "UNIMPLEMENTED": 37,
+  "FOUNDRY_ACCEPTANCE_REQUIRED": 100,
+  "UNIMPLEMENTED": 38,
   "DEFERRED_RULES_REVIEW": 77
  },
  "items": [
@@ -738,6 +738,13 @@
   },
   {
    "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "houserules",
+   "id": null,
+   "item": "Per house rule: GM surface toggle produces the rule effect in its owning rule module",
+   "source": "scripts/ui/shell/gm/GMHouseRulesSurfaceService.js:374"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
    "domain": "infrastructure",
    "id": null,
    "item": "Boot order after moving hotfix registration into index.js",
@@ -854,6 +861,27 @@
    "id": null,
    "item": "Sheet/progression re-render count caused by getSuggestions history writes (F-MEN-006)",
    "source": "this contract"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "migration",
+   "id": "U-MIG-01",
+   "item": "Migration registry / ordered runner with active-GM gate",
+   "source": "index.js:306"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "migration",
+   "id": null,
+   "item": "DSP migration on a real legacy world",
+   "source": "scripts/migration/dark-side-points-migration.js:162"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "migration",
+   "id": null,
+   "item": "Startup migrations with two GMs connected",
+   "source": "index.js:306"
   },
   {
    "kind": "UNIMPLEMENTED",

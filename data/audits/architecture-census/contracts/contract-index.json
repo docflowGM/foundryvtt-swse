@@ -200,6 +200,17 @@
    "findings": 9
   },
   {
+   "contractId": "B-HRL",
+   "domain": "houserules",
+   "doc": "docs/architecture/v2-contracts/B-HRL-houserules.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/houserules.json",
+   "responsibilities": 7,
+   "subsystemContracts": 0,
+   "contradictions": 2,
+   "unimplemented": 0,
+   "findings": 5
+  },
+  {
    "contractId": "B-INF",
    "domain": "infrastructure",
    "doc": "docs/architecture/v2-contracts/B-INF-infrastructure.md",
@@ -220,6 +231,17 @@
    "contradictions": 6,
    "unimplemented": 3,
    "findings": 15
+  },
+  {
+   "contractId": "B-MIG",
+   "domain": "migration",
+   "doc": "docs/architecture/v2-contracts/B-MIG-migration.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/migration.json",
+   "responsibilities": 3,
+   "subsystemContracts": 0,
+   "contradictions": 2,
+   "unimplemented": 1,
+   "findings": 4
   },
   {
    "contractId": "B-NPC",
@@ -253,6 +275,17 @@
    "contradictions": 1,
    "unimplemented": 0,
    "findings": 5
+  },
+  {
+   "contractId": "B-SET",
+   "domain": "settings-config",
+   "doc": "docs/architecture/v2-contracts/B-SET-settings-config.md",
+   "sidecar": "data/audits/architecture-census/contracts/domains/settings-config.json",
+   "responsibilities": 4,
+   "subsystemContracts": 0,
+   "contradictions": 0,
+   "unimplemented": 0,
+   "findings": 2
   },
   {
    "contractId": "B-SKL",

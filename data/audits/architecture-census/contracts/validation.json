@@ -2,12 +2,10 @@
  "schema": "swse.v2-contract.validation/1",
  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
  "generator": "tools/architecture-census/assemble-contracts.mjs",
- "sidecars": 27,
- "uniqueIds": 726,
- "evidenceRefsChecked": 1887,
+ "sidecars": 30,
+ "uniqueIds": 756,
+ "evidenceRefsChecked": 1946,
  "evidenceFailures": [],
  "errors": [],
- "warnings": [
-  "domains without contract: houserules, settings-config, migration"
- ]
+ "warnings": []
 }

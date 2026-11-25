@@ -1,0 +1,398 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-HRL",
+  "domain": "houserules",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "HouseRuleService is the approved single house-rule read path and is widely used; two engine reads bypass it. The old V1 house-rule initializer and its 13 companion modules are unreachable (their hooks never install), with live rule modules and the GM House Rules surface apparently superseding them; defaults are declared three times, and ENGINE-ARCHITECTURE documents API names that do not exist.",
+  "responsibilities": [
+    {
+      "id": "R-HRL-01",
+      "responsibility": "House-rule read/write API",
+      "owner": {
+        "path": "scripts/engine/system/HouseRuleService.js",
+        "symbol": "HouseRuleService"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/system/HouseRuleService.js:102",
+        "scripts/engine/system/HouseRuleService.js:115",
+        "scripts/engine/system/HouseRuleService.js:134",
+        "scripts/engine/system/HouseRuleService.js:147"
+      ],
+      "tests": [],
+      "notes": "ENGINE-ARCH \u00a73"
+    },
+    {
+      "id": "R-HRL-02",
+      "responsibility": "Default values",
+      "owner": {
+        "path": "scripts/utils/settings-defaults.js",
+        "symbol": "SETTINGS_DEFAULTS"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/utils/settings-defaults.js:115",
+        "scripts/engine/system/HouseRuleService.js:14"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-HRL-03",
+      "responsibility": "House-rule setting registration",
+      "owner": {
+        "path": "scripts/houserules/houserule-settings.js",
+        "symbol": "registerHouseruleSettings"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/houserules/houserule-settings.js:17",
+        "scripts/core/settings.js:673"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-HRL-04",
+      "responsibility": "Manifest for GM house-rules surface",
+      "owner": {
+        "path": "scripts/houserules/houserules-manifest.js",
+        "symbol": "HOUSERULE_MANIFEST"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/ui/shell/gm/GMHouseRulesSurfaceService.js:8"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-HRL-05",
+      "responsibility": "House-rule feat/talent grants",
+      "owner": {
+        "path": "scripts/houserules/houserule-feat-grants.js",
+        "symbol": "HouseRuleFeatGrants"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/houserules/houserule-feat-grants.js:167",
+        "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:466"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-HRL-06",
+      "responsibility": "Recovery/status-effect helpers for GM tools",
+      "owner": {
+        "path": "scripts/houserules/houserule-recovery.js",
+        "symbol": "RecoveryMechanics.performRecovery"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/holonet/subsystems/gm-combat-recovery-service.js:414",
+        "scripts/holonet/subsystems/gm-combat-recovery-service.js:790"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-HRL-07",
+      "responsibility": "Class tree access overrides",
+      "owner": {
+        "path": "scripts/settings/house-rules.js",
+        "symbol": "registerHouseRuleSettings"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/core/settings.js:676"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "HouseRuleService.get",
+      "path": "scripts/engine/system/HouseRuleService.js",
+      "line": 102,
+      "consumers": 76,
+      "contract": ""
+    },
+    {
+      "symbol": "HouseRuleService.isEnabled",
+      "path": "scripts/engine/system/HouseRuleService.js",
+      "line": 115,
+      "consumers": 76,
+      "contract": ""
+    },
+    {
+      "symbol": "HouseRuleService.set",
+      "path": "scripts/engine/system/HouseRuleService.js",
+      "line": 147,
+      "consumers": 76,
+      "contract": ""
+    },
+    {
+      "symbol": "isGrantEnabled",
+      "path": "scripts/houserules/house-rule-grant-table.js",
+      "line": 1,
+      "consumers": 7,
+      "contract": ""
+    },
+    {
+      "symbol": "HouseRuleFeatGrants",
+      "path": "scripts/houserules/houserule-feat-grants.js",
+      "line": 167,
+      "consumers": 4,
+      "contract": ""
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "infrastructure",
+      "ActorEngine (grant writes)"
+    ],
+    "prohibited": [
+      "house-rule reads via game.settings in engines (A-06)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/progression/prerequisites/legacy-prereq-registry.js",
+        "to": "game.settings athleticsConsolidation",
+        "evidence": "scripts/engine/progression/prerequisites/legacy-prereq-registry.js:89"
+      },
+      {
+        "from": "scripts/engine/progression/skills/skill-registry.js",
+        "to": "game.settings athleticsConsolidation",
+        "evidence": "scripts/engine/progression/skills/skill-registry.js:85"
+      }
+    ]
+  },
+  "subsystemContracts": [],
+  "contradictions": [
+    {
+      "id": "CR-HRL-01",
+      "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md \u00a73",
+      "claim": "API is getRule/isRuleEnabled/getRuleVariant",
+      "observed": "Methods are get/isEnabled/getString/getNumber/getBoolean/set",
+      "evidence": [
+        "docs/architecture/ENGINE-ARCHITECTURE.md:53",
+        "scripts/engine/system/HouseRuleService.js:115"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-HRL-02",
+      "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md \u00a73 (global CR-06)",
+      "claim": "No game.settings.get in engines",
+      "observed": "2 real house-rule reads; 6 of 8 probe hits are comments",
+      "evidence": [
+        "scripts/engine/progression/skills/skill-registry.js:85",
+        "scripts/engine/combat/ConditionEngine.js:13"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [],
+  "deferredRules": [],
+  "foundryAcceptance": [
+    {
+      "item": "Per house rule: GM surface toggle produces the rule effect in its owning rule module",
+      "source": "scripts/ui/shell/gm/GMHouseRulesSurfaceService.js:374"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-HRL-001",
+      "category": "dead-code",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "14 unreachable house-rule modules: superseded V1 initializer, menus, presets and app",
+      "affectedFiles": [
+        "scripts/houserules/houserule-menus.js",
+        "scripts/houserules/houserule-presets.js",
+        "scripts/houserules/houserule-healing.js",
+        "scripts/apps/house-rules-app.js",
+        "scripts/houserules/houserules-data.js",
+        "scripts/houserules/houserule-mechanics.js",
+        "scripts/houserules/houserule-healing-skill-integration.js",
+        "scripts/houserules/houserule-actor-enhancements.js",
+        "scripts/houserules/houserules-config.js",
+        "scripts/houserules/houserule-skill-training.js",
+        "scripts/houserules/houserule-flanking.js",
+        "scripts/houserules/houserule-block-mechanic.js",
+        "scripts/houserules/houserule-condition-track.js",
+        "scripts/houserules/houserule-grapple.js"
+      ],
+      "evidence": [
+        "scripts/houserules/houserule-mechanics.js:38",
+        "scripts/houserules/houserule-mechanics.js:48",
+        "scripts/houserules/houserule-mechanics.js:56",
+        "scripts/houserules/houserule-feat-grants.js:33",
+        "scripts/houserules/houserule-status-effects.js:129"
+      ],
+      "observed": "HouseruleMechanics.initialize (orphan) was the only installer of house-rule hooks (feat grants on setting change/createActor, recovery on rest, status effects on updateActor, flanking, skill training, healing integration, block, condition track, grapple). Current settings are read by live rule modules (CombatRules, SkillRules, ForceRules, ConditionTrackRules read flankingEnabled, criticalHitVariant, deathSystem, feintSkill, blockMechanicalAlternative, conditionTrackCap), and the GM UI is GMHouseRulesSurfaceService, so the orphan cluster appears superseded. Whether every exposed setting has a live effect was not traced (suspected per rule). houserule-grapple is test-only.",
+      "intendedOwnership": "Each exposed house rule has exactly one live implementation in its owning rule module.",
+      "contractRef": "A-09; R-HRL-03",
+      "proposedSolution": "Build a per-setting table (setting key -> live reader module) from the manifest; delete the orphan cluster (legacy C) for settings with a live reader; list settings with no live reader as UNIMPLEMENTED for the owner (do not silently drop or invent behaviour).",
+      "alternatives": "",
+      "dependencies": [
+        "combat/skills/force contracts"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Census test: every manifest key has >=1 live reader outside houserules/ and ui.",
+      "foundryAcceptance": "Toggle-to-effect checks per rule.",
+      "scope": "M",
+      "simplificationBenefit": "~2.6k SLOC removed; clear house-rule ownership.",
+      "risk": "Medium: some toggles may currently do nothing.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-HRL-002",
+      "category": "bypass-engine",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "A-06: two live house-rule reads bypass HouseRuleService; six probe hits are comments",
+      "affectedFiles": [
+        "scripts/engine/progression/prerequisites/legacy-prereq-registry.js",
+        "scripts/engine/progression/skills/skill-registry.js",
+        "scripts/engine/skill-challenges/SkillChallengeStore.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/prerequisites/legacy-prereq-registry.js:89",
+        "scripts/engine/progression/skills/skill-registry.js:85",
+        "scripts/engine/skill-challenges/SkillChallengeStore.js:62",
+        "scripts/engine/combat/ConditionEngine.js:13",
+        "scripts/engine/progression/ProgressionEngineV2.js:14",
+        "scripts/engine/combat/SecondWindEngine.js:8"
+      ],
+      "observed": "athleticsConsolidation read twice via game.settings.get with try/catch; SkillChallengeStore reads its own data setting (not a house rule - exception candidate). ConditionEngine/ProgressionEngineV2/SecondWindEngine hits are doc comments.",
+      "intendedOwnership": "House-rule reads via HouseRuleService.",
+      "contractRef": "A-06",
+      "proposedSolution": "Replace both athleticsConsolidation reads with HouseRuleService.isEnabled; document SkillChallengeStore as a non-house-rule data setting; teach the probe to skip comments.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Unit test for skill registry with fake HouseRuleService.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-HRL-003",
+      "category": "duplicate-schema-interpretation",
+      "severity": "low",
+      "status": "suspected",
+      "title": "House-rule defaults declared in three places",
+      "affectedFiles": [
+        "scripts/utils/settings-defaults.js",
+        "scripts/houserules/houserule-settings.js",
+        "scripts/houserules/houserules-manifest.js"
+      ],
+      "evidence": [
+        "scripts/utils/settings-defaults.js:115",
+        "scripts/houserules/houserule-settings.js:494",
+        "scripts/houserules/houserules-manifest.js:358"
+      ],
+      "observed": "Sampled keys agree (e.g. criticalHitVariant default standard in all three); no test enforces parity across the three.",
+      "intendedOwnership": "One declaration from which registration, defaults and manifest derive.",
+      "contractRef": "A-01",
+      "proposedSolution": "Generate registration + defaults from the manifest (or add a parity test first).",
+      "alternatives": "",
+      "dependencies": [
+        "B-INF F-INF-003"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Parity test over all keys.",
+      "foundryAcceptance": "None.",
+      "scope": "M",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-HRL-004",
+      "category": "bypass-engine",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Direct effect.setFlag inside an uninstalled hook (latent)",
+      "affectedFiles": [
+        "scripts/houserules/houserule-status-effects.js"
+      ],
+      "evidence": [
+        "scripts/houserules/houserule-status-effects.js:298",
+        "scripts/houserules/houserule-status-effects.js:129"
+      ],
+      "observed": "Duration decrement writes owned AE flags directly; the updateActor hook is installed only by orphan houserule-mechanics, and it is not user-gated (would run on every client).",
+      "intendedOwnership": "AE writes via ActorEngine; one client acts.",
+      "contractRef": "A-02",
+      "proposedSolution": "If revived, route via ActorEngine.updateActiveEffects and gate to the active GM; otherwise delete with F-HRL-001.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None today.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-HRL-005",
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "ENGINE-ARCHITECTURE \u00a73 documents a non-existent HouseRuleService API",
+      "affectedFiles": [
+        "docs/architecture/ENGINE-ARCHITECTURE.md"
+      ],
+      "evidence": [
+        "docs/architecture/ENGINE-ARCHITECTURE.md:53"
+      ],
+      "observed": "See CR-HRL-01.",
+      "intendedOwnership": "",
+      "contractRef": "A-06; A-P2",
+      "proposedSolution": "Correct the doc to the real API or reference this contract.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None.",
+      "perfImpact": "none"
+    }
+  ]
+}

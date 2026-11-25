@@ -1,0 +1,263 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-MIG",
+  "domain": "migration",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "Only one runtime migration (Dark Side Points) is live, run with the Force abilityMeta repair at ready by any GM client; six runtime migrations are unreachable, there is no migration registry, and docs/migrations/readme.md lists migrations that do not exist.",
+  "responsibilities": [
+    {
+      "id": "R-MIG-01",
+      "responsibility": "Dark Side Points migration",
+      "owner": {
+        "path": "scripts/migration/dark-side-points-migration.js",
+        "symbol": "migrateDarkSidePoints"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/migration/dark-side-points-migration.js:24",
+        "scripts/migration/dark-side-points-migration.js:162",
+        "scripts/migration/dark-side-points-migration.js:202",
+        "scripts/migration/dark-side-points-migration.js:222"
+      ],
+      "tests": [
+        "tests/dsp-migration-behavior.test.mjs",
+        "tests/dsp-migration-consolidation.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-MIG-02",
+      "responsibility": "Startup migration orchestration (GM only)",
+      "owner": {
+        "path": "index.js",
+        "symbol": "ready hook"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "index.js:306",
+        "index.js:309",
+        "index.js:314"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-MIG-03",
+      "responsibility": "Per-migration version records",
+      "owner": {
+        "path": "scripts/migration/dark-side-points-migration.js",
+        "symbol": "HouseRuleService.set(SETTING_KEY)"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/migration/dark-side-points-migration.js:222"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "migrateDarkSidePoints",
+      "path": "scripts/migration/dark-side-points-migration.js",
+      "line": 161,
+      "consumers": 3,
+      "contract": "GM only; idempotent; version-gated"
+    },
+    {
+      "symbol": "MIGRATION_VERSION",
+      "path": "scripts/migration/dark-side-points-migration.js",
+      "line": 24,
+      "consumers": 3,
+      "contract": ""
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "ActorEngine",
+      "HouseRuleService/SettingsHelper",
+      "infrastructure"
+    ],
+    "prohibited": [
+      "direct document writes",
+      "rule changes"
+    ],
+    "observedViolations": []
+  },
+  "subsystemContracts": [],
+  "contradictions": [
+    {
+      "id": "CR-MIG-01",
+      "existingSource": "docs/migrations/readme.md Completed Migrations",
+      "claim": "Five scripts run automatically on world load",
+      "observed": "None of them exists",
+      "evidence": [
+        "docs/migrations/readme.md:28",
+        "docs/migrations/readme.md:56"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-MIG-02",
+      "existingSource": "docs/migrations/readme.md:125",
+      "claim": "ActorEngine at scripts/actors/engine/actor-engine.js",
+      "observed": "Path does not exist (global CR-01)",
+      "evidence": [
+        "docs/migrations/readme.md:125"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-MIG-01",
+      "item": "Migration registry / ordered runner with active-GM gate",
+      "source": "index.js:306",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [],
+  "foundryAcceptance": [
+    {
+      "item": "DSP migration on a real legacy world",
+      "source": "scripts/migration/dark-side-points-migration.js:162"
+    },
+    {
+      "item": "Startup migrations with two GMs connected",
+      "source": "index.js:306"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-MIG-001",
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Unreachable runtime migrations",
+      "affectedFiles": [
+        "scripts/migration/armor-system-migration-v4.js",
+        "scripts/migration/weapon-talents-migration.js",
+        "scripts/migrations/phase5-compendium-heal.js",
+        "scripts/migration/weapon-properties-migration.js",
+        "scripts/migrations/json-backed-ids-migration.js",
+        "scripts/migration/migrate-force-powers-type.js"
+      ],
+      "evidence": [
+        "scripts/migration/armor-system-migration-v4.js:128",
+        "scripts/migrations/json-backed-ids-migration.js:1",
+        "scripts/migration/dark-side-points-migration.js:17"
+      ],
+      "observed": "No importer; json-backed-ids-migration is named only in a comment of the DSP migration. Their data shapes may still exist in old worlds.",
+      "intendedOwnership": "Migrations either registered in a runner or archived.",
+      "contractRef": "A-09",
+      "proposedSolution": "Owner decides per migration whether legacy worlds still need it (class E/F); if not, delete (class C). Do not delete without confirming the earliest supported world version.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Full CI.",
+      "foundryAcceptance": "Legacy world load.",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Medium if a needed migration is removed.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-MIG-002",
+      "category": "multiple-writers",
+      "severity": "medium",
+      "status": "suspected",
+      "title": "Startup migrations gated on isGM, not the active GM",
+      "affectedFiles": [
+        "index.js",
+        "scripts/migration/dark-side-points-migration.js"
+      ],
+      "evidence": [
+        "index.js:306",
+        "scripts/migration/dark-side-points-migration.js:162",
+        "scripts/migration/dark-side-points-migration.js:222"
+      ],
+      "observed": "Every connected GM client runs autoLoad, abilityMeta repair and DSP migration at ready; the version setting is written after the loop, so two GMs loading together can both apply the migration. Compute is idempotent, so the likely effect is duplicate writes, not corruption - not verified.",
+      "intendedOwnership": "Exactly one client (game.users.activeGM) runs world migrations.",
+      "contractRef": "A-02 (multiple writers); OSI runtime-risk",
+      "proposedSolution": "Gate on game.user === game.users.activeGM (as houserule-feat-grants canWriteGrants does) in a single migration runner.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Unit test with two fake GM users.",
+      "foundryAcceptance": "Two GMs connecting simultaneously.",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-MIG-003",
+      "category": "unimplemented",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "No migration registry; flag-namespace migration has no home",
+      "affectedFiles": [
+        "index.js"
+      ],
+      "evidence": [
+        "index.js:309",
+        "index.js:314"
+      ],
+      "observed": "Migrations are ad-hoc calls in index.js, each with its own version setting; F-ACT-009/F-PAT-005 need a flags.swse -> foundryvtt-swse migration with nowhere to register it.",
+      "intendedOwnership": "One ordered migration runner.",
+      "contractRef": "A-09",
+      "proposedSolution": "Introduce a small registry (id, version, run) executed by the active GM in order.",
+      "alternatives": "",
+      "dependencies": [
+        "B-ACT F-ACT-009"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Runner unit tests.",
+      "foundryAcceptance": "Legacy world.",
+      "scope": "M",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-MIG-004",
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "docs/migrations/readme.md describes non-existent migrations",
+      "affectedFiles": [
+        "docs/migrations/readme.md"
+      ],
+      "evidence": [
+        "docs/migrations/readme.md:28",
+        "docs/migrations/readme.md:125"
+      ],
+      "observed": "See CR-MIG-01/02.",
+      "intendedOwnership": "",
+      "contractRef": "A-P2",
+      "proposedSolution": "Mark the readme historical and link this contract; do not delete.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None.",
+      "perfImpact": "none"
+    }
+  ]
+}

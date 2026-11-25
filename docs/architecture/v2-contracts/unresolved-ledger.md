@@ -1,6 +1,6 @@
 # Unimplemented and unresolved requirement ledger (generated)
 
-Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIRED 97 · UNIMPLEMENTED 37 · DEFERRED_RULES_REVIEW 77. Rules questions are never decided here; they belong in `docs/audits/swse-rules-decisions-pending.md`.
+Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIRED 100 · UNIMPLEMENTED 38 · DEFERRED_RULES_REVIEW 77. Rules questions are never decided here; they belong in `docs/audits/swse-rules-decisions-pending.md`.
 
 | Kind | Domain | ID | Item | Source |
 |---|---|---|---|---|
@@ -108,6 +108,7 @@ Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIR
 | FOUNDRY_ACCEPTANCE_REQUIRED | `holonet` | — | Credit/item/asset trades including forced rollback; job payouts; Party Fund contribution/payout | OSI runtime-risk areas (trade/store, credit movement) |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `holonet` | — | Emitter notifications (droid/ship/follower HP) after F-HOL-004 fix | this contract |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `holonet` | — | Socket relay of GM-authority actions from a player client | this contract |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `houserules` | — | Per house rule: GM surface toggle produces the rule effect in its owning rule module | scripts/ui/shell/gm/GMHouseRulesSurfaceService.js:374 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `infrastructure` | — | Boot order after moving hotfix registration into index.js | index.js:91 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `infrastructure` | — | Foundry v13 acceptance of settings namespace 'swse' | index.js:361 |
 | UNIMPLEMENTED | `mentor-suggestion` | U-MEN-01 | Certified answer-to-tag crosswalk for survey responses | docs/design/mentor-survey-v2/01-SHARED-ARCHITECTURE-CONTRACT.md §9 (SV-16) |
@@ -125,6 +126,9 @@ Aggregated from domain contracts at `f734b4d`. Counts: FOUNDRY_ACCEPTANCE_REQUIR
 | FOUNDRY_ACCEPTANCE_REQUIRED | `mentor-suggestion` | — | Entire Mentor Survey V2 live pass (NOT PERFORMED) | docs/design/mentor-survey-v2/20-FOUNDRY-ACCEPTANCE-CHECKLIST.md:3 |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `mentor-suggestion` | — | Confirm Foundry rejects flag scope 'swse' (F-MEN-003) and observe multi-client decay behavior (F-MEN-004) | this contract |
 | FOUNDRY_ACCEPTANCE_REQUIRED | `mentor-suggestion` | — | Sheet/progression re-render count caused by getSuggestions history writes (F-MEN-006) | this contract |
+| UNIMPLEMENTED | `migration` | U-MIG-01 | Migration registry / ordered runner with active-GM gate | index.js:306 |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `migration` | — | DSP migration on a real legacy world | scripts/migration/dark-side-points-migration.js:162 |
+| FOUNDRY_ACCEPTANCE_REQUIRED | `migration` | — | Startup migrations with two GMs connected | index.js:306 |
 | UNIMPLEMENTED | `npc-followers` | U-NPC-01 | Follower mutation authority checker covering all writers and wired into CI | tools/check-follower-mutation-authority.mjs:87 |
 | DEFERRED_RULES_REVIEW | `npc-followers` | none (new; owner to register) | Ability modifier for follower Fortitude Defense (hotfix uses CON, NPC sheet display uses max(STR, CON)) | docs/audits/swse-rules-decisions-pending.md |
 | DEFERRED_RULES_REVIEW | `npc-followers` | none (new; owner to register) | Fidelity of MinionManager.MINION_TALENTS paraphrases to printed talents (no source/page) | docs/audits/swse-rules-decisions-pending.md |

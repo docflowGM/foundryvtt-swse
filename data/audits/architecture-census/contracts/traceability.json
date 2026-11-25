@@ -2742,6 +2742,113 @@
    "foundry": "not live-verified"
   },
   {
+   "requirement": "R-HRL-01",
+   "domain": "houserules",
+   "responsibility": "House-rule read/write API",
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "code": "scripts/engine/system/HouseRuleService.js :: HouseRuleService",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 4,
+   "ownerCiTests": 376,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HRL-02",
+   "domain": "houserules",
+   "responsibility": "Default values",
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "code": "scripts/utils/settings-defaults.js :: SETTINGS_DEFAULTS",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 376,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HRL-03",
+   "domain": "houserules",
+   "responsibility": "House-rule setting registration",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/houserules/houserule-settings.js :: registerHouseruleSettings",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HRL-04",
+   "domain": "houserules",
+   "responsibility": "Manifest for GM house-rules surface",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/houserules/houserules-manifest.js :: HOUSERULE_MANIFEST",
+   "codeReachability": "reachable-dynamic",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 1,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HRL-05",
+   "domain": "houserules",
+   "responsibility": "House-rule feat/talent grants",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/houserules/houserule-feat-grants.js :: HouseRuleFeatGrants",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 1,
+   "ownerCiTests": 6,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HRL-06",
+   "domain": "houserules",
+   "responsibility": "Recovery/status-effect helpers for GM tools",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/houserules/houserule-recovery.js :: RecoveryMechanics.performRecovery",
+   "codeReachability": "reachable-dynamic",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 10,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-HRL-07",
+   "domain": "houserules",
+   "responsibility": "Class tree access overrides",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/settings/house-rules.js :: registerHouseRuleSettings",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
    "requirement": "R-INF-01",
    "domain": "infrastructure",
    "responsibility": "Composition root",
@@ -3171,6 +3278,54 @@
    ],
    "ownerDirectTests": 1,
    "ownerCiTests": 57,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-MIG-01",
+   "domain": "migration",
+   "responsibility": "Dark Side Points migration",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/migration/dark-side-points-migration.js :: migrateDarkSidePoints",
+   "codeReachability": "reachable-static",
+   "namedTests": [
+    "tests/dsp-migration-behavior.test.mjs",
+    "tests/dsp-migration-consolidation.test.mjs"
+   ],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 2,
+   "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-MIG-02",
+   "domain": "migration",
+   "responsibility": "Startup migration orchestration (GM only)",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "index.js :: ready hook",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 0,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-MIG-03",
+   "domain": "migration",
+   "responsibility": "Per-migration version records",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/migration/dark-side-points-migration.js :: HouseRuleService.set(SETTING_KEY)",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 2,
+   "ownerCiTests": 2,
    "testGap": false,
    "foundry": "not live-verified"
   },
@@ -3751,6 +3906,66 @@
    "ownerDirectTests": 9,
    "ownerCiTests": 353,
    "testGap": false,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SET-01",
+   "domain": "settings-config",
+   "responsibility": "Custom-content approval policy setting",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/settings/custom-content-approval.js :: registerCustomContentApprovalSettings",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 5,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SET-02",
+   "domain": "settings-config",
+   "responsibility": "Epic override setting and accessor",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/settings/epic-override.js :: isEpicOverrideEnabled",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 51,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SET-03",
+   "domain": "settings-config",
+   "responsibility": "Capability slug constants",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/constants/capability-slugs.js :: CAPABILITY_SLUGS",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
+   "foundry": "not live-verified"
+  },
+  {
+   "requirement": "R-SET-04",
+   "domain": "settings-config",
+   "responsibility": "Beam style constants",
+   "status": [
+    "OBSERVED"
+   ],
+   "code": "scripts/constants/beam-styles.js :: BEAM_STYLES",
+   "codeReachability": "reachable-static",
+   "namedTests": [],
+   "ownerDirectTests": 0,
+   "ownerCiTests": 353,
+   "testGap": true,
    "foundry": "not live-verified"
   },
   {

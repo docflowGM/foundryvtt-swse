@@ -2436,6 +2436,106 @@
    "tests": []
   },
   {
+   "id": "R-HRL-01",
+   "domain": "houserules",
+   "responsibility": "House-rule read/write API",
+   "owner": {
+    "path": "scripts/engine/system/HouseRuleService.js",
+    "symbol": "HouseRuleService"
+   },
+   "status": [
+    "APPROVED",
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-HRL-02",
+   "domain": "houserules",
+   "responsibility": "Default values",
+   "owner": {
+    "path": "scripts/utils/settings-defaults.js",
+    "symbol": "SETTINGS_DEFAULTS"
+   },
+   "status": [
+    "OBSERVED",
+    "CONFLICT"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-HRL-03",
+   "domain": "houserules",
+   "responsibility": "House-rule setting registration",
+   "owner": {
+    "path": "scripts/houserules/houserule-settings.js",
+    "symbol": "registerHouseruleSettings"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-HRL-04",
+   "domain": "houserules",
+   "responsibility": "Manifest for GM house-rules surface",
+   "owner": {
+    "path": "scripts/houserules/houserules-manifest.js",
+    "symbol": "HOUSERULE_MANIFEST"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-HRL-05",
+   "domain": "houserules",
+   "responsibility": "House-rule feat/talent grants",
+   "owner": {
+    "path": "scripts/houserules/houserule-feat-grants.js",
+    "symbol": "HouseRuleFeatGrants"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-HRL-06",
+   "domain": "houserules",
+   "responsibility": "Recovery/status-effect helpers for GM tools",
+   "owner": {
+    "path": "scripts/houserules/houserule-recovery.js",
+    "symbol": "RecoveryMechanics.performRecovery"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-HRL-07",
+   "domain": "houserules",
+   "responsibility": "Class tree access overrides",
+   "owner": {
+    "path": "scripts/settings/house-rules.js",
+    "symbol": "registerHouseRuleSettings"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
    "id": "R-INF-01",
    "domain": "infrastructure",
    "responsibility": "Composition root",
@@ -2841,6 +2941,51 @@
    "tests": [
     "tests/mentor-translator-cancellation.test.mjs"
    ]
+  },
+  {
+   "id": "R-MIG-01",
+   "domain": "migration",
+   "responsibility": "Dark Side Points migration",
+   "owner": {
+    "path": "scripts/migration/dark-side-points-migration.js",
+    "symbol": "migrateDarkSidePoints"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "test-verified",
+   "tests": [
+    "tests/dsp-migration-behavior.test.mjs",
+    "tests/dsp-migration-consolidation.test.mjs"
+   ]
+  },
+  {
+   "id": "R-MIG-02",
+   "domain": "migration",
+   "responsibility": "Startup migration orchestration (GM only)",
+   "owner": {
+    "path": "index.js",
+    "symbol": "ready hook"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-MIG-03",
+   "domain": "migration",
+   "responsibility": "Per-migration version records",
+   "owner": {
+    "path": "scripts/migration/dark-side-points-migration.js",
+    "symbol": "HouseRuleService.set(SETTING_KEY)"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
   },
   {
    "id": "R-NPC-01",
@@ -3383,6 +3528,62 @@
     "OBSERVED"
    ],
    "verification": "dependency-traced",
+   "tests": []
+  },
+  {
+   "id": "R-SET-01",
+   "domain": "settings-config",
+   "responsibility": "Custom-content approval policy setting",
+   "owner": {
+    "path": "scripts/settings/custom-content-approval.js",
+    "symbol": "registerCustomContentApprovalSettings"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SET-02",
+   "domain": "settings-config",
+   "responsibility": "Epic override setting and accessor",
+   "owner": {
+    "path": "scripts/settings/epic-override.js",
+    "symbol": "isEpicOverrideEnabled"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SET-03",
+   "domain": "settings-config",
+   "responsibility": "Capability slug constants",
+   "owner": {
+    "path": "scripts/constants/capability-slugs.js",
+    "symbol": "CAPABILITY_SLUGS"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
+   "tests": []
+  },
+  {
+   "id": "R-SET-04",
+   "domain": "settings-config",
+   "responsibility": "Beam style constants",
+   "owner": {
+    "path": "scripts/constants/beam-styles.js",
+    "symbol": "BEAM_STYLES"
+   },
+   "status": [
+    "OBSERVED"
+   ],
+   "verification": "source-inspected",
    "tests": []
   },
   {

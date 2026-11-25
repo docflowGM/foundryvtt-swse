@@ -2,7 +2,7 @@
 
 Level A invariants trace to probes (see `A-global-invariants.md`). Domain requirements trace to the owning module and its tests. **No requirement is live-Foundry-verified.** Generated at `f734b4d`.
 
-- Domain requirements: 294; with a named test or a direct test of the owner module: 193; **test gaps: 101**.
+- Domain requirements: 308; with a named test or a direct test of the owner module: 197; **test gaps: 111**.
 
 | Requirement | Domain | Code | Reachability | Named tests | Owner direct tests | Owner CI tests (transitive) |
 |---|---|---|---|---:|---:|---:|
@@ -166,6 +166,13 @@ Level A invariants trace to probes (see `A-global-invariants.md`). Domain requir
 | R-HOL-10 | `holonet` | `scripts/holonet/subsystems/gm-combat-recovery-service.js :: GMCombatRecoveryService` | reachable-static | 0 | 2 | 10 |
 | R-HOL-11 | `holonet` | `scripts/holonet/subsystems/holonet-socket-service.js :: HolonetSocketService; HolonetMessengerService._isRequesterGm` | reachable-static | 0 | 1 | 353 |
 | R-HOL-12 ⚠ | `holonet` | `scripts/holonet/holonet-preferences.js :: HolonetPreferences; HolonetStateService` | reachable-static | 0 | 0 | 353 |
+| R-HRL-01 | `houserules` | `scripts/engine/system/HouseRuleService.js :: HouseRuleService` | reachable-static | 0 | 4 | 376 |
+| R-HRL-02 ⚠ | `houserules` | `scripts/utils/settings-defaults.js :: SETTINGS_DEFAULTS` | reachable-static | 0 | 0 | 376 |
+| R-HRL-03 ⚠ | `houserules` | `scripts/houserules/houserule-settings.js :: registerHouseruleSettings` | reachable-static | 0 | 0 | 0 |
+| R-HRL-04 ⚠ | `houserules` | `scripts/houserules/houserules-manifest.js :: HOUSERULE_MANIFEST` | reachable-dynamic | 0 | 0 | 1 |
+| R-HRL-05 | `houserules` | `scripts/houserules/houserule-feat-grants.js :: HouseRuleFeatGrants` | reachable-static | 0 | 1 | 6 |
+| R-HRL-06 ⚠ | `houserules` | `scripts/houserules/houserule-recovery.js :: RecoveryMechanics.performRecovery` | reachable-dynamic | 0 | 0 | 10 |
+| R-HRL-07 ⚠ | `houserules` | `scripts/settings/house-rules.js :: registerHouseRuleSettings` | reachable-static | 0 | 0 | 0 |
 | R-INF-01 ⚠ | `infrastructure` | `index.js :: init/ready hooks` | reachable-static | 0 | 0 | 0 |
 | R-INF-02 ⚠ | `infrastructure` | `scripts/core/settings.js :: registerSystemSettings` | reachable-static | 0 | 0 | 0 |
 | R-INF-03 | `infrastructure` | `scripts/infrastructure/hooks/hooks-registry.js :: HooksRegistry` | reachable-static | 0 | 1 | 1 |
@@ -192,6 +199,9 @@ Level A invariants trace to probes (see `A-global-invariants.md`). Domain requir
 | R-MEN-13 | `mentor-suggestion` | `scripts/engine/archetype/archetype-registry.js :: ArchetypeRegistry` | reachable-static | 2 | 0 | 55 |
 | R-MEN-14 | `mentor-suggestion` | `scripts/engine/suggestion/equipment-loadout-profile.js :: buildEquipmentLoadoutProfile` | reachable-static | 1 | 0 | 56 |
 | R-MEN-15 | `mentor-suggestion` | `scripts/mentor/mentor-translation-integration.js :: MentorTranslationIntegration` | reachable-static | 1 | 1 | 57 |
+| R-MIG-01 | `migration` | `scripts/migration/dark-side-points-migration.js :: migrateDarkSidePoints` | reachable-static | 2 | 2 | 2 |
+| R-MIG-02 ⚠ | `migration` | `index.js :: ready hook` | reachable-static | 0 | 0 | 0 |
+| R-MIG-03 | `migration` | `scripts/migration/dark-side-points-migration.js :: HouseRuleService.set(SETTING_KEY)` | reachable-static | 0 | 2 | 2 |
 | R-NPC-01 | `npc-followers` | `scripts/engine/crew/follower-slot-service.js :: FollowerSlotService` | reachable-static | 1 | 4 | 12 |
 | R-NPC-02 | `npc-followers` | `scripts/engine/crew/follower-talent-config.js :: getFollowerTalentConfig` | reachable-static | 0 | 1 | 69 |
 | R-NPC-03 | `npc-followers` | `scripts/infrastructure/hooks/follower-hooks.js :: initializeFollowerHooks` | reachable-static | 1 | 0 | 57 |
@@ -228,6 +238,10 @@ Level A invariants trace to probes (see `A-global-invariants.md`). Domain requir
 | R-ROL-06 ⚠ | `rolls` | `scripts/rolls/custom-skill-roller.js :: rollCustomSkill` | reachable-static | 0 | 0 | 4 |
 | R-ROL-07 | `rolls` | `scripts/engine/rolls/swse-roll-engine.js :: SWSERollEngine` | reachable-static | 0 | 1 | 353 |
 | R-ROL-08 | `rolls` | `scripts/engine/roll/roll-core.js :: RollCore.applyForcePointLogic` | reachable-static | 0 | 9 | 353 |
+| R-SET-01 ⚠ | `settings-config` | `scripts/settings/custom-content-approval.js :: registerCustomContentApprovalSettings` | reachable-static | 0 | 0 | 5 |
+| R-SET-02 ⚠ | `settings-config` | `scripts/settings/epic-override.js :: isEpicOverrideEnabled` | reachable-static | 0 | 0 | 51 |
+| R-SET-03 ⚠ | `settings-config` | `scripts/constants/capability-slugs.js :: CAPABILITY_SLUGS` | reachable-static | 0 | 0 | 353 |
+| R-SET-04 ⚠ | `settings-config` | `scripts/constants/beam-styles.js :: BEAM_STYLES` | reachable-static | 0 | 0 | 353 |
 | R-SKL-01 ⚠ | `skills` | `scripts/utils/skill-normalization.js :: canonicalizeSkillKey` | reachable-static | 0 | 0 | 364 |
 | R-SKL-02 ⚠ | `skills` | `scripts/engine/progression/skills/skill-registry.js :: SkillRegistry` | reachable-static | 0 | 0 | 366 |
 | R-SKL-03 ⚠ | `skills` | `scripts/engine/skills/SkillRules.js :: SkillRules` | reachable-static | 0 | 0 | 353 |

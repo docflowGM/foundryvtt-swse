@@ -620,6 +620,30 @@
    "domain": "holonet"
   },
   {
+   "id": "CR-HRL-01",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md §3",
+   "claim": "API is getRule/isRuleEnabled/getRuleVariant",
+   "observed": "Methods are get/isEnabled/getString/getNumber/getBoolean/set",
+   "evidence": [
+    "docs/architecture/ENGINE-ARCHITECTURE.md:53",
+    "scripts/engine/system/HouseRuleService.js:115"
+   ],
+   "status": "CONFLICT",
+   "domain": "houserules"
+  },
+  {
+   "id": "CR-HRL-02",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md §3 (global CR-06)",
+   "claim": "No game.settings.get in engines",
+   "observed": "2 real house-rule reads; 6 of 8 probe hits are comments",
+   "evidence": [
+    "scripts/engine/progression/skills/skill-registry.js:85",
+    "scripts/engine/combat/ConditionEngine.js:13"
+   ],
+   "status": "CONFLICT",
+   "domain": "houserules"
+  },
+  {
    "id": "CR-INF-01",
    "existingSource": "index.js:216 comment / scripts/core/init.js",
    "claim": "scripts/core/init.js is dead",
@@ -734,6 +758,29 @@
    ],
    "status": "CONFLICT",
    "domain": "mentor-suggestion"
+  },
+  {
+   "id": "CR-MIG-01",
+   "existingSource": "docs/migrations/readme.md Completed Migrations",
+   "claim": "Five scripts run automatically on world load",
+   "observed": "None of them exists",
+   "evidence": [
+    "docs/migrations/readme.md:28",
+    "docs/migrations/readme.md:56"
+   ],
+   "status": "CONFLICT",
+   "domain": "migration"
+  },
+  {
+   "id": "CR-MIG-02",
+   "existingSource": "docs/migrations/readme.md:125",
+   "claim": "ActorEngine at scripts/actors/engine/actor-engine.js",
+   "observed": "Path does not exist (global CR-01)",
+   "evidence": [
+    "docs/migrations/readme.md:125"
+   ],
+   "status": "CONFLICT",
+   "domain": "migration"
   },
   {
    "id": "CR-NPC-01",
