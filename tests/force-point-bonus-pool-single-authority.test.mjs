@@ -145,6 +145,79 @@ try {
     assert.equal(out3.bonusSpent, 0, 'an empty bonus pool is not spendable');
     ok('single-copy pools behave as before and cannot be overspent');
   }
+
+  // 5. HISTORICAL RECONCILIATION USES SPEND RECEIPTS (review finding): an entry that was spent must not come back from a stale copy.
+  //    Receipts (flags.swse.forcePointLedger) record bonusEntriesSpent {id, amount, entry:{value before the debit, createdAt}}.
+  const receipt = (id, createdAt, before, amount, state = 'finalized') => ({ receiptId: `r-${id}-${amount}-${before}`, requestId: `q-${id}-${amount}-${before}`, state, spent: 1, normalSpent: 0,
+    bonusEntriesSpent: [{ id, source: 'Force Flow', amount, entry: { id, source: 'Force Flow', value: before, max: before, createdAt } }] });
+  const withLedger = (actor, receipts) => { actor.flags.swse.forcePointLedger = { receipts }; return actor; };
+  const both = (canonical, legacy, receipts) => { const a = makeActor(legacy); a.flags[CANON] = { bonusForcePoints: clone(canonical) }; return withLedger(a, receipts); };
+  const idsOf = (a) => GuardianSpiritActions.getBonusForcePoints(a).entries.map((e) => e.id).sort();
+  const guardianE = { ...unrestricted('g', 1), source: 'Guardian Spirit', restrictions: 'Guardian only', createdAt: 9 };
+
+  // 5a. A was spent from the legacy view (removed there); the stale canonical copy still holds A.
+  {
+    const A = { ...unrestricted('a', 1), createdAt: 100 };
+    const actor = both(poolOf(2, [A, guardianE]), poolOf(1, [guardianE]), [receipt('a', 100, 1, 1)]);
+    assert.deepEqual(idsOf(actor), ['g'], 'a spent entry is not resurrected from the stale canonical copy');
+    ok('spent entry present only in the stale canonical copy is not resurrected');
+  }
+  // 5b. The legacy copy itself can be stale-high: a later grant read the stale canonical copy and rewrote the legacy copy including the spent entry.
+  {
+    const A = { ...unrestricted('a', 1), createdAt: 100 }; const F = { ...unrestricted('f', 1), createdAt: 200 };
+    const actor = both(poolOf(2, [A, guardianE]), poolOf(3, [A, guardianE, F]), [receipt('a', 100, 1, 1)]);
+    assert.deepEqual(idsOf(actor), ['f', 'g'], 'a spent entry is not resurrected from a stale legacy copy either; later grants are kept');
+    ok('spent entry re-introduced into the legacy copy by a later write is not resurrected');
+  }
+  // 5c. Partially spent entry: the lower remaining value implied by the receipts wins even when both copies say more.
+  {
+    const A3 = { ...unrestricted('a', 3), createdAt: 100 };
+    const actor = both(poolOf(3, [A3]), poolOf(3, [A3]), [receipt('a', 100, 3, 1, 'committed')]);
+    assert.equal(GuardianSpiritActions.getBonusForcePoints(actor).value, 2, '3 granted, 1 spent according to the receipt: 2 remain');
+    ok('a partially spent entry is capped by the receipt evidence');
+  }
+  // 5d. An id re-granted later (same id, new createdAt) is a different grant: the old receipt must not cancel it.
+  {
+    const daily = { ...guardianE, id: 'guardian-spirit-daily', restrictions: '', createdAt: 5000 };
+    const actor = both(poolOf(1, [daily]), poolOf(0, []), [receipt('guardian-spirit-daily', 1000, 1, 1)]);
+    assert.deepEqual(idsOf(actor), ['guardian-spirit-daily'], 'today\'s re-grant survives yesterday\'s receipt');
+    ok('a re-granted entry with a new createdAt is not cancelled by an older grant\'s receipt');
+  }
+  // 5e. A rolled-back receipt returned the point: it must not reduce anything.
+  {
+    const A = { ...unrestricted('a', 1), createdAt: 100 };
+    const actor = both(poolOf(1, [A]), poolOf(1, [A]), [receipt('a', 100, 1, 1, 'rolled-back')]);
+    assert.deepEqual(idsOf(actor), ['a'], 'a rolled-back spend does not consume the entry');
+    ok('rolled-back receipts are ignored');
+  }
+  // 5f. Entries that cannot be matched to a receipt (no createdAt) are kept: never discard a balance on weak evidence.
+  {
+    const legacyAgg = { id: 'legacy-bonus-force-points', source: 'Bonus Force Point', value: 1, max: 1, restrictions: '', expires: '', encounterId: null, createdAt: null };
+    const actor = both(poolOf(1, [legacyAgg]), poolOf(0, []), [receipt('legacy-bonus-force-points', null, 1, 1)]);
+    assert.deepEqual(idsOf(actor), ['legacy-bonus-force-points'], 'an entry without grant identity is kept');
+    ok('entries without a provable grant identity are kept (documented limitation)');
+  }
+  // 5g. Receipts never change a single stored copy (the governed, consistent case).
+  {
+    const A = { ...unrestricted('a', 1), createdAt: 100 };
+    const actor = withLedger(makeActor(poolOf(1, [A])), [receipt('a', 100, 1, 1)]);
+    assert.deepEqual(idsOf(actor), ['a'], 'a single copy is returned as stored');
+    ok('single-copy pools are never altered by receipt evidence');
+  }
+
+  // 5h. END TO END: the receipt comes from a REAL spendForcePoints call (not hand-written), then a stale copy still holding the spent entry
+  //     is introduced the way the old code produced it. The real receipt shape must be sufficient evidence.
+  {
+    const A = { ...unrestricted('a', 1), createdAt: 4242 };
+    const actor = makeActor(poolOf(1, [A]));
+    const out = await spend(actor);
+    assert.equal(out.bonusSpent, 1, 'the real spend consumed entry a');
+    const recorded = actor.flags.swse.forcePointLedger.receipts.at(-1).bonusEntriesSpent[0];
+    assert.equal(recorded.id, 'a'); assert.equal(recorded.entry.createdAt, 4242, 'the real receipt records the grant identity (createdAt)'); assert.equal(recorded.entry.value, 1, 'and the value before the debit');
+    actor.flags[CANON] = { bonusForcePoints: clone(poolOf(1, [A])) };               // stale copy from before the spend
+    assert.deepEqual(GuardianSpiritActions.getBonusForcePoints(actor).entries.map((e) => e.id), [], 'the entry the real receipt shows as spent is not resurrected');
+    ok('a real spend receipt is sufficient evidence to keep a spent entry from being resurrected');
+  }
 } finally {
   restore();
 }

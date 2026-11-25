@@ -14,8 +14,19 @@
  *  - Every write goes through {@link bonusPoolUpdate}, which writes that location AND clears a canonical shadow copy in the
  *    SAME update, so exactly one copy exists after any governed write.
  *  - Every read goes through {@link readBonusPool}. With one stored copy it returns that copy unchanged. With two (data
- *    written by the old code) it merges them without discarding any balance and without letting any entry exceed the value
- *    either stored copy recorded; the next governed write heals the divergence. Reads never write.
+ *    written by the old code) it merges them and then caps every entry by the SPEND RECEIPTS (below), so an entry that was
+ *    already spent is not resurrected from whichever copy is stale; the next governed write heals the divergence.
+ *    Reads never write.
+ *
+ * RECEIPT EVIDENCE (historical divergence only)
+ *    ActorEngine.spendForcePoints records, per spend, `bonusEntriesSpent: [{ id, amount, entry }]` where `entry` is the pool
+ *    entry as it stood BEFORE the debit (`value`, `createdAt`). An entry is the same grant instance when its `id` AND
+ *    `createdAt` match, so a later re-grant under the same id (new `createdAt`) is never cancelled by an older receipt.
+ *    The remaining value implied by a receipt is `entry.value - amount`; the smallest such value is an upper bound on what
+ *    is left. Rolled-back receipts returned the point and are ignored. Only `committed`/`finalized` receipts count.
+ *    Receipts are only ever used to LOWER a value, never to raise one, and an entry with no `createdAt` (no provable grant
+ *    identity) is left as stored: weak evidence never discards a balance. The ledger retains at most the newest 200 settled
+ *    receipts, so very old spends may not be visible; that can only leave a value higher than the truth, never lower.
  *
  * This module is a pure leaf (no engine imports) so any layer can use it without creating a dependency cycle.
  */
@@ -42,12 +53,33 @@ export function readBonusPoolCopies(actor) {
 const entriesOf = (pool) => (Array.isArray(pool?.entries) ? pool.entries.filter((e) => e && typeof e === 'object') : []);
 const numberOr = (v, d) => (Number.isFinite(Number(v)) ? Number(v) : d);
 
+/** Upper bound on an entry's remaining value implied by the spend receipts, or null when no receipt applies to this grant instance. */
+function receiptCap(entry, receipts) {
+  if (!Array.isArray(receipts) || entry?.createdAt == null) return null;
+  let cap = null;
+  for (const r of receipts) {
+    if (!r || !['committed', 'finalized'].includes(r.state)) continue;
+    for (const spent of Array.isArray(r.bonusEntriesSpent) ? r.bonusEntriesSpent : []) {
+      if (spent?.id !== entry.id || spent?.entry?.createdAt == null || spent.entry.createdAt !== entry.createdAt) continue;
+      const left = numberOr(spent.entry.value, NaN) - numberOr(spent.amount, 0);
+      if (Number.isFinite(left)) cap = cap === null ? left : Math.min(cap, left);
+    }
+  }
+  return cap;
+}
+
+function spendReceipts(actor) {
+  const ledger = actor?.flags?.[BONUS_POOL_LEGACY_SCOPE]?.forcePointLedger ?? actor?.flags?.[BONUS_POOL_CANONICAL_SCOPE]?.forcePointLedger;
+  return Array.isArray(ledger?.receipts) ? ledger.receipts : [];
+}
+
 /**
  * Merge two stored copies of the same pool. Legacy is the base (every writer except the old Guardian path wrote it).
  * Union by entry id; where both copies know an id, the SMALLER value wins (a value only ever decreases by spending);
- * an id known to one copy only is kept as stored. No value is ever raised above what a stored copy recorded.
+ * an id known to one copy only is kept as stored; then every entry is capped by the spend receipts. No value is ever raised above what a
+ * stored copy recorded.
  */
-function mergeCopies(canonical, legacy) {
+function mergeCopies(canonical, legacy, receipts = []) {
   const byId = new Map();
   const order = [];
   const add = (entry) => { if (entry.id !== undefined && !byId.has(entry.id)) order.push(entry.id); };
@@ -59,7 +91,9 @@ function mergeCopies(canonical, legacy) {
       byId.set(e.id, { ...prev, value });
     } else { add(e); byId.set(e.id, { ...e }); }
   }
-  const entries = order.map((id) => byId.get(id)).filter((e) => numberOr(e.value, 0) > 0);
+  const entries = order.map((id) => byId.get(id))
+    .map((e) => { const cap = receiptCap(e, receipts); return cap === null ? e : { ...e, value: Math.min(numberOr(e.value, 0), cap) }; })
+    .filter((e) => numberOr(e.value, 0) > 0);
   const value = entries.reduce((s, e) => s + numberOr(e.value, 0), 0);
   const max = Math.max(value, entries.reduce((s, e) => s + numberOr(e.max ?? e.value, 0), 0));
   return {
@@ -75,7 +109,7 @@ function mergeCopies(canonical, legacy) {
 export function readBonusPool(actor) {
   const { canonical, legacy } = readBonusPoolCopies(actor);
   if (canonical && legacy) {
-    const merged = mergeCopies(canonical, legacy);
+    const merged = mergeCopies(canonical, legacy, spendReceipts(actor));
     // Warn once per actor per session: reads happen on every render until the next governed write heals the data.
     const warnKey = String(actor?.id ?? actor?.name ?? 'actor');
     if (!WARNED.has(warnKey)) WARNED.add(warnKey);
