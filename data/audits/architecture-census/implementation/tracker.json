@@ -49,7 +49,7 @@
    "requiredDecision": null,
    "dependencies": [],
    "commits": [
-    "pending"
+    "11dd58062"
    ],
    "tests": [
     "tools/architecture-census/check-architecture.mjs"
@@ -155,7 +155,7 @@
    "requiredDecision": null,
    "dependencies": [],
    "commits": [
-    "pending"
+    "11dd58062"
    ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
