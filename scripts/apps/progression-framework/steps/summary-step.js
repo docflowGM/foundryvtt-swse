@@ -15,7 +15,7 @@ import { ActorAbilityBridge } from '/systems/foundryvtt-swse/scripts/adapters/Ac
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 import { ProgressionFinalizer } from '../shell/progression-finalizer.js';
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
-import { buildClassSkillKeySet, buildSkillDisplay, normalizeSkillKey } from '../utils/skill-display.js';
+import { buildClassSkillKeySet, buildSkillDisplay, normalizeSkillKey } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-display.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { HPGeneratorEngine } from '/systems/foundryvtt-swse/scripts/engine/HP/HPGeneratorEngine.js';
 import { RollEngine } from '/systems/foundryvtt-swse/scripts/engine/roll-engine.js';

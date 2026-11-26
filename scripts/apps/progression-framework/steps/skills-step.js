@@ -12,7 +12,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
-import { normalizeSkills } from './step-normalizers.js';
+import { normalizeSkills } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/step-normalizers.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SkillRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
@@ -28,7 +28,7 @@ import { getPendingBackgroundClassSkills } from '/systems/foundryvtt-swse/script
 import { BackgroundLedgerCompatibility } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-ledger-compatibility.js';
 import { extractDescriptionText, normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { ExtraSkillUseRegistry } from '/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js';
-import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
+import { PendingEntitlementService } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/pending-entitlement-service.js';
 import { FeatRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry.js';
 import { buildActorPrerequisiteSnapshot } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/actor-prerequisite-snapshot.js';
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";

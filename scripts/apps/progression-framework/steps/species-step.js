@@ -11,10 +11,10 @@ import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
 import { buildPublicationComparison, checkPublicationSelection, getSoleSnapshotVersion, isSupersededLegacyVariant, PUBLICATION_SELECTION_ERRORS } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
 import { applySpeciesVariantProfile } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
-import { normalizeSpecies } from './step-normalizers.js';
+import { normalizeSpecies } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithPicker, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
 // Patch builder lives in the shared progression-framework module — NOT the legacy chargen path.
-import { buildSpeciesAtomicPatch } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shared/species-patch.js';
+import { buildSpeciesAtomicPatch } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/species-patch.js';
 import { NearHumanBuilder } from './near-human-builder.js';
 import { getMentorGuidance, getMentorForClass, MENTORS } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';

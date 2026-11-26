@@ -33,7 +33,7 @@ import { validateMentorIntegration } from "/systems/foundryvtt-swse/scripts/engi
 // Deferred intentionally: Extracting rollout configuration requires a dedicated progression-framework refactor.
 // Do not expand this dependency; move pure logic into scripts/engine/progression in a later pass.
 // PHASE 4: Rollout Configuration
-import { RolloutSettings } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/rollout/rollout-settings.js";
+import { RolloutSettings } from "/systems/foundryvtt-swse/scripts/engine/progression/rollout-settings.js";
 import { initializeClassPrerequisitesCache } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-init.js";
 import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";

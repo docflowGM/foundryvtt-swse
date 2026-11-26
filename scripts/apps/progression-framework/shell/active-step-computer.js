@@ -42,7 +42,7 @@ import { ClassFeatRegistry } from '../../../engine/progression/feats/class-feat-
 import { LanguageEngine } from '../../../engine/progression/engine/language-engine.js';
 import { buildLevelUpEventContext, countClassFeatureChoicesAtLevel } from '../../../engine/progression/utils/levelup-event-context.js';
 import { buildLevelUpEntitlementManifest } from '../../../engine/progression/utils/levelup-entitlement-manifest.js';
-import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
+import { PendingEntitlementService } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/pending-entitlement-service.js';
 import { ChargenRules } from '../../../engine/chargen/ChargenRules.js';
 import { TalentCadenceEngine } from '../../../engine/progression/talents/talent-cadence-engine.js';
 

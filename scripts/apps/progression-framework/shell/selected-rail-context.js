@@ -23,7 +23,7 @@
 import { ProjectionEngine } from './projection-engine.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
-import { buildClassSkillKeySet, buildSkillDisplay, getSkillLabel, normalizeSkillKey } from '../utils/skill-display.js';
+import { buildClassSkillKeySet, buildSkillDisplay, getSkillLabel, normalizeSkillKey } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-display.js';
 
 export class SelectedRailContext {
   /**

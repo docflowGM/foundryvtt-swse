@@ -18,7 +18,7 @@ import { ActiveStepComputer } from './shell/active-step-computer.js';
 import { mapNodesToDescriptors } from './registries/node-descriptor-mapper.js';
 import { ClassStep } from './steps/class-step.js';
 import { PrestigeSurveyStep } from './steps/mentor-survey-step.js';
-import { RolloutSettings } from './rollout/rollout-settings.js';
+import { RolloutSettings } from '/systems/foundryvtt-swse/scripts/engine/progression/rollout-settings.js';
 import { AttributeStep } from './steps/attribute-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
 import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';

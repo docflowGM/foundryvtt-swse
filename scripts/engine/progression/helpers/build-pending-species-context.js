@@ -19,7 +19,7 @@ import { resolveAbilityChoice } from '/systems/foundryvtt-swse/scripts/species/s
 import { checkPublicationSelection, isRecordedConfigurationRestore, getSoleSnapshotVersion } from '/systems/foundryvtt-swse/scripts/species/species-publication-selection.js';
 import { applySpeciesVariantProfile } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
-import { computeStartingFeatsRequired } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shared/species-patch.js';
+import { computeStartingFeatsRequired } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/species-patch.js';
 
 /**
  * @typedef {Object} PendingSpeciesContext

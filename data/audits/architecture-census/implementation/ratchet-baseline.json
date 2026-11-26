@@ -111,15 +111,10 @@
    "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js>scripts/apps/progression-framework/steps/feat-step.js": 1,
    "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js>scripts/apps/progression-framework/steps/talent-step.js": 1,
    "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js>scripts/apps/progression-framework/shell/progression-reconciler.js": 1,
-   "scripts/engine/progression/helpers/build-pending-species-context.js>scripts/apps/progression-framework/shared/species-patch.js": 1,
-   "scripts/engine/progression/hooks/system-init-hooks.js>scripts/apps/progression-framework/rollout/rollout-settings.js": 1,
-   "scripts/engine/progression/profile/galactic-profile-compiler.js>scripts/apps/progression-framework/steps/step-normalizers.js": 1,
    "scripts/engine/progression/profile/galactic-profile-service.js>scripts/apps/progression-framework/adapters/progression-subtype-adapter-registry.js": 1,
    "scripts/engine/progression/profile/galactic-profile-service.js>scripts/apps/progression-framework/shell/progression-session.js": 1,
    "scripts/engine/progression/profile/galactic-profile-service.js>scripts/apps/progression-framework/shell/active-step-computer.js": 1,
    "scripts/engine/progression/utils/acquisition-authority.js>scripts/apps/progression-framework/shell/progression-reconciler.js": 1,
-   "scripts/engine/progression/utils/force-suite-resolution.js>scripts/apps/progression-framework/services/pending-entitlement-service.js": 1,
-   "scripts/engine/suggestion/BackgroundSuggestionEngine.js>scripts/apps/progression-framework/utils/skill-display.js": 1,
    "scripts/engine/suggestion/SuggestionService.js>scripts/ui/shell/ShellMutationGuard.js": 1
   },
   "P-A08": {},
@@ -130,9 +125,9 @@
    "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js": 8
   },
   "P-A09-modules": {
-   "scripts/apps/progression-framework/shared/species-patch.js": 1,
    "scripts/engine/progression/engine/apply-progression-patch.js": 1,
    "scripts/engine/progression/engine/progression-patch.js": 1,
+   "scripts/engine/progression/helpers/species-patch.js": 1,
    "scripts/governance/snapshot/deletion-aware-patch.js": 1,
    "scripts/patches/armor-hydration-defense-hotfix.js": 1,
    "scripts/patches/attack-dialog-combat-corrections-hotfix.js": 1,

@@ -37,7 +37,7 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
 import { FeatChoiceDialog } from '/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js';
 import { attachFeatIconPath, resolveFeatIconPath } from './feat-icon-resolver.js';
-import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
+import { PendingEntitlementService } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/pending-entitlement-service.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { buildLevelUpEntitlementManifest, getManifestStartingFeatNameSet, normalizeManifestName } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
 import { isDroidProgressionActor } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js';

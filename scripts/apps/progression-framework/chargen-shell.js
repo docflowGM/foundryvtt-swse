@@ -20,7 +20,7 @@ import { createStepDescriptor, StepCategory, StepType } from './steps/step-descr
 import { ActiveStepComputer } from './shell/active-step-computer.js';
 import { mapNodesToDescriptors } from './registries/node-descriptor-mapper.js';
 import { DroidBuilderAdapter } from './steps/droid-builder-adapter.js';
-import { RolloutSettings } from './rollout/rollout-settings.js';
+import { RolloutSettings } from '/systems/foundryvtt-swse/scripts/engine/progression/rollout-settings.js';
 import { filterActiveStepsForProfile } from '/systems/foundryvtt-swse/scripts/engine/progression/profile/galactic-profile-apply.js';
 import { NullStepPlugin } from './steps/null-step-plugin.js';
 import { getNpcProfileState } from '/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js';

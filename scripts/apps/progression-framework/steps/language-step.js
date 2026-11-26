@@ -18,7 +18,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
 import { LanguageEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/engine/language-engine.js';
-import { normalizeLanguages } from './step-normalizers.js';
+import { normalizeLanguages } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/step-normalizers.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
@@ -28,7 +28,7 @@ import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/en
 import { getPendingBackgroundLanguages } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { CustomLanguageDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-language-dialog.js';
-import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
+import { PendingEntitlementService } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/pending-entitlement-service.js';
 
 // Token used for language de-duplication (formerly in scripts/patches/progression-choice-language-hotfix.js).
 function normalizeLanguageToken(value) {

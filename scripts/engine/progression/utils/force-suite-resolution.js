@@ -14,7 +14,7 @@ import { resolveClassModel } from './class-resolution.js';
 import { buildLevelUpEventContext, countClassFeatureChoicesAtLevel, getClassLevelProgressionEntry } from './levelup-event-context.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { buildClassGrantLedger } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
-import { PendingEntitlementService } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/services/pending-entitlement-service.js';
+import { PendingEntitlementService } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/pending-entitlement-service.js';
 
 function normalizeForceChoiceName(value) {
   return String(value || '')
