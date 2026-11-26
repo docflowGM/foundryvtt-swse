@@ -702,7 +702,7 @@
    ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "Removed so far: SWSEChat.postRoll wrapper, feat-chain FeatStep wrapper, finalizer force-knowledge and choice-resolution patches, force-suite render-guard stack-inspecting wrapper (4 patch modules deleted). The remaining ~100 sites need per-domain folding with parity tests; prerequisite patches wait for 3N-PRQ, derived-calculator patch for 3N-DC."
+   "notes": "Removed so far: SWSEChat.postRoll wrapper, feat-chain FeatStep wrapper, finalizer force-knowledge and choice-resolution patches, force-suite render-guard stack-inspecting wrapper (4 patch modules deleted). The remaining ~100 sites need per-domain folding with parity tests; prerequisite patches wait for 3N-PRQ, derived-calculator patch for 3N-DC. | Removed so far: SWSEChat.postRoll wrapper, feat-chain FeatStep wrapper, finalizer force-knowledge and choice-resolution patches, force-suite render-guard wrapper, language/search-reset patches, armor worn-preference panel patches (5+ patch modules touched, 4 deleted). Attempted and REVERTED: folding the SpeciesRegistry._normalizeEntry canonicalStats fill — tests/eq-int-1-species-compatibility.test.mjs (baseline main@48d1da1) requires unpatched normalization and the fill changes species-sorcerer-of-rhand; whether the baseline or the production-patched output is authoritative is a data question for the owner. Remaining ~95 sites need per-domain folds with parity tests; prerequisite patches wait for 3N-PRQ, derived-calculator patch for 3N-DC."
   },
   {
    "id": "F-PRG-001",
