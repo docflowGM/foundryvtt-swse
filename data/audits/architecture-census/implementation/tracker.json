@@ -776,17 +776,21 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3M",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "B-PAT F-PAT-001"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "87aaa73be"
+   ],
+   "tests": [
+    "tests/attack-chat-outcome-normalization.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "SWSEChat.postRoll is no longer wrapped at runtime."
   },
   {
    "id": "F-CMB-007",
@@ -2435,17 +2439,21 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3K",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "F-MEN-001"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "68340ccf0"
+   ],
+   "tests": [
+    "tests/mentor-decay-originating-client.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Decay applies only on the originating client; other clients just track the level."
   },
   {
    "id": "F-NPC-002",
@@ -2477,17 +2485,19 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3H",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "B-MIG migration"
    ],
-   "commits": [],
+   "commits": [
+    "68340ccf0"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "NPC damage hydration writes through ActorEngine.updateEmbeddedDocuments (already GM+originating-client gated)."
   },
   {
    "id": "F-PRG-004",
@@ -4432,15 +4442,19 @@
    "auditStatus": "confirmed",
    "wave": 5,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "68340ccf0"
+   ],
+   "tests": [
+    "tests/finalizer-no-runtime-patches.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Both finalizer runtime patches removed; logic moved to mutation/force-knowledge-post-apply.js and engine/progression/feats/choice-candidates.js; three tests that registered the patch now pass without it."
   },
   {
    "id": "F-ABL-003",
