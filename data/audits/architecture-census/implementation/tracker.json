@@ -3763,7 +3763,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Reviewed 3F: Master Advisor reads prior?.combatant from a combatTurn argument that Foundry's hook (combat, updateData, updateOptions) does not carry, so the grant likely never fires. The fix depends on whether combat.combatant is still the ENDING combatant when the hook fires in V13 (believed yes, unverified here). Needs the Foundry V13 hook order confirmed live before changing which actor is read; gated to the responsible GM already (this session)."
   },
   {
    "id": "F-ACT-003",
