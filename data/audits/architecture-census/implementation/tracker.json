@@ -2219,13 +2219,14 @@
     "F-TAL-006"
    ],
    "commits": [
-    "pending"
+    "pending",
+    "d6d9a1699"
    ],
    "tests": [
     "tests/custom-talent-wizard-no-render-writes.test.mjs"
    ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "Presented state moved to a WeakSet; the one-shot request flag is still consumed with item.unsetFlag when present (rare path). UX note: an untouched workbench talent with no effects now auto-opens the wizard once per session rather than once ever."
+   "notes": "Presented state moved to a WeakSet; the one-shot request flag is still consumed with item.unsetFlag when present (rare path). UX note: an untouched workbench talent with no effects now auto-opens the wizard once per session rather than once ever. | Presented state moved to a WeakSet; one-shot request flag still consumed with item.unsetFlag when present. UX note: an untouched workbench talent with no effects auto-opens the wizard once per session rather than once ever."
   },
   {
    "id": "F-UIS-001",
