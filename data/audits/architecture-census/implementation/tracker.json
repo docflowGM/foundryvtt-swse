@@ -322,7 +322,7 @@
    "auditStatus": "confirmed",
    "wave": 1,
    "plannedPhase": "3F",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -330,7 +330,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-ABL-009",
@@ -379,7 +379,7 @@
    "auditStatus": "confirmed",
    "wave": 1,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -387,7 +387,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-CMB-012",
@@ -417,7 +417,7 @@
    "auditStatus": "confirmed",
    "wave": 1,
    "plannedPhase": "3D",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -425,7 +425,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-DRD-006",
@@ -436,7 +436,7 @@
    "auditStatus": "confirmed",
    "wave": 1,
    "plannedPhase": "3J",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -444,7 +444,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-FEA-014",
@@ -531,7 +531,7 @@
    "auditStatus": "confirmed",
    "wave": 1,
    "plannedPhase": "3K",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -539,7 +539,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-MIG-004",
@@ -569,7 +569,7 @@
    "auditStatus": "confirmed",
    "wave": 1,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -577,7 +577,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-SET-002",
@@ -588,7 +588,7 @@
    "auditStatus": "confirmed",
    "wave": 1,
    "plannedPhase": "3D",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -599,7 +599,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-SKL-007",
@@ -610,7 +610,7 @@
    "auditStatus": "confirmed",
    "wave": 1,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -618,7 +618,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-STO-009",
@@ -3474,7 +3474,7 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3J",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -3482,7 +3482,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-GAL-004",
@@ -3493,7 +3493,7 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3K",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -3501,7 +3501,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-HRL-004",
@@ -3512,7 +3512,7 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3D",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -3520,7 +3520,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-INF-007",
@@ -3531,7 +3531,7 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3D",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -3541,7 +3541,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-NPC-009",
@@ -3552,7 +3552,7 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3H",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -3560,7 +3560,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-UIS-012",
@@ -3571,7 +3571,7 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3M",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -3579,7 +3579,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-VEH-012",
@@ -4418,7 +4418,7 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -4426,7 +4426,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-FEA-001",
@@ -5459,7 +5459,7 @@
    "auditStatus": "confirmed",
    "wave": 5,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -5467,7 +5467,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Phase 2 audit classified this as conformant / legitimate exception / false positive (evidence in the finding register at f734b4d). Not re-verified against current code in 3A–3N; no change made."
   },
   {
    "id": "F-GOV-001",
