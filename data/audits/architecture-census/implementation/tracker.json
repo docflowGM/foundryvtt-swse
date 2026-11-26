@@ -2092,7 +2092,7 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3H",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -2100,9 +2100,11 @@
     "compat-patches domain"
    ],
    "commits": [],
-   "tests": [],
+   "tests": [
+    "tests/follower-slot-lock.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "followerSlots direct setFlag writers were rerouted through ActorEngine in 3D; this change adds a per-owner in-process FIFO lock (domain/followers/follower-slot-lock.js) around the createItem/deleteItem/progression reconcile, repeatable-entitlement repair and orphan-transfer read-modify-writes. Not yet locked: FollowerSlotService manual GM grant/revoke/transfer writes, minion-creator (user-driven, low concurrency). No cross-client guarantee claimed. Not Foundry-tested."
   },
   {
    "id": "F-PAT-002",

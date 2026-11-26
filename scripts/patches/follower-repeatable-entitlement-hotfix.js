@@ -1,6 +1,7 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { withFollowerSlotLock } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-lock.js';
 import { resolveFollowerSlotActorId } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 
 const REGISTERED = Symbol.for('swse.followerRepeatableEntitlement.registered.v1');
@@ -108,8 +109,14 @@ function sameSlotState(a = [], b = []) {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-export async function repairRepeatableFollowerEntitlements(actor, { reason = 'manual' } = {}) {
+export async function repairRepeatableFollowerEntitlements(actor, options = {}) {
   if (!isOwnerActor(actor) || REPAIRING.has(actor.id)) return [];
+  // F-NPC-001: the repair reads, recomputes and rewrites followerSlots; serialize it with the other followerSlots writers for this owner.
+  return withFollowerSlotLock(actor.id, () => repairRepeatableFollowerEntitlementsLocked(actor, options));
+}
+
+async function repairRepeatableFollowerEntitlementsLocked(actor, { reason = 'manual' } = {}) {
+  if (REPAIRING.has(actor.id)) return [];
   REPAIRING.add(actor.id);
   try {
     const groups = groupFollowerTalents(actor);
