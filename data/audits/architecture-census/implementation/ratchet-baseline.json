@@ -107,7 +107,6 @@
    "scripts/engine/combat/weapon-control-effects.js>scripts/dialogs/entity-dialog/effect-intent-engine.js": 1,
    "scripts/engine/crew/ally-assignment-service.js>scripts/apps/progression-framework/adapters/follower-mutation-transaction.js": 1,
    "scripts/engine/crew/ally-assignment-service.js>scripts/apps/follower-creator.js": 1,
-   "scripts/engine/crew/vehicle-crew-assignment-service.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
    "scripts/engine/crew/vehicle-crew-assignment-service.js>scripts/sheets/v2/vehicle-sheet/crew-resolver.js": 1,
    "scripts/engine/crew/vehicle-weapon-station-service.js>scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js": 1,
    "scripts/engine/effects/adapters/active-effect-adapter.js>scripts/dialogs/entity-dialog/effect-intent-engine.js": 1,

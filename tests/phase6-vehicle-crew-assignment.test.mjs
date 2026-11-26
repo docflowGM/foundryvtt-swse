@@ -67,7 +67,7 @@ assert.doesNotMatch(onRenderHookBody, /this\.activateListeners\(/);
 
 // 1. Assign button invokes the picker.
 assert.match(controls, /'\[data-action="vehicle-assign-crew"\]'/);
-assert.match(controls, /VehicleCrewAssignmentService\.openCrewPicker\(vehicle, station\)/);
+assert.match(controls, /await openCrewPicker\(vehicle, station\);/);   // the picker now lives in the controls module (F-VEH-004)
 
 // 4. Open-sheet opens the assigned actor.
 assert.match(controls, /'\[data-action="vehicle-open-crew"\]'/);
@@ -226,10 +226,10 @@ assert.match(panelTemplate, /\{\{#if station\.editable\}\}/);
 // --- Picker reliability (spec section 9) ------------------------------------
 
 // A cancelled picker (chosenUuid falsy) performs no mutation.
-const pickerFn = service.slice(service.indexOf('static async openCrewPicker'), service.indexOf('static async openCrewSheet'));
+const pickerFn = controls.slice(controls.indexOf('async function openCrewPicker'), controls.indexOf('function bindAssignmentButtons'));
 assert.match(pickerFn, /if \(!chosenUuid\) return null;/);
 const cancelIndex = pickerFn.indexOf('if (!chosenUuid) return null;');
-const assignCallIndex = pickerFn.indexOf('this.assignCrew(');
+const assignCallIndex = pickerFn.indexOf('V.assignCrew(');
 assert.ok(cancelIndex >= 0 && cancelIndex < assignCallIndex, 'cancel check must precede the assignCrew call');
 
 // --- Removal / reassignment (spec section 10) -------------------------------
