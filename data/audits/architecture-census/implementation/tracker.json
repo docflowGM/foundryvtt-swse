@@ -2331,17 +2331,21 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3E",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "ActorEngine.applyDamage"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "d5bba99b0"
+   ],
+   "tests": [
+    "tests/damage-resolution-flags-governed.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "DamageResolutionEngine bookkeeping flags route through ActorEngine.updateActorFlags/unsetActorFlag (recalc:false); remaining raw flag calls in combat code are chat-message flags."
   },
   {
    "id": "F-EQP-001",
@@ -2773,7 +2777,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Reviewed 3J: the three raw-base Wisdom fallbacks are defensive for pre-derived actors; the audit's 'refuse/defer when derived is absent' changes behavior for fresh actors (maneuver grants at feat-add time). Needs a decision on the right fallback (total score vs refuse); not changed."
   },
   {
    "id": "F-MIG-002",
@@ -3940,15 +3944,17 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3J",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "9b0cd4269"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Step 1 done: eight unused exports (141 lines) deleted from scripts/domain/droids/droid-part-schema.js. Step 2 (reimplement resolveDroidSystemIdentity on the canonical normalizeDroidPartId + alias table and retire the overlay) remains and belongs with the 3N-PRQ droid-system grammar work."
   },
   {
    "id": "F-FEA-003",
