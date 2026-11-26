@@ -428,7 +428,7 @@
         "probe": "payloads"
       },
       "entrypoint": null,
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "note": "5D-B/5D-C",
@@ -11026,7 +11026,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11044,7 +11044,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11062,7 +11062,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11080,7 +11080,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11098,7 +11098,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11116,7 +11116,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11134,7 +11134,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11152,7 +11152,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11170,7 +11170,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11248,7 +11248,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11266,7 +11266,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11284,7 +11284,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11302,7 +11302,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11320,7 +11320,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11338,7 +11338,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11356,7 +11356,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11374,7 +11374,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11392,7 +11392,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11410,7 +11410,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11428,7 +11428,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11446,7 +11446,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11464,7 +11464,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11482,7 +11482,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11500,7 +11500,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11518,7 +11518,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11536,7 +11536,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11554,7 +11554,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11572,7 +11572,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11590,7 +11590,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11608,7 +11608,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11626,7 +11626,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11644,7 +11644,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11662,7 +11662,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11680,7 +11680,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11698,7 +11698,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11716,7 +11716,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11734,7 +11734,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11782,7 +11782,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11800,7 +11800,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11818,7 +11818,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11836,7 +11836,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11854,7 +11854,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11872,7 +11872,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11890,7 +11890,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11908,7 +11908,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11926,7 +11926,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11944,7 +11944,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11962,7 +11962,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11980,7 +11980,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11998,7 +11998,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12016,7 +12016,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12034,7 +12034,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12052,7 +12052,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12070,7 +12070,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12088,7 +12088,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12106,7 +12106,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12124,7 +12124,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12142,7 +12142,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12160,7 +12160,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12178,7 +12178,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12196,7 +12196,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12214,7 +12214,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12232,7 +12232,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12250,7 +12250,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12268,7 +12268,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12286,7 +12286,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12304,7 +12304,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12322,7 +12322,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12340,7 +12340,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12358,7 +12358,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12376,7 +12376,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12394,7 +12394,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/attack-chat-outcome-normalization.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",

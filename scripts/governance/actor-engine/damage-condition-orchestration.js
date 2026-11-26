@@ -10,6 +10,7 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { SecondWindRules } from "/systems/foundryvtt-swse/scripts/engine/combat/SecondWindRules.js";
+import { getEffectiveRechargeShieldsAmount } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 // ForcePointsService is injected by ActorEngine (configureDamageOrchestration) so this module does not join the ActorEngine static import cycle.
@@ -495,6 +496,145 @@ export async function resetSecondWindImpl(engine, actor) {
 
     } catch (err) {
       SWSELogger.error(`ActorEngine.resetSecondWind failed for ${actor?.name ?? 'unknown actor'}`, { error: err });
+      throw err;
+    }
+  }
+
+export async function rechargeShieldsImpl(engine, actor, { amount = 5 } = {}) {
+    if (!actor) {throw new Error('rechargeShields() requires actor');}
+    // Regenerating shields (certified installation) raise a vehicle's normal 5 to 10.
+    amount = getEffectiveRechargeShieldsAmount(actor, amount);
+
+    const shields = actor.system?.shields || {};
+    const max = Math.max(
+      Number(shields.max ?? shields.rating ?? 0) || 0,
+      Number(actor.system?.shieldRating ?? 0) || 0,
+      Number(actor.system?.derived?.shield?.max ?? 0) || 0
+    );
+
+    if (max <= 0) {
+      return { restored: 0, current: Number(shields.value ?? 0) || 0, max: 0 };
+    }
+
+    const current = Number(actor.system?.derived?.shield?.current ?? shields.value ?? 0) || 0;
+    const next = Math.min(max, current + (Number(amount) || 0));
+    const restored = Math.max(0, next - current);
+
+    if (restored > 0) {
+      await engine.updateActor(actor, { 'system.shields.value': next });
+    }
+
+    return { restored, current: next, max };
+  }
+
+export async function applyHealingImpl(engine, actor, amount, source = 'healing') {
+    try {
+      if (!actor) {throw new Error('applyHealing() called with no actor');}
+      if (typeof amount !== 'number' || amount < 0) {
+        throw new Error(`Invalid healing amount: ${amount}`);
+      }
+
+      SWSELogger.debug(`ActorEngine.applyHealing → ${actor.name}`, {
+        amount,
+        source
+      });
+
+      if (actor.type === 'droid' && actor.system?.droidState?.destroyed === true) {
+        throw new Error(`${actor.name} is destroyed and cannot be repaired or healed.`);
+      }
+
+      const currentHP = SchemaAdapters.getHP(actor);
+      const maxHP = SchemaAdapters.getMaxHP(actor);
+      const currentCT = Number(actor.system?.conditionTrack?.current ?? 0);
+      const newHP = Math.min(maxHP, currentHP + amount);
+      const actualHealing = newHP - currentHP;
+
+      if (actualHealing === 0) {
+        SWSELogger.debug(`${actor.name} healing had no effect (already at max HP)`);
+        return { applied: 0, newHP };
+      }
+
+      const updates = {
+        ...SchemaAdapters.setHPUpdate(newHP)
+      };
+
+      // RAW: Any healing while at 0 HP / disabled revives and moves +1 step up the CT.
+      const recoveredStep = ConditionTrackRules.resolveHealingConditionRecovery(currentHP, currentCT);
+      if (recoveredStep !== null) {
+        updates['system.conditionTrack.current'] = recoveredStep;
+      }
+      if (actor.type === 'droid' && newHP > 0 && actor.system?.droidState?.status === 'disabled') {
+        updates['system.droidState.status'] = 'operational';
+        updates['system.droidState.disabled'] = false;
+        updates['system.droidState.canBeRepaired'] = true;
+      }
+
+      await engine.updateActor(actor, updates);
+
+      SWSELogger.log(`Healing applied to ${actor.name}: +${actualHealing}HP (now: ${newHP}/${maxHP})`, {
+        source
+      });
+
+      return {
+        applied: actualHealing,
+        newHP
+      };
+
+    } catch (err) {
+      SWSELogger.error(`ActorEngine.applyHealing failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        amount,
+        source
+      });
+      throw err;
+    }
+  }
+
+export async function applyConditionShiftImpl(engine, actor, direction, source = 'manual') {
+    try {
+      if (!actor) {throw new Error('applyConditionShift() called with no actor');}
+      if (!Number.isInteger(direction) || direction === 0) {
+        throw new Error(`Invalid shift direction: ${direction} (must be a non-zero integer)`);
+      }
+
+      SWSELogger.debug(`ActorEngine.applyConditionShift → ${actor.name}`, {
+        direction,
+        source
+      });
+
+      const shift = ConditionTrackRules.resolveConditionShift(actor, direction);
+
+      if (shift.appliedShift === 0) {
+        SWSELogger.debug(`${actor.name} condition shift had no effect (at boundary)`);
+        return { applied: 0, newCondition: shift.next };
+      }
+
+      // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
+      await engine.updateActor(actor, {
+        'system.conditionTrack.current': shift.next
+      }, {
+        render: false
+      });
+
+      const directionLabel = direction > 0 ? 'worsened' : 'improved';
+      SWSELogger.log(`Condition ${directionLabel} for ${actor.name} (now: ${shift.next})`, {
+        source,
+        requestedShift: direction,
+        implantExtraStep: shift.implantExtraStep,
+        appliedShift: shift.appliedShift
+      });
+
+      return {
+        applied: shift.appliedShift,
+        newCondition: shift.next
+      };
+
+    } catch (err) {
+      SWSELogger.error(`ActorEngine.applyConditionShift failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        direction,
+        source
+      });
       throw err;
     }
   }
