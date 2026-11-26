@@ -5249,15 +5249,17 @@
    "auditStatus": "confirmed",
    "wave": 5,
    "plannedPhase": "3J",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "c30329d57"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Static cycle through vehicle published-field state broken via leaf module vehicle-published-field-state.js; ratchet cycles 9->4 overall. Not Foundry-tested."
   },
   {
    "id": "F-VEH-011",
