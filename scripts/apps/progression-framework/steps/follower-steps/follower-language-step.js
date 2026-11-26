@@ -7,6 +7,7 @@
  */
 
 import { LanguageStep } from '../language-step.js';
+import { applyOwnerConstrainedFollowerLanguages, ownerConstrainedLanguageStepData, rejectFollowerCustomLanguage } from './follower-language-owner-constraint.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 function uniqueStrings(values = []) {
@@ -24,6 +25,19 @@ function normalizeLanguageToken(value) {
 
 export class FollowerLanguageStep extends LanguageStep {
   async onStepEnter(shell) {
+    await this._onStepEnterBase(shell);
+    await applyOwnerConstrainedFollowerLanguages(this, shell);
+  }
+
+  async getStepData(context) {
+    return ownerConstrainedLanguageStepData(await super.getStepData(context));
+  }
+
+  async _addCustomLanguage() {
+    rejectFollowerCustomLanguage();
+  }
+
+  async _onStepEnterBase(shell) {
     this._followerChoices = this._getFollowerChoices(shell);
     this._allLanguages = await this._getAllLanguages();
     await this._loadSpeciesLanguageRules();
