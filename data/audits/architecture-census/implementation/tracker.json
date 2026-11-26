@@ -1087,7 +1087,7 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3H",
-   "status": "PARTIALLY_COMPLETE_BLOCKED",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -1096,13 +1096,14 @@
     "B-PRG"
    ],
    "commits": [
-    "40cc017a5"
+    "40cc017a5",
+    "HEAD"
    ],
    "tests": [
     "tests/follower-live-state-folded.test.mjs"
    ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "Follower live-state projection and owner-constrained language selection folded into FollowerSubtypeAdapter/FollowerLanguageStep; slot-reconcile listeners gated to the originating client. Remaining: follower-npc-sheet-parity (NPC sheet context/event/feat patches), follower-orphan-transfer, follower-repeatable-entitlement, follower-species-materialization (FollowerCreator override), render-triggered reconcile queues."
+   "notes": "Follower live-state projection and owner-constrained language selection folded into FollowerSubtypeAdapter/FollowerLanguageStep; slot-reconcile listeners gated to the originating client. Remaining: follower-npc-sheet-parity (NPC sheet context/event/feat patches), follower-orphan-transfer, follower-repeatable-entitlement, follower-species-materialization (FollowerCreator override), render-triggered reconcile queues. | Follower NPC sheet context/events/feat-dedupe folded into SWSEV2NpcSheet (_prepareContext, _wireNpcConceptSheetEvents) and FollowerCreator._addFeatByName via sheets/v2/npc/follower-sheet-parity.js; follower DefenseCalculator wrapper remains (shadow defense authority = owner decision). Not Foundry-tested."
   },
   {
    "id": "F-PAT-005",

@@ -85,7 +85,7 @@ const view = (a, editable = true) => buildActorEquipmentWorkspace(a, { inventory
 // 5. follower Store, progression and statblock surfaces preserved
 {
   const npc = fs.readFileSync('templates/actors/npc/v2/partials/npc-concept-content.hbs', 'utf8');
-  const hotfix = fs.readFileSync('scripts/patches/follower-npc-sheet-parity-hotfix.js', 'utf8');
+  const hotfix = fs.readFileSync('scripts/sheets/v2/npc/follower-sheet-parity.js', 'utf8');
   for (const sel of ['section.tab[data-tab="gear"]', '.swse-npc-card__header', '.swse-npc-badges']) assert.ok(hotfix.includes(sel), `hotfix still targets ${sel}`);
   assert.ok(/data-tab="gear"/.test(npc) && npc.includes('class="tab flexcol"') && npc.includes('swse-npc-card__header') && npc.includes('swse-npc-badges'), 'the template still provides every hook the Store injection needs');
   assert.ok(hotfix.includes("data-action = 'open-follower-store'") || hotfix.includes("'open-follower-store'"));

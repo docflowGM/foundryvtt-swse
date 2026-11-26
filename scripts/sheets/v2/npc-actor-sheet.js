@@ -9,6 +9,7 @@ import { NpcProfileBuilder } from "/systems/foundryvtt-swse/scripts/actors/npc/n
 import { buildNpcConceptAbilities, buildNpcConceptSheetContext, isNpcSheetWritablePath, isNpcStatblockAuthorityPath, isQuietNpcSheetPath } from "/systems/foundryvtt-swse/scripts/sheets/v2/npc/npc-sheet-helpers.js";
 import { coerceSingleFieldValue } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
 import { launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { applyFollowerContext, injectFollowerSheetControls } from "/systems/foundryvtt-swse/scripts/sheets/v2/npc/follower-sheet-parity.js";
 import { SnapshotManager } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js";
 import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
 
@@ -116,7 +117,20 @@ export class SWSEV2NpcSheet extends SWSEV2CharacterLikeSheet {
     }
   }
 
+  /** Follower rows/skills/gear parity (folded from follower-npc-sheet-parity-hotfix). */
+  async _prepareContext(options = {}) {
+    const context = await super._prepareContext(options);
+    return applyFollowerContext(context, this.actor);
+  }
+
   _wireNpcConceptSheetEvents(root, signal) {
+    const result = this._wireNpcConceptSheetEventsBase(root, signal);
+    if (this.actor?.type !== 'npc') return result;
+    injectFollowerSheetControls(this, root, signal);
+    return result;
+  }
+
+  _wireNpcConceptSheetEventsBase(root, signal) {
     if (!(root instanceof HTMLElement) || this.actor?.type !== 'npc') return;
 
     this._wireNpcConceptFieldPersistence(root, signal);

@@ -543,6 +543,14 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @returns {boolean} True if feat was added successfully
      */
     static async _addFeatByName(follower, featName, grantMetadata = null) {
+        // Folded from follower-npc-sheet-parity-hotfix: a follower never receives a feat it already owns (same normalized name).
+        const dedupeKey = (v) => String(v || '').trim().toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '');
+        const target = dedupeKey(featName);
+        if (Array.from(follower?.items || []).some(item => item?.type === 'feat' && dedupeKey(item.name) === target)) return false;
+        return this._addFeatByNameBase(follower, featName, grantMetadata);
+    }
+
+    static async _addFeatByNameBase(follower, featName, grantMetadata = null) {
         try {
             if (!follower || !featName) return false;
             const normalizedName = String(featName).trim();
