@@ -72,16 +72,16 @@ Counts: DELEGATE_TO_EXISTING_DOMAIN_ENGINE 15; EXTRACT_INTERNAL_IMPLEMENTATION 3
 | `buildDerivedState` | 3202–3204 | EXTRACTED (AE.1, delegate retained) | AE.1 | mutation-plan-helpers.js |
 | `applyMutationPlan` | 3235–3371 | KEEP_IN_FACADE | AE.5 | public; bucket stage functions extracted behind it (tests: 50) |
 | `_validateRecoverySnapshot` | 3382–3384 | EXTRACTED (AE.1, delegate retained) | AE.1 | mutation-plan-helpers.js |
-| `restoreSnapshotVerified` | 3399–3444 | KEEP_IN_FACADE | AE.5 | public; verified-restore certification stays here |
-| `captureRecoverySnapshot` | 3453–3461 | KEEP_IN_FACADE | AE.5 | public |
-| `_rollbackTransactionalPlan` | 3484–3558 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.5 | rollback; TE depends on its semantics (F-ACT-003) |
+| `restoreSnapshotVerified` | 3399–3444 | EXTRACTED (AE.5, delegate retained) | AE.5 | plan-stages.js;  public; verified-restore certification stays here |
+| `captureRecoverySnapshot` | 3453–3461 | EXTRACTED (AE.5, delegate retained) | AE.5 | plan-stages.js;  public |
+| `_rollbackTransactionalPlan` | 3484–3558 | EXTRACTED (AE.5, delegate retained) | AE.5 | plan-stages.js;  rollback; TE depends on its semantics (F-ACT-003) |
 | `_validateMutationPlan` | 3564–3566 | EXTRACTED (AE.1, delegate retained) | AE.1 | mutation-plan-helpers.js |
-| `_applyCreateOps` | 3573–3616 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.5 | bucket stage |
+| `_applyCreateOps` | 3573–3616 | EXTRACTED (AE.5, delegate retained) | AE.5 | plan-stages.js;  bucket stage |
 | `_rewriteTemporaryIds` | 3623–3625 | EXTRACTED (AE.1, delegate retained) | AE.1 | mutation-plan-helpers.js |
-| `_applyDeleteOps` | 3631–3668 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.5 | bucket stage |
-| `_applySetOps` | 3674–3704 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.5 | bucket stage |
-| `_applyUpdateOps` | 3710–3757 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.5 | bucket stage |
-| `_applyAddOps` | 3763–3802 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.5 | bucket stage |
+| `_applyDeleteOps` | 3631–3668 | EXTRACTED (AE.5, delegate retained) | AE.5 | plan-stages.js;  bucket stage |
+| `_applySetOps` | 3674–3704 | EXTRACTED (AE.5, delegate retained) | AE.5 | plan-stages.js;  bucket stage |
+| `_applyUpdateOps` | 3710–3757 | EXTRACTED (AE.5, delegate retained) | AE.5 | plan-stages.js;  bucket stage |
+| `_applyAddOps` | 3763–3802 | EXTRACTED (AE.5, delegate retained) | AE.5 | plan-stages.js;  bucket stage |
 | `applyRepair` | 3816–3921 | RETAIN_PENDING_PARITY | AE.6 | 106 lines, 1 caller, 0 tests: characterize first (vehicle repair rules = domain) |
 | `updateActorFlags` | 3941–3976 | KEEP_IN_FACADE | AE.3 | public; recalc:false semantics must be preserved |
 | `unsetActorFlag` | 3989–4021 | KEEP_IN_FACADE | AE.3 | public |
