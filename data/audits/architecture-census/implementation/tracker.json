@@ -2112,7 +2112,7 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3N",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -2122,7 +2122,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Follower species-materialization FollowerCreator wrapper folded into FollowerCreator (create/update call domain/followers/follower-species-materialization.js after the base succeeds; logic moved verbatim). Remaining in the hotfix: SpeciesRegistry canonical-stats normalization (blocked on baseline-vs-production species data question). Other follower hotfixes (entitlement, orphan-transfer, live-state) are Hooks registrations, not prototype patches; sheet-parity patches the NPC sheet prototype and defense (defense = owner decision). Not Foundry-tested."
   },
   {
    "id": "F-PAT-004",

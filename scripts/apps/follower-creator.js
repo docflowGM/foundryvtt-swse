@@ -52,6 +52,10 @@ import {
     buildFollowerCreationPreflight
 } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-mutation-planning.js";
 
+// Lazy: the materializer reaches ActorEngine/DerivedCalculator; keep FollowerCreator out of that static import cycle.
+const materializeFollowerSpeciesLazy = async (follower, mutation) =>
+    (await import("/systems/foundryvtt-swse/scripts/domain/followers/follower-species-materialization.js")).materializeFollowerSpecies(follower, mutation);
+
 export class FollowerCreator {
 
     // CORRECTION — runtime-only in-flight guard for concurrent duplicate
@@ -1290,6 +1294,12 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @returns {Promise<Actor|null>} Created follower actor or null on error
      */
     static async createFollowerFromMutation(owner, followerMutation) {
+        const follower = await this._createFollowerFromMutationBase(owner, followerMutation);
+        if (follower) await materializeFollowerSpeciesLazy(follower, followerMutation);
+        return follower;
+    }
+
+    static async _createFollowerFromMutationBase(owner, followerMutation) {
         const finalizationToken = resolveFollowerFinalizationToken(followerMutation);
         const guardKey = buildFollowerFinalizationGuardKey(owner?.id, finalizationToken);
 
@@ -1497,7 +1507,13 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @param {{report?: object}} [options]
      * @returns {Promise<boolean>} True if successful, false otherwise
      */
-    static async updateFollowerFromMutation(follower, followerMutation, options = {}) {
+    static async updateFollowerFromMutation(follower, followerMutation, ...rest) {
+        const success = await this._updateFollowerFromMutationBase(follower, followerMutation, ...rest);
+        if (success) await materializeFollowerSpeciesLazy(follower, followerMutation);
+        return success;
+    }
+
+    static async _updateFollowerFromMutationBase(follower, followerMutation, options = {}) {
         const report = (options && typeof options.report === 'object' && options.report !== null) ? options.report : {};
 
         // Snapshot the follower before any mutation so a failure partway through (core state committed via ActorEngine.updateActor, then

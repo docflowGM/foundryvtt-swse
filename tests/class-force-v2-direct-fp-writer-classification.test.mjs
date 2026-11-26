@@ -21,7 +21,7 @@ const CLASSIFIED = {
   'scripts/governance/actor-engine/actor-engine.js': 'V2_INTERNAL',
   'scripts/actors/base/swse-actor-base.js': 'REGAIN_OR_RESET',
   'scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js': 'REGAIN_OR_RESET',
-  'scripts/patches/follower-species-materialization-hotfix.js': 'REGAIN_OR_RESET',
+  'scripts/domain/followers/follower-species-materialization.js': 'REGAIN_OR_RESET',
   'scripts/sheets/v2/actor-sheet-base.js': 'REGAIN_OR_RESET',
   'scripts/sheets/v2/character-like-sheet.js': 'MANUAL_ADJUSTMENT',
   'scripts/sheets/v2/character-sheet/form.js': 'MANUAL_ADJUSTMENT',
