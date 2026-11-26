@@ -111,5 +111,5 @@ Counts: DELEGATE_TO_EXISTING_DOMAIN_ENGINE 15; EXTRACT_INTERNAL_IMPLEMENTATION 3
 | `_ensureCanonicalDefenseShapes` | 4517–4519 | EXTRACTED (AE.1, delegate retained) | AE.1 | canonical-actor-shapes.js |
 | `_ensureCanonicalXpShape` | 4525–4527 | EXTRACTED (AE.1, delegate retained) | AE.1 | canonical-actor-shapes.js |
 | `_ensureCanonicalHpShape` | 4533–4535 | EXTRACTED (AE.1, delegate retained) | AE.1 | canonical-actor-shapes.js |
-| `_normalizeAbilityPaths` | 4545–4582 | EXTRACT_PURE_HELPER | AE.2 | uses foundry.utils only; pure after parity test |
-| `_normalizeXpPaths` | 4592–4617 | EXTRACT_PURE_HELPER | AE.2 | uses foundry.utils only; pure after parity test |
+| `_normalizeAbilityPaths` | removed | VERIFIED_OBSOLETE (removed AE.2) | AE.2 | no callers; duplicate of MutationNormalizationService._normalizeAbilityPaths |
+| `_normalizeXpPaths` | removed | VERIFIED_OBSOLETE (removed AE.2) | AE.2 | no callers; duplicate of MutationNormalizationService._normalizeXpPaths |
