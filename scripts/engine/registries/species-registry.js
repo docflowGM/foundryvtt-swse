@@ -54,23 +54,6 @@ import { readOptionalSpeciesAnatomy } from "/systems/foundryvtt-swse/scripts/spe
  * @property {string} pack - Compendium pack origin
  */
 
-const CANONICAL_ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-
-function clonePlain(value) {
-  try { return structuredClone(value); } catch (_err) {
-    try { return JSON.parse(JSON.stringify(value)); } catch (_jsonErr) { return value; }
-  }
-}
-
-function finiteOr(value, fallback = 0) {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : fallback;
-}
-
-function normalizeCanonicalAbilityMods(raw = {}) {
-  return Object.fromEntries(CANONICAL_ABILITY_KEYS.map(key => [key, finiteOr(raw?.[key], 0)]));
-}
-
 export class SpeciesRegistry {
   // Static state - all methods are class methods
   static _initialized = false;
@@ -443,44 +426,6 @@ export class SpeciesRegistry {
    * @returns {SpeciesRegistryEntry}
    */
   static _normalizeEntry(doc) {
-    // Normalize the real Foundry document first (a pseudo-document built on the DataModel prototype breaks v13 DocumentStatsField shimming),
-    // then fill gaps from system.canonicalStats. Formerly a runtime patch in scripts/patches/follower-species-materialization-hotfix.js.
-    const entry = this._normalizeEntryBase(doc);
-    const system = doc?.system || {};
-    const canonical = system.canonicalStats && typeof system.canonicalStats === 'object'
-      ? system.canonicalStats
-      : null;
-    if (!canonical) return entry;
-
-    const canonicalMods = normalizeCanonicalAbilityMods(canonical.abilityMods || canonical.abilityScores || {});
-    const hasCanonicalMods = Object.values(canonicalMods).some(value => value !== 0);
-    const canonicalMovement = canonical.movement && typeof canonical.movement === 'object'
-      ? clonePlain(canonical.movement)
-      : null;
-
-    return {
-      ...entry,
-      abilityScores: hasCanonicalMods ? canonicalMods : entry.abilityScores,
-      abilityMods: hasCanonicalMods ? { ...canonicalMods } : entry.abilityMods,
-      size: entry.size || canonical.size || null,
-      speed: Number.isFinite(Number(entry.speed)) ? Number(entry.speed) : finiteOr(canonical.speed ?? canonicalMovement?.walk, 6),
-      movement: entry.movement && Object.keys(entry.movement).length ? entry.movement : (canonicalMovement || entry.movement),
-      languages: Array.isArray(entry.languages) && entry.languages.length
-        ? entry.languages
-        : (Array.isArray(canonical.languages) ? [...canonical.languages] : []),
-      abilities: Array.isArray(entry.abilities) && entry.abilities.length
-        ? entry.abilities
-        : (Array.isArray(canonical.special) ? [...canonical.special] : []),
-      canonicalTraits: Array.isArray(entry.canonicalTraits) && entry.canonicalTraits.length
-        ? entry.canonicalTraits
-        : (Array.isArray(canonical.traits) ? clonePlain(canonical.traits) : []),
-      variants: Array.isArray(entry.variants) && entry.variants.length
-        ? entry.variants
-        : (Array.isArray(canonical.variants) ? clonePlain(canonical.variants) : []),
-    };
-  }
-
-  static _normalizeEntryBase(doc) {
     // DIAGNOSTICS: Log document structure for first few species to understand ID location
     this._normalizeCount = (this._normalizeCount ?? 0) + 1;
     if (this._normalizeCount <= 3) {
