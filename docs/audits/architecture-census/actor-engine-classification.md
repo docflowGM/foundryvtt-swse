@@ -29,15 +29,15 @@ Counts: DELEGATE_TO_EXISTING_DOMAIN_ENGINE 15; EXTRACT_INTERNAL_IMPLEMENTATION 3
 | `applyDelta` | 1106–1208 | RETAIN_PENDING_PARITY | AE.6 | 2 callers, 0 tests: needs characterization first |
 | `_preflightAdoptionPayloads` | 1257–1278 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.5 | adoption payload preflight |
 | `apply` | 1280–1397 | KEEP_IN_FACADE | - | public (136 callers) |
-| `applyDamage` | 1424–1554 | KEEP_IN_FACADE | AE.6 | public; orchestration extracted to a damage coordinator behind it |
+| `applyDamage` | 1424–1554 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  public; orchestration extracted to a damage coordinator behind it |
 | `rechargeShields` | 1574–1599 | DELEGATE_TO_EXISTING_DOMAIN_ENGINE | AE.6 | shield domain |
 | `applyHealing` | 1611–1672 | KEEP_IN_FACADE | AE.6 | public; 0 tests: characterize first |
-| `setConditionStep` | 1684–1727 | KEEP_IN_FACADE | AE.6 | public |
-| `setConditionPersistent` | 1738–1772 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.6 | condition internals |
+| `setConditionStep` | 1684–1727 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  public |
+| `setConditionPersistent` | 1738–1772 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  condition internals |
 | `applyConditionShift` | 1784–1831 | KEEP_IN_FACADE | AE.6 | public (0 tests) |
-| `incrementPersistentConditionSteps` | 1837–1854 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.6 | condition internals |
-| `_settleForcePointRescue` | 1863–1878 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4/AE.6 | FP rescue |
-| `_maybeResolveForcePointRescue` | 1900–1972 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4/AE.6 | FP rescue; uses FP ledger |
+| `incrementPersistentConditionSteps` | 1837–1854 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  condition internals |
+| `_settleForcePointRescue` | 1863–1878 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  FP rescue |
+| `_maybeResolveForcePointRescue` | 1900–1972 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  FP rescue; uses FP ledger |
 | `recoverConditionStep` | 1981–2028 | RETAIN_PENDING_PARITY | AE.6 | 0 callers/tests: confirm obsolete (VERIFIED_OBSOLETE?) before moving |
 | `updateActionEconomy` | 2040–2072 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.6 | turn-economy write (runtime-risk area) |
 | `gainForcePoints` | 2080–2112 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  public |
@@ -59,8 +59,8 @@ Counts: DELEGATE_TO_EXISTING_DOMAIN_ENGINE 15; EXTRACT_INTERNAL_IMPLEMENTATION 3
 | `finalizeDestinyPointSpend` | 2548–2569 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  public |
 | `dispatchDestinyPointTriggers` | 2572–2599 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  trigger dispatch |
 | `ackDestinyPointTrigger` | 2602–2613 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  trigger ack |
-| `applySecondWind` | 2625–2746 | KEEP_IN_FACADE | AE.6 | public; SecondWindEngine rules stay in the domain engine |
-| `resetSecondWind` | 2757–2790 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.6 | second wind |
+| `applySecondWind` | 2625–2746 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  public; SecondWindEngine rules stay in the domain engine |
+| `resetSecondWind` | 2757–2790 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  second wind |
 | `applySecondWindEdgeOfExhaustion` | 2808–2849 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.6 | second wind (0 tests) |
 | `applyProgression` | 2874–3031 | RETAIN_PENDING_PARITY | AE.5 | 158 lines, 4 callers, 0 tests: characterize against ProgressionFinalizer before moving |
 | `restoreFromSnapshot` | 3046–3050 | KEEP_IN_FACADE | AE.5 | public (thin) |
