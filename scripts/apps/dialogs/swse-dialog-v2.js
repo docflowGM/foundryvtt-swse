@@ -13,6 +13,7 @@
  */
 
 import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import { registerUiPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { domQuery } from "/systems/foundryvtt-swse/scripts/utils/dom-query-shim.js";
 
 export class SWSEDialogV2 extends SWSEApplicationV2 {
@@ -227,3 +228,4 @@ export class SWSEDialogV2 extends SWSEApplicationV2 {
 
 // Expose globally for mechanical Run-1 replacements (Dialog -> SWSEDialogV2).
 globalThis.SWSEDialogV2 = SWSEDialogV2;
+registerUiPort('dialogV2', SWSEDialogV2);

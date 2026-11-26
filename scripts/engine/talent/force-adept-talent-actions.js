@@ -1,13 +1,13 @@
 import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { readBonusPool, bonusPoolUpdate } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort, openForceAlchemyWorkbenchPort as openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { rollAttack, rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { getClassLevel, getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
-import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
+
 import { countForceTalents } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
 import { getTalentAbilityMod as abilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
 
@@ -217,7 +217,7 @@ async function promptFields(title, body, fields = []) {
     return `<div class="form-group"><label>${esc(field.label)}</label><input type="text" name="${esc(field.name)}" value="${esc(field.value ?? '')}" placeholder="${esc(field.placeholder ?? '')}" /></div>`;
   }).join('');
   const content = `<form class="swse-dialog swse-force-adept-talent-dialog"><p>${body}</p>${fieldHtml}</form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title,
     content,
     label: 'Continue',

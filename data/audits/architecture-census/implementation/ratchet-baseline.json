@@ -123,18 +123,7 @@
    "scripts/engine/progression/utils/acquisition-authority.js>scripts/apps/progression-framework/shell/progression-reconciler.js": 1,
    "scripts/engine/progression/utils/force-suite-resolution.js>scripts/apps/progression-framework/services/pending-entitlement-service.js": 1,
    "scripts/engine/suggestion/BackgroundSuggestionEngine.js>scripts/apps/progression-framework/utils/skill-display.js": 1,
-   "scripts/engine/suggestion/SuggestionService.js>scripts/ui/shell/ShellMutationGuard.js": 1,
-   "scripts/engine/talent/armor-talent-actions.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
-   "scripts/engine/talent/consular-talent-actions.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
-   "scripts/engine/talent/force-adept-talent-actions.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
-   "scripts/engine/talent/force-adept-talent-actions.js>scripts/apps/force-alchemy/force-alchemy-workbench-app.js": 1,
-   "scripts/engine/talent/guardian-spirit-actions.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
-   "scripts/engine/talent/jedi-prestige-talent-actions.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
-   "scripts/engine/talent/lightsaber-form-engine.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
-   "scripts/engine/talent/lightsaber-talent-actions.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
-   "scripts/engine/talent/sentinel-talent-actions.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
-   "scripts/engine/talent/sith-talent-actions.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
-   "scripts/engine/talent/sith-talent-actions.js>scripts/apps/force-alchemy/force-alchemy-workbench-app.js": 1
+   "scripts/engine/suggestion/SuggestionService.js>scripts/ui/shell/ShellMutationGuard.js": 1
   },
   "P-A08": {},
   "P-A09-prototype": {

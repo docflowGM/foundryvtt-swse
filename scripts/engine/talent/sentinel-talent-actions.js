@@ -3,7 +3,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { resolveForceDiscipleIndomitable } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-features.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
@@ -140,7 +140,7 @@ async function promptToken(actor, title, { relation = 'any', maxSquares = null, 
     ${requireDarkSide ? '<label class="checkbox"><input type="checkbox" name="confirmDarkSide" /> Target has a Dark Side Score of 1 or higher</label>' : ''}
     <p class="notes">Line of sight, concealment, exact range, and special target traits remain GM/player adjudicated when the scene cannot prove them.</p>
   </form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title,
     content,
     label: 'Continue',
@@ -329,7 +329,7 @@ export class SentinelTalentActions {
       <label class="checkbox"><input type="checkbox" name="vehicle" /> Hide one vehicle instead while on board (GM confirms size restriction)</label>
       <p class="notes">If an opponent moves into line of sight of a hidden creature, compare this UTF result to that opponent's Will Defense. On success, hidden creatures have Total Concealment against that opponent.</p>
     </form>`;
-    const choice = await SWSEDialogV2.prompt({
+    const choice = await DialogPort.prompt({
       title: 'Force Haze',
       content,
       label: 'Create Haze',
@@ -429,7 +429,7 @@ export class SentinelTalentActions {
     const powers = forcePowerOptions(actor);
     const powerOptions = powers.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
     const content = `<form class="swse-dialog"><p>Spend 1 Force Point to activate a ready Force Power as a Reaction after being targeted by a Force Power with the [Dark Side] descriptor.</p><div class="form-group"><label>Force Power to activate</label><select name="powerId">${powerOptions}<option value="manual">Manual / not tracked</option></select></div></form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Dark Retaliation', content, label: 'Retaliate', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Dark Retaliation', content, label: 'Retaliate', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       return { powerId: String(new FormData(form).get('powerId') || 'manual') };
@@ -455,7 +455,7 @@ export class SentinelTalentActions {
       return null;
     }
     const content = `<form class="swse-dialog"><p>After you take damage from a Force Power, identify that power. You gain +2 Force bonus to all Defenses against that Force Power until the end of the encounter.</p><div class="form-group"><label>Force Power</label><input name="powerName" type="text" placeholder="Move Object, Force Lightning, etc." /></div></form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Gradual Resistance', content, label: 'Record Resistance', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Gradual Resistance', content, label: 'Record Resistance', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       return { powerName: String(new FormData(form).get('powerName') || '').trim() || 'the triggering Force Power' };
@@ -515,7 +515,7 @@ export class SentinelTalentActions {
     const bab = getBab(actor);
     const maxPenalty = Math.max(1, Math.min(5, bab || 5));
     const content = `<form class="swse-dialog"><p>When you use a Standard Action to make a melee attack, take an attack penalty and gain twice that value as an insight bonus to Will Defense until the start of your next turn. The bonus cannot exceed your Base Attack Bonus.</p><div class="form-group"><label>Attack penalty</label><input name="penalty" type="range" min="1" max="${maxPenalty}" value="1" step="1" oninput="this.nextElementSibling.value=this.value" /><output>1</output></div><p class="notes">Current detected BAB cap: ${bab}. If BAB could not be detected, GM confirms the cap.</p></form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Steel Resolve', content, label: 'Apply Steel Resolve', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Steel Resolve', content, label: 'Apply Steel Resolve', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       return { penalty: Math.max(1, Math.min(maxPenalty, Number(new FormData(form).get('penalty') || 1) || 1)) };
@@ -574,7 +574,7 @@ export class SentinelTalentActions {
     }
     const rows = options.map(row => `<option value="${esc(row.id)}" ${current?.powerName === row.name ? 'selected' : ''}>${esc(row.name)} — ${esc(row.source)}</option>`).join('');
     const content = `<form class="swse-dialog"><p>Choose one Force Power with the [Dark Side] descriptor to add to your Force Power Suite. Once per encounter, you can use that chosen power without increasing your Dark Side Score unless you spend a Force Point or Destiny Point to modify it.</p><div class="form-group"><label>Dark Side Force Power</label><select name="powerRef">${rows}</select></div><p class="notes">If the selected power is from the compendium and not already owned, it will be added to the actor's Force Power Suite.</p></form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Taint of the Dark Side', content, label: 'Choose Power', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Taint of the Dark Side', content, label: 'Choose Power', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       return { powerRef: String(new FormData(form).get('powerRef') || '') };

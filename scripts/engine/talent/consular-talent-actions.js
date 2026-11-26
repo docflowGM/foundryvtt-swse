@@ -3,7 +3,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { ConditionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionEngine.js";
 import { resolveForceDiscipleIndomitable } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-features.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
@@ -103,7 +103,7 @@ async function promptToken(actor, title, { relation = 'any', maxSquares = null, 
     <div class="form-group"><label>${esc(fallbackLabel)}</label><input name="manualName" type="text" placeholder="Manual target name" /></div>
     <p class="notes">Line of sight, language, willingness, and exact range remain GM/player adjudicated when the scene cannot prove them.</p>
   </form>`;
-  const result = await SWSEDialogV2.prompt({
+  const result = await DialogPort.prompt({
     title,
     content,
     label: 'Continue',
@@ -417,7 +417,7 @@ export class ConsularTalentActions {
       <label class="checkbox"><input type="checkbox" name="useForcePoint" /> Spend 1 Force Point for +10 instead</label>
       <p class="notes">Full-Round Action · Mind-Affecting · applies to the ally's next chosen Skill Check.</p>
     </form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Skilled Advisor', content, label: 'Advise Ally', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Skilled Advisor', content, label: 'Advise Ally', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       const fd = new FormData(form);
@@ -533,7 +533,7 @@ export class ConsularTalentActions {
       '<option value="manual">Manual GM-adjudicated effect</option>'
     ].join('');
     const content = `<form class="swse-dialog"><p>Choose one ongoing Mind-Affecting effect to remove.</p><div class="form-group"><label>Effect</label><select name="choice">${optionHtml}</select></div></form>`;
-    const result = await SWSEDialogV2.prompt({ title: 'Cleanse Mind', content, label: 'Cleanse', callback: (html) => {
+    const result = await DialogPort.prompt({ title: 'Cleanse Mind', content, label: 'Cleanse', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       return { choice: String(new FormData(form).get('choice') || 'manual') };
@@ -919,7 +919,7 @@ export class ConsularTalentActions {
       ui?.notifications?.warn?.('Grenade Defense talent required.');
       return null;
     }
-    const choice = await SWSEDialogV2.prompt({
+    const choice = await DialogPort.prompt({
       title: 'Grenade Defense',
       content: '<form class="swse-dialog swse-grenade-defense-dialog"><p>Enter the incoming grenade attack roll. You will make a Use the Force check against that DC.</p><div class="form-group"><label>Incoming Attack Roll DC</label><input name="dc" type="number" min="1" value="20" /></div><p class="notes">Reaction - Move Light Object application - success negates the grenade attack. Whether or not successful, you take -5 on UTF checks until the start of your next turn.</p></form>',
       label: 'Roll Use the Force',

@@ -1,6 +1,6 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { readBonusPool, bonusPoolUpdate, normalizeBonusEntries } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
@@ -202,7 +202,7 @@ export class GuardianSpiritActions {
       </select></div>
       <p class="notes">For multi-result skill checks, failure means achieving less than the minimum DC.</p>
     </form>`;
-    const result = await SWSEDialogV2.prompt({
+    const result = await DialogPort.prompt({
       title: 'Crucial Advice — Skill Reroll',
       content,
       label: 'Reroll Skill',

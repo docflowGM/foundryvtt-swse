@@ -1,11 +1,11 @@
 import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort, openForceAlchemyWorkbenchPort as openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { getClassLevel, getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
-import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
+
 import { getTalentAbilityMod as abilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
 import { isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/utils/responsible-gm.js";
@@ -105,7 +105,7 @@ function htmlSelect(name, label, options = []) {
 
 async function promptSelect(title, body, select) {
   const content = `<form class="swse-dialog swse-sith-talent-dialog"><p>${body}</p>${htmlSelect(select.name, select.label, select.options)}</form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title,
     content,
     label: 'Continue',
@@ -119,7 +119,7 @@ async function promptSelect(title, body, select) {
 
 async function promptText(title, body, { name = 'value', label = 'Value', placeholder = '' } = {}) {
   const content = `<form class="swse-dialog swse-sith-talent-dialog"><p>${body}</p><div class="form-group"><label>${esc(label)}</label><input type="text" name="${esc(name)}" placeholder="${esc(placeholder)}" /></div></form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title,
     content,
     label: 'Continue',
@@ -440,7 +440,7 @@ export class SithTalentActions {
     let kept = second;
     let spent = false;
     if (master && Number(first?.total ?? 0) > Number(second?.total ?? 0)) {
-      const spend = await SWSEDialogV2.confirm?.({ title: 'Dark Side Master', content: `<p>Spend 1 Force Point to keep the better result (${first.total}) instead of the reroll (${second.total})?</p>` });
+      const spend = await DialogPort.confirm?.({ title: 'Dark Side Master', content: `<p>Spend 1 Force Point to keep the better result (${first.total}) instead of the reroll (${second.total})?</p>` });
       if (spend) {
         const fp = await beginContractedForcePoint(actor, 'sith:Dark Side Master', {}, { label: 'Dark Side Master' });
         if (fp.ok) spent = await fp.settle(async () => { kept = first; return true; });
@@ -536,7 +536,7 @@ export class SithTalentActions {
 
   static async announceSithAlchemyDeferred(actor) {
     let dsp = null;
-    const record = await SWSEDialogV2.confirm?.({
+    const record = await DialogPort.confirm?.({
       title: 'Sith Alchemy',
       content: '<p>Sith Alchemy crafting automation is deferred until the item/transformation UI exists.</p><p>If the character has just completed an Alchemical Transformation, record the required <strong>+1 Dark Side Score</strong> on the character sheet now?</p>'
     });
@@ -546,7 +546,7 @@ export class SithTalentActions {
 
   static async announceSithAlchemySpecialistDeferred(actor) {
     let dsp = null;
-    const record = await SWSEDialogV2.confirm?.({
+    const record = await DialogPort.confirm?.({
       title: 'Sith Alchemy Specialist',
       content: '<p>Sith Alchemy Specialist trait automation is deferred until the item/trait UI exists.</p><p>If the character has just applied a Sith Alchemy Specialist trait, record the required <strong>+1 Dark Side Score</strong> on the character sheet now?</p>'
     });

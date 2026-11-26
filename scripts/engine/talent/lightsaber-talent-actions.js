@@ -1,6 +1,6 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { ownedAbilityInstance } from "/systems/foundryvtt-swse/scripts/utils/canonical-ability-identity.js";
@@ -80,7 +80,7 @@ function currentBlockDeflectState(actor) {
 // all equipped weapons are never silently combined.
 async function chooseReactionWeapon(candidates, title) {
   const options = candidates.map((c) => `<option value="${esc(c.item.id)}">${esc(c.item.name)}</option>`).join('');
-  const picked = await SWSEDialogV2.prompt({
+  const picked = await DialogPort.prompt({
     title: `${title} - choose the weapon`,
     content: `<form class="swse-dialog"><p>More than one equipped weapon can be used for ${esc(title)} with different effects. Choose the one you are using.</p><div class="form-group"><select name="weapon">${options}</select></div></form>`,
     label: 'Use this weapon',
@@ -127,7 +127,7 @@ async function promptAttackRollDc(title, { note = '', includeArea = false, inclu
     ${includeCortosis ? '<label class="checkbox"><input type="checkbox" name="cortosis" /> I am using a Cortosis Gauntlet for Block</label>' : ''}
     <p class="notes">You must be aware of the attack and not Flat-Footed. Lightsaber requirements remain table-adjudicated unless a talent explicitly changes them.</p>
   </form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title,
     content,
     label: 'Roll Use the Force',
@@ -155,7 +155,7 @@ async function promptNamedTarget(title, note = '') {
     <div class="form-group"><label>Target</label><input name="targetName" type="text" placeholder="Target name" /></div>
     <p class="notes">Exact range, line of sight, adjacency, target type, and weapon context remain GM/player adjudicated when the scene cannot prove them.</p>
   </form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title,
     content,
     label: 'Continue',
@@ -187,7 +187,7 @@ async function promptSeveringStrikeDetails(actor) {
     <label class="checkbox"><input type="checkbox" name="applyCondition" ${target?.actor ? 'checked' : ''} /> Apply -1 Condition Track and Persistent Condition to selected/targeted token</label>
     <p class="notes">The damage replacement itself is GM/player adjudicated: deal half damage instead of full damage. Limb penalties and surgery/cybernetic recovery are recorded in chat.</p>
   </form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title: 'Severing Strike',
     content,
     label: 'Use Severing Strike',
@@ -250,7 +250,7 @@ async function pickProtectableEvent(actor, talent) {
   if (!options.length) return null;
   if (options.length === 1) return options[0];
   const list = options.map((o, i) => `<option value="${i}">${esc(o.attacker.name)} attacks ${esc(o.ally.name)} (${o.event.attackTotal})</option>`).join('');
-  const picked = await SWSEDialogV2.prompt({
+  const picked = await DialogPort.prompt({
     title: `Protect an adjacent ally`, label: 'Protect',
     content: `<form class="swse-dialog"><div class="form-group"><label>Attack to answer</label><select name="pick">${list}</select></div></form>`,
     callback: (html) => { const root = html instanceof HTMLElement ? html : html?.[0] ?? html; return Number(new FormData(root?.querySelector?.('form') ?? root).get('pick')); }
@@ -265,7 +265,7 @@ async function askUseTemporaryPoint(actor, talent, modResult) {
   const entries = readBonusPool(actor).entries ?? [];
   const has = Array.isArray(entries) && entries.some(e => e?.entitlement?.kind === 'regimen-reaction' && Number(e.value) >= 1 && (e.entitlement.talents ?? []).includes(talent));
   if (!has) return false;
-  return await SWSEDialogV2.confirm({
+  return await DialogPort.confirm({
     title: 'Temporary Force Point',
     content: `<p>Spend a temporary Force Point from your Force regimen on this ${talent === 'block' ? 'Block' : 'Deflect'} check instead of an ordinary Force Point? It does not count toward the one Force Point per round limit (a Force Point on this qualifying check is exempt).</p>`,
     defaultYes: false
@@ -504,7 +504,7 @@ export class LightsaberTalentActions {
     const weapons = weaponOptions(actor).filter(w => isLightsaberLike(w, String(w.name ?? '') + ' ' + String(w.system?.group ?? '') + ' ' + String(w.system?.weaponType ?? '')));
     const weaponList = weapons.length ? `<div class="form-group"><label>Lightsaber</label><select name="weaponId">${weapons.map(w => `<option value="${esc(w.id)}">${esc(w.name)}</option>`).join('')}</select></div>` : '';
     const content = `<form class="swse-dialog"><p>Throw a lightsaber as a Standard Action; it is treated as a thrown weapon, not an improvised weapon.</p>${weaponList}<label class="checkbox"><input type="checkbox" name="pullBack" /> Target is within 6 squares and I want to pull the lightsaber back with a Swift Action now</label><p class="notes">The thrown attack itself uses the normal attack roller/range penalties. This helper handles the optional DC 20 Use the Force pull-back.</p></form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Lightsaber Throw', content, label: 'Use Lightsaber Throw', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Lightsaber Throw', content, label: 'Use Lightsaber Throw', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       const fd = new FormData(form);
@@ -610,7 +610,7 @@ export class LightsaberTalentActions {
       return null;
     }
     const content = `<form class="swse-dialog"><p>Spend 1 Force Point as a Standard Action to throw your lightsaber in a 6-square line. Make one ranged attack roll and compare it to each target's Reflex Defense.</p><div class="form-group"><label>Line / target group</label><input name="targetName" type="text" placeholder="Targets in 6-square line" /></div><label class="checkbox"><input type="checkbox" name="pullBack" checked /> Attempt DC 20 Use the Force to pull the lightsaber back as a Swift Action</label><p class="notes">Hit: normal lightsaber damage. Miss/fails to exceed Reflex: half damage. This is an Area Attack.</p></form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Improved Lightsaber Throw', content, label: 'Use Improved Lightsaber Throw', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Improved Lightsaber Throw', content, label: 'Use Improved Lightsaber Throw', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       const fd = new FormData(form);

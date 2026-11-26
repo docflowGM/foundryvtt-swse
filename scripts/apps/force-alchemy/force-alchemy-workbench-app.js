@@ -5,6 +5,7 @@ import { ForceAlchemyContextResolver, getForceAlchemySuggestedRiteForItem, resol
 import { FORCE_ALCHEMY_CATEGORIES, FORCE_ALCHEMY_RITES } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-data.js";
 import { ForceAlchemyStateService } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-state-service.js";
 import { ForceAlchemyMechanicsService } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-mechanics-service.js";
+import { registerUiPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 
 const TEMPLATE_PATH = 'systems/foundryvtt-swse/templates/apps/force-alchemy/force-alchemy-workbench.hbs';
@@ -478,6 +479,8 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
 export async function openForceAlchemyWorkbench(actorRef = null, options = {}) {
   return ForceAlchemyWorkbenchApp.open(actorRef, options);
 }
+// Engine-side talent actions open the workbench through the UI port (A-07: engines do not import presentation modules).
+registerUiPort('forceAlchemyWorkbench', openForceAlchemyWorkbench);
 
 export function registerForceAlchemyWorkbench() {
   game.swse ??= {};

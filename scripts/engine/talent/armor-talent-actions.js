@@ -1,6 +1,6 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 const NS = 'swse';
@@ -57,7 +57,7 @@ async function promptShield(actor, rows) {
     </div>
     <p class="notes">Shield Expert restores 10 SR up to the shield's maximum once per encounter.</p>
   </form>`;
-  const result = await SWSEDialogV2.prompt({
+  const result = await DialogPort.prompt({
     title: 'Shield Expert',
     content,
     label: 'Restore SR',
