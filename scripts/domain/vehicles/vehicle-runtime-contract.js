@@ -247,18 +247,8 @@ export function classifyVehicleActorSource(document, data = undefined, options =
   };
 }
 
-/** A field's published epistemic state; 0 is never treated as missing. */
-export function getVehiclePublishedFieldState(value, evidence = undefined) {
-  const state = typeof evidence === 'string' ? evidence :
-    evidence?.status ?? evidence?.state ?? '';
-  const label = String(state).toLowerCase();
-  if (/conflict|ambiguous/.test(label)) return 'conflicting';
-  if (/conditional/.test(label)) return 'conditional';
-  if (/unknown|missing|silent|not.published/.test(label)) return 'unknown';
-  if (value === undefined || value === null) return 'unknown';
-  if (typeof value === 'number' && value === 0) return 'explicit-zero';
-  return 'known';
-}
+export { getVehiclePublishedFieldState } from './vehicle-published-field-state.js';
+import { getVehiclePublishedFieldState } from './vehicle-published-field-state.js';
 
 /**
  * Read-only selector for P1-P4. Never synthesize source statistics from

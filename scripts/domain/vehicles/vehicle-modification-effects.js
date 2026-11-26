@@ -16,7 +16,7 @@
  *
  * No Foundry globals: Node-testable.
  */
-import { getVehiclePublishedFieldState } from './vehicle-runtime-contract.js';
+import { getVehiclePublishedFieldState } from './vehicle-published-field-state.js';
 import { costModifierForSize, cargoToKilograms, consumablesToDays } from './vehicle-modification-rules.js';
 import { launcherStandardCapacity } from './vehicle-launcher-capacity.js';
 
