@@ -19,5 +19,8 @@ Other consumers to migrate in 3N-PRG: `shell/projection-engine.js`, `shell/selec
 ## Canonical targets (after 3N-AE/DC/PRQ)
 `BABCalculator`, `DefenseCalculator`, `DerivedCalculator.computeAll` via a read-only interface, `computeGrappleBonus`, the DT authority, `hp-accounting`, `SecondWindEngine`, and the prerequisite evaluator on the same mannequin state. `ProgressionFinalizer.dryRun/_compileMutationPlan` supplies the plan the mannequin applies non-persistently.
 
-## Baseline tests to add when the mannequin work starts (not yet written)
+## Baseline tests (projected-BAB characterization written; defense/grapple/DT projections still deferred)
+Written in `tests/summary-step-projection-baseline.test.mjs`: same-class level-up, new-class multiclass, prestige entry, no-class, ability-score/wounded-actor independence, and the name-table estimation fallback (labelled uncertified; 3N-DC replaces it). Still to characterize once the DerivedCalculator contract is final: the defense, grapple and damage-threshold projections.
+
+Original list:
 Characterize today's summary output for: same-class level-up, new-class multiclass, prestige entry, ability-score level, wounded actor. They become the parity fixtures required by the PRG addendum §12. They are deliberately deferred: they need the finalized DerivedCalculator contract to decide which differences are corrections rather than regressions.
