@@ -638,3 +638,129 @@ export async function applyConditionShiftImpl(engine, actor, direction, source =
       throw err;
     }
   }
+
+export async function recoverConditionStepImpl(engine, actor, source = 'recover-action') {
+    try {
+      if (!actor) throw new Error('recoverConditionStep() requires actor');
+
+      const current = Math.max(0, Number(actor.system?.conditionTrack?.current ?? 0));
+      const persistent = actor.system?.conditionTrack?.persistent === true;
+      if (current <= 0) return { applied: false, reason: 'no-condition' };
+      if (persistent) return { applied: false, reason: 'persistent' };
+
+      const combat = game.combat;
+      const combatant = combat?.combatants?.find?.(c => c.actorId === actor.id) ?? actor.combatant;
+      const inCombat = !!combat && !!combatant;
+
+      if (!inCombat) {
+        await engine.applyConditionShift(actor, -1, source);
+        await actor.unsetFlag?.('foundryvtt-swse', 'conditionRecoverProgress');
+        return { applied: true, stepsRecovered: 1, spent: 3, inCombat: false, complete: true };
+      }
+
+      const progress = foundry.utils.deepClone(
+        actor.getFlag?.('foundryvtt-swse', 'conditionRecoverProgress') ?? {}
+      );
+      const combatId = combat.id;
+      const round = Number(combat.round ?? 0);
+
+      const sameCombat = progress.combatId === combatId;
+      const sameRound = Number(progress.round ?? -999) == round;
+      const nextRound = Number(progress.round ?? -999) == (round - 1);
+
+      const spent = (sameCombat && (sameRound || nextRound)) ? Number(progress.spent ?? 0) + 1 : 1;
+      const payload = { combatId, round, spent };
+
+      if (spent >= 3) {
+        await engine.applyConditionShift(actor, -1, source);
+        await actor.unsetFlag?.('foundryvtt-swse', 'conditionRecoverProgress');
+        return { applied: true, stepsRecovered: 1, spent, inCombat: true, complete: true };
+      }
+
+      await actor.setFlag?.('foundryvtt-swse', 'conditionRecoverProgress', payload);
+      return { applied: false, reason: 'progress', spent, remaining: Math.max(0, 3 - spent), inCombat: true, complete: false };
+    } catch (err) {
+      SWSELogger.error(`ActorEngine.recoverConditionStep failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        source
+      });
+      return { applied: false, reason: 'error', error: err };
+    }
+  }
+
+export async function updateActionEconomyImpl(engine, actor, actionEconomy) {
+    try {
+      if (!actor) {throw new Error('updateActionEconomy() called with no actor');}
+      if (!actionEconomy || typeof actionEconomy !== 'object') {
+        throw new Error('updateActionEconomy() requires actionEconomy object');
+      }
+
+      SWSELogger.debug(`ActorEngine.updateActionEconomy → ${actor.name}`, {
+        swift: actionEconomy.swift,
+        move: actionEconomy.move,
+        standard: actionEconomy.standard,
+        fullRound: actionEconomy.fullRound,
+        reaction: actionEconomy.reaction
+      });
+
+      await engine.updateActor(actor, {
+        'system.actionEconomy': actionEconomy
+      });
+
+      SWSELogger.log(`Action economy updated for ${actor.name}`, {
+        actionEconomy
+      });
+
+      return { updated: true, actionEconomy };
+
+    } catch (err) {
+      SWSELogger.error(`ActorEngine.updateActionEconomy failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        actionEconomy
+      });
+      throw err;
+    }
+  }
+
+export async function applySecondWindEdgeOfExhaustionImpl(engine, actor) {
+    try {
+      if (!actor) {throw new Error('applySecondWindEdgeOfExhaustion() requires actor');}
+
+      // Eligibility check delegated to SecondWindRules
+      const eligibility = SecondWindRules.canUseEdgeOfExhaustion(actor);
+      if (!eligibility.allowed) {
+        return { success: false, reason: eligibility.reason };
+      }
+
+      // Trade: Worsen condition by 1, gain 1 Second Wind use
+      const currentCT = Number(actor.system.conditionTrack?.current ?? 0);
+      const conditionStepCap = ConditionTrackRules.getConditionStepCap();
+      const newCT = Math.min(conditionStepCap, currentCT + 1);
+
+      await engine.updateActor(actor, {
+        'system.secondWind.uses': 1,
+        'system.conditionTrack.current': newCT,
+        'system.conditionTrack.persistent': true
+      });
+
+      SWSELogger.log(`${actor.name} accepts Edge of Exhaustion`, {
+        trade: 'condition for Second Wind',
+        conditionBefore: currentCT,
+        conditionAfter: newCT,
+        secondWindRestored: 1
+      });
+
+      return {
+        success: true,
+        reason: 'Edge of Exhaustion accepted',
+        condition: currentCT,
+        newCondition: newCT
+      };
+
+    } catch (err) {
+      SWSELogger.error(`ActorEngine.applySecondWindEdgeOfExhaustion failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err
+      });
+      throw err;
+    }
+  }

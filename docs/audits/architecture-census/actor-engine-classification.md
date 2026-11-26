@@ -38,8 +38,8 @@ Counts: DELEGATE_TO_EXISTING_DOMAIN_ENGINE 15; EXTRACT_INTERNAL_IMPLEMENTATION 3
 | `incrementPersistentConditionSteps` | 1837–1854 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  condition internals |
 | `_settleForcePointRescue` | 1863–1878 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  FP rescue |
 | `_maybeResolveForcePointRescue` | 1900–1972 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  FP rescue; uses FP ledger |
-| `recoverConditionStep` | 1981–2028 | RETAIN_PENDING_PARITY | AE.6 | 0 callers/tests: confirm obsolete (VERIFIED_OBSOLETE?) before moving |
-| `updateActionEconomy` | 2040–2072 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.6 | turn-economy write (runtime-risk area) |
+| `recoverConditionStep` | 1981–2028 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  0 callers/tests: confirm obsolete (VERIFIED_OBSOLETE?) before moving |
+| `updateActionEconomy` | 2040–2072 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  turn-economy write (runtime-risk area) |
 | `gainForcePoints` | 2080–2112 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  public |
 | `spendForcePoints` | 2119–2194 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  public; ledger stays single (no second ledger) |
 | `listUnsettledForcePointReceipts` | 2202–2212 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  receipt reads |
@@ -61,7 +61,7 @@ Counts: DELEGATE_TO_EXISTING_DOMAIN_ENGINE 15; EXTRACT_INTERNAL_IMPLEMENTATION 3
 | `ackDestinyPointTrigger` | 2602–2613 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  trigger ack |
 | `applySecondWind` | 2625–2746 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  public; SecondWindEngine rules stay in the domain engine |
 | `resetSecondWind` | 2757–2790 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  second wind |
-| `applySecondWindEdgeOfExhaustion` | 2808–2849 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.6 | second wind (0 tests) |
+| `applySecondWindEdgeOfExhaustion` | 2808–2849 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  second wind (0 tests) |
 | `applyProgression` | 2874–3031 | RETAIN_PENDING_PARITY | AE.5 | 158 lines, 4 callers, 0 tests: characterize against ProgressionFinalizer before moving |
 | `restoreFromSnapshot` | 3046–3050 | KEEP_IN_FACADE | AE.5 | public (thin) |
 | `buildEmbeddedCreatePlan` | 3067–3070 | EXTRACTED (AE.1, delegate retained) | AE.1 | plan-builders.js |
