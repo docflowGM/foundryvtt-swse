@@ -30,7 +30,7 @@
 | 3O (partial) | 25 dead modules + stale badge guide deleted (4,933 non-blank lines); legacy static ProgressionEngine stack (10 modules) and dead critical-confirmation roll removed (F-PRG-005, F-ROL-002). `progression-event-processor.js` is now test-only: the 3C Lineage idempotency fix guards code with no live caller | see tracker |
 | 3N-PRQ | contract recorded (`docs/architecture/v2-contracts/PRQ-canonical-prerequisite-registry.md`); PRQ.0A census done (`docs/audits/architecture-census/prq-0a-corpus-census.md`, `tools/prq-corpus-census.mjs`). **Production integration (PRQ.1D/E) is gated on the ActorEngine and DerivedCalculator refactors.** | Findings below |
 | 3N-AE / 3N-TE / 3N-DC / 3N-PRQ / 3N-PRG | **roadmap recorded** (`docs/architecture/v2-contracts/PHASE-3N-structural-roadmap.md`); not started by design. Order: AE -> TE -> DC (hard certification gate) -> PRQ -> PRG, after domain phases stabilize consumers | |
-| other 3E–3P | not started | |
+| other 3E–3P | partially executed; see "Current state" below (3E: F-CMB-007 partial; 3F; 3G prep; 3H follower gates; 3K/3M partial; 3O two passes; 3P not started) | |
 
 ## Owner decisions currently blocking work (all in the tracker as `requiredDecision`)
 `node -e` helper: `node tools/architecture-census/tracker.mjs summary`; the full text of each question is in `tracker.json` under the finding.
