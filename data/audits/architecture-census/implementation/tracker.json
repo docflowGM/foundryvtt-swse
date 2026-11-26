@@ -3178,13 +3178,14 @@
    "requiredDecision": null,
    "dependencies": [],
    "commits": [
-    "pending"
+    "pending",
+    "b76817556"
    ],
    "tests": [
     "tests/finalizer-no-runtime-patches.test.mjs"
    ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "ProgressionFinalizer._resolveActorEngine returns the canonical import or an explicit _actorEngineOverride; the global fallback chain is gone; the two tests that injected via globals now use the seam."
+   "notes": "ProgressionFinalizer._resolveActorEngine returns the canonical import or an explicit _actorEngineOverride; the global fallback chain is gone; the two tests that injected via globals now use the seam. | Canonical import or explicit _actorEngineOverride; global fallback chain removed; tests that injected via globals use the seam."
   },
   {
    "id": "F-PRG-012",
