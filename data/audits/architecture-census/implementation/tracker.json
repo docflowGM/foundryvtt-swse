@@ -4305,15 +4305,17 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3E",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "df516615d"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "CombatEngine.applyDamage (no callers) and _apply{Dead,Destroyed,Unconscious}Effect removed. Not Foundry-tested."
   },
   {
    "id": "F-EQP-008",
