@@ -41,7 +41,7 @@ const ROOT = path.resolve(__dirname, '..');
 const STRICT = process.argv.includes('--strict');
 
 const CONTEXT_BUILDER_FILE = 'scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js';
-const MAPPING_FILE = 'scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js';
+const MAPPING_FILE = 'scripts/actors/vehicle/weapon-station-mapping.js';
 const WEAPON_STATION_SERVICE_FILE = 'scripts/engine/crew/vehicle-weapon-station-service.js';
 const CUSTOM_STATION_SERVICE_FILE = 'scripts/engine/crew/vehicle-custom-station-service.js';
 const CREW_SERVICE_FILE = 'scripts/engine/crew/vehicle-crew-assignment-service.js';

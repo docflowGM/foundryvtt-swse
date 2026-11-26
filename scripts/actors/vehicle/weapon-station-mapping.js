@@ -1,4 +1,4 @@
-// scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js
+// scripts/actors/vehicle/weapon-station-mapping.js
 //
 // Phase 7 (vehicle-crew-runtime-and-ux-phase-7): deterministic resolution of
 // which crew station operates a given vehicle weapon mount.

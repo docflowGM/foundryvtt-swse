@@ -1,4 +1,4 @@
-// scripts/sheets/v2/vehicle-sheet/crew-resolver.js
+// scripts/actors/vehicle/crew-resolver.js
 // Phase 4 crew resolver: pure, reusable station visibility and assignment display for vehicle sheet v2.
 
 import { VehicleCrewPositions } from "/systems/foundryvtt-swse/scripts/actors/vehicle/vehicle-crew-positions.js";

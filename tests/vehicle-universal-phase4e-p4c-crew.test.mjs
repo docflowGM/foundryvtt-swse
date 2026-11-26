@@ -11,7 +11,7 @@ const byKey = key => structuredClone(actors.find(a => a.system.vehicleSourceEntr
 const XW = 'core-incom-t-65b-x-wing-starfighter';
 
 const resolver = (() => {
-  const code = readFileSync('scripts/sheets/v2/vehicle-sheet/crew-resolver.js', 'utf8')
+  const code = readFileSync('scripts/actors/vehicle/crew-resolver.js', 'utf8')
     .replace(/^import[\s\S]*?;\s*$/gm, '').replace(/\bexport\s+/g, '');
   const ctx = { VehicleCrewPositions: { POSITION_SKILLS: {} } };
   runInNewContext(code + '\nglobalThis.R = resolveVehicleCrewStations;', ctx);

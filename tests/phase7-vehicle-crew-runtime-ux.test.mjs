@@ -17,14 +17,14 @@ import { readFile } from 'node:fs/promises';
 // the read-only diagnostics command.
 
 const contextBuilder = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js', import.meta.url), 'utf8');
-const mapping = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js', import.meta.url), 'utf8');
+const mapping = await readFile(new URL('../scripts/actors/vehicle/weapon-station-mapping.js', import.meta.url), 'utf8');
 const weaponStationService = await readFile(new URL('../scripts/engine/crew/vehicle-weapon-station-service.js', import.meta.url), 'utf8');
 const customStationService = await readFile(new URL('../scripts/engine/crew/vehicle-custom-station-service.js', import.meta.url), 'utf8');
 const controls = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/vehicle-crew-assignment-controls.js', import.meta.url), 'utf8');
 const actorUtils = await readFile(new URL('../scripts/utils/actor-utils.js', import.meta.url), 'utf8');
 const diagnostics = await readFile(new URL('../scripts/engine/crew/vehicle-crew-diagnostics.js', import.meta.url), 'utf8');
 const diagnosticsLog = await readFile(new URL('../scripts/engine/crew/vehicle-crew-diagnostics-log.js', import.meta.url), 'utf8');
-const crewResolver = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/crew-resolver.js', import.meta.url), 'utf8');
+const crewResolver = await readFile(new URL('../scripts/actors/vehicle/crew-resolver.js', import.meta.url), 'utf8');
 const panelTemplate = await readFile(new URL('../templates/actors/vehicle/v2/partials/vehicle-crew-assignment-panel.hbs', import.meta.url), 'utf8');
 const mountTemplate = await readFile(new URL('../templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs', import.meta.url), 'utf8');
 const editorTemplate = await readFile(new URL('../templates/actors/vehicle/v2/partials/vehicle-custom-station-editor-panel.hbs', import.meta.url), 'utf8');

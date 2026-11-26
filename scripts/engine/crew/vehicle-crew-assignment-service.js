@@ -1,6 +1,6 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-resolver.js";
+import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/actors/vehicle/crew-resolver.js";
 import { recordAssignmentEvent, recordMutationReceipt } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-diagnostics-log.js";
 
 const CREW_ACTOR_TYPES = new Set(['character', 'npc', 'droid']);

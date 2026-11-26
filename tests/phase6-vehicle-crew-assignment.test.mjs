@@ -31,7 +31,7 @@ const characterSheet = await readFile(new URL('../scripts/sheets/v2/character-sh
 const controls = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/vehicle-crew-assignment-controls.js', import.meta.url), 'utf8');
 const service = await readFile(new URL('../scripts/engine/crew/vehicle-crew-assignment-service.js', import.meta.url), 'utf8');
 const dropEngine = await readFile(new URL('../scripts/engine/interactions/vehicle-drop-engine.js', import.meta.url), 'utf8');
-const resolver = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/crew-resolver.js', import.meta.url), 'utf8');
+const resolver = await readFile(new URL('../scripts/actors/vehicle/crew-resolver.js', import.meta.url), 'utf8');
 const contextBuilder = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js', import.meta.url), 'utf8');
 const panelTemplate = await readFile(new URL('../templates/actors/vehicle/v2/partials/vehicle-crew-assignment-panel.hbs', import.meta.url), 'utf8');
 const skillRouter = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/crew-skill-router.js', import.meta.url), 'utf8');
@@ -146,14 +146,14 @@ assert.match(resolver, /array\(system\?\.stations\)/);
 // The live panel builder uses THIS resolver instead of its own hard-coded
 // six-station array — the actual fix for "multi-gunner and custom stations
 // are unreliable."
-assert.match(contextBuilder, /import \{ resolveVehicleCrewStations \} from "\/systems\/foundryvtt-swse\/scripts\/sheets\/v2\/vehicle-sheet\/crew-resolver\.js"/);
+assert.match(contextBuilder, /import \{ resolveVehicleCrewStations \} from "\/systems\/foundryvtt-swse\/scripts\/actors\/vehicle\/crew-resolver\.js"/);
 assert.doesNotMatch(contextBuilder, /const stationKeys = \['pilot', 'copilot', 'gunner', 'engineer', 'shields', 'commander'\];/);
 assert.match(contextBuilder, /const resolved = resolveVehicleCrewStations\(\{ system, weapons: \{ count: weaponCount \} \}\);/);
 
 // VehicleCrewAssignmentService validates against the SAME dynamic resolver
 // rather than its own independent hard-coded station list — one
 // authoritative station model, not three.
-assert.match(service, /import \{ resolveVehicleCrewStations \} from "\/systems\/foundryvtt-swse\/scripts\/sheets\/v2\/vehicle-sheet\/crew-resolver\.js"/);
+assert.match(service, /import \{ resolveVehicleCrewStations \} from "\/systems\/foundryvtt-swse\/scripts\/actors\/vehicle\/crew-resolver\.js"/);
 assert.match(service, /static resolveStations\(vehicle\) \{/);
 assert.match(service, /return resolveVehicleCrewStations\(\{ system, weapons: \{ count: countCrewWeapons\(vehicle\) \} \}\);/);
 

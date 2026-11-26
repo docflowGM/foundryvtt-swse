@@ -14,8 +14,8 @@ import { buildVehicleSchemaViewModel } from "/systems/foundryvtt-swse/scripts/sh
 import { buildVehicleSystemsBrowser } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-systems-browser.js";
 import { buildVehiclePublicationViewModel, buildPublishedCrewSummary, describeShield, SOURCE_UNKNOWN } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-publication-view-model.js";
 import { getStationSkillActions } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
-import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-resolver.js";
-import { resolveWeaponOperatorStation } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js";
+import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/actors/vehicle/crew-resolver.js";
+import { resolveWeaponOperatorStation } from "/systems/foundryvtt-swse/scripts/actors/vehicle/weapon-station-mapping.js";
 
 const VEHICLE_WEAPON_ITEM_TYPES = new Set(['weapon', 'vehicle-weapon', 'vehicleWeapon', 'vehicleWeaponRange']);
 
