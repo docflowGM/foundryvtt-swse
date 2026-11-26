@@ -96,8 +96,8 @@ async function clearOwnerRegistries(owner, followerId, { clearSlot = true } = {}
   const followers = (owner.getFlag('foundryvtt-swse', 'followers') || []).filter(entry => entry?.id !== followerId);
   const ownedActors = (owner.system?.ownedActors || []).filter(entry => entry?.id !== followerId);
 
-  await owner.setFlag('foundryvtt-swse', 'followerSlots', slots);
-  await owner.setFlag('foundryvtt-swse', 'followers', followers);
+  await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'followerSlots', slots, { recalc: false });
+  await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'followers', followers, { recalc: false });
   await ActorEngine.updateActor(owner, { 'system.ownedActors': ownedActors }, {
     source: 'FollowerOrphanTransfer.clearOwnerRegistries',
   });
@@ -222,8 +222,8 @@ async function setOwnerLink(owner, follower, slot) {
   const ownedActors = (owner.system?.ownedActors || []).filter(entry => entry?.id !== follower.id);
   ownedActors.push(link);
 
-  await owner.setFlag('foundryvtt-swse', 'followerSlots', slots);
-  await owner.setFlag('foundryvtt-swse', 'followers', followers);
+  await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'followerSlots', slots, { recalc: false });
+  await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'followers', followers, { recalc: false });
   await ActorEngine.updateActor(owner, { 'system.ownedActors': ownedActors }, {
     source: 'FollowerOrphanTransfer.setOwnerLink',
   });

@@ -44,12 +44,14 @@ export function setupArchetypeEngineHooks() {
   });
 
   // 2. Initialize affinity when actor is created
-  Hooks.on('createActor', async (actor) => {
+  Hooks.on('createActor', async (actor, options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return; // originating client only (affinity init persists flags)
     await onActorCreate(actor);
   });
 
   // 3. Update affinity when actor is updated
   Hooks.on('updateActor', async (actor, change, options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return; // affinity refresh persists flags: originating client only
     await onActorUpdate(actor, change);
   });
 

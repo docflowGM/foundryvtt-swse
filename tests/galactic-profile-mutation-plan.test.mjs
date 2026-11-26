@@ -4,11 +4,9 @@ import { createSession } from './helpers/session-harness.mjs';
 import { createOfflineResolvers, loadProfilesDoc } from './helpers/galactic-profile-fixtures.mjs';
 
 const { ProgressionFinalizer } = await import('../scripts/apps/progression-framework/shell/progression-finalizer.js');
-const { registerProgressionFinalizerForceKnowledgePatch } = await import('../scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js');
 const { compileProfile } = await import('../scripts/engine/progression/profile/galactic-profile-compiler.js');
 const { applyCompiledProfile } = await import('../scripts/engine/progression/profile/galactic-profile-apply.js');
 const { DroidSubtypeAdapter } = await import('../scripts/apps/progression-framework/adapters/default-subtypes.js');
-registerProgressionFinalizerForceKnowledgePatch();     // installs the runtime post-apply helper the real finalizer calls
 const { resolvers } = await createOfflineResolvers();
 const doc = loadProfilesDoc();
 const byId = id => JSON.parse(JSON.stringify(doc.profiles.find(p => p.profileId === id)));

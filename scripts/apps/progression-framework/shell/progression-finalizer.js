@@ -82,6 +82,8 @@ import { compileProfileEquipmentItems, hasResolvedProfileWallet, profileKitProvi
 import { ProgressionEconomyPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js';
 import { ProgressionReconciler } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
 import { beginAbilityIncreaseTransaction, verifyAbilityIncreaseCommit, describeAbilityTransaction, ABILITY_HISTORY_KEY, strictCount } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-increase-guard.js';
+import { applyForceKnowledgePostApply, buildForceKnowledgePostApplyEntry } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/force-knowledge-post-apply.js';
+import { choiceCandidates, firstScalar } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/choice-candidates.js';
 import { ProgressionMetadataPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-metadata-plan-builder.js';
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
@@ -1229,6 +1231,9 @@ export class ProgressionFinalizer {
     Object.assign(plan.set, fragment);
   }
 
+  static _applyForceKnowledgePostApply(set, actor, postApply) { return applyForceKnowledgePostApply(set, actor, postApply); }
+  static _buildForceKnowledgePostApplyEntry(baseItem, rawEntry, selectionIdentity, sessionId) { return buildForceKnowledgePostApplyEntry(baseItem, rawEntry, selectionIdentity, sessionId); }
+
   static async _compileMutationPlanBase(sessionState, actor, options = {}) {
     // PHASE 1: REQUIRE canonical progressionSession. Fail loudly if missing.
     if (!sessionState.progressionSession) {
@@ -2216,7 +2221,15 @@ export class ProgressionFinalizer {
     }
   }
 
+  /** Canonical skill key, also accepting object-shaped values (key/slug/name/...). */
   static _canonicalSkillKey(value) {
+    const direct = this._canonicalSkillKeyBase(value);
+    if (direct) return direct;
+    const scalar = firstScalar(value);
+    return scalar && scalar !== value ? (this._canonicalSkillKeyBase(scalar) || '') : '';
+  }
+
+  static _canonicalSkillKeyBase(value) {
     const firstScalar = (input) => {
       if (input === null || input === undefined) return '';
       if (typeof input === 'object') {
@@ -2324,7 +2337,25 @@ export class ProgressionFinalizer {
    * @param {Object} selections - Draft selections from the progression session
    * @returns {string[]} Canonical skill keys to mark as focused
    */
+  /** Skill Focus keys from selections, including stored choices on Skill Focus feat entries. */
   static _extractSkillFocusKeysFromSelections(selections = {}) {
+    const keys = new Set(this._extractSkillFocusKeysFromSelectionsBase(selections) || []);
+    const feats = [
+      ...(Array.isArray(selections.feats) ? selections.feats : []),
+      ...(Array.isArray(selections.selectedFeats) ? selections.selectedFeats : []),
+    ];
+    for (const feat of feats) {
+      const name = String(feat?.name || feat?.label || feat || '').trim().toLowerCase();
+      if (!name.startsWith('skill focus')) continue;
+      for (const candidate of choiceCandidates(feat)) {
+        const key = this._canonicalSkillKey(candidate);
+        if (key) keys.add(key);
+      }
+    }
+    return Array.from(keys);
+  }
+
+  static _extractSkillFocusKeysFromSelectionsBase(selections = {}) {
     const feats = [
       ...(Array.isArray(selections.feats) ? selections.feats : []),
       ...(Array.isArray(selections.selectedFeats) ? selections.selectedFeats : []),

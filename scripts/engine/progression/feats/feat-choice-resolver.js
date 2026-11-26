@@ -10,6 +10,7 @@
  * - avoid UI implementation and avoid writing choices without explicit caller input
  */
 
+import { choiceCandidates, hasValue } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/choice-candidates.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { FeatDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-diagnostics.js";
 import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
@@ -504,7 +505,14 @@ export class FeatChoiceResolver {
     );
   }
 
+  /** Stored choice: the metadata-driven lookup first, then every known representation of a stored choice. */
   static getStoredChoice(actor, itemOrFeat) {
+    const original = this._getStoredChoiceFromMeta(actor, itemOrFeat);
+    if (hasValue(original)) return original;
+    return choiceCandidates(itemOrFeat).find(hasValue);
+  }
+
+  static _getStoredChoiceFromMeta(actor, itemOrFeat) {
     const meta = this.getChoiceMeta(itemOrFeat);
     if (!meta) return undefined;
 
@@ -1530,6 +1538,16 @@ export class FeatChoiceResolver {
   }
 
   static buildChoicePatch(itemOrFeat, selectedChoice) {
+    const patch = this._buildChoicePatchBase(itemOrFeat, selectedChoice) || {};
+    if (hasValue(selectedChoice)) {
+      setPropertySafe(patch, 'system.selectedChoice', selectedChoice);
+      setPropertySafe(patch, 'flags.swse.selectedChoice', selectedChoice);
+      setPropertySafe(patch, 'flags.swse.progression.selectedChoice', selectedChoice);
+    }
+    return patch;
+  }
+
+  static _buildChoicePatchBase(itemOrFeat, selectedChoice) {
     const meta = this.getChoiceMeta(itemOrFeat);
     if (!meta) return null;
     const patch = {};

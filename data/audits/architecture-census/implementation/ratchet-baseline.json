@@ -8,16 +8,15 @@
   "unreachableRuntimeModules": 471,
   "testOnlyRuntimeModules": 180,
   "exactFunctionCloneGroupsRuntime": 30,
-  "compatPatchModules": 24,
+  "compatPatchModules": 22,
   "chatMessageCreateOutsideSwseChat": 9,
-  "runtimeDirectDocumentWriteSites": 187
+  "runtimeDirectDocumentWriteSites": 181
  },
  "perKey": {
   "P-A02": {
    "scripts/items/swse-item-sheet.js": 19,
    "scripts/data/force-points.js": 6,
    "scripts/engine/combat/damage-resolution-engine.js": 6,
-   "scripts/patches/follower-orphan-transfer-hotfix.js": 6,
    "scripts/core/mutation-safety.js": 5,
    "scripts/utils/lightsaber-light-sync.js": 5,
    "scripts/core/document-api-v13.js": 4,
@@ -40,6 +39,7 @@
    "scripts/engine/abilities/active/duration-engine.js": 2,
    "scripts/engine/feats/encounter-use-tracker.js": 2,
    "scripts/engine/poison/poison-engine.js": 2,
+   "scripts/patches/follower-orphan-transfer-hotfix.js": 2,
    "scripts/ui/shell/gm/utils/gm-contact-actorizer-service.js": 2,
    "scripts/utils/actor-utils.js": 2,
    "scripts/utils/flags/swse-flags.js": 2,
@@ -57,7 +57,6 @@
    "scripts/domain/vehicles/vehicle-phase4d-scratch-import.js": 1,
    "scripts/engine/combat/fire-state-store.js": 1,
    "scripts/engine/feats/meta-resource-feat-resolver.js": 1,
-   "scripts/engine/import/npc-damage-hydration-hooks.js": 1,
    "scripts/engine/progression/utils/enforcer-resources-transaction-guard.js": 1,
    "scripts/engine/skills/skill-attempt-registry.js": 1,
    "scripts/engine/store/store-droid-construction.js": 1,
@@ -66,7 +65,6 @@
    "scripts/engine/suggestion/attribute-planner.js": 1,
    "scripts/houserules/houserule-status-effects.js": 1,
    "scripts/infrastructure/hooks/actor-sidebar-controls.js": 1,
-   "scripts/patches/follower-repeatable-entitlement-hotfix.js": 1,
    "scripts/patches/progression-ledger-reconciliation-hotfix.js": 1,
    "scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js": 1
   },
@@ -160,8 +158,6 @@
   },
   "P-A09-modules": {
    "scripts/apps/progression-framework/shared/species-patch.js": 1,
-   "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js": 1,
-   "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js": 1,
    "scripts/engine/progression/engine/apply-progression-patch.js": 1,
    "scripts/engine/progression/engine/progression-patch.js": 1,
    "scripts/governance/snapshot/deletion-aware-patch.js": 1,

@@ -167,7 +167,7 @@ export async function repairRepeatableFollowerEntitlements(actor, { reason = 'ma
 
     nextSlots.sort((a, b) => String(a.talentName || '').localeCompare(String(b.talentName || '')) || Number(a.talentRank || 0) - Number(b.talentRank || 0));
     if (!sameSlotState(currentSlots, nextSlots)) {
-      await actor.setFlag('foundryvtt-swse', 'followerSlots', nextSlots);
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'followerSlots', nextSlots, { recalc: false });
       swseLogger.log('[FollowerRepeatableEntitlement] Repaired canonical follower slots', {
         actor: actor.name,
         reason,

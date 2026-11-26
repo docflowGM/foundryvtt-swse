@@ -44,7 +44,7 @@ async function onClickMentor(app) {
  * Handle mentor commitment decay on levelup
  * Called when an actor's system data changes
  */
-async function onActorLevelup(actor) {
+async function onActorLevelup(actor, { apply = true } = {}) {
   if (!actor || actor.type !== 'character') {
     return;
   }
@@ -54,7 +54,8 @@ async function onActorLevelup(actor) {
   const lastKnownLevel = _actorLevelMap.get(actorId) || currentLevel;
 
   // Only trigger decay if level actually increased
-  if (currentLevel > lastKnownLevel) {
+  // apply=false: a level change made by another user's client; that client performs the (persistent) decay, this one only tracks the level.
+  if (apply && currentLevel > lastKnownLevel) {
     SWSELogger.log(`[Mentor Decay] ${actor.name} leveled up from ${lastKnownLevel} to ${currentLevel}`);
 
     try {
@@ -93,7 +94,7 @@ export function registerMentorSheetHooks() {
   HooksRegistry.register('updateActor', (actor, changes, options, userId) => {
     // Only process if level changed
     if (changes?.system?.level !== undefined) {
-      onActorLevelup(actor);
+      onActorLevelup(actor, { apply: userId === undefined || userId === game.user?.id });
     }
   }, { id: 'swse-mentor-decay' });
 

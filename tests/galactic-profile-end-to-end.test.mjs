@@ -15,10 +15,8 @@ installFetchShim();
 const { GalacticProfileRegistry } = await import('../scripts/engine/progression/profile/galactic-profile-registry.js');
 const { GalacticProfileService } = await import('../scripts/engine/progression/profile/galactic-profile-service.js');
 const { ProgressionFinalizer } = await import('../scripts/apps/progression-framework/shell/progression-finalizer.js');
-const { registerProgressionFinalizerForceKnowledgePatch } = await import('../scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js');
 const { DroidSubtypeAdapter } = await import('../scripts/apps/progression-framework/adapters/default-subtypes.js');
 const { getProfileApplication, filterActiveStepsForProfile, isOverridden } = await import('../scripts/engine/progression/profile/galactic-profile-apply.js');
-registerProgressionFinalizerForceKnowledgePatch();
 ProgressionFinalizer._loadCanonicalItemData = async e => ({ _id: 'x', name: e.name, type: /rifle|pistol|blade|saber/i.test(e.name) ? 'weapon' : 'equipment', system: {}, flags: {} });
 
 const doc = loadProfilesDoc(); const schema = loadSchema();

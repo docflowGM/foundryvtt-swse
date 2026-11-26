@@ -39,11 +39,9 @@ const { getLevelSplit } = await sys('scripts/actors/derived/level-split.js');
 const { ProgressionSession } = await sys('scripts/apps/progression-framework/shell/progression-session.js');
 const { seedNonheroicSession } = await sys('scripts/apps/progression-framework/adapters/nonheroic-session-seeder.js');
 const { ProgressionFinalizer } = await sys('scripts/apps/progression-framework/shell/progression-finalizer.js');
-const { registerProgressionFinalizerForceKnowledgePatch } = await sys('scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js');
 const { ProgressionContentAuthority } = await sys('scripts/engine/progression/content/progression-content-authority.js');
 const { SnapshotManager, STATBLOCK_ORIGIN_KIND } = await sys('scripts/engine/progression/utils/snapshot-manager.js');
 const { ActorEngine: FakeEngine } = await sys('scripts/governance/actor-engine/actor-engine.js');
-registerProgressionFinalizerForceKnowledgePatch();
 
 // Content documents live in compendia the harness cannot read.
 ProgressionContentAuthority.initialize = async () => {};

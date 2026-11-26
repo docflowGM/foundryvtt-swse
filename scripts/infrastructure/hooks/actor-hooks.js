@@ -81,7 +81,8 @@ export function registerActorHooks() {
     // setTimeout(0) defers until after the full ActorEngine.updateActor + recalcAll
     // microtask chain completes, so actor state is current when requirements are evaluated.
     // The _touchesRelevantDomains guard prevents re-entry on the flag-clear write that follows.
-    Hooks.on('updateActor', (actor, changes, options) => {
+    Hooks.on('updateActor', (actor, changes, options, userId) => {
+        if (userId !== undefined && userId !== game.user?.id) return; // reconcile (a write) only on the originating client
         if (options?.meta?.guardKey === 'species-conditional-reconciliation') return;
         if (!_touchesRelevantDomains(changes)) return;
         if (!actor?.flags?.swse?.deferredSpeciesBonusFeats?.length) return;

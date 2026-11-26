@@ -1,4 +1,10 @@
-import { ProgressionFinalizer } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-finalizer.js';
+/**
+ * Force knowledge post-apply ledger (V2 realignment 3G, finding F-PRG-002).
+ *
+ * These two functions were attached to ProgressionFinalizer at import time by progression-finalizer-force-knowledge-patch.js, which was only
+ * loaded because the Squad Actions macro menu imported it; the finalizer called a method that did not exist otherwise. They are now ordinary
+ * exports that ProgressionFinalizer delegates to. Logic is unchanged. Pure: no engine imports.
+ */
 import {
   collectKnownForceSecrets,
   collectKnownForceTechniques,
@@ -6,7 +12,7 @@ import {
   forceKnowledgeKey,
 } from '/systems/foundryvtt-swse/scripts/utils/force-knowledge.js';
 
-const PATCH_ID = 'progression-finalizer-force-knowledge-post-apply-v2';
+const SOURCE_ID = 'progression-finalizer-force-knowledge-post-apply-v2';
 
 function asArray(value) {
   return Array.isArray(value) ? value : [];
@@ -33,7 +39,7 @@ function normalizePendingEntry(entry = {}, fallback = {}) {
     name,
     selectionId: entry?.selectionId || fallback?.selectionId || entry?.flags?.swse?.progression?.selectionId || null,
     sourceSession: entry?.sourceSession || fallback?.sourceSession || entry?.flags?.swse?.progression?.sourceSession || null,
-    source: entry?.source || fallback?.source || PATCH_ID,
+    source: entry?.source || fallback?.source || SOURCE_ID,
   };
 }
 
@@ -94,54 +100,42 @@ function buildPendingLedger(postApply = {}) {
   };
 }
 
-export function registerProgressionFinalizerForceKnowledgePatch() {
-  if (!ProgressionFinalizer || ProgressionFinalizer.__swseForceKnowledgePatch === PATCH_ID) return;
-
-  if (typeof ProgressionFinalizer._buildForceKnowledgePostApplyEntry !== 'function') {
-    ProgressionFinalizer._buildForceKnowledgePostApplyEntry = function buildForceKnowledgePostApplyEntry(baseItem = {}, rawEntry = {}, selectionIdentity = null, sessionId = null) {
-      return normalizePendingEntry(baseItem, {
-        id: rawEntry?.id || rawEntry?._id || rawEntry?.uuid || null,
-        name: forceKnowledgeEntryName(rawEntry),
-        selectionId: selectionIdentity,
-        sourceSession: sessionId,
-        source: 'progression-finalizer',
-      });
-    };
-  }
-
-  ProgressionFinalizer._applyForceKnowledgePostApply = function applyForceKnowledgePostApply(set = {}, actor = null, postApply = {}) {
-    // This method is called from the common finalizer path, but Force knowledge
-    // reconciliation is only meaningful when actual Force Technique/Secret items
-    // were selected. Non-Force chargen must remain a zero-cost no-op here.
-    if (!hasForceKnowledgeEntries(postApply)) return;
-    if (!actorIsForceSensitive(actor)) return;
-
-    const pendingTechniques = asArray(postApply.forceTechniqueEntries).map(entry => normalizePendingEntry(entry));
-    const pendingSecrets = asArray(postApply.forceSecretEntries).map(entry => normalizePendingEntry(entry));
-
-    const pending = buildPendingLedger({
-      forceTechniqueEntries: pendingTechniques,
-      forceSecretEntries: pendingSecrets,
+export function buildForceKnowledgePostApplyEntry(baseItem = {}, rawEntry = {}, selectionIdentity = null, sessionId = null) {
+    return normalizePendingEntry(baseItem, {
+      id: rawEntry?.id || rawEntry?._id || rawEntry?.uuid || null,
+      name: forceKnowledgeEntryName(rawEntry),
+      selectionId: selectionIdentity,
+      sourceSession: sessionId,
+      source: 'progression-finalizer',
     });
-
-    const knownTechniques = forceKnowledgeToLedgerEntries(collectKnownForceTechniques(actor, pending));
-    const knownSecrets = forceKnowledgeToLedgerEntries(collectKnownForceSecrets(actor, pending));
-    const mergedTechniques = mergeKnowledgeEntries(knownTechniques, pendingTechniques);
-    const mergedSecrets = mergeKnowledgeEntries(knownSecrets, pendingSecrets);
-
-    if (mergedTechniques.length) {
-      set['system.progression.forceTechniques'] = mergedTechniques;
-      set['system.forceTechniques.known'] = mergedTechniques;
-    }
-    if (mergedSecrets.length) {
-      set['system.progression.forceSecrets'] = mergedSecrets;
-      set['system.forceSecrets.known'] = mergedSecrets;
-    }
-  };
-
-  ProgressionFinalizer.__swseForceKnowledgePatch = PATCH_ID;
 }
 
-registerProgressionFinalizerForceKnowledgePatch();
+export function applyForceKnowledgePostApply(set = {}, actor = null, postApply = {}) {
+  // This method is called from the common finalizer path, but Force knowledge
+  // reconciliation is only meaningful when actual Force Technique/Secret items
+  // were selected. Non-Force chargen must remain a zero-cost no-op here.
+  if (!hasForceKnowledgeEntries(postApply)) return;
+  if (!actorIsForceSensitive(actor)) return;
 
-export default registerProgressionFinalizerForceKnowledgePatch;
+  const pendingTechniques = asArray(postApply.forceTechniqueEntries).map(entry => normalizePendingEntry(entry));
+  const pendingSecrets = asArray(postApply.forceSecretEntries).map(entry => normalizePendingEntry(entry));
+
+  const pending = buildPendingLedger({
+    forceTechniqueEntries: pendingTechniques,
+    forceSecretEntries: pendingSecrets,
+  });
+
+  const knownTechniques = forceKnowledgeToLedgerEntries(collectKnownForceTechniques(actor, pending));
+  const knownSecrets = forceKnowledgeToLedgerEntries(collectKnownForceSecrets(actor, pending));
+  const mergedTechniques = mergeKnowledgeEntries(knownTechniques, pendingTechniques);
+  const mergedSecrets = mergeKnowledgeEntries(knownSecrets, pendingSecrets);
+
+  if (mergedTechniques.length) {
+    set['system.progression.forceTechniques'] = mergedTechniques;
+    set['system.forceTechniques.known'] = mergedTechniques;
+  }
+  if (mergedSecrets.length) {
+    set['system.progression.forceSecrets'] = mergedSecrets;
+    set['system.forceSecrets.known'] = mergedSecrets;
+  }
+}

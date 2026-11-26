@@ -4,12 +4,10 @@
  */
 
 import '/systems/foundryvtt-swse/scripts/patches/runtime-bugfix-hotfixes-init.js';
-import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js';
 // PHASE 4: the per-domain progression finalizer patches (ability-score, feat-talent,
 // force, skills-languages, species-background, progression-economy) were folded
 // directly into ProgressionFinalizer's compilation flow and their files removed, so
 // they are no longer imported here. See progression-finalizer.js (PHASE 4 sections).
-import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js';
 import SquadActionsMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/squad-actions-mechanics.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
