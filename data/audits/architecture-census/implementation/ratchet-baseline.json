@@ -9,7 +9,7 @@
   "testOnlyRuntimeModules": 180,
   "exactFunctionCloneGroupsRuntime": 30,
   "compatPatchModules": 22,
-  "chatMessageCreateOutsideSwseChat": 9,
+  "chatMessageCreateOutsideSwseChat": 7,
   "runtimeDirectDocumentWriteSites": 181
  },
  "perKey": {
@@ -92,9 +92,7 @@
   "P-A05": {
    "scripts/core/document-api-v13.js": 3,
    "scripts/engine/combat/reactions/reaction-registry.js": 2,
-   "scripts/apps/progression-framework/steps/attribute-step.js": 1,
    "scripts/engine/combat/CombatEngine.js": 1,
-   "scripts/engine/poison/poison-engine.js": 1,
    "scripts/sheets/v2/droid-actor-sheet.js": 1
   },
   "P-A06": {

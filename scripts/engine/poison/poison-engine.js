@@ -810,7 +810,9 @@ export class PoisonEngine {
       const kitText = poison.treatment.requiresMedicalKit ? ' with Medical Kit/Natural Healing substitute' : '';
       lines.push(`<p><strong>Treatment:</strong> ${escapeHtml(poison.treatment.skill || 'Treat Injury')} DC ${escapeHtml(poison.treatment.dc ?? poison.treatment.dcFormula ?? '?')}${kitText}.</p>`);
     }
-    return ChatMessage.create({ speaker, content: lines.join('') });
+    // Lazy import keeps the poison engine out of the swse-chat static import cycle.
+    const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
+    return SWSEChat.postHTML({ speaker, content: lines.join('') });
   }
 }
 
