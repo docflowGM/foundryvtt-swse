@@ -689,7 +689,7 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3N",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": true,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -697,10 +697,12 @@
     "B-ACT F-ACT-015",
     "feats/combat/progression/force/talents contracts"
    ],
-   "commits": [],
+   "commits": [
+    "9830ad1da"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Removed so far: SWSEChat.postRoll wrapper, feat-chain FeatStep wrapper, finalizer force-knowledge and choice-resolution patches, force-suite render-guard stack-inspecting wrapper (4 patch modules deleted). The remaining ~100 sites need per-domain folding with parity tests; prerequisite patches wait for 3N-PRQ, derived-calculator patch for 3N-DC."
   },
   {
    "id": "F-PRG-001",
@@ -711,7 +713,7 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -720,10 +722,14 @@
     "talents domain (custom trees)",
     "houserules domain"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "31f226a73"
+   ],
+   "tests": [
+    "tests/feat-step-chain-refresh.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Folded into class code: progression-feat-chain-hotfix (FeatStep.onItemCommitted), finalizer force-knowledge and choice-resolution patches (F-PRG-002). Remaining prototype/static patches: progression-choice-language-hotfix (ProgressionShell/LanguageStep/FollowerStepBase/TalentStep), canonical-ability-prerequisite-hotfix (PrerequisiteChecker; belongs to 3N-PRQ), feat-housekeeping-runtime-patches (FeatStep), follower hotfixes."
   },
   {
    "id": "F-ABL-004",
