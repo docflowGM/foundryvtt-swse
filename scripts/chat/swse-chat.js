@@ -2,7 +2,6 @@
 
 import { normalizeAttackChatPayload } from "/systems/foundryvtt-swse/scripts/chat/attack-chat-outcome.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { SWSERollEngine } from "/systems/foundryvtt-swse/scripts/engine/rolls/swse-roll-engine.js";
 import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
 
 
@@ -308,6 +307,8 @@ export class SWSEChat {
     const renderContext = sanitizeRollContextForChat(context);
 
     // Build structured roll data for holo rendering
+    // Lazy: the roll engine reaches back into chat through the skill/damage runtime, so a static import is a cycle.
+    const { SWSERollEngine } = await import("/systems/foundryvtt-swse/scripts/engine/rolls/swse-roll-engine.js");
     const holoData = SWSERollEngine.buildHoloRollData({
       roll,
       actor,
