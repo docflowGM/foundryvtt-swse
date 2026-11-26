@@ -45,6 +45,11 @@ async function _persistHistory(actor) {
 }
 
 export class SelectionRecorder {
+  /** Persist the in-memory history once (used after a batch of persist:false records). */
+  static persistHistory(actor) {
+    return _persistHistory(actor);
+  }
+
   /**
    * Record that a suggestion was shown to the player
    *
@@ -54,7 +59,7 @@ export class SelectionRecorder {
    * @param {Object} context - { mentorAlignment, classSynergy, buildCoherence, archetypeMatch }
    * @returns {Promise<string>} Suggestion ID (for later outcome tracking)
    */
-  static async recordSuggestionShown(actor, suggestion, confidence, context) {
+  static async recordSuggestionShown(actor, suggestion, confidence, context, { persist = true } = {}) {
     try {
       if (!actor?.system?.suggestionEngine?.history?.recent) {
         SWSELogger.warn('[SelectionRecorder] History not initialized, cannot record shown suggestion');
@@ -92,8 +97,8 @@ export class SelectionRecorder {
         actor.system.suggestionEngine.history.recent.shift();
       }
 
-      // Persist to flags
-      await _persistHistory(actor);
+      // Persist to flags (batch callers pass persist:false and call persistHistory once)
+      if (persist) await _persistHistory(actor);
 
       SWSELogger.log(`[SelectionRecorder] Suggestion shown: ${suggestion.itemName} (${suggestionId})`);
       return suggestionId;

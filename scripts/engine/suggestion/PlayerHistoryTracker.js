@@ -22,10 +22,10 @@ export class PlayerHistoryTracker {
    * Record that a suggestion was shown to the player
    * Delegates to SelectionRecorder
    */
-  static async recordSuggestionShown(actor, suggestion, confidence, context) {
+  static async recordSuggestionShown(actor, suggestion, confidence, context, options = {}) {
     try {
       await this.initializeStorage(actor);
-      return SelectionRecorder.recordSuggestionShown(actor, suggestion, confidence, context);
+      return SelectionRecorder.recordSuggestionShown(actor, suggestion, confidence, context, options);
     } catch (err) {
       SWSELogger.error('[HistoryTracker] Error recording shown suggestion:', err);
       throw err;
@@ -143,6 +143,11 @@ export class PlayerHistoryTracker {
   /**
    * Initialize history storage for an actor
    */
+  /** Persist the in-memory selection history once (after a batch of persist:false records). */
+  static persistHistory(actor) {
+    return SelectionRecorder.persistHistory(actor);
+  }
+
   static async initializeStorage(actor) {
     try {
       if (!actor?.system?.suggestionEngine) {

@@ -673,9 +673,12 @@ export class SuggestionService {
             reasonCode: suggestion?.suggestion?.reasonCode || suggestion?.reasonCode || null,
             tier: suggestion?.suggestion?.tier ?? suggestion?.tier ?? 0,
             domain: options.domain || null,
-          }
+          },
+          { persist: false }
         );
       }
+      // F-MEN-006: one flag write for the whole batch instead of one per suggestion.
+      if (top.length) await PlayerHistoryTracker.persistHistory(actor);
     } catch (err) {
       SWSELogger.log('[SuggestionService] recordSuggestionShown skipped (non-fatal):', err?.message ?? err);
     }
