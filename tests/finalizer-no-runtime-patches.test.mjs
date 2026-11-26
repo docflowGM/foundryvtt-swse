@@ -32,3 +32,15 @@ test('the patch modules are gone and nothing wraps these methods at import time'
   assert.ok(!fs.existsSync('scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js'));
   assert.ok(!/force-knowledge-patch|choice-resolution-finalization-patch/.test(fs.readFileSync('scripts/talents/squad-actions-init.js', 'utf8')));
 });
+
+test('the finalizer never resolves its ActorEngine from globals (F-PRG-011)', async () => {
+  const { ActorEngine } = await import('../scripts/governance/actor-engine/actor-engine.js');
+  const decoy = { applyMutationPlan() {}, updateActor() {} };
+  globalThis.SWSE = { ...(globalThis.SWSE ?? {}), ActorEngine: decoy }; globalThis.ActorEngine = decoy;
+  try {
+    ProgressionFinalizer._actorEngineOverride = null;
+    assert.notEqual(ProgressionFinalizer._resolveActorEngine(), decoy);
+    ProgressionFinalizer._actorEngineOverride = decoy;
+    assert.equal(ProgressionFinalizer._resolveActorEngine(), decoy, 'explicit injection still works');
+  } finally { ProgressionFinalizer._actorEngineOverride = null; delete globalThis.ActorEngine; }
+});

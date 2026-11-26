@@ -3172,15 +3172,19 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "pending"
+   ],
+   "tests": [
+    "tests/finalizer-no-runtime-patches.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "ProgressionFinalizer._resolveActorEngine returns the canonical import or an explicit _actorEngineOverride; the global fallback chain is gone; the two tests that injected via globals now use the seam."
   },
   {
    "id": "F-PRG-012",

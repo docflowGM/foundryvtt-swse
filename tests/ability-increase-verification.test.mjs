@@ -21,6 +21,7 @@ globalThis.game.swse = { ActorEngine: {
     if (mode === 'throw') throw new Error('engine failure');
     for (const [k, v] of Object.entries(plan.set || {})) { if (mode === 'drop-score' && k === 'system.attributes.wis.base') continue; setPath(actor, k, structuredClone(v)); }
   } } };
+ProgressionFinalizer._actorEngineOverride = globalThis.game.swse.ActorEngine;   // F-PRG-011: explicit injection seam (globals are no longer consulted)
 const attr = { mode: 'levelup-ability-increase', increases: { con: 1, wis: 1 }, abilityIncreaseLevel: 8, slotId: 'ability-increase-level-8', characterLevel: 8 };
 const plan = (a) => { const p = { set: { 'system.progression.completedSessionId': 'sess-1' } }; ProgressionFinalizer._applyAbilityScoreBuilder(a, { mode: 'levelup', progressionSession: { reconciliation: { mode: 'reconcile' }, draftSelections: { attributes: attr } } }, p); return p; };
 const comp = (a) => R.getAbilityIncreaseCompletion(a, 8, { expectedCount: 2 });

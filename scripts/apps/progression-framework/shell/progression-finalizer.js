@@ -3935,21 +3935,12 @@ export class ProgressionFinalizer {
    * @param {Object} mutationPlan
    * @returns {Promise<{success: boolean, result?: Object, error?: string}>}
    */
-  static _resolveActorEngine() {
-    const candidates = [
-      globalThis.SWSE?.ActorEngine,
-      globalThis.game?.swse?.ActorEngine,
-      globalThis.ActorEngine,
-      CanonicalActorEngine,
-    ].filter(Boolean);
+  /** Test seam (F-PRG-011): an engine injected explicitly. Globals are never consulted. */
+  static _actorEngineOverride = null;
 
-    // Some boot paths expose an older global ActorEngine facade before the
-    // canonical module is loaded. Prefer an engine that can actually apply the
-    // mutation plan; otherwise fall back to the richest mutation surface.
-    return candidates.find(engine => typeof engine?.applyMutationPlan === 'function')
-      || candidates.find(engine => typeof engine?.applyProgression === 'function')
-      || candidates.find(engine => typeof engine?.updateActor === 'function')
-      || CanonicalActorEngine;
+  static _resolveActorEngine() {
+    // F-PRG-011: the canonical module import is the only engine. Tests inject through the explicit seam below, never through globals.
+    return this._actorEngineOverride ?? CanonicalActorEngine;
   }
 
   /**

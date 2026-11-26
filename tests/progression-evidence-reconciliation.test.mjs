@@ -216,7 +216,7 @@ await check('11. _certifyProgressionSession end-to-end with a stub ActorEngine',
   const { actor } = buildLifecycle();
   delete actor.flags.swse.progressionCertifications;
   const writes = [];
-  globalThis.SWSE = { ...(globalThis.SWSE || {}), ActorEngine: { applyMutationPlan: async () => ({}), updateActor: async (a, data, opts) => { writes.push({ data, opts }); } } };
+  ProgressionFinalizer._actorEngineOverride = { applyMutationPlan: async () => ({}), updateActor: async (a, data, opts) => { writes.push({ data, opts }); } };
   const ok = await ProgressionFinalizer._certifyProgressionSession(actor, { sessionId: 'S3', mode: 'levelup', progressionSession: {} },
     { set: { 'flags.swse.levelUpEntitlementManifest': man('scout', 'Scout', 1, 3) } }, { ok: true, errors: [] });
   assert.equal(ok.certified, true);
@@ -227,7 +227,7 @@ await check('11. _certifyProgressionSession end-to-end with a stub ActorEngine',
     { set: { 'flags.swse.levelUpEntitlementManifest': man('scout', 'Scout', 1, 3) } }, { ok: false, errors: ['x'] });
   assert.equal(failed.certified, false);
   assert.equal(writes[1].data['flags.swse.progressionCertifications'].at(-1).outcome, 'audit-failed');
-  globalThis.SWSE.ActorEngine.updateActor = async () => { throw new Error('write failed'); };
+  ProgressionFinalizer._actorEngineOverride.updateActor = async () => { throw new Error('write failed'); };
   const swallowed = await ProgressionFinalizer._certifyProgressionSession(actor, { sessionId: 'S3', mode: 'levelup', progressionSession: {} }, {}, { ok: true });
   assert.equal(swallowed.certified, false, 'a certification write failure is contained');
 });
@@ -253,7 +253,7 @@ await check('13. [unit] level-up audit with no manifest is vacuous and is NOT ce
   const { actor } = buildLifecycle();
   delete actor.flags.swse.progressionCertifications;
   const writes = [];
-  globalThis.SWSE = { ...(globalThis.SWSE || {}), ActorEngine: { applyMutationPlan: async () => ({}), updateActor: async (a, data) => { writes.push(data); } } };
+  ProgressionFinalizer._actorEngineOverride = { applyMutationPlan: async () => ({}), updateActor: async (a, data) => { writes.push(data); } };
   const res = await ProgressionFinalizer._certifyProgressionSession(actor, { sessionId: 'S3', mode: 'levelup', progressionSession: {} }, {}, { ok: true, vacuous: true, errors: [] });
   assert.equal(res.certified, false);
   assert.equal(writes[0]['flags.swse.progressionCertifications'][0].outcome, 'unverified');
@@ -265,7 +265,7 @@ await check('14. [unit, real validators] chargen/recovery are certified only by 
   const { ProgressionFinalizer } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-finalizer.js');
   const { actor } = buildLifecycle();
   const writes = [];
-  globalThis.SWSE = { ...(globalThis.SWSE || {}), ActorEngine: { applyMutationPlan: async () => ({}), updateActor: async (a, data) => { writes.push(data['flags.swse.progressionCertifications'].at(-1)); } } };
+  ProgressionFinalizer._actorEngineOverride = { applyMutationPlan: async () => ({}), updateActor: async (a, data) => { writes.push(data['flags.swse.progressionCertifications'].at(-1)); } };
   const session = names => ({ draftSelections: { feats: names.feats || [], talents: names.talents || [] } });
   const ok = await ProgressionFinalizer._certifyProgressionSession(actor, { sessionId: 'S1', mode: 'chargen', progressionSession: session({ feats: [{ name: 'Toughness' }], talents: [{ name: 'Armor Specialization' }] }) }, {}, null);
   assert.equal(ok.certified, true);
@@ -379,7 +379,7 @@ await check('18. [unit] F1: an OLDER same-name item or a PLANNED item does not p
 await check('19. [unit, real validators] F1 through the finalizer: same-name older item => audit-failed, never certified; level-up needs BOTH audits', async () => {
   const { ProgressionFinalizer } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-finalizer.js');
   const writes = [];
-  globalThis.SWSE = { ...(globalThis.SWSE || {}), ActorEngine: { applyMutationPlan: async () => ({}), updateActor: async (a, data) => { writes.push(data['flags.swse.progressionCertifications'].at(-1)); } } };
+  ProgressionFinalizer._actorEngineOverride = { applyMutationPlan: async () => ({}), updateActor: async (a, data) => { writes.push(data['flags.swse.progressionCertifications'].at(-1)); } };
   const actor = { id: 'z', type: 'character', flags: { swse: {} }, system: { level: 2 }, items: [stamp('feat', 'Weapon Focus', 'S-OLD', 'general'), stamp('feat', 'Dodge', 'S2', 'class')] };
   const plan = { add: { items: [{ name: 'Weapon Focus', type: 'feat' }] } };
   const chargen = await ProgressionFinalizer._certifyProgressionSession(actor, { sessionId: 'S2', mode: 'chargen', progressionSession: { draftSelections: { feats: [{ name: 'Weapon Focus' }] } } }, plan, null);
