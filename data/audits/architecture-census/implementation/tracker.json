@@ -4885,15 +4885,17 @@
    "auditStatus": "confirmed",
    "wave": 5,
    "plannedPhase": "3F",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "43e887e1c"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Engine talent modules reach SWSEDialogV2/Force Alchemy workbench through utils/ui-ports.js (UI modules register on load). P-A07-ui 38->27. Not Foundry-tested (port registration order in the live client unverified)."
   },
   {
    "id": "F-UIS-008",
