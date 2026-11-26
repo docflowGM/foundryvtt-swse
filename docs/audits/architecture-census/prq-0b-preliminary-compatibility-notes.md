@@ -22,3 +22,9 @@ Not yet examined (need source evidence, PRQ.0B proper): Boolean (AND/OR) structu
 - Name overlap between the feat and talent namespaces: 0 (no clause matches both), so the cross-domain risk is the 64 talent→feat and 2 feat→talent references, which need explicit domain typing.
 - About 600 clauses match no record by name (class, skill, ability, BAB, species, Force and other non-feat/talent requirements): these are the non-identity requirement types the structured grammar still has to express (see PRQ.0A condition-type counts).
 These remain heuristic counts; certification needs the source comparison (PRQ.0C).
+
+## PRQ.0C start: production text vs the content authorities (generated; full tables in `prq-0c-authority-vs-production.md`)
+Compared production `system.prerequisites` with `scripts/data/authority/{feat,talent}-prerequisite-authority.js` (name-keyed):
+- **Feats:** 351 of 353 records have an authority entry; 319 are textually equal, 32 differ, **15 substantively** (e.g. `Staggering Attack`: production "Base Attack Bonus +1" vs authority "Sneak Attack or Rapid Shot or Rapid Strike"; droid-condition phrasing; AND/OR grouping). 2 records share a name key and 2 authority entries have no production record.
+- **Talents:** 990 of 1,187 records have an entry (197 do not); 812 equal, 178 differ (97 substantive across both domains in the table), 42 records share a name key with another record (a name-keyed table cannot distinguish them), 57 authority entries have no production record.
+- These are review candidates, **not** corrections: deciding which side matches the published page requires the sourcebooks (PRQ.0C). No pack or authority data was changed.
