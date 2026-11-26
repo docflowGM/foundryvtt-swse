@@ -16,6 +16,7 @@ import { formatSpeedLine } from '/systems/foundryvtt-swse/scripts/species/specie
 import { PanelContextValidator } from './PanelContextValidator.js';
 import { isFollowerSlotOccupied } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 import { RowTransformers } from './RowTransformers.js';
+import { isEnergyShieldItem, isArmorItemEquipped } from '/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js';
 import { captureHydrationSnapshot, emitHydrationError, emitHydrationWarning, getRecentHydrationMutation, summarizeBiographyPanel, summarizeDefensePanel } from '/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js';
 import { validatePanel } from './PanelValidators.js';
 import { buildHpViewModel, buildDefensesViewModel, buildAttributesViewModel, buildIdentityViewModel } from '/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js';
@@ -44,10 +45,12 @@ function safePanelNumber(value, fallback = 0) {
   return Number.isFinite(numeric) ? numeric : fallback;
 }
 
-function isTruthyEquipState(value) {
-  if (value === true) return true;
-  if (typeof value === 'string') return ['true', '1', 'yes', 'equipped', 'on'].includes(value.toLowerCase());
-  return Number(value) === 1;
+/**
+ * The worn armor shown in the gear Armor Profile: same equipped-state semantics as the inventory rows (isArmorItemEquipped) and worn armor
+ * preferred over equipped energy shields. Formerly applied by runtime patches in scripts/patches/armor-hydration-defense-hotfix.js.
+ */
+function findEquippedWornArmor(items) {
+  return Array.from(items ?? []).find(item => item?.type === 'armor' && isArmorItemEquipped(item) && !isEnergyShieldItem(item)) ?? null;
 }
 
 export class PanelContextBuilder {
@@ -501,9 +504,7 @@ export class PanelContextBuilder {
     const totalWeight = EncumbranceEngine.calculateCarriedWeight(this.actor);
 
     // Find equipped armor
-    const equippedArmorItem = items.find(item =>
-      item.type === 'armor' && isTruthyEquipState(item.system?.equipped)
-    );
+    const equippedArmorItem = findEquippedWornArmor(items);
     const equippedArmor = equippedArmorItem
       ? RowTransformers.toArmorSummaryRow(equippedArmorItem)
       : null;
@@ -1202,9 +1203,7 @@ export class PanelContextBuilder {
    * - canEdit: boolean
    */
   buildArmorSummaryPanel() {
-    const equippedArmorItem = this._actorItems().find(item =>
-      item.type === 'armor' && item.system?.equipped === true
-    );
+    const equippedArmorItem = findEquippedWornArmor(this._actorItems());
 
     const panel = {
       equippedArmor: equippedArmorItem ? RowTransformers.toArmorSummaryRow(equippedArmorItem) : null,
