@@ -960,15 +960,17 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3D",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "339cf71df"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "See commit 339cf71df. Not Foundry-tested."
   },
   {
    "id": "F-HRL-001",
@@ -2807,12 +2809,14 @@
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "339cf71df"
+   ],
    "tests": [
     "tests/startup-migrations-responsible-gm.test.mjs"
    ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "Ready-time WorldDataLoader.autoLoad + Force abilityMeta repair + DSP migration now gated on isResponsibleGM(). The migrations' own internal isGM checks remain as permission guards. Not Foundry-tested."
+   "notes": "Ready-time WorldDataLoader.autoLoad + Force abilityMeta repair + DSP migration now gated on isResponsibleGM(). The migrations' own internal isGM checks remain as permission guards. Not Foundry-tested. | See commit 339cf71df. Not Foundry-tested."
   },
   {
    "id": "F-ACT-005",
@@ -3103,15 +3107,17 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3D",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "339cf71df"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "See commit 339cf71df. Not Foundry-tested."
   },
   {
    "id": "F-HOL-005",
@@ -4385,10 +4391,12 @@
    "dependencies": [
     "B-ACT"
    ],
-   "commits": [],
+   "commits": [
+    "339cf71df"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "Duplicate level-split.js isEpicOverrideEnabled (direct game.settings read, zero importers) removed; settings/epic-override.js (HouseRuleService) is the single reader."
+   "notes": "Duplicate level-split.js isEpicOverrideEnabled (direct game.settings read, zero importers) removed; settings/epic-override.js (HouseRuleService) is the single reader. | See commit 339cf71df. Not Foundry-tested."
   },
   {
    "id": "F-SKL-003",
