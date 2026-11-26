@@ -365,7 +365,8 @@ export class SWSEActiveEffectsManager {
 
     this._registerStatusEffects();
 
-    Hooks.on('updateActor', (actor, changes) => {
+    Hooks.on('updateActor', (actor, changes, _options, userId) => {
+      if (userId !== undefined && userId !== game.user?.id) return; // originating client only (hook fires on every client)
       const ct = changes?.system?.conditionTrack?.current;
       if (ct !== undefined) this.applyConditionEffect(actor, ct);
     });
