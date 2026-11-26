@@ -2078,6 +2078,33 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   async _activateStep(stepIndex, options = {}) {
+    // Moving to a different step clears the utility-bar search (formerly installed at runtime by progression-choice-language-hotfix.js).
+    const currentStepId = this.steps?.[this.currentStepIndex]?.stepId ?? null;
+    const targetStepId = this.steps?.[stepIndex]?.stepId ?? null;
+    if (targetStepId && targetStepId !== currentStepId) {
+      const utilityBar = this.utilityBar;
+      if (utilityBar) {
+        utilityBar._searchQuery = '';
+        utilityBar._focusState = null;
+      }
+      const targetPlugin = this.stepPlugins?.get?.(targetStepId);
+      if (targetPlugin) {
+        if ('_searchQuery' in targetPlugin) targetPlugin._searchQuery = '';
+        if ('searchQuery' in targetPlugin) targetPlugin.searchQuery = '';
+        if ('_query' in targetPlugin) targetPlugin._query = '';
+      }
+      const searchInput = this.getRootElement?.()?.querySelector?.('[data-utility-search]');
+      if (searchInput) searchInput.value = '';
+      swseLogger.debug('[ProgressionShell] Cleared utility search for step transition', {
+        from: currentStepId,
+        to: targetStepId,
+        source: options?.source || 'unknown',
+      });
+    }
+    return this._activateStepBase(stepIndex, options);
+  }
+
+  async _activateStepBase(stepIndex, options = {}) {
     const {
       source = 'unknown',
       restoreIndex = null,
