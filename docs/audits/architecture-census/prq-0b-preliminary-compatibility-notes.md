@@ -14,3 +14,11 @@ Heuristic scan of production prerequisite *text* in `packs/feats.db` and `packs/
 | Feat same-name groups | 1 | Known certified collision; resolve via the manifest (class 4). |
 
 Not yet examined (need source evidence, PRQ.0B proper): Boolean (AND/OR) structure, class-level/BAB semantics, Force power/technique/secret clauses, droid systems, Dark Side Score, scoped-choice clauses, and text/structure conflicts. See `prq-0a-corpus-census.md` for the structured-coverage counts and `docs/architecture/v2-contracts/PRQ-canonical-prerequisite-registry.md` for the contract.
+
+## Update: text-reference resolution (generated; see `prq-0a-corpus-census.md` → `textReferenceResolution`)
+`node tools/prq-corpus-census.mjs --write docs/audits/architecture-census/prq-0a-corpus-census.md` now also resolves each prerequisite *clause name* against production names (scope text in parentheses removed). Current numbers:
+- **Feats:** 134 clauses name a production record; 129 resolve to exactly one feat and 2 to a talent-named entity (Sneak Attack). 3 are ambiguous because the base name is shared by scoped/derivative records (`Attack Combo (Melee)` / `(Ranged)` → base `Attack Combo`; `Armor Proficiency (Light)`). These are scoped-choice identities, so the compiler needs feat UUID + choice, never the name.
+- **Talents:** 592 clauses name a record: 497 resolve to exactly one talent, 64 to a feat, **30 are ambiguous talent names** (same-name groups, e.g. `Seize the Moment`, `Charm Beast`, `Notorious`, `Blend In`, `Greater Weapon Focus`), 1 ambiguous feat (`Armor Proficiency`). 270 of the matched clauses already have a UUID in `prerequisitesStructured`.
+- Name overlap between the feat and talent namespaces: 0 (no clause matches both), so the cross-domain risk is the 64 talent→feat and 2 feat→talent references, which need explicit domain typing.
+- About 600 clauses match no record by name (class, skill, ability, BAB, species, Force and other non-feat/talent requirements): these are the non-identity requirement types the structured grammar still has to express (see PRQ.0A condition-type counts).
+These remain heuristic counts; certification needs the source comparison (PRQ.0C).
