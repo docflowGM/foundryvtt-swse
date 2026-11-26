@@ -1,18 +1,19 @@
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { ForceRegimenExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-regimen-executor.js";
-import { ShellMutationGuard } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
 import { promptForcePowerRollOptions, promptForceRegimenRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
 
 /**
  * Repaint the actor's sheet without a data render. Formerly done by scripts/patches/force-suite-render-guard-hotfix.js, which wrapped every open
- * sheet's render() and inspected the call stack to recognise this module; the surface-render guard is now applied directly at the call site.
+ * sheet's render() and inspected the call stack to recognise this module; the repaint now uses the sheet's coordinated requestSurfaceRender().
  */
 function repaintForceSheet(actor) {
   const sheet = actor?.sheet;
-  if (!sheet || typeof sheet.render !== 'function') return;
-  return ShellMutationGuard.withSurfaceRender(sheet, () => sheet.render(false), { reason: 'force-suite-runtime-repaint', surfaceId: 'force' });
+  if (!sheet) return;
+  // The shell sheet's own coordinated, guarded repaint path; plain render(false) only for hosts that do not expose it.
+  if (typeof sheet.requestSurfaceRender === 'function') return sheet.requestSurfaceRender({ reason: 'force-suite-runtime-repaint', surfaceId: 'force' });
+  return sheet.render?.(false);
 }
 
 let registered = false;

@@ -8,7 +8,7 @@
   "unreachableRuntimeModules": 471,
   "testOnlyRuntimeModules": 180,
   "exactFunctionCloneGroupsRuntime": 30,
-  "compatPatchModules": 21,
+  "compatPatchModules": 20,
   "chatMessageCreateOutsideSwseChat": 7,
   "runtimeDirectDocumentWriteSites": 180
  },
@@ -167,7 +167,6 @@
    "scripts/patches/follower-repeatable-entitlement-hotfix.js": 1,
    "scripts/patches/follower-species-materialization-hotfix.js": 1,
    "scripts/patches/follower-species-repair-hook.js": 1,
-   "scripts/patches/force-suite-render-guard-hotfix.js": 1,
    "scripts/patches/progression-choice-language-hotfix.js": 1,
    "scripts/patches/progression-ledger-reconciliation-hotfix.js": 1,
    "scripts/patches/runtime-bugfix-hotfixes-init.js": 1,
