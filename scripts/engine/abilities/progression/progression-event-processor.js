@@ -421,10 +421,8 @@ export class ProgressionEventProcessor {
           to ${actor.name} for Lineage level${levelsGranted.length === 1 ? "" : "s"} ${levelsGranted.join(", ")}.
         </div>
       `;
-      await ChatMessage.create({
-        speaker: ChatMessage.getSpeaker?.({ actor }) ?? { alias: actor.name },
-        content
-      });
+      const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js'); // lazy: keeps this engine out of the swse-chat static cycle
+      await SWSEChat.postHTML({ actor, content });
     } catch (err) {
       swseLogger.warn(`[ProgressionEventProcessor] Failed to post ${ability.name} credit award chat card`, err);
     }

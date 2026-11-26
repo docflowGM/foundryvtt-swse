@@ -355,11 +355,8 @@ export class CombatEngine {
         ? messageContent + ` <em style="color: red;">Target is dead!</em>`
         : messageContent;
 
-      ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: attacker }),
-        content: finalContent,
-        type: 'other'
-      });
+      const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js'); // lazy: keeps this engine out of the swse-chat static cycle
+      await SWSEChat.postHTML({ actor: attacker, content: finalContent });
     }
 
     /* DELEGATE UI HANDLING TO ADAPTER (Phase 1.5 consolidation) */
