@@ -156,8 +156,7 @@
    "scripts/sheets/v2/character-sheet/form.js": 1
   },
   "P-A16": {
-   "scripts/apps/progression-framework/steps/talent-step.js": 1,
-   "scripts/governance/sentinel/sentinel-source-mapper.js": 1
+   "scripts/apps/progression-framework/steps/talent-step.js": 1
   }
  }
 }

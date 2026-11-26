@@ -3149,7 +3149,7 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3D",
-   "status": "OPEN",
+   "status": "VERIFIED_NO_CHANGE_NEEDED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -3157,7 +3157,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Re-probed 2026-11-26: P-A06 hits are comments (ConditionEngine, ProgressionEngineV2, SecondWindEngine) plus SkillChallengeStore reading its own persisted-data setting (not a house rule). The earlier 'two live bypass reads' were rerouted in 3D (house-rule-reads-via-service test)."
   },
   {
    "id": "F-MEN-008",
