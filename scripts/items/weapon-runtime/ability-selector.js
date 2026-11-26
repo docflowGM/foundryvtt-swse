@@ -6,8 +6,7 @@
 // Names are display only for canonical content: a renamed canonical feat still applies, a same-named non-canonical item does not
 // impersonate one. Legacy/homebrew compatibility (name + choice text) remains ONLY for weapons/feats that carry no canonical identity.
 import { canonicalFeatSlug } from '../../utils/canonical-ability-identity.js';
-import { shapeOfWeapon } from './attack-consumer.js';
-import { featChoiceSelectors, featChoiceMatchesShape, canonicalSelectionFromContext, normalizeToken } from './attack-shape.js';
+import { normalizeToken } from './attack-shape.js';
 
 /**
  * Stable ability identity slug, independent of the display name:
@@ -28,20 +27,6 @@ export function featIs(item, slug) {
 
 /** The slug an owned ability resolves to: canonical identity, else its legacy base name. */
 export const featKeyOf = (item) => canonicalFeatSlug(item) ?? legacyBase(item);
-
-/**
- * Does the ability's stored choice select the weapon form being used?
- * @returns {boolean|null} true/false for a canonical weapon (structured join); null when the weapon is legacy/custom (caller keeps its legacy match)
- */
-export function abilityChoiceMatchesWeapon(item, weapon, context = {}) {
-  if (!weapon) return null;
-  const shape = shapeOfWeapon(weapon, canonicalSelectionFromContext(context));
-  if (shape.source === 'legacy') return null;
-  if (shape.source === 'error') return false;
-  const actor = item?.actor ?? item?.parent ?? context.actor ?? null;
-  const slug = canonicalFeatSlug(item) ?? legacyBase(item);
-  return featChoiceMatchesShape(featChoiceSelectors(item, { actor, choiceKind: slug ? slug.replace(/-/g, '_') : null }), shape);
-}
 
 /** Identity keys of every ability an actor owns (canonical slug, else legacy base + full name), for hasFeat-style conditions. */
 export function abilityKeysOfActor(actor) {

@@ -16,7 +16,8 @@
  */
 import { shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { canonicalSelectionFromContext } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-shape.js";
-import { abilityChoiceMatchesWeapon, canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
+import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
+import { abilityChoiceMatchesWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-choice-match.js";
 import { ownedSizeStateOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js";
 import { descriptorMatchesAny, identitySlugSet, groupVocabSet } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-descriptor.js";
 import { getSharedWeaponAuthorityRegistry } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/weapon-authority-registry.js";

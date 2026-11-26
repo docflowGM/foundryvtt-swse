@@ -1,5 +1,6 @@
 import { isRangedWeapon as canonicalIsRangedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
-import { canonicalFeatSlug, abilityChoiceMatchesWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
+import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
+import { abilityChoiceMatchesWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-choice-match.js";
 
 function normalizeToken(value) {
   return String(value ?? '')
