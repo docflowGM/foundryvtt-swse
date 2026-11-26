@@ -13,7 +13,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { CLASS_SYNERGY_DATA } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
-import { BUILD_THEMES, FEAT_THEME_SIGNALS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { BUILD_THEMES, FEAT_THEME_SIGNALS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildThemes.js";
 
 export class BuildThemeProjection {
     /**

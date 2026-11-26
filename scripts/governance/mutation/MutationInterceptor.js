@@ -34,7 +34,6 @@
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import GovernanceDiagnostics from "/systems/foundryvtt-swse/scripts/governance/sentinel/governance-diagnostics.js";
 
 /**
  * PHASE 1 ENFORCEMENT LEVEL
@@ -145,12 +144,15 @@ export class MutationInterceptor {
 
     // PHASE 5: Initialize Sentinel governance diagnostics
     if (DEV_MODE && defaultLevel === 'strict') {
-      const guardrails = GovernanceDiagnostics.verifyGuardrails();
-      if (guardrails.allActive) {
-        console.log(`[MutationInterceptor] ✅ All governance guardrails verified and active`);
-      } else {
-        console.warn(`[MutationInterceptor] ⚠️  Some governance guardrails not active:`, guardrails);
-      }
+      // Lazy import: governance-diagnostics imports this module, so a static import closed a two-file import cycle (F-GOV-001 follow-up).
+      import("/systems/foundryvtt-swse/scripts/governance/sentinel/governance-diagnostics.js").then(({ default: GovernanceDiagnostics }) => {
+        const guardrails = GovernanceDiagnostics.verifyGuardrails();
+        if (guardrails.allActive) {
+          console.log(`[MutationInterceptor] ✅ All governance guardrails verified and active`);
+        } else {
+          console.warn(`[MutationInterceptor] ⚠️  Some governance guardrails not active:`, guardrails);
+        }
+      }).catch((err) => console.warn('[MutationInterceptor] Governance diagnostics unavailable', err));
     }
 
     console.log(`[MutationInterceptor] ✅ Mutation context enforcement initialized (${defaultLevel.toUpperCase()} mode). No prototype patches. Guards via Sentinel+ActorEngine.`);

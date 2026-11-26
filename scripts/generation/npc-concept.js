@@ -30,7 +30,7 @@
 import { isCommandTier, COMMAND_TIER, RANK_TARGET_IMPORTANCES } from './rank-metadata.js';
 import { createProvenance, isProvenance } from './provenance.js';
 import { createDraftId } from './lib/draft-id.js';
-import { isNpcCompetenceLevel } from './npc/npc-competence.js';
+import { isNpcCompetenceLevel } from './npc/npc-competence-levels.js';
 import { composeNpcPublicDescription } from './lib/description-composer.js';
 import { reconcileFieldsStateWithScalars } from './lib/draft-field-authoring.js';
 import { NPC_FIELD_DEFINITIONS } from './npc/npc-field-definitions.js';

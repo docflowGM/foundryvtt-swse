@@ -3,8 +3,8 @@
  "note": "Limits only go DOWN. Raise requires an explicit owner-approved exception recorded in docs/architecture/v2-contracts/DECISIONS.md.",
  "seededFromCommit": "b6b7923ad76ffc8eb079f69254eff20f55aaff95",
  "aggregate": {
-  "staticImportCycles": 8,
-  "filesInStaticCycles": 43,
+  "staticImportCycles": 5,
+  "filesInStaticCycles": 37,
   "unreachableRuntimeModules": 466,
   "testOnlyRuntimeModules": 180,
   "exactFunctionCloneGroupsRuntime": 30,
