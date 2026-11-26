@@ -2054,11 +2054,12 @@
     "species/combat/feats/ui-shell contracts"
    ],
    "commits": [
-    "3ad63f612"
+    "3ad63f612",
+    "de30a7940"
    ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "Raw ChatMessage.create outside SWSEChat 74 -> 2 (damage-log-formatter, droid sheet). 47 callers still use the document-api-v13 createChatMessage wrapper (the probe's blind spot); migrating them is a mechanical but wide follow-up."
+   "notes": "Raw ChatMessage.create outside SWSEChat 74 -> 2 (damage-log-formatter, droid sheet). 47 callers still use the document-api-v13 createChatMessage wrapper (the probe's blind spot); migrating them is a mechanical but wide follow-up. | Raw ChatMessage.create outside SWSEChat 74 -> 2 (damage-log-formatter, droid sheet). createChatMessage-wrapper callers 47 -> 20: the remaining ones pass rolls/user/flavor/sound (not expressible through postHTML) or a prebuilt message object (roll-manager, houserule-healing). Chat-roll cards should move to SWSEChat.postRoll in a follow-up with roll-card parity tests."
   },
   {
    "id": "F-FRC-005",
