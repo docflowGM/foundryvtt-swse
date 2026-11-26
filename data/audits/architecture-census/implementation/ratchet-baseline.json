@@ -10,13 +10,12 @@
   "exactFunctionCloneGroupsRuntime": 30,
   "compatPatchModules": 20,
   "chatMessageCreateOutsideSwseChat": 7,
-  "runtimeDirectDocumentWriteSites": 179
+  "runtimeDirectDocumentWriteSites": 173
  },
  "perKey": {
   "P-A02": {
    "scripts/items/swse-item-sheet.js": 19,
    "scripts/data/force-points.js": 6,
-   "scripts/engine/combat/damage-resolution-engine.js": 6,
    "scripts/core/mutation-safety.js": 5,
    "scripts/utils/lightsaber-light-sync.js": 5,
    "scripts/core/document-api-v13.js": 4,
