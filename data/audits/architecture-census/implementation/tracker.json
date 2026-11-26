@@ -5169,15 +5169,19 @@
    "auditStatus": "confirmed",
    "wave": 5,
    "plannedPhase": "3D",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "f7cda5ec1"
+   ],
+   "tests": [
+    "tests/sentinel-source-mapper-bounded-cache.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "SentinelSourceMapper cache bounded. The 'duplicated CSS auditor' half is not addressed."
   },
   {
    "id": "F-HOL-009",
