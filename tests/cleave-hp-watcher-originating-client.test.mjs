@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+// F-FEA-006 (3F): the Cleave "target dropped" HP watcher is an updateActor listener (every client) that posts chat cards; only the originating client runs it.
+globalThis.window = globalThis.window || {}; registerFoundryPathLoader(); installFoundryShimGlobals();
+globalThis.foundry = globalThis.foundry ?? {}; globalThis.foundry.utils = globalThis.foundry.utils ?? {};
+globalThis.foundry.utils.randomID ??= () => 'x'; globalThis.foundry.utils.deepClone ??= (v) => JSON.parse(JSON.stringify(v));
+globalThis.foundry.applications = globalThis.foundry.applications ?? { api: { ApplicationV2: class {}, HandlebarsApplicationV2: class {}, HandlebarsApplicationMixin: (B) => B } };
+globalThis.localStorage ??= { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+globalThis.ui = { notifications: { warn() {}, info() {}, error() {} } };
+const hooks = []; const emitted = [];
+globalThis.Hooks = { on: (ev, fn) => hooks.push({ ev, fn }), once() {}, callAll: (ev) => emitted.push(ev), call() {} };
+globalThis.game = { ...(globalThis.game ?? {}), user: { id: 'me', isGM: true }, actors: { contents: [] }, combat: null };
+const { registerCoreCombatReactionRuntimePatches } = await import('../scripts/engine/feats/core-combat-reaction-runtime-patches.js');
+registerCoreCombatReactionRuntimePatches();
+const watcher = hooks.filter((h) => h.ev === 'updateActor').at(-1)?.fn; assert.ok(watcher, 'updateActor HP watcher registered');
+const actor = { id: 'a', name: 'T', system: { hp: { value: 0 } } };
+const changes = { system: { hp: { value: 0 } } };
+emitted.length = 0; watcher(actor, changes, { swsePreviousHp: 5 }, 'someone-else');
+assert.equal(emitted.length, 0, 'a foreign user\'s HP change is ignored');
+emitted.length = 0; watcher(actor, changes, { swsePreviousHp: 5 }, 'me');
+assert.ok(emitted.includes('swse.targetDroppedToZero'), 'the originating client reports the drop');
+console.log('cleave-hp-watcher-originating-client: ok');

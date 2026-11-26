@@ -393,7 +393,9 @@ export class CoreCombatReactionFeatActions {
 }
 
 function registerCleaveHpHooks() {
-  Hooks.on('updateActor', (actor, changes = {}, options = {}) => {
+  Hooks.on('updateActor', (actor, changes = {}, options = {}, userId) => {
+    // F-FEA-006: updateActor fires on every client and this watcher posts chat cards; only the originating client reports the drop.
+    if (userId !== undefined && userId !== game.user?.id) return;
     if (options?.swseSkipCleaveHpWatcher === true) return;
     if (!updateHasHpChange(changes)) return;
     const previousHp = Number(options?.swsePreviousHp ?? options?.previousHp ?? options?.oldHp);
