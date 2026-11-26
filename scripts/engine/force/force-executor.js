@@ -17,7 +17,7 @@ import { ForceEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { readBonusPool, bonusPoolUpdate, normalizeBonusEntries, buildBonusPool } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
@@ -835,7 +835,7 @@ export class ForceExecutor {
       <p class="notes"><strong>Cost:</strong> 1 Force Point · <strong>Action:</strong> Standard Action · <strong>Duration:</strong> heroic level minutes · <strong>Descriptor:</strong> Mind-Affecting</p>
     </form>`;
 
-    const result = await SWSEDialogV2.prompt({
+    const result = await DialogPort.prompt({
       title: 'Illusion — Use the Force Check',
       content,
       label: 'Roll Illusion',
@@ -974,7 +974,7 @@ export class ForceExecutor {
       <div class="form-group"><label>Ally Name</label><input name="allyName" type="text" placeholder="Willing trained ally" /></div>
       <p class="notes">Standard Action · one active Link at a time · lasts until encounter end or until ended as a Free Action.</p>
     </form>`;
-    const result = await SWSEDialogV2.prompt({
+    const result = await DialogPort.prompt({
       title: 'Link',
       content,
       label: 'Create Link',
@@ -1014,7 +1014,7 @@ export class ForceExecutor {
       <div class="form-group"><label>Ally Name</label><input name="allyName" type="text" placeholder="Force-sensitive willing ally" /></div>
       <p class="notes">Swift Action · maintained until ended · one kilometer communication range · once per encounter share a Force Power with consent.</p>
     </form>`;
-    const result = await SWSEDialogV2.prompt({
+    const result = await DialogPort.prompt({
       title: 'Telepathic Link', content, label: 'Establish Link',
       callback: (html) => {
         const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
@@ -1042,7 +1042,7 @@ export class ForceExecutor {
       <div class="form-group"><label>Target UTF Result</label><input name="targetResult" type="number" value="10" /></div>
       <div class="form-group"><label>Situational Modifier</label><input name="modifier" type="number" value="0" /></div>
     </form>`;
-    const result = await SWSEDialogV2.prompt({ title: 'Suppress Force', content, label: 'Roll Suppression', callback: (html) => {
+    const result = await DialogPort.prompt({ title: 'Suppress Force', content, label: 'Roll Suppression', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       const fd = new FormData(form);

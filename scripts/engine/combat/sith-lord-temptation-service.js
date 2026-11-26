@@ -8,7 +8,7 @@ import {createTemptationActorSerializer} from '/systems/foundryvtt-swse/scripts/
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { rollSkill } from '/systems/foundryvtt-swse/scripts/rolls/skills.js';
-import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
+import { DialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { DSPEngine } from '/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js';
 import { ConditionTrackRules } from '/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js';
 import { registerSpendTriggerConsumer, registerSpendEvidenceProvider } from '/systems/foundryvtt-swse/scripts/engine/force/force-point-trigger-registry.js';
@@ -168,7 +168,7 @@ export class SithLordTemptationService {
   }
 
   /** The affected target or GM, NOT the Sith Lord, chooses the consequence. */
-  static async resolvePending(target,{dialog=SWSEDialogV2}={}){
+  static async resolvePending(target,{dialog=DialogPort}={}){
     if(!target?.id||!permission(target))
       throw new Error('Only the affected target owner or GM may choose Temptation consequences');
     const reports=[];

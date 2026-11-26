@@ -97,15 +97,12 @@
    "scripts/engine/skill-challenges/SkillChallengeStore.js": 1
   },
   "P-A07-ui": {
-   "scripts/engine/combat/class-target-observation.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
    "scripts/engine/combat/features/combat-feature-panel-renderer.js>scripts/sheets/v2/character-sheet/combat-feature-sheet-adapter.js": 1,
-   "scripts/engine/combat/sith-lord-temptation-service.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
    "scripts/engine/combat/ui/CombatUIAdapter.js>scripts/ui/chat/chat-interaction-bridge.js": 1,
    "scripts/engine/crew/ally-assignment-service.js>scripts/apps/progression-framework/adapters/follower-mutation-transaction.js": 1,
    "scripts/engine/crew/ally-assignment-service.js>scripts/apps/follower-creator.js": 1,
    "scripts/engine/crew/vehicle-crew-assignment-service.js>scripts/sheets/v2/vehicle-sheet/crew-resolver.js": 1,
    "scripts/engine/crew/vehicle-weapon-station-service.js>scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js": 1,
-   "scripts/engine/force/force-executor.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
    "scripts/engine/force/force-suite-runtime-repairs.js>scripts/sheets/v2/character-sheet/force-roll-dialog.js": 1,
    "scripts/engine/mentor/aurebesh-translator.js>scripts/ui/dialogue/aurebesh-translator.js": 1,
    "scripts/engine/progression/engine/starship-maneuver-engine.js>scripts/apps/progression-framework/progression-suite-launcher.js": 1,
