@@ -797,17 +797,21 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3E",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "combat features reform phases"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "87aaa73be"
+   ],
+   "tests": [
+    "tests/attack-chat-outcome-normalization.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "Reviewed 3E: combat-ui-behavior-hotfix (680 lines) monkey-patches SWSEChat.postRoll and installs a delegated multi-attack/combat-option click handler. Folding the postRoll patch into SWSEChat and the handler into the combat UI is combat-runtime-risky and its action surface depends on the F-CMB-004 Combat Action Browser decision; deferred until a combat parity test exists (needs live acceptance). No change made."
+   "notes": "Reviewed 3E: combat-ui-behavior-hotfix (680 lines) monkey-patches SWSEChat.postRoll and installs a delegated multi-attack/combat-option click handler. Folding the postRoll patch into SWSEChat and the handler into the combat UI is combat-runtime-risky and its action surface depends on the F-CMB-004 Combat Action Browser decision; deferred until a combat parity test exists (needs live acceptance). No change made. | Folded the SWSEChat.postRoll monkey-patch into SWSEChat (attack-chat-outcome.js, behavior verbatim). Remaining in combat-ui-behavior-hotfix: the delegated multi-attack / combat-option click handler (executeMultiAttackFromElement, executeCombatOptionAttackFromElement) and sheet render repairs; folding them needs a combat parity test and depends on the F-CMB-004 Combat Action Browser decision."
   },
   {
    "id": "F-CUS-001",
@@ -2559,17 +2563,19 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "chat domain"
    ],
-   "commits": [],
+   "commits": [
+    "3ad63f612"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "12 chat posts in species-activated-ability-engine route through SWSEChat.postHTML; no dedicated test."
   },
   {
    "id": "F-STO-002",
@@ -3120,15 +3126,17 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3H",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "0e8c372de"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Faction registry actor flag writes route through ActorEngine.updateActorFlags (recalc:false); no dedicated test."
   },
   {
    "id": "F-PRG-011",
@@ -3158,15 +3166,17 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "0e8c372de"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "clearPendingGains unset path routes through ActorEngine.unsetActorFlag."
   },
   {
    "id": "F-PRG-013",
@@ -3238,17 +3248,21 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "F-PRG-015"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "87aaa73be"
+   ],
+   "tests": [
+    "tests/house-rule-reads-via-service.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "All 12 athleticsConsolidation reads route through HouseRuleService.getBoolean."
   },
   {
    "id": "F-SKL-005",
