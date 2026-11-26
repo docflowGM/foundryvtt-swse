@@ -1414,11 +1414,12 @@
    "requiredDecision": null,
    "dependencies": [],
    "commits": [
-    "7756c7d33"
+    "7756c7d33",
+    "efec0afc2"
    ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "Deleted 3 statically-proven dead file(s); 10 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section."
+   "notes": "Deleted 3 statically-proven dead file(s); 10 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section. | Deleted 4 of the dead customization modules (incl. unused customization-router.js); 9 remain blocked by references (apps/customization index/workbench cluster, tests, CI)."
   },
   {
    "id": "F-DAT-002",
@@ -1551,17 +1552,18 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "PARTIALLY_COMPLETE_BLOCKED",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
    "commits": [
-    "7756c7d33"
+    "7756c7d33",
+    "efec0afc2"
    ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "Deleted 1 statically-proven dead file(s); 2 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section."
+   "notes": "Deleted 1 statically-proven dead file(s); 2 remain because each is still referenced (CSS/templates/tests/CI workflows/other modules) and needs reference removal first. See 3O ledger section. | galactic-records-browser.js, its category registry, template, CSS and responsive-observer entries removed (whole surface); its only entry point (the orphan actor-creation-entry dialog) was deleted earlier."
   },
   {
    "id": "F-HOL-006",
