@@ -29,9 +29,8 @@
 import { weightedPick } from '../lib/weighted-random.js';
 import { NPC_ROLE_TIER } from '../data/npc-roles.js';
 import { COMMAND_TIER } from '../rank-metadata.js';
-import { updateNpcConceptDraft } from '../npc-concept.js';
+import { updateNpcConceptDraft, NPC_COMPETENCE_LEVEL, isNpcCompetenceLevel } from '../npc-concept.js';
 
-import { NPC_COMPETENCE_LEVEL, isNpcCompetenceLevel } from './npc-competence-levels.js';
 export { NPC_COMPETENCE_LEVEL, isNpcCompetenceLevel };
 /**
  * Documented semantic bridge to SWSE's existing generic-vehicle-crew

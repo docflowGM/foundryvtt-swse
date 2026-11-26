@@ -38,7 +38,7 @@ import { resolvePhysicalOccupancy } from '/systems/foundryvtt-swse/scripts/engin
 import { resolveEquipmentGrips } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-grip-resolver.js';
 import { resolveEffectiveEquipmentPosture, EFFECTIVE_POSTURE_STATUS } from '/systems/foundryvtt-swse/scripts/engine/equipment/effective-equipment-posture.js';
 import { shapeOfWeapon } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
-import { readFireState, ownedConfigurationSelection } from '/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js';
+import { readFireState, ownedConfigurationSelection } from '/systems/foundryvtt-swse/scripts/engine/combat/fire-state-read.js';
 import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js';
 import { resolveDroidRulesProfile } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 import { resolveInstalledDroidComponents } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js';

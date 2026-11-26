@@ -30,7 +30,20 @@
 import { isCommandTier, COMMAND_TIER, RANK_TARGET_IMPORTANCES } from './rank-metadata.js';
 import { createProvenance, isProvenance } from './provenance.js';
 import { createDraftId } from './lib/draft-id.js';
-import { isNpcCompetenceLevel } from './npc/npc-competence-levels.js';
+
+// Competence level identifiers live here (the validating module) so npc/npc-competence.js can re-export them without a
+// concept <-> competence import cycle (F-NPC). No numeric fields; see npc/npc-competence.js for the hard rule.
+export const NPC_COMPETENCE_LEVEL = Object.freeze({
+  UNTRAINED: 'untrained',
+  CAPABLE: 'capable',
+  SKILLED: 'skilled',
+  EXPERT: 'expert',
+  ELITE: 'elite'
+});
+const COMPETENCE_LEVELS = Object.freeze(Object.values(NPC_COMPETENCE_LEVEL));
+export function isNpcCompetenceLevel(value) {
+  return COMPETENCE_LEVELS.includes(value);
+}
 import { composeNpcPublicDescription } from './lib/description-composer.js';
 import { reconcileFieldsStateWithScalars } from './lib/draft-field-authoring.js';
 import { NPC_FIELD_DEFINITIONS } from './npc/npc-field-definitions.js';
