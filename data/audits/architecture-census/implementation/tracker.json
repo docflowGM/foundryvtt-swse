@@ -4782,15 +4782,17 @@
    "auditStatus": "confirmed",
    "wave": 5,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "b4c9fc9e6"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "The unused ProgressionEngine imports in mentor-dialogues, drop-handler, actor/combat hooks and utils/force-points were removed with the legacy stack; the 11-file static cycle is now a 5-file cycle (census 2026-11-26). Remaining 5-file suggestion cycle (OpportunityCostAnalyzer/PathPreview/SuggestionEngine*/SuggestionService) is separate."
   },
   {
    "id": "F-PRG-007",
