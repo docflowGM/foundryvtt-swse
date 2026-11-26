@@ -986,7 +986,7 @@ export class SWSEV2CharacterLikeSheet extends SWSEV2ActorSheetBase {
 
     // SWSE Skills Registry - CANONICAL: Must match Actor data model / derived calculator keys exactly.
     // Athletics consolidation house rule: Acrobatics + Climb + Jump + Swim → Athletics.
-    const _athleticsOn = (() => { try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; } catch { return false; } })();
+    const _athleticsOn = HouseRuleService.getBoolean('athleticsConsolidation', false);
     const SWSE_SKILL_DEFINITIONS = {
       ...(!_athleticsOn ? { acrobatics: { label: 'Acrobatics', ability: 'dex' } } : {}),
       ...(!_athleticsOn ? { climb: { label: 'Climb', ability: 'str' } } : {}),

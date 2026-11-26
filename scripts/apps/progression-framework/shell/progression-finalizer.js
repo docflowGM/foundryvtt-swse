@@ -83,6 +83,7 @@ import { ProgressionEconomyPlanBuilder } from '/systems/foundryvtt-swse/scripts/
 import { ProgressionReconciler } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
 import { beginAbilityIncreaseTransaction, verifyAbilityIncreaseCommit, describeAbilityTransaction, ABILITY_HISTORY_KEY, strictCount } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-increase-guard.js';
 import { ProgressionMetadataPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-metadata-plan-builder.js';
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 /* -------------------------------------------------------------------------- */
 /* PHASE 4 consolidation helpers                                              */
@@ -2311,7 +2312,7 @@ export class ProgressionFinalizer {
     // Athletics consolidation: redirect component keys → 'athletics' when house rule is on.
     const athleticsComponents = new Set(['acrobatics', 'climb', 'jump', 'swim']);
     if (athleticsComponents.has(resolved)) {
-      try { if (game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true) return 'athletics'; } catch { /* off */ }
+      if (HouseRuleService.getBoolean('athleticsConsolidation', false)) return 'athletics';
     }
     return resolved;
   }

@@ -1,5 +1,6 @@
 // scripts/chat/swse-chat.js
 
+import { normalizeAttackChatPayload } from "/systems/foundryvtt-swse/scripts/chat/attack-chat-outcome.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSERollEngine } from "/systems/foundryvtt-swse/scripts/engine/rolls/swse-roll-engine.js";
 import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
@@ -288,18 +289,19 @@ export class SWSEChat {
     return ChatMessage.getSpeaker({ actor, token, alias });
   }
 
-  static async postRoll({
-    roll,
-    actor = null,
-    token = null,
-    speaker = null,
-    flavor = '',
-    flags = {},
-    rollMode = null,
-    whisper = null,
-    blind = false,
-    context = {}
-  } = {}) {
+  static async postRoll(payload = {}) {
+    const {
+      roll,
+      actor = null,
+      token = null,
+      speaker = null,
+      flavor = '',
+      flags = {},
+      rollMode = null,
+      whisper = null,
+      blind = false,
+      context = {}
+    } = normalizeAttackChatPayload(payload) ?? {};
     if (!roll) {throw new Error('SWSEChat.postRoll requires a Roll.');}
 
     const companionSource = resolveRollCompanionSource(context);

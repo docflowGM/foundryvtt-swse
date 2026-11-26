@@ -23,13 +23,13 @@ import { observedSkillBonus, observedSkillRerolls, soleTargetedActor } from "/sy
 import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
 import { canMasterSaboteurReroll } from "/systems/foundryvtt-swse/scripts/engine/combat/class-master-saboteur-reroll.js";
 import { resolveSaboteurSkillUse } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/saboteur-quick-sabotage.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 
 const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
 
 function athleticsConsolidationActive() {
-  try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; }
-  catch (_err) { return false; }
+  return HouseRuleService.getBoolean('athleticsConsolidation', false);
 }
 
 function isAthleticsComponentKey(skillKey) {

@@ -1,3 +1,4 @@
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
 const ATHLETICS_COMPONENT_NAMES = ['Acrobatics', 'Climb', 'Jump', 'Swim'];
 
@@ -6,8 +7,7 @@ const ATHLETICS_COMPONENT_NAMES = ['Acrobatics', 'Climb', 'Jump', 'Swim'];
  * Cached per call to avoid repeated setting reads in tight loops.
  */
 function athleticsConsolidationActive() {
-  try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; }
-  catch { return false; }
+  return HouseRuleService.getBoolean('athleticsConsolidation', false);
 }
 
 const CANONICAL_SKILL_DEFS = {

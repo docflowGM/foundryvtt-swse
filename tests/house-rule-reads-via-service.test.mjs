@@ -16,4 +16,8 @@ assert.equal(HouseRuleService.getBoolean('athleticsConsolidation', false), true)
 value = false; assert.equal(HouseRuleService.getBoolean('athleticsConsolidation', false), false);
 globalThis.game = { settings: { get: () => { throw new Error('not registered'); } } };
 assert.equal(HouseRuleService.getBoolean('athleticsConsolidation', false), false, 'unregistered setting falls back to the default');
+// F-SKL-004: no module reads the athleticsConsolidation house rule straight from game.settings any more
+const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => e.isDirectory() ? walk(`${d}/${e.name}`) : e.name.endsWith('.js') ? [`${d}/${e.name}`] : []);
+const offenders = walk('scripts').filter((f) => /game\.settings\.get\(\s*['"]foundryvtt-swse['"]\s*,\s*['"]athleticsConsolidation['"]/.test(fs.readFileSync(f, 'utf8')) && !f.endsWith('HouseRuleService.js'));
+assert.deepEqual(offenders, [], 'athleticsConsolidation must be read through HouseRuleService');
 console.log('house-rule-reads-via-service: ok');
