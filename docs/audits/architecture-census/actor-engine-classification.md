@@ -40,25 +40,25 @@ Counts: DELEGATE_TO_EXISTING_DOMAIN_ENGINE 15; EXTRACT_INTERNAL_IMPLEMENTATION 3
 | `_maybeResolveForcePointRescue` | 1900–1972 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4/AE.6 | FP rescue; uses FP ledger |
 | `recoverConditionStep` | 1981–2028 | RETAIN_PENDING_PARITY | AE.6 | 0 callers/tests: confirm obsolete (VERIFIED_OBSOLETE?) before moving |
 | `updateActionEconomy` | 2040–2072 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.6 | turn-economy write (runtime-risk area) |
-| `gainForcePoints` | 2080–2112 | KEEP_IN_FACADE | AE.4 | public |
-| `spendForcePoints` | 2119–2194 | KEEP_IN_FACADE | AE.4 | public; ledger stays single (no second ledger) |
-| `listUnsettledForcePointReceipts` | 2202–2212 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4 | receipt reads |
-| `reconcileForcePointReceipt` | 2219–2233 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4 | receipts |
-| `rollbackForcePointSpend` | 2239–2291 | KEEP_IN_FACADE | AE.4 | public (15 callers) |
-| `finalizeForcePointSpend` | 2297–2325 | KEEP_IN_FACADE | AE.4 | public |
-| `dispatchForcePointTriggers` | 2331–2359 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4 | trigger dispatch |
-| `ackForcePointTrigger` | 2362–2373 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4 | trigger ack |
+| `gainForcePoints` | 2080–2112 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  public |
+| `spendForcePoints` | 2119–2194 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  public; ledger stays single (no second ledger) |
+| `listUnsettledForcePointReceipts` | 2202–2212 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  receipt reads |
+| `reconcileForcePointReceipt` | 2219–2233 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  receipts |
+| `rollbackForcePointSpend` | 2239–2291 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  public (15 callers) |
+| `finalizeForcePointSpend` | 2297–2325 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  public |
+| `dispatchForcePointTriggers` | 2331–2359 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  trigger dispatch |
+| `ackForcePointTrigger` | 2362–2373 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  trigger ack |
 | `recordOutgoingAttackEvent` | 2385–2393 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4 | attack-event record |
 | `setOutgoingAttackEventState` | 2395–2405 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4 | attack-event record |
 | `grantRegimenEntitlement` | 2412–2431 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4 | regimen |
 | `recordRegimenFailure` | 2433–2438 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4 | regimen |
 | `releaseAttackEventAsDefender` | 2441–2450 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4 | attack-event record |
 | `consumeAttackEventAsDefender` | 2452–2461 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4 | attack-event record |
-| `spendDestinyPoints` | 2469–2523 | KEEP_IN_FACADE | AE.4 | public |
-| `rollbackDestinyPointSpend` | 2526–2542 | KEEP_IN_FACADE | AE.4 | public |
-| `finalizeDestinyPointSpend` | 2548–2569 | KEEP_IN_FACADE | AE.4 | public |
-| `dispatchDestinyPointTriggers` | 2572–2599 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4 | trigger dispatch |
-| `ackDestinyPointTrigger` | 2602–2613 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.4 | trigger ack |
+| `spendDestinyPoints` | 2469–2523 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  public |
+| `rollbackDestinyPointSpend` | 2526–2542 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  public |
+| `finalizeDestinyPointSpend` | 2548–2569 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  public |
+| `dispatchDestinyPointTriggers` | 2572–2599 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  trigger dispatch |
+| `ackDestinyPointTrigger` | 2602–2613 | EXTRACTED (AE.4, delegate retained) | AE.4 | point-ledgers.js;  trigger ack |
 | `applySecondWind` | 2625–2746 | KEEP_IN_FACADE | AE.6 | public; SecondWindEngine rules stay in the domain engine |
 | `resetSecondWind` | 2757–2790 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.6 | second wind |
 | `applySecondWindEdgeOfExhaustion` | 2808–2849 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.6 | second wind (0 tests) |

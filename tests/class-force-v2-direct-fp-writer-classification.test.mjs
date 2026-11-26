@@ -18,7 +18,7 @@ const found = walk(join(root, 'scripts')).filter((f) => PATTERNS.some((re) => re
 // Classes: V2_INTERNAL | REGAIN_OR_RESET | MANUAL_ADJUSTMENT | CHARGEN_GRANT | TARGET_LOSS_EFFECT | EXEMPT_BY_SOURCE | HELPER | COMMENT_OR_READ_ONLY
 // (The legacy Dark/Light Side talent planners were retired; see class-force-v2-legacy-talent-retirement.test.mjs.)
 const CLASSIFIED = {
-  'scripts/governance/actor-engine/actor-engine.js': 'V2_INTERNAL',
+  'scripts/governance/actor-engine/point-ledgers.js': 'V2_INTERNAL', // 3N-AE.4: Force/Destiny ledger operations extracted from ActorEngine (persist only via engine.updateActor)
   'scripts/actors/base/swse-actor-base.js': 'REGAIN_OR_RESET',
   'scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js': 'REGAIN_OR_RESET',
   'scripts/domain/followers/follower-species-materialization.js': 'REGAIN_OR_RESET',
