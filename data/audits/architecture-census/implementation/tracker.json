@@ -2708,15 +2708,19 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3F",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "dae1447da"
+   ],
+   "tests": [
+    "tests/sith-crippling-strike-post-update.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "deleteCombat cleanups gated (earlier commits); Crippling Strike cleanup moved from preUpdateActor to a gated updateActor."
   },
   {
    "id": "F-UIS-003",
@@ -4962,17 +4966,21 @@
    "auditStatus": "suspected",
    "wave": 5,
    "plannedPhase": "3F",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "combat domain (damage event payload)"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "2b168cc39"
+   ],
+   "tests": [
+    "tests/cleave-hp-watcher-originating-client.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "updateActor HP watcher gated to the originating client; the swse.damageApplied path is a local hook and unchanged."
   },
   {
    "id": "F-GOV-004",
