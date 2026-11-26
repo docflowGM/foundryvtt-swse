@@ -323,14 +323,16 @@ function patchFollowerLanguages() {
 }
 
 function registerDelayedSlotReconciliation() {
-  Hooks.on('createItem', (item) => {
+  Hooks.on('createItem', (item, _options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return; // originating client only
     const actor = resolveItemOwner(item);
     if (item?.type !== 'talent' || !actor) return;
     if (!getFollowerTalentConfig(item.name, item)) return;
     queueFollowerReconciliation(actor, 'create-follower-talent');
   });
 
-  Hooks.on('updateItem', (item) => {
+  Hooks.on('updateItem', (item, _changes, _options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return; // originating client only
     const actor = resolveItemOwner(item);
     if (item?.type !== 'talent' || !actor) return;
     if (!getFollowerTalentConfig(item.name, item)) return;

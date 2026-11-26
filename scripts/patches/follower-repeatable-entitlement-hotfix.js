@@ -236,19 +236,23 @@ function appendTalentRankBadges(application) {
 export function registerFollowerRepeatableEntitlementHotfix() {
   if (globalThis[REGISTERED]) return;
 
-  Hooks.on('createItem', item => {
+  Hooks.on('createItem', (item, _options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return; // originating client only
     const actor = item?.parent || item?.actor;
     if (item?.type === 'talent' && getFollowerTalentConfig(item.name, item)) queueRepair(actor, 'talent-created');
   });
-  Hooks.on('updateItem', item => {
+  Hooks.on('updateItem', (item, _changes, _options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return; // originating client only
     const actor = item?.parent || item?.actor;
     if (item?.type === 'talent' && getFollowerTalentConfig(item.name, item)) queueRepair(actor, 'talent-updated');
   });
-  Hooks.on('deleteItem', item => {
+  Hooks.on('deleteItem', (item, _options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return; // originating client only
     const actor = item?.parent || item?.actor;
     if (item?.type === 'talent') queueRepair(actor, 'talent-deleted');
   });
-  Hooks.on('createActor', actor => {
+  Hooks.on('createActor', (actor, _options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return; // originating client only
     const ownerId = followerOwnerId(actor);
     if (ownerId) queueRepair(game.actors?.get(ownerId), 'follower-created');
   });
