@@ -33,6 +33,7 @@ globalThis.game.swse = { ActorEngine: { updateActor: async (actor, patch) => { f
   engineCalls += 1; if (gate) await gate; if (failNext) { failNext = false; throw new Error('engine failure'); }
   for (const [k, v] of Object.entries(plan.set || {})) setPath(actor, k, structuredClone(v));
 } } };
+ProgressionFinalizer._actorEngineOverride = globalThis.game.swse.ActorEngine;   // F-PRG-011: explicit injection seam
 const reconcileSession = (attr) => ({ mode: 'levelup', progressionSession: { reconciliation: { mode: 'reconcile' }, draftSelections: { attributes: attr } } });
 const attrFor = (level, increases = { con: 1, wis: 1 }) => ({ mode: 'levelup-ability-increase', increases, abilityIncreaseLevel: level, slotId: `ability-increase-level-${level}`, slotType: 'ability-increase', characterLevel: level });
 const compile = (actor, session) => { const plan = { set: {} }; ProgressionFinalizer._applyAbilityScoreBuilder(actor, session, plan); return plan; };

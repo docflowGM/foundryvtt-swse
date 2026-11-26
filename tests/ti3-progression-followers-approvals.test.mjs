@@ -325,23 +325,23 @@ const { GMApprovalOperationsService: Svc } = await import('/systems/foundryvtt-s
   const saved = globalThis.SWSE;
   try {
     // the plan applies, then the post-apply sync write fails: the plan IS committed -> success with a warning, applied once
-    globalThis.SWSE = { ActorEngine: engine(async () => { throw new Error('maneuver suite write failed'); }) };
+    ProgressionFinalizer._actorEngineOverride = engine(async () => { throw new Error('maneuver suite write failed'); });
     calls.apply = calls.update = 0; notes.warn.length = 0;
     let r = await silent(() => ProgressionFinalizer._applyMutationPlan(mkActor(), plan));
     assert.equal(r.success, true, 'an applied plan is not reported as a failed finalization'); assert.equal(calls.apply, 1, 'the plan was applied exactly once'); assert.equal(r.postApplyWarnings?.length, 1); assert.equal(r.postApplyWarnings[0].step, 'post-apply-sync'); assert.match(r.postApplyWarnings[0].error, /maneuver suite write failed/);
     assert.ok(notes.warn.some((m) => /applied/i.test(m) && /finalize again/i.test(m)), 'the player is told not to finalize again');
     // the plan ITSELF failing is still a failure and never reaches the sync
-    globalThis.SWSE = { ActorEngine: { applyMutationPlan: async () => { calls.apply += 1; throw new Error('plan failed'); }, updateActor: async () => { calls.update += 1; } } };
+    ProgressionFinalizer._actorEngineOverride = { applyMutationPlan: async () => { calls.apply += 1; throw new Error('plan failed'); }, updateActor: async () => { calls.update += 1; } };
     calls.apply = calls.update = 0; r = await silent(() => ProgressionFinalizer._applyMutationPlan(mkActor(), plan));
     assert.equal(r.success, false); assert.match(r.error, /plan failed/); assert.equal(calls.update, 0, 'no post-apply sync after a failed plan');
     // the healthy path is unchanged
-    globalThis.SWSE = { ActorEngine: engine(async () => ({})) }; calls.apply = calls.update = 0; r = await ProgressionFinalizer._applyMutationPlan(mkActor(), plan);
+    ProgressionFinalizer._actorEngineOverride = engine(async () => ({})); calls.apply = calls.update = 0; r = await ProgressionFinalizer._applyMutationPlan(mkActor(), plan);
     assert.equal(r.success, true); assert.equal(r.postApplyWarnings, undefined); assert.equal(calls.update, 1);
     // review TI3-R3: committed-but-incomplete is machine readable, and ONLY the suite can be repaired, idempotently, without replaying the level-up
     {
       const live = mkActor(); calls.apply = calls.update = 0; const writes = [];
       const failingOnce = { fail: true };
-      globalThis.SWSE = { ActorEngine: { applyMutationPlan: async () => { calls.apply += 1; }, updateActor: async (a, data) => { calls.update += 1; writes.push(Object.keys(data)); if (failingOnce.fail) throw new Error('maneuver suite write failed'); for (const [k2, v2] of Object.entries(data)) setPath(a, k2, v2); return a; } } };
+      ProgressionFinalizer._actorEngineOverride = { applyMutationPlan: async () => { calls.apply += 1; }, updateActor: async (a, data) => { calls.update += 1; writes.push(Object.keys(data)); if (failingOnce.fail) throw new Error('maneuver suite write failed'); for (const [k2, v2] of Object.entries(data)) setPath(a, k2, v2); return a; } };
       let r2 = await silent(() => ProgressionFinalizer._applyMutationPlan(live, plan));
       assert.equal(r2.success, true); assert.equal(r2.committed, true); assert.equal(r2.postApplyIncomplete, true, 'distinguished from a clean finalization'); assert.equal(r2.postApplyWarnings[0].field, 'system.starshipManeuverSuite'); assert.deepEqual(r2.postApplyRepair.starshipManeuverNames, ['Evasive Action']);
       assert.equal(calls.apply, 1, 'the plan ran once'); assert.deepEqual(live.system.starshipManeuverSuite.maneuvers, [], 'and the suite really is still incomplete');
@@ -359,7 +359,7 @@ const { GMApprovalOperationsService: Svc } = await import('/systems/foundryvtt-s
       assert.deepEqual(await ProgressionFinalizer.resyncPostApplyState(live, { starshipManeuverRemoveItemIds: ['m9'] }), { success: true, changed: false });
       // a repair that fails reports it (never throws) and a clean finalization carries no incomplete flag
       failingOnce.fail = true; live.system.starshipManeuverSuite = { maneuvers: [], max: 0 }; const bad = await silent(() => ProgressionFinalizer.resyncPostApplyState(live, r2.postApplyRepair)); assert.equal(bad.success, false); assert.match(bad.error, /write failed/);
-      globalThis.SWSE = { ActorEngine: engine(async () => ({})) }; const clean = await ProgressionFinalizer._applyMutationPlan(mkActor(), plan); assert.equal(clean.postApplyIncomplete, undefined); assert.equal(clean.committed, true);
+      ProgressionFinalizer._actorEngineOverride = engine(async () => ({})); const clean = await ProgressionFinalizer._applyMutationPlan(mkActor(), plan); assert.equal(clean.postApplyIncomplete, undefined); assert.equal(clean.committed, true);
     }
     ok('TI-3.5 (TX-09 sub-gap / TI-N6): a post-apply sync failure after a COMMITTED progression plan is success + postApplyWarnings (and a "do not finalize again" notice), a failed plan is still a failure that skips the sync');
   } finally { globalThis.SWSE = saved; }
