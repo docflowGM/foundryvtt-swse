@@ -4,7 +4,6 @@ import { registerArmorHydrationDefenseHotfix } from '/systems/foundryvtt-swse/sc
 import { registerWeaponBranchCoherenceHotfix } from '/systems/foundryvtt-swse/scripts/patches/weapon-branch-coherence-hotfix.js';
 import { registerAttackDialogCombatCorrectionsHotfix } from '/systems/foundryvtt-swse/scripts/patches/attack-dialog-combat-corrections-hotfix.js';
 import { registerCombatUiBehaviorHotfixes } from '/systems/foundryvtt-swse/scripts/patches/combat-ui-behavior-hotfix.js';
-import { registerForceSuiteRenderGuardHotfix } from '/systems/foundryvtt-swse/scripts/patches/force-suite-render-guard-hotfix.js';
 import { registerProgressionChoiceLanguageHotfix } from '/systems/foundryvtt-swse/scripts/patches/progression-choice-language-hotfix.js';
 import { registerFollowerSpeciesMaterializationHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-species-materialization-hotfix.js';
 import { registerFollowerSpeciesRepairHook } from '/systems/foundryvtt-swse/scripts/patches/follower-species-repair-hook.js';
@@ -24,7 +23,6 @@ registerWeaponBranchCoherenceHotfix();
 registerAttackDialogCombatCorrectionsHotfix();
 registerCombatFeatureLegacyActionBridge();
 registerCombatUiBehaviorHotfixes();
-registerForceSuiteRenderGuardHotfix();
 registerProgressionChoiceLanguageHotfix();
 registerFollowerSpeciesMaterializationHotfix();
 registerFollowerSpeciesRepairHook();

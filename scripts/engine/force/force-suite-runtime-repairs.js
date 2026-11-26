@@ -1,8 +1,19 @@
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { ForceRegimenExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-regimen-executor.js";
+import { ShellMutationGuard } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
 import { promptForcePowerRollOptions, promptForceRegimenRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
+
+/**
+ * Repaint the actor's sheet without a data render. Formerly done by scripts/patches/force-suite-render-guard-hotfix.js, which wrapped every open
+ * sheet's render() and inspected the call stack to recognise this module; the surface-render guard is now applied directly at the call site.
+ */
+function repaintForceSheet(actor) {
+  const sheet = actor?.sheet;
+  if (!sheet || typeof sheet.render !== 'function') return;
+  return ShellMutationGuard.withSurfaceRender(sheet, () => sheet.render(false), { reason: 'force-suite-runtime-repaint', surfaceId: 'force' });
+}
 
 let registered = false;
 const TELEKINETIC_MESSAGE_PATCH_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.telekineticMessage.v1');
@@ -402,7 +413,7 @@ async function executeRepairedForceButton(button) {
 
   if (result?.success === false) ui?.notifications?.warn?.(result?.error || `${power.name} failed.`);
   else ui?.notifications?.info?.(`${power.name} ${isRecovery ? 'recovered' : 'used'}`);
-  actor.sheet?.render?.(false);
+  repaintForceSheet(actor);
 }
 
 function clearRecoveryModes(root) {
@@ -440,7 +451,7 @@ async function handleForceSuiteRecoverAll(button) {
     const result = await ForceExecutor.recoverForcePowers(actor, null, { proof: { kind: 'gm', reason: 'Recover all from the Force suite panel' } });
     if (result?.success) {
       ui?.notifications?.info?.('All spent Force powers recovered.');
-      actor.sheet?.render?.(false);
+      repaintForceSheet(actor);
     } else {
       ui?.notifications?.warn?.(result?.error || 'No spent Force powers to recover.');
     }
@@ -494,7 +505,7 @@ async function handleForceSuiteRecoverOne(button) {
     if (result?.success) {
       ui?.notifications?.info?.('Force power recovered.');
       clearRecoveryModes(root);
-      actor.sheet?.render?.(false);
+      repaintForceSheet(actor);
     } else {
       ui?.notifications?.warn?.(result?.error || 'Could not recover that Force power.');
     }
@@ -521,10 +532,10 @@ async function handleUseForceRegimen(button) {
     const result = await ForceRegimenExecutor.executeRegimen(actor, itemId, rollOptions);
     if (result?.success) {
       ui?.notifications?.info?.(`${result.regimenName || regimen.name} is active until long rest.`);
-      actor.sheet?.render?.(false);
+      repaintForceSheet(actor);
     } else {
       ui?.notifications?.warn?.(result?.error || 'Force Regimen could not be used.');
-      if (result?.executed) actor.sheet?.render?.(false);
+      if (result?.executed) repaintForceSheet(actor);
     }
   } catch (err) {
     console.error('SWSE | Force Regimen use failed', err);
@@ -546,7 +557,7 @@ async function handleEndForceRegimen(button) {
     const result = await ForceRegimenExecutor.endRegimen(actor, itemId);
     if (result?.success) {
       ui?.notifications?.info?.('Force Regimen effect ended.');
-      actor.sheet?.render?.(false);
+      repaintForceSheet(actor);
     } else {
       ui?.notifications?.warn?.(result?.error || 'Force Regimen effect could not be ended.');
     }
