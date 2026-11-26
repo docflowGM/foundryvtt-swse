@@ -1987,17 +1987,21 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3F",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "B-ACT"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "cd9b15f47"
+   ],
+   "tests": [
+    "tests/effect-expiry-governed.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Actor effects via ActorEngine.updateActiveEffects; owned-item effects via new ActorEngine.updateOwnedItemEffects; both recalc. Needs live check that expiry still disables effects."
   },
   {
    "id": "F-ABL-002",
@@ -2207,17 +2211,21 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3F",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "F-TAL-006"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "pending"
+   ],
+   "tests": [
+    "tests/custom-talent-wizard-no-render-writes.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Presented state moved to a WeakSet; the one-shot request flag is still consumed with item.unsetFlag when present (rare path). UX note: an untouched workbench talent with no effects now auto-opens the wizard once per session rather than once ever."
   },
   {
    "id": "F-UIS-001",
