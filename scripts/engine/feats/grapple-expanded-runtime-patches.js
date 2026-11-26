@@ -1,7 +1,7 @@
 import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 let registered = false;
 
@@ -79,10 +79,7 @@ function targetIsGrappled(target) {
 
 async function postBoneCrusherMessage({ attacker, target, shift, source = 'Bone Crusher' } = {}) {
   if (!attacker || !target || !shift) return null;
-  return createChatMessage({
-    speaker: ChatMessage.getSpeaker?.({ actor: attacker }) ?? { alias: attacker?.name ?? source },
-    content: `<section class="swse-chat-card swse-grapple-feat-card swse-bone-crusher-card"><header class="swse-chat-card__header"><strong>${source}</strong></header><div class="swse-chat-card__body"><p><strong>${attacker.name}</strong> damaged Grappled opponent <strong>${target.name}</strong>. ${source} moves the target -1 step on the Condition Track.</p></div></section>`,
-    flags: {
+  return SWSEChat.postHTML({ speaker: ChatMessage.getSpeaker?.({ actor: attacker }) ?? { alias: attacker?.name ?? source }, content: `<section class="swse-chat-card swse-grapple-feat-card swse-bone-crusher-card"><header class="swse-chat-card__header"><strong>${source}</strong></header><div class="swse-chat-card__body"><p><strong>${attacker.name}</strong> damaged Grappled opponent <strong>${target.name}</strong>. ${source} moves the target -1 step on the Condition Track.</p></div></section>`, flags: {
       'foundryvtt-swse': {
         grappleFeatAction: true,
         boneCrusher: true,
@@ -90,8 +87,7 @@ async function postBoneCrusherMessage({ attacker, target, shift, source = 'Bone 
         targetId: actorId(target),
         shift
       }
-    }
-  });
+    } });
 }
 
 async function applyBoneCrusherIfEligible(result, packet = {}, target = null) {

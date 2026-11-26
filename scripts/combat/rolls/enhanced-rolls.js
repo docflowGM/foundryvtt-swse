@@ -500,14 +500,11 @@ export class SWSERoll {
     const results = [];
 
     // Show summary header
-    await createChatMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `
+    await SWSEChat.postHTML({ actor, content: `
         <div class="swse-bulk-attack-header">
           <h3><i class="fa-solid fa-crosshairs"></i> ${weapon.name} — Attacking ${targets.length} target${targets.length > 1 ? 's' : ''}</h3>
         </div>
-      `
-    });
+      ` });
 
     for (const target of targets) {
       const result = await this.rollAttack(actor, weapon, {
@@ -1164,10 +1161,7 @@ export class SWSERoll {
       const cardHtml = generateFullAttackCard(actor, results, config);
 
       // Create chat message
-      const message = await createChatMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: cardHtml
-      });
+      const message = await SWSEChat.postHTML({ actor, content: cardHtml });
 
       // Show 3D dice if available
       if (game.dice3d) {

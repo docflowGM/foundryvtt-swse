@@ -1,7 +1,7 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { readBonusPool, bonusPoolUpdate, buildBonusPool } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { ForcePointFeatRules } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-rules.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 function normalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -63,11 +63,7 @@ function bonusPoolEntries(pool = {}) {
 
 
 async function postForcePointFeatMessage(actor, title, body, flags = {}) {
-  return createChatMessage({
-    speaker: ChatMessage.getSpeaker?.({ actor }) ?? { alias: actor?.name ?? 'Force Point Feat' },
-    content: `<section class="swse-chat-card swse-force-point-feat-card"><header class="swse-chat-card__header"><strong>${title}</strong></header><div class="swse-chat-card__body">${body}</div></section>`,
-    flags: { 'foundryvtt-swse': { forcePointFeatAction: true, ...flags } }
-  });
+  return SWSEChat.postHTML({ speaker: ChatMessage.getSpeaker?.({ actor }) ?? { alias: actor?.name ?? 'Force Point Feat' }, content: `<section class="swse-chat-card swse-force-point-feat-card"><header class="swse-chat-card__header"><strong>${title}</strong></header><div class="swse-chat-card__body">${body}</div></section>`, flags: { 'foundryvtt-swse': { forcePointFeatAction: true, ...flags } } });
 }
 
 export class ForcePointFeatActions {

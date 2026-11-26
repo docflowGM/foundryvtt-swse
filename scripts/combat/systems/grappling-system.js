@@ -25,6 +25,7 @@ import { abilityKeysOfActor, canonicalFeatSlug } from '/systems/foundryvtt-swse/
 import { grabAttackPenalty } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/control-rules.js';
 import { controlManeuverLegality, escapeOptionsFor } from '/systems/foundryvtt-swse/scripts/engine/combat/weapon-control-effects.js';
 import { ModifierType, ModifierSource, createModifier } from '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js';
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 function swseNormalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -937,7 +938,7 @@ export class SWSEGrappling {
         </div>
       </section>
     `;
-    await createChatMessage({ speaker: ChatMessage.getSpeaker({ actor: attacker }), content: html });
+    await SWSEChat.postHTML({ actor: attacker, content: html });
   }
 
   static async _createAdvancedManeuverMessage({ attacker, defender, maneuver, check = null, success = false, damage = null, effects = [] } = {}) {
@@ -1032,10 +1033,7 @@ export class SWSEGrappling {
       </section>
     `;
 
-    await createChatMessage({
-      speaker: ChatMessage.getSpeaker({ actor: attacker }),
-      content: html
-    });
+    await SWSEChat.postHTML({ actor: attacker, content: html });
   }
 
 
@@ -1063,7 +1061,7 @@ export class SWSEGrappling {
         </div>
       </section>
     `;
-    await createChatMessage({ speaker: ChatMessage.getSpeaker({ actor: escaper }), content: html });
+    await SWSEChat.postHTML({ actor: escaper, content: html });
   }
 
   static async _createGrappleReleasedMessage(actor, target, verb = 'releases') {
@@ -1075,7 +1073,7 @@ export class SWSEGrappling {
         </div>
       </section>
     `;
-    await createChatMessage({ speaker: ChatMessage.getSpeaker({ actor }), content: html });
+    await SWSEChat.postHTML({ actor, content: html });
   }
 }
 

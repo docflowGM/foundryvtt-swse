@@ -4,15 +4,12 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 export function warnGM(message) {
   // Log to console
   SWSELogger.warn(message);
 
   // Send GM chat whisper
-  createChatMessage({
-    content: `<p style="color:orange;"><strong>SWSE Warning:</strong> ${message}</p>`,
-    whisper: ChatMessage.getWhisperRecipients('GM')
-  });
+  SWSEChat.postHTML({ content: `<p style="color:orange;"><strong>SWSE Warning:</strong> ${message}</p>`, whisper: ChatMessage.getWhisperRecipients('GM') });
 }

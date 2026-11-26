@@ -1,9 +1,9 @@
 import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { CombatRules } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatRules.js";
 import { ConditionTrackFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/condition-track-feat-actions.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 /**
  * SWSE Combat Automation (v13+)
@@ -114,15 +114,9 @@ export class SWSECombatAutomation {
             callback: async () => {
               const result = await ConditionTrackFeatActions.recover(actor);
               if (result?.complete) {
-                createChatMessage({
-                  speaker: ChatMessage.getSpeaker({ actor }),
-                  content: `<strong>${actor.name}</strong> completes the Recover Action and moves +1 step on the Condition Track.`
-                });
+                SWSEChat.postHTML({ actor, content: `<strong>${actor.name}</strong> completes the Recover Action and moves +1 step on the Condition Track.` });
               } else if (result?.success && typeof result?.remaining === 'number') {
-                createChatMessage({
-                  speaker: ChatMessage.getSpeaker({ actor }),
-                  content: `<strong>${actor.name}</strong> spends a Swift Action toward recovery (${result.spent}/3).`
-                });
+                SWSEChat.postHTML({ actor, content: `<strong>${actor.name}</strong> spends a Swift Action toward recovery (${result.spent}/3).` });
               } else if (result?.reason === 'Insufficient swift actions') {
                 ui.notifications.warn(`${actor.name} does not have an available Swift Action to spend toward recovery.`);
               } else if (result?.reason) {

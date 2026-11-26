@@ -7,9 +7,9 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEActiveEffectsManager } from "/systems/foundryvtt-swse/scripts/combat/active-effects-manager.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 export class DestinyEffects {
 
@@ -24,11 +24,7 @@ export class DestinyEffects {
   static async autoCrit(actor) {
     await actor.setFlag('foundryvtt-swse', 'destinyAutoCrit', true);
 
-    createChatMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<p><strong>${actor.name}</strong> uses Destiny to guarantee a critical hit on their next attack!</p>`,
-      style: CONST.CHAT_MESSAGE_STYLES.OOC
-    });
+    SWSEChat.postHTML({ actor, content: `<p><strong>${actor.name}</strong> uses Destiny to guarantee a critical hit on their next attack!</p>`, style: CONST.CHAT_MESSAGE_STYLES.OOC });
   }
 
   /**
@@ -38,11 +34,7 @@ export class DestinyEffects {
   static async autoMiss(actor) {
     await actor.setFlag('foundryvtt-swse', 'destinyAutoMiss', true);
 
-    createChatMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<p><strong>${actor.name}</strong> uses Destiny to guarantee an attacker misses their next attack!</p>`,
-      style: CONST.CHAT_MESSAGE_STYLES.OOC
-    });
+    SWSEChat.postHTML({ actor, content: `<p><strong>${actor.name}</strong> uses Destiny to guarantee an attacker misses their next attack!</p>`, style: CONST.CHAT_MESSAGE_STYLES.OOC });
   }
 
   /**
@@ -51,11 +43,7 @@ export class DestinyEffects {
   static async actOutOfTurn(actor) {
     await actor.setFlag('foundryvtt-swse', 'destinyActOutOfTurn', true);
 
-    createChatMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<p><strong>${actor.name}</strong> uses Destiny to act out of turn!</p>`,
-      style: CONST.CHAT_MESSAGE_STYLES.OOC
-    });
+    SWSEChat.postHTML({ actor, content: `<p><strong>${actor.name}</strong> uses Destiny to act out of turn!</p>`, style: CONST.CHAT_MESSAGE_STYLES.OOC });
   }
 
   /**
@@ -81,13 +69,9 @@ export class DestinyEffects {
     const result = await ActorEngine.gainForcePoints(actor, gained);
     const actualGain = result.gained;
 
-    createChatMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<p><strong>${actor.name}</strong> uses Destiny to gain <strong>${actualGain}</strong> Force Points!</p>
+    SWSEChat.postHTML({ actor, content: `<p><strong>${actor.name}</strong> uses Destiny to gain <strong>${actualGain}</strong> Force Points!</p>
                 <p><strong>Roll:</strong> ${roll.formula} = ${roll.total}</p>
-                <p><strong>Force Points:</strong> ${result.current}/${result.max}</p>`,
-      style: CONST.CHAT_MESSAGE_STYLES.OOC
-    });
+                <p><strong>Force Points:</strong> ${result.current}/${result.max}</p>`, style: CONST.CHAT_MESSAGE_STYLES.OOC });
   }
 
   /**
@@ -97,11 +81,7 @@ export class DestinyEffects {
   static async takeDamageForAlly(actor) {
     await actor.setFlag('foundryvtt-swse', 'destinyTakeDamageForAlly', true);  // @mutation-exception: metadata (temporary destiny effect)
 
-    createChatMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<p><strong>${actor.name}</strong> uses Destiny to take damage for an ally instead!</p>`,
-      style: CONST.CHAT_MESSAGE_STYLES.OOC
-    });
+    SWSEChat.postHTML({ actor, content: `<p><strong>${actor.name}</strong> uses Destiny to take damage for an ally instead!</p>`, style: CONST.CHAT_MESSAGE_STYLES.OOC });
   }
 
   /* -------------------------------------------------------------------------- */

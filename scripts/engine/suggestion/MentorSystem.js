@@ -1,7 +1,7 @@
 // scripts/engine/MentorSystem.js
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 /**
  * MentorSystem - Async, fault-tolerant narrative guidance system
@@ -670,17 +670,12 @@ export class MentorSystem {
         </div>
       `;
 
-      await createChatMessage({
-        speaker: { alias: mentorVoice.name },
-        content,
-        whisper: [game.user.id], // Only to the player
-        flags: {
+      await SWSEChat.postHTML({ speaker: { alias: mentorVoice.name }, content, flags: {
           swse: {
             type: 'mentorSuggestion',
             suggestionType: suggestion.type
           }
-        }
-      });
+        }, whisper: [game.user.id] });
 
       swseLogger.log('[MENTOR] Posted suggestion to chat');
     } catch (err) {

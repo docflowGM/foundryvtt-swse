@@ -1,7 +1,7 @@
 import { CombatActionsMapper } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-actions-mapper.js";
 import { SWSECombat } from "/systems/foundryvtt-swse/scripts/combat/systems/enhanced-combat-system.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 let registered = false;
 
@@ -242,11 +242,7 @@ async function renderAidAnotherCard(actor, action) {
     </div>
   `;
 
-  await createChatMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    content: html,
-    style: CONST.CHAT_MESSAGE_STYLES.OTHER
-  });
+  await SWSEChat.postHTML({ actor, content: html, style: CONST.CHAT_MESSAGE_STYLES.OTHER });
   return true;
 }
 

@@ -23,6 +23,7 @@
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ROLL_HOOKS } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { readBonusPool } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 /** Bonus Force Points normalized the way ActorEngine.spendForcePoints reads them, so the entries a spend consumed can be given back by id. */
 const bonusEntries = (pool) => {
@@ -165,17 +166,14 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
       }
       if (!tx.chatPosted) {
         try {
-          const message = await createChatMessage({
-            speaker: ChatMessage.getSpeaker({ actor }),
-            content: `
+          const message = await SWSEChat.postHTML({ actor, content: `
           <div class="swse-forcepoint-roll">
             <h3>Force Point Used</h3>
             <p>Rolled: ${formula}</p>
             <p>Result Applied: <strong>+${result}</strong></p>
             <p>FP Remaining: ${tx.shown.remaining}/${tx.shown.max}</p>
           </div>
-        `
-          });
+        ` });
           if (message) {tx.chatPosted = true;}   // createChatMessage resolves null (it does not throw) when the message was not created
           else {tx.announceError = new Error('chat message was not created');}
         } catch (err) { tx.announceError = err; }

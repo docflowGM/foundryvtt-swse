@@ -17,6 +17,7 @@ import { abilityKeysOfActor } from "/systems/foundryvtt-swse/scripts/items/weapo
 import { controlRecord, controlDeclarationOf, sizeGate, rangeGate, dueRecurring, recurringEventId, maneuverLegality, CONTROL_END_REASONS } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/control-rules.js";
 import { statusEffectData, hasWeaponEffect } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/outcome-effects.js";
 import { fallingObjectDamage } from "/systems/foundryvtt-swse/scripts/engine/combat/falling-object-rules.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 const sizeOf = (actor) => String(actor?.system?.size ?? actor?.system?.derived?.size ?? '').trim().toLowerCase() || null;
 const idOf = (a) => a?.id ?? a?._id ?? null;
@@ -156,7 +157,7 @@ export async function postControlCard({ controller, target, record, weapon = nul
     holder.push(btn('release', controller, target, 'Release'));
     const held = escapeOptionsFor(target).map((o) => btn('escape', target, controller, `Escape: ${o.label}`, { 'escape-mode': o.mode, 'action-cost': 'standard' }));
     const { createChatMessage } = await import('/systems/foundryvtt-swse/scripts/core/document-api-v13.js');
-    await createChatMessage({ speaker: globalThis.ChatMessage?.getSpeaker?.({ actor: controller }) ?? {}, content: `<section class="swse-chat-card swse-weapon-control-card"><h3>${controller?.name ?? 'Wielder'} holds ${target?.name ?? 'the target'}</h3><div class="swse-chat-card__actions">${holder.join('\n')}${held.join('\n')}</div></section>` });
+    await SWSEChat.postHTML({ speaker: globalThis.ChatMessage?.getSpeaker?.({ actor: controller }) ?? {}, content: `<section class="swse-chat-card swse-weapon-control-card"><h3>${controller?.name ?? 'Wielder'} holds ${target?.name ?? 'the target'}</h3><div class="swse-chat-card__actions">${holder.join('\n')}${held.join('\n')}</div></section>` });
   } catch (_err) { /* the control itself is already in place */ }
 }
 

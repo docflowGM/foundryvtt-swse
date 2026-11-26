@@ -20,7 +20,7 @@ import { DamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/dam
 import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js";
 import { SubsystemEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 export class VehicleCollisions {
 
@@ -65,10 +65,7 @@ export class VehicleCollisions {
       </div>
     `;
 
-    await createChatMessage({
-      speaker: ChatMessage.getSpeaker({ actor: attacker }),
-      content: html
-    });
+    await SWSEChat.postHTML({ actor: attacker, content: html });
 
     /* ROUTE THROUGH DAMAGE ENGINE */
     const damageResult = await DamageEngine.applyDamage(target, damage, {

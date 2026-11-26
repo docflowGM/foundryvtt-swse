@@ -20,8 +20,8 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { computeDogfightingModifier } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicles/utils/vehicle-calculations.js";
 import { measureSquares } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicles/utils/vehicle-shared.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 export class VehicleDogfighting {
 
@@ -219,9 +219,6 @@ export class VehicleDogfighting {
 
     html += `</div>`;
 
-    await createChatMessage({
-      speaker: ChatMessage.getSpeaker({ actor: attacker }),
-      content: html
-    });
+    await SWSEChat.postHTML({ actor: attacker, content: html });
   }
 }
