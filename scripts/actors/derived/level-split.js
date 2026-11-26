@@ -102,6 +102,4 @@ export function getPlannedHeroicLevel(actor, pendingData = {}) {
   return null;
 }
 
-export function isEpicOverrideEnabled() {
-  return game.settings?.get('foundryvtt-swse', 'epicOverride') === true;
-}
+// Epic-override reads live in scripts/settings/epic-override.js (HouseRuleService-backed); the duplicate here had no importers (F-SET-001).

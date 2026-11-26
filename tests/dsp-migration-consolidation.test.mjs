@@ -72,7 +72,7 @@ assert.match(exportModel, /darkSideScore: Number\(sys\.darkSide\?\.value \?\? sy
 assert.match(migration, /const MIGRATION_VERSION = '2026-08-01-dark-side-points-v1';/);
 assert.match(settings, /game\.settings\.register\('foundryvtt-swse', 'darkSidePointsPhase2Migration'/);
 assert.match(indexJs, /import \{ migrateDarkSidePoints \} from "\.\/scripts\/migration\/dark-side-points-migration\.js";/);
-assert.match(indexJs, /if \(game\.user\.isGM\) \{[\s\S]{0,400}migrateDarkSidePoints\(\{ silent: true \}\)/);
+assert.match(indexJs, /if \(isResponsibleGM\(\)\) \{[\s\S]{0,400}migrateDarkSidePoints\(\{ silent: true \}\)/);
 
 // 7. World-level version only advances when there were zero failures —
 //    the retry-safety guarantee.

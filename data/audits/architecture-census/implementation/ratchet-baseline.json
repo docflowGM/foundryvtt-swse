@@ -5,7 +5,7 @@
  "aggregate": {
   "staticImportCycles": 1,
   "filesInStaticCycles": 18,
-  "unreachableRuntimeModules": 466,
+  "unreachableRuntimeModules": 464,
   "testOnlyRuntimeModules": 180,
   "exactFunctionCloneGroupsRuntime": 30,
   "compatPatchModules": 20,
