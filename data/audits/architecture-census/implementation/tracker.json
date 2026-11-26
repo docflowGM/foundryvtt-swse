@@ -2358,7 +2358,7 @@
    "commits": [],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Reviewed 3I: item-sheet ActiveEffect writes (create/update/delete/toggle, 6 sites in swse-item-sheet.js) target the item itself, which may be world-level or owned. Owned-item update now has ActorEngine.updateOwnedItemEffects (F-ABL-001); create/delete equivalents are an ActorEngine API addition that belongs with the 3N-AE gateway design, not a one-off now. No change made."
   },
   {
    "id": "F-FEA-005",
