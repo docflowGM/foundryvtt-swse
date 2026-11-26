@@ -8,9 +8,9 @@
   "unreachableRuntimeModules": 471,
   "testOnlyRuntimeModules": 180,
   "exactFunctionCloneGroupsRuntime": 30,
-  "compatPatchModules": 22,
+  "compatPatchModules": 21,
   "chatMessageCreateOutsideSwseChat": 7,
-  "runtimeDirectDocumentWriteSites": 181
+  "runtimeDirectDocumentWriteSites": 180
  },
  "perKey": {
   "P-A02": {
@@ -35,7 +35,6 @@
    "scripts/apps/progression-framework/shell/progression-actor-persistence.js": 2,
    "scripts/apps/progression-framework/shell/progression-shell.js": 2,
    "scripts/apps/progression-framework/steps/force-power-step.js": 2,
-   "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js": 2,
    "scripts/engine/abilities/active/duration-engine.js": 2,
    "scripts/engine/feats/encounter-use-tracker.js": 2,
    "scripts/engine/poison/poison-engine.js": 2,
@@ -49,6 +48,7 @@
    "scripts/apps/follower-creator.js": 1,
    "scripts/apps/npc-template-importer.js": 1,
    "scripts/apps/talent-tree-workbench/custom-content-approval-service.js": 1,
+   "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js": 1,
    "scripts/combat/active-effects-manager.js": 1,
    "scripts/combat/rolls/attacks.js": 1,
    "scripts/core/world-data-loader.js": 1,
@@ -77,13 +77,13 @@
    "scripts/apps/progression-framework/shell/progression-actor-persistence.js": 2,
    "scripts/apps/progression-framework/shell/progression-shell.js": 2,
    "scripts/apps/progression-framework/steps/force-power-step.js": 2,
-   "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js": 2,
    "scripts/ui/shell/gm/utils/gm-contact-actorizer-service.js": 2,
    "scripts/apps/allies/ally-assignment-modal.js": 1,
    "scripts/apps/choices/feat-choice-dialog.js": 1,
    "scripts/apps/follower-creator.js": 1,
    "scripts/apps/npc-template-importer.js": 1,
    "scripts/apps/talent-tree-workbench/custom-content-approval-service.js": 1,
+   "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js": 1,
    "scripts/dialogs/entity-dialog/entity-create-browser.js": 1,
    "scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js": 1
   },
@@ -169,7 +169,6 @@
    "scripts/patches/follower-species-repair-hook.js": 1,
    "scripts/patches/force-suite-render-guard-hotfix.js": 1,
    "scripts/patches/progression-choice-language-hotfix.js": 1,
-   "scripts/patches/progression-feat-chain-hotfix.js": 1,
    "scripts/patches/progression-ledger-reconciliation-hotfix.js": 1,
    "scripts/patches/runtime-bugfix-hotfixes-init.js": 1,
    "scripts/patches/runtime-bugfix-hotfixes.js": 1,
