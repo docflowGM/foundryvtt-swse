@@ -822,7 +822,10 @@ export class SithTalentActions {
       }
     });
 
-    Hooks.on('preUpdateActor', async (actor, update) => {
+    // F-TAL-004: this was a preUpdateActor listener that awaited writes inside the pre-hook. It now runs after the update, only on the client whose user
+    // made it; the condition is unchanged (the new HP value reached maximum).
+    Hooks.on('updateActor', async (actor, update, _options, userId) => {
+      if (userId !== undefined && userId !== game.user?.id) return;
       try {
         const incomingHp = update?.system?.hp?.value ?? update?.system?.hitPoints?.value ?? update?.system?.attributes?.hp?.value;
         if (incomingHp === undefined) return;
