@@ -16,6 +16,7 @@ import { formatSpeedLine } from '/systems/foundryvtt-swse/scripts/species/specie
 import { PanelContextValidator } from './PanelContextValidator.js';
 import { isFollowerSlotOccupied } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 import { RowTransformers } from './RowTransformers.js';
+import { SecondWindRules } from '/systems/foundryvtt-swse/scripts/engine/combat/SecondWindRules.js';
 import { isEnergyShieldItem, isArmorItemEquipped } from '/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js';
 import { captureHydrationSnapshot, emitHydrationError, emitHydrationWarning, getRecentHydrationMutation, summarizeBiographyPanel, summarizeDefensePanel } from '/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js';
 import { validatePanel } from './PanelValidators.js';
@@ -901,10 +902,10 @@ export class PanelContextBuilder {
         10
       );
 
-    // SWSE RAW: Second Wind heals the better of one-quarter max HP or CON score.
+    // Healing comes from the single authority (SecondWindRules.calculateHealingAmount), the same call ActorEngine.applySecondWind makes (F-UIS-005).
     // Use stored override only when it is positive; otherwise hydrate a real
     // playable default instead of leaving the concept sheet blank.
-    const baseHealing = Math.max(Math.floor(maxHp / 4), conTotal);
+    const baseHealing = SecondWindRules.calculateHealingAmount(maxHp, conTotal);
     const storedHealing = safePanelNumber(this.system.secondWind?.healing, 0);
     const healing = storedHealing > 0 ? storedHealing : baseHealing;
 
