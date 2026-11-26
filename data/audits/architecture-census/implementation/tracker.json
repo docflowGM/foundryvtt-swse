@@ -4695,17 +4695,21 @@
    "auditStatus": "confirmed",
    "wave": 5,
    "plannedPhase": "3K",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "F-MEN-001"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "2149ac21a"
+   ],
+   "tests": [
+    "tests/suggestion-shown-batched-persist.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "One persisted flag write per batch (was up to 8). Recording still happens on the read path in decision-step/levelup/chargen/mentor contexts; moving it to explicit selection is a UX/behavior decision not taken."
   },
   {
    "id": "F-NPC-004",
