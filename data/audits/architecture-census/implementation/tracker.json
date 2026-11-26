@@ -4127,7 +4127,7 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3M",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -4135,10 +4135,14 @@
     "B-CMB combat",
     "B-ACT actor-core"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "7d32d5e6f"
+   ],
+   "tests": [
+    "tests/second-wind-panel-authority.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Second Wind panel base healing now calls SecondWindRules.calculateHealingAmount. Not done: the defense tooltip still rebuilds a subtotal when derived total is falsy and picks the Fortitude ability by actor type; changing it to 'unavailable' alters visible output and belongs with the 3N-DC derived-defense contribution ledger (single source for tooltips). Healing-mode/multiplier/feat-rule display also depends on exposing SecondWindRules results in derived data (3N-DC)."
   },
   {
    "id": "F-UIS-006",
@@ -4893,15 +4897,19 @@
    "auditStatus": "confirmed",
    "wave": 5,
    "plannedPhase": "3J",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "03f74c549"
+   ],
+   "tests": [
+    "tests/phase6-vehicle-crew-assignment.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Crew picker moved from the engine service into the vehicle-sheet controls (engine->UI edge removed). Path relocations of crew-resolver, weapon-station-mapping and effect-intent-engine not done (import churn across many files; separate prune/reroute pass)."
   },
   {
    "id": "F-X-002",
