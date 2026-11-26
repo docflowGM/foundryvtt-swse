@@ -14,12 +14,8 @@ import { ForcePowerMaintenance } from "/systems/foundryvtt-swse/scripts/engine/f
 import { SuiteInstanceRecovery } from "/systems/foundryvtt-swse/scripts/engine/force/suite-instance-recovery.js";
 import { installFinalForcePowerIntegration } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-final-integration.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/utils/responsible-gm.js";
 
-// Exactly one client acts: the first active GM (mirrors the other combat hooks).
-function isResponsibleGm() {
-  const gms = (globalThis.game?.users ?? []).filter?.(u => u.isGM && u.active) ?? [];
-  return globalThis.game?.user?.isGM === true && (gms.length === 0 || gms[0]?.id === globalThis.game.user.id);
-}
 
 function isProgressionManagedForceMutation(itemOrActor, options = {}) {
   const source = String(options?.source || options?.meta?.source || '').toLowerCase();
@@ -127,13 +123,13 @@ export function initializeForcePowerHooks() {
   // Core, "Regaining Force Powers": combat over AND a chance to rest for 1 minute. The combat document being deleted
   // proves neither; the proven event is the GM-confirmed `restCompleted` (SuiteInstanceRecovery verifies it).
   Hooks.on('restCompleted', async (event) => {
-    if (!isResponsibleGm()) return;
+    if (!isResponsibleGM()) return;
     await SuiteInstanceRecovery.regainAfterRest(event);
   });
 
   // Natural 20 on a Force Power / starship maneuver activation check: regain at the END of that actor's turn.
   Hooks.on('updateCombat', async (combat, changed, options, userId) => {
-    if (!isResponsibleGm()) return;
+    if (!isResponsibleGM()) return;
     if (changed?.turn === undefined && changed?.round === undefined) return;
     await SuiteInstanceRecovery.regainAtEndOfTurn(combat);
     // The previous combatant's turn just ended: their unmaintained Force power instances lapse.
