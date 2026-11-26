@@ -23,7 +23,7 @@ import { getWeaponBranch, isRangedWeapon as isCanonicalRangedWeapon } from "/sys
 import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems, summarizeItem } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
 import { buildEntityDialogContext } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/context-builder.js";
 import { validateItemData } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/validation.js";
-import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
+import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/effect-intent-engine.js";
 
 const EFFECT_WIZARD_DRAFT_FLAG = 'effectWizardDraft';
 const EFFECT_WIZARD_CONFIRM_STATES = Object.freeze(['delete-effect', 'convert-effect-basic', 'clear-draft']);

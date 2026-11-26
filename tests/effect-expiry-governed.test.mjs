@@ -14,7 +14,7 @@ const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governanc
 const calls = [];
 ActorEngine.updateActiveEffects = async (a, u, o) => { calls.push(['actor', u, o.source]); };
 ActorEngine.updateOwnedItemEffects = async (a, i, u, o) => { calls.push(['item', i.id, u, o.source]); };
-const { EffectIntentEngine } = await import('/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js');
+const { EffectIntentEngine } = await import('/systems/foundryvtt-swse/scripts/engine/effects/effect-intent-engine.js');
 const direct = []; const mkFx = (id) => ({ id, disabled: false, flags: { swse: { effectIntent: { lifecycle: { duration: 'encounter', combatId: 'c1' } } } } });
 EffectIntentEngine.hasIntent = () => true; EffectIntentEngine.getIntent = () => ({ duration: 'encounter' });
 const actor = { id: 'a1', effects: [mkFx('e1')], items: [{ id: 'i1', effects: [mkFx('e2')], updateEmbeddedDocuments: async (...a) => direct.push(a) }], updateEmbeddedDocuments: async (...a) => direct.push(a) };

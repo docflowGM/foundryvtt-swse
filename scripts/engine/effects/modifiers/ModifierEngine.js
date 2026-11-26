@@ -28,7 +28,7 @@ import {
   resolveArmorData
 } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { resolveArmorUsageEffects, ACP_AFFECTED_SKILLS } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
-import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
+import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/effect-intent-engine.js";
 import { buildSourceBreakdown, buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
 import { isPerformanceDiagnosticsEnabled } from "/systems/foundryvtt-swse/scripts/utils/performance-utils.js";

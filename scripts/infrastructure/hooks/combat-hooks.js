@@ -22,7 +22,7 @@ import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
 import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-scene-state.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
-import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
+import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/effect-intent-engine.js";
 import { pruneObservations, observeTargetedOpponent } from "/systems/foundryvtt-swse/scripts/engine/combat/class-target-observation.js";
 import { pruneMasterOfMovement, useMasterOfMovementMovement } from "/systems/foundryvtt-swse/scripts/engine/combat/class-master-of-movement.js";
 import { pruneMarks, markTargetedOpponent } from "/systems/foundryvtt-swse/scripts/engine/combat/class-assassin-mark.js";

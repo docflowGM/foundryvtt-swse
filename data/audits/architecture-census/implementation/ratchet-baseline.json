@@ -97,18 +97,14 @@
    "scripts/engine/skill-challenges/SkillChallengeStore.js": 1
   },
   "P-A07-ui": {
-   "scripts/engine/combat/canonical-special-effects.js>scripts/dialogs/entity-dialog/effect-intent-engine.js": 1,
    "scripts/engine/combat/class-target-observation.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
    "scripts/engine/combat/features/combat-feature-panel-renderer.js>scripts/sheets/v2/character-sheet/combat-feature-sheet-adapter.js": 1,
    "scripts/engine/combat/sith-lord-temptation-service.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
    "scripts/engine/combat/ui/CombatUIAdapter.js>scripts/ui/chat/chat-interaction-bridge.js": 1,
-   "scripts/engine/combat/weapon-control-effects.js>scripts/dialogs/entity-dialog/effect-intent-engine.js": 1,
    "scripts/engine/crew/ally-assignment-service.js>scripts/apps/progression-framework/adapters/follower-mutation-transaction.js": 1,
    "scripts/engine/crew/ally-assignment-service.js>scripts/apps/follower-creator.js": 1,
    "scripts/engine/crew/vehicle-crew-assignment-service.js>scripts/sheets/v2/vehicle-sheet/crew-resolver.js": 1,
    "scripts/engine/crew/vehicle-weapon-station-service.js>scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js": 1,
-   "scripts/engine/effects/adapters/active-effect-adapter.js>scripts/dialogs/entity-dialog/effect-intent-engine.js": 1,
-   "scripts/engine/effects/modifiers/ModifierEngine.js>scripts/dialogs/entity-dialog/effect-intent-engine.js": 1,
    "scripts/engine/force/force-executor.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
    "scripts/engine/force/force-suite-runtime-repairs.js>scripts/sheets/v2/character-sheet/force-roll-dialog.js": 1,
    "scripts/engine/mentor/aurebesh-translator.js>scripts/ui/dialogue/aurebesh-translator.js": 1,
@@ -138,8 +134,7 @@
    "scripts/engine/talent/lightsaber-talent-actions.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
    "scripts/engine/talent/sentinel-talent-actions.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
    "scripts/engine/talent/sith-talent-actions.js>scripts/apps/dialogs/swse-dialog-v2.js": 1,
-   "scripts/engine/talent/sith-talent-actions.js>scripts/apps/force-alchemy/force-alchemy-workbench-app.js": 1,
-   "scripts/engine/vehicles/vehicle-interdiction-service.js>scripts/dialogs/entity-dialog/effect-intent-engine.js": 1
+   "scripts/engine/talent/sith-talent-actions.js>scripts/apps/force-alchemy/force-alchemy-workbench-app.js": 1
   },
   "P-A08": {},
   "P-A09-prototype": {

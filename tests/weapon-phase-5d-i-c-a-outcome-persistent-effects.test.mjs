@@ -141,7 +141,7 @@ const OE = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/o
 const SM = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js');
 const { PoisonEngine } = await import('/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js');
 const { RecurringDamageEngine } = await import('/systems/foundryvtt-swse/scripts/engine/combat/recurring-damage-engine.js');
-const { EffectIntentEngine } = await import('/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js');
+const { EffectIntentEngine } = await import('/systems/foundryvtt-swse/scripts/engine/effects/effect-intent-engine.js');
 const { I_C_A_ROWS } = await import('../tools/lib/weapon-phase-5d-i-c-a-ledger.mjs');
 const rowOf = (key) => I_C_A_ROWS.find((r) => r.key === key);
 

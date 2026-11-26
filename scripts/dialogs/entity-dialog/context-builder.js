@@ -16,7 +16,7 @@ import { resolveForcePowerData } from "/systems/foundryvtt-swse/scripts/items/fo
 import { resolveSkillData } from "/systems/foundryvtt-swse/scripts/items/skill-data-resolver.js";
 import { PrereqEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/prereq-engine.js";
 import { summarizeValidation, validateItemData } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/validation.js";
-import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
+import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/effect-intent-engine.js";
 
 const TYPE_DEFINITIONS = Object.freeze({
   weapon: {

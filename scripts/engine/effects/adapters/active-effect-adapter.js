@@ -15,7 +15,7 @@ import {
   summarizeEffectChanges
 } from "./effect-card-utils.js";
 import { EffectStateFlags } from "../effect-state-flags.js";
-import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
+import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/effect-intent-engine.js";
 
 export class ActiveEffectAdapter {
   /**

@@ -120,7 +120,7 @@ const READ_REVIEWED_BASELINE = new Set([
   'scripts/engine/suggestion/equipment/armor-scoring-engine.js',
   'scripts/engine/suggestion/equipment/equipment-use-evaluator.js',
   'scripts/engine/chargen/CharacterGenerationEngine.js',
-  'scripts/dialogs/entity-dialog/effect-intent-engine.js',
+  'scripts/engine/effects/effect-intent-engine.js',
   'scripts/apps/progression-framework/shell/active-step-computer.js',
   'scripts/apps/progression-framework/shell/progression-finalizer.js',
   'scripts/apps/progression-framework/steps/skills-step.js',

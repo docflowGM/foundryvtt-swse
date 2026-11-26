@@ -4523,15 +4523,17 @@
    "auditStatus": "confirmed",
    "wave": 5,
    "plannedPhase": "3F",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "HEAD"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "EffectIntentEngine moved scripts/dialogs/entity-dialog/ -> scripts/engine/effects/ (git mv; all importers and tests updated; no logic change). Not Foundry-tested. | EffectIntentEngine moved scripts/dialogs/entity-dialog/ -> scripts/engine/effects/ (git mv; importers and tests updated; no logic change). P-A07-ui 43->38. Not Foundry-tested."
   },
   {
    "id": "F-ABL-008",
@@ -4606,7 +4608,7 @@
    "auditStatus": "confirmed",
    "wave": 5,
    "plannedPhase": "3M",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -4614,10 +4616,12 @@
     "B-ROL",
     "B-PAT"
    ],
-   "commits": [],
+   "commits": [
+    "cdce4fe58"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "chat<->roll<->damage-packet static cycle broken: SWSEChat.postRoll lazily imports SWSERollEngine; unused SWSEChat import dropped from skill-feat-resolver. Ratchet cycles 3->2 at that commit (now 1). Not Foundry-tested."
   },
   {
    "id": "F-CUS-007",

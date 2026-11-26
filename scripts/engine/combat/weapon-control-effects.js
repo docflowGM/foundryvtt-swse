@@ -113,7 +113,7 @@ export function entitlementOf(declaration, { profileId = null, proficient = fals
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 
 async function createStatus(target, attacker, built) {
-  const { EffectIntentEngine } = await import('/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js');
+  const { EffectIntentEngine } = await import('/systems/foundryvtt-swse/scripts/engine/effects/effect-intent-engine.js');
   const data = EffectIntentEngine.stampLifecycle(built.data, { actor: target, turnOwnerActorId: built.plan.turnOwnerActorId ?? null, phase: built.plan.phase ?? null });
   const created = await ActorEngine.createActiveEffects(target, [data], { source: 'weapon-control-effect' });
   return Array.isArray(created) ? created.length > 0 : !!created;
