@@ -15,7 +15,8 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { isEpicActor, getPlannedHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { ClassSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
 import { BuildIntent, PRESTIGE_SIGNALS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
-import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
+// Lazy: the Coordinator imports this module, so a static import here would be a cycle (F-SUG cycle break).
+const getSuggestionEngineCoordinator = async () => (await import("/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js")).SuggestionEngineCoordinator;
 
 // ──────────────────────────────────────────────────────────────
 // PATH PREVIEW CONFIGURATION
@@ -59,7 +60,7 @@ export class PathPreview {
         const previews = [];
         const actorState = await ClassSuggestionEngine._buildActorState(actor, pendingData);
         const prestigePrereqs = await ClassSuggestionEngine._loadPrestigePrerequisites();
-        const buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(actor, pendingData);
+        const buildIntent = await (await getSuggestionEngineCoordinator()).analyzeBuildIntent(actor, pendingData);
 
         // Get top prestige targets from build intent
         const targets = this._getTargetClasses(buildIntent, prestigePrereqs);
