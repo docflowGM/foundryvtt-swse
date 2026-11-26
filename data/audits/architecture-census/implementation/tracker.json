@@ -2377,15 +2377,17 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3F",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "fb4fb109b"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Feat/talent actor flag writes route through ActorEngine (recalc:false). Retained direct writes: encounter-use-tracker and meta-resource-feat-resolver (ActorEngine imports them; importing back adds static cycles — internal to the authority) and owned-item flags (force-adept weapon flags, TalentNormalizerEngine item meta)."
   },
   {
    "id": "F-FRC-006",
