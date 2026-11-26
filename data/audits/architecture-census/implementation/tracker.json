@@ -2046,17 +2046,19 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3M",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "species/combat/feats/ui-shell contracts"
    ],
-   "commits": [],
+   "commits": [
+    "3ad63f612"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Raw ChatMessage.create outside SWSEChat 74 -> 2 (damage-log-formatter, droid sheet). 47 callers still use the document-api-v13 createChatMessage wrapper (the probe's blind spot); migrating them is a mechanical but wide follow-up."
   },
   {
    "id": "F-FRC-005",
@@ -2752,17 +2754,19 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3M",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "B-CHT chat"
    ],
-   "commits": [],
+   "commits": [
+    "3ad63f612"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Sheet chat posts routed except the droid-part use card (carries rolls:[roll], which postHTML does not accept)."
   },
   {
    "id": "F-VEH-010",
@@ -2933,15 +2937,17 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3E",
-   "status": "OPEN",
+   "status": "PARTIALLY_COMPLETE_BLOCKED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "2232c171f"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "10 of 11 combat engine chat sites routed through SWSEChat; damage-log-formatter keeps ChatMessage.create because it spreads caller-supplied message options."
   },
   {
    "id": "F-CUS-004",
@@ -3030,15 +3036,17 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3F",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "3ad63f612"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "grapple tie message routed through SWSEChat.postHTML."
   },
   {
    "id": "F-FRC-011",
@@ -3252,17 +3260,19 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "F-PRG-005"
    ],
-   "commits": [],
+   "commits": [
+    "2232c171f"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "attribute-step GM whisper and progression-event-processor credit card route through SWSEChat."
   },
   {
    "id": "F-PRG-015",
@@ -3376,15 +3386,17 @@
    "auditStatus": "confirmed",
    "wave": 3,
    "plannedPhase": "3F",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "3ad63f612"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Talent-module raw ChatMessage.create sites routed through SWSEChat.postHTML."
   },
   {
    "id": "F-VEH-009",
