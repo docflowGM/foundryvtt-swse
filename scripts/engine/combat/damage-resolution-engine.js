@@ -1,3 +1,4 @@
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js";
 import { DamageMitigationManager } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-mitigation-manager.js";
@@ -77,10 +78,22 @@ function readEncounterUse(actor, flagName) {
   return Math.max(0, Number(flag.count ?? 0) || 0);
 }
 
+// Bookkeeping flags go through the governed flag API without recalculation (they never feed derived values). A document that cannot store flags
+// (a bare/test actor) is skipped exactly as the previous optional-call writes were.
+async function setActorFlag(actor, key, value) {
+  if (typeof actor?.setFlag !== 'function') return;
+  await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', key, value, { recalc: false });
+}
+
+async function unsetActorFlagIfSupported(actor, key) {
+  if (typeof actor?.unsetFlag !== 'function') return;
+  await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', key, { recalc: false });
+}
+
 async function writeEncounterUse(actor, flagName, count) {
   const combatId = activeCombatId();
   if (!combatId) return;
-  await actor?.setFlag?.('foundryvtt-swse', flagName, { combatId, count: Math.max(0, Number(count ?? 0) || 0) });
+  await setActorFlag(actor, flagName, { combatId, count: Math.max(0, Number(count ?? 0) || 0) });
 }
 
 function stayUpAlreadyUsed(actor) {
@@ -91,13 +104,13 @@ function stayUpAlreadyUsed(actor) {
 
 async function markStayUpUsed(actor) {
   const combatId = activeCombatId();
-  if (combatId) await actor?.setFlag?.('foundryvtt-swse', 'stayUpUsedThisEncounter', combatId);
+  if (combatId) await setActorFlag(actor, 'stayUpUsedThisEncounter', combatId);
 }
 
 async function markQuickComebackAvailable(actor, sourceInfo = {}) {
   const combatId = activeCombatId();
   if (!combatId) return;
-  await actor?.setFlag?.('foundryvtt-swse', 'quickComebackAvailable', {
+  await setActorFlag(actor, 'quickComebackAvailable', {
     combatId,
     round: activeCombatRound(),
     source: sourceInfo.source ?? 'Quick Comeback',
@@ -109,7 +122,7 @@ async function markQuickComebackAvailable(actor, sourceInfo = {}) {
 async function markRecoverBlockedByPinpoint(actor, sourceInfo = {}) {
   const combatId = activeCombatId();
   if (!combatId) return;
-  await actor?.setFlag?.('foundryvtt-swse', 'recoverBlockedByPinpointAccuracy', {
+  await setActorFlag(actor, 'recoverBlockedByPinpointAccuracy', {
     combatId,
     round: activeCombatRound(),
     expiresAfterRound: activeCombatRound() + 1,
@@ -134,7 +147,7 @@ export class DamageResolutionEngine {
       throw new Error('DamageResolutionEngine.resolveDamage: actor required');
     }
 
-    await actor.unsetFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution');
+    await unsetActorFlagIfSupported(actor, 'alreadyRescuedThisResolution');
 
     if (typeof damage !== 'number' || damage < 0) {
       throw new Error(`DamageResolutionEngine.resolveDamage: invalid damage amount: ${damage}`);
@@ -343,7 +356,7 @@ export class DamageResolutionEngine {
         const firstExceededFlag = actor.getFlag?.('foundryvtt-swse', 'damageThresholdExceededThisEncounter');
         if (combatId && firstExceededFlag !== combatId) {
           thresholdShift = 0;
-          await actor.setFlag?.('foundryvtt-swse', 'damageThresholdExceededThisEncounter', combatId);
+          await setActorFlag(actor, 'damageThresholdExceededThisEncounter', combatId);
           result.galacticAllianceMilitaryTraining = { applied: true, preventedConditionShift: true };
         }
       }
