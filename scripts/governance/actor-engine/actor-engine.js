@@ -4233,6 +4233,29 @@ export const ActorEngine = {
   },
 
   /**
+   * Update ActiveEffects embedded on an item owned by `actor` (F-ABL-001). Same governed context and recalculation as updateActiveEffects();
+   * the item's effects are part of the actor's effective modifier set, so the actor is recalculated afterwards.
+   */
+  async updateOwnedItemEffects(actor, item, updates, options = {}) {
+    if (!actor) {throw new Error('updateOwnedItemEffects() called with no actor');}
+    if (!item?.updateEmbeddedDocuments) {throw new Error('updateOwnedItemEffects() requires an owned item');}
+    if (!Array.isArray(updates)) {throw new Error('updateOwnedItemEffects() requires updates array');}
+    MutationInterceptor.setContext({
+      operation: 'updateOwnedItemEffects',
+      source: options.source || 'ActorEngine',
+      suppressRecalc: options.suppressRecalc ?? false
+    });
+    try {
+      const normalizedUpdates = normalizeActiveEffectDataForRuntime(updates);
+      const result = await item.updateEmbeddedDocuments('ActiveEffect', normalizedUpdates, options);
+      await this.recalcAll(actor);
+      return result;
+    } finally {
+      MutationInterceptor.clearContext();
+    }
+  },
+
+  /**
    * Apply VERIFIED changes to system.hp.max. ONLY writer of system.hp.max (besides validated plans).
    *
    * Owner decision: maximum HP is additive history (see engine/HP/hp-accounting.js). This method NEVER

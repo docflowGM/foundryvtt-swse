@@ -187,6 +187,17 @@ export const ActorEngine = {
     return actor.setFlag(scope, key, value);
   },
 
+  // Mirrors the real governed effect APIs (actor-engine.js updateActiveEffects / updateOwnedItemEffects): the write goes to the embedded collection.
+  async updateActiveEffects(actor, updates, options = {}) {
+    fakeActorEngineCallLog.push({ method: 'updateActiveEffects', actorId: actor?.id, options: { ...options } });
+    return actor.updateEmbeddedDocuments('ActiveEffect', updates, options);
+  },
+
+  async updateOwnedItemEffects(actor, item, updates, options = {}) {
+    fakeActorEngineCallLog.push({ method: 'updateOwnedItemEffects', actorId: actor?.id, itemId: item?.id, options: { ...options } });
+    return item.updateEmbeddedDocuments('ActiveEffect', updates, options);
+  },
+
   async unsetActorFlag(actor, scope, key, options = {}) {
     fakeActorEngineCallLog.push({ method: 'unsetActorFlag', actorId: actor?.id, scope, key, options: { ...options } });
     return actor.unsetFlag(scope, key);

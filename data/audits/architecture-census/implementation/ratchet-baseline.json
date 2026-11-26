@@ -52,7 +52,6 @@
    "scripts/combat/active-effects-manager.js": 1,
    "scripts/combat/rolls/attacks.js": 1,
    "scripts/core/world-data-loader.js": 1,
-   "scripts/dialogs/entity-dialog/effect-intent-engine.js": 1,
    "scripts/dialogs/entity-dialog/entity-create-browser.js": 1,
    "scripts/domain/vehicles/vehicle-phase4d-scratch-import.js": 1,
    "scripts/engine/combat/fire-state-store.js": 1,
@@ -85,7 +84,6 @@
    "scripts/apps/follower-creator.js": 1,
    "scripts/apps/npc-template-importer.js": 1,
    "scripts/apps/talent-tree-workbench/custom-content-approval-service.js": 1,
-   "scripts/dialogs/entity-dialog/effect-intent-engine.js": 1,
    "scripts/dialogs/entity-dialog/entity-create-browser.js": 1,
    "scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js": 1
   },

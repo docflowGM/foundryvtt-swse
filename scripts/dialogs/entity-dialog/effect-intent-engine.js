@@ -977,7 +977,7 @@ function shouldExpireAtCombatEnd(effect = {}, combat = null) {
   return !combat || !lifecycle?.combatId || lifecycle.combatId === combat.id;
 }
 
-async function disableExpiredEffectsOnDocument(document, effects = [], expiredEffects = [], source = 'swse-basic-effect-lifecycle') {
+async function disableExpiredEffectsOnDocument(document, effects = [], expiredEffects = [], source = 'swse-basic-effect-lifecycle', actor = null) {
   if (!document?.updateEmbeddedDocuments || !expiredEffects.length) return 0;
   const updates = expiredEffects
     .filter(effect => effect?.id || effect?._id)
@@ -988,7 +988,12 @@ async function disableExpiredEffectsOnDocument(document, effects = [], expiredEf
       [`flags.${SWSE_EFFECT_FLAG_SCOPE}.${SWSE_EFFECT_LIFECYCLE_KEY}.expiredReason`]: source
     }));
   if (!updates.length) return 0;
-  await document.updateEmbeddedDocuments('ActiveEffect', updates, { source });
+  // F-ABL-001: governed + recalculated (an expired effect stops contributing to derived values). Lazy import: a static import of ActorEngine
+  // would join this module to the large ActorEngine/DerivedCalculator static cycle.
+  const owner = actor ?? document;
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  if (document === owner) await ActorEngine.updateActiveEffects(owner, updates, { source });
+  else await ActorEngine.updateOwnedItemEffects(owner, document, updates, { source });
   return updates.length;
 }
 
@@ -1467,7 +1472,7 @@ export class EffectIntentEngine {
         ? shouldExpireAtCombatEnd(effect, activeCombat)
         : shouldExpireAtTurnStart(effect, actor, activeCombat);
     });
-    expired += await disableExpiredEffectsOnDocument(actor, actor?.effects, actorEffects, `swse-basic-effect-${timing}`);
+    expired += await disableExpiredEffectsOnDocument(actor, actor?.effects, actorEffects, `swse-basic-effect-${timing}`, actor);
 
     for (const item of Array.from(actor?.items ?? [])) {
       const itemExpired = Array.from(item?.effects ?? []).filter(effect => {
@@ -1476,7 +1481,7 @@ export class EffectIntentEngine {
           ? shouldExpireAtCombatEnd(effect, activeCombat)
           : shouldExpireAtTurnStart(effect, actor, activeCombat);
       });
-      expired += await disableExpiredEffectsOnDocument(item, item?.effects, itemExpired, `swse-basic-effect-${timing}`);
+      expired += await disableExpiredEffectsOnDocument(item, item?.effects, itemExpired, `swse-basic-effect-${timing}`, actor);
     }
 
     return { expired };
