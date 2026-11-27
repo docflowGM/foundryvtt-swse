@@ -3788,17 +3788,19 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3H",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": true,
    "rulesQuestion": true,
    "requiredDecision": null,
    "dependencies": [
     "B-ACT actor-core"
    ],
-   "commits": [],
+   "commits": [
+    "f54be5a43"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Owner ruling: wrapper retired; canonical follower defense rules; FOUNDRY_ACCEPTANCE_PENDING"
   },
   {
    "id": "F-TAL-003",
