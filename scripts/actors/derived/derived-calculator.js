@@ -259,7 +259,11 @@ export class DerivedCalculator {
       const hp = {
         base: actor.system.hp?.max || 1,
         max: actor.system.hp?.max || 1,
-        value: actor.system.hp?.value || actor.system.hp?.max || 1,
+        // 3N-DC P0: a CURRENT HP of 0 is a real value (a downed actor), not "missing". The truthy fallback (`value || max`) mirrored full HP for an
+        // actor at 0 HP. Only a missing/non-numeric value falls back to max.
+        value: Number.isFinite(Number(actor.system.hp?.value)) && actor.system.hp?.value !== null && actor.system.hp?.value !== ''
+          ? Number(actor.system.hp.value)
+          : (actor.system.hp?.max || 1),
         total: actor.system.hp?.max || 1,
         adjustment: 0 // Adjustments are part of ActorEngine.recomputeHP, not derived
       };
