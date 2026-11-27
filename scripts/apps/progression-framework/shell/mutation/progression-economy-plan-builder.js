@@ -112,10 +112,29 @@ function resolveWealthPayoutMode() {
   return ProgressionRules.getWealthPayoutMode();
 }
 
-function computePendingLineageEligibleLevel(selections = {}, sessionState = {}, mode = resolveWealthPayoutMode()) {
-  if (!isWealthCountedClass(selections.class, mode)) return 0;
+function chargenStartingLevel(selections = {}, sessionState = {}) {
   const rawLevel = Number(selections?.survey?.startingLevel ?? sessionState?.targetLevel ?? sessionState?.progressionSession?.targetLevel ?? 1) || 1;
   return Math.max(1, Math.floor(rawLevel));
+}
+
+/**
+ * The class levels a creation holds: an explicit `selections.classLevels` ([{ class, level }], the canonical shape for a multiclass start) or, as today,
+ * the single selected class holding every starting level. Character level is NEVER used as a class level when a class-level list is present.
+ */
+function chargenClassLevels(selections = {}, sessionState = {}) {
+  const explicit = Array.isArray(selections?.classLevels) ? selections.classLevels : null;
+  if (explicit?.length) {
+    return explicit
+      .map((entry) => ({ class: entry?.class ?? entry?.classSelection ?? entry, level: Math.max(0, Math.floor(Number(entry?.level ?? entry?.classLevel ?? 0) || 0)) }))
+      .filter((entry) => entry.level > 0);
+  }
+  return selections?.class ? [{ class: selections.class, level: chargenStartingLevel(selections, sessionState) }] : [];
+}
+
+/** Counted class levels (Noble under RAW; Lineage-eligible under Expanded Wealth) of a creation: the Wealth payout multiplier. */
+function computePendingLineageEligibleLevel(selections = {}, sessionState = {}, mode = resolveWealthPayoutMode()) {
+  return chargenClassLevels(selections, sessionState)
+    .reduce((sum, entry) => sum + (isWealthCountedClass(entry.class, mode) ? entry.level : 0), 0);
 }
 
 function computeWealthCreditGrant(selections = {}, actor = null, sessionState = {}, mode = resolveWealthPayoutMode()) {
@@ -141,15 +160,20 @@ function withWealthProgressionHistory(actor, selections = {}, sessionState = {})
   const existing = history[key] || { levelsGranted: [] };
   const levels = new Set((Array.isArray(existing.levelsGranted) ? existing.levelsGranted : []).map(Number).filter(Number.isFinite));
   for (let level = 1; level <= lineageLevel; level += 1) levels.add(level);
+  // Higher-level creation pays ONE evaluation (WEALTH-Q1 policy): it belongs to the starting character level; intermediate levels were not paid.
+  const startingLevel = chargenStartingLevel(selections, sessionState);
+  const characterLevels = new Set((Array.isArray(existing.characterLevelsGranted) ? existing.characterLevelsGranted : []).map(Number).filter(Number.isFinite));
+  if (lineageLevel > 0) characterLevels.add(startingLevel);
   history[key] = {
     ...existing,
     levelsGranted: Array.from(levels).sort((a, b) => a - b),
+    characterLevelsGranted: Array.from(characterLevels).sort((a, b) => a - b),
     lastGrantedAt: existing.lastGrantedAt || new Date().toISOString(),
     lastGrantedCredits: existing.lastGrantedCredits || lineageLevel * 5000,
     // Provenance: the payout mode and class-level basis the credits were computed under (history is never recomputed when the setting changes).
     lastMode: existing.lastMode || mode,
     lastClassLevelBasis: existing.lastClassLevelBasis ?? lineageLevel,
-    grantLog: existing.grantLog?.length ? existing.grantLog : appendWealthGrantLog(existing, { characterLevel: Number(sessionState?.targetLevel ?? selections?.survey?.startingLevel ?? 1) || 1, mode, classLevelBasis: lineageLevel, credits: lineageLevel * 5000, source: 'chargen-finalizer' }),
+    grantLog: existing.grantLog?.length ? existing.grantLog : appendWealthGrantLog(existing, { characterLevel: startingLevel, mode, classLevelBasis: lineageLevel, credits: lineageLevel * 5000, source: 'chargen-finalizer' }),
     source: existing.source || 'chargen-finalizer',
   };
   return history;
@@ -330,6 +354,11 @@ export class ProgressionEconomyPlanBuilder {
     if (wealthBonus > 0 && !(explicit > 0 && explicitIncludesWealth)) ledger.registerGrant({ id: 'chargen:wealth-talent', source: 'wealth-talent', amount: wealthBonus, step: 'talent', ruleRef: wealthMode ? `wealth-payout:${wealthMode}:levels=${wealthClassLevelBasis ?? 'n/a'}` : null, eligibleCategories: '*', policy: 'persist' });
     const settlement = ledger.finalize();
     return { startingCredits: settlement.liquidCredits, grants: ledger.snapshot().grants, settlement };
+  }
+
+  /** Wealth history with grant provenance for a creation (single payout at the starting level); pure, used by the plan compiler. */
+  static withChargenWealthHistory(actor, selections = {}, sessionState = {}) {
+    return withWealthProgressionHistory(actor, selections, sessionState);
   }
 
   /** Wealth history with grant provenance (mode + class-level basis) for a level-up; pure, used by the plan compiler. */
