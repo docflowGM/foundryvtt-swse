@@ -29,7 +29,6 @@ for (const id of expected) ok(`effect-data:${id}`, effectIds.has(id));
 const sourceFiles = [
   'scripts/engine/implants/ImplantRules.js',
   'scripts/engine/poison/poison-engine.js',
-  'scripts/actors/derived/hp-calculator.js',
   'scripts/engine/combat/combat-roll-math.js',
   'scripts/engine/combat/threshold-engine.js',
   'scripts/holonet/subsystems/gm-healing-trigger.js',
