@@ -142,9 +142,10 @@ const add = (p) => probes.push(p);
 // A-10 credits through TransactionEngine
 {
   const hits = [];
-  const TE = 'scripts/engine/store/transaction-engine.js';
+  // TE-owned modules (3N-TE): the engine and the helpers extracted from it are the one commerce authority.
+  const TE_OWNED = new Set(['scripts/engine/store/transaction-engine.js', 'scripts/engine/store/transaction-recovery.js', 'scripts/engine/store/transaction-helpers.js']);
   for (const e of runtime.filter(live)) {
-    if (e.path === TE) continue;
+    if (TE_OWNED.has(e.path)) continue;
     const t = read(e.path);
     for (const m of t.matchAll(/['"`]system\.credits['"`]\s*:|system\.credits\s*=(?!=)|credits\s*:\s*[^,}\n]*[-+]\s*\w/g)) hits.push({ path: e.path, line: lineAt(t, m.index), text: t.slice(m.index, m.index + 60).split('\n')[0] });
   }

@@ -36,9 +36,11 @@ import { resetFakeActorEngine } from './helpers/foundry-shim/fakes/actor-engine.
 
 registerFoundryPathLoader();
 
-const TRANSACTION_ENGINE_SOURCE = await readFile(
+// 3N-TE.5: the restore helper moved out of transaction-engine.js into transaction-recovery.js (same code, same single call site); the engine
+// source plus its recovery module are the "TransactionEngine source" this migration guard inspects.
+const TRANSACTION_ENGINE_SOURCE = (await readFile(
   new URL('../scripts/engine/store/transaction-engine.js', import.meta.url), 'utf8'
-);
+)) + '\n' + (await readFile(new URL('../scripts/engine/store/transaction-recovery.js', import.meta.url), 'utf8'));
 
 // --- Tier (c): source-inspection of the un-migrated legacy call sites ---
 
@@ -46,7 +48,7 @@ const restoreSnapshotCallSites = [...TRANSACTION_ENGINE_SOURCE.matchAll(/Snapsho
 // TI-2: the migration this file documented as outstanding is done. Every restore now goes through the single #restoreVerified helper, which branches on
 // the boolean (a restore is reported only when `restoreSnapshot()` returned true) and surfaces a failed restore as `rollbackFailed` to every caller.
 assert.equal(restoreSnapshotCallSites.length, 1, 'TI-2: transaction-engine.js has exactly one restoreSnapshot() call site, inside #restoreVerified');
-assert.match(TRANSACTION_ENGINE_SOURCE, /static async #restoreVerified\([\s\S]{0,700}restored === true/, 'the single call site inspects the boolean result');
+assert.match(TRANSACTION_ENGINE_SOURCE, /export async function restoreVerified\([\s\S]{0,700}restored === true/, 'the single call site inspects the boolean result');
 assert.doesNotMatch(TRANSACTION_ENGINE_SOURCE, /rollback successful['"`]?, \{[^}]*\}\);\s*\} catch/i, 'no \"rollback successful\" is logged from inside a try that ignores the restore result');
 
 // None of these calls the OLD, pre-P1-7 shape independently — they all

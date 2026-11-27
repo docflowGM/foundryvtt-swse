@@ -50,6 +50,7 @@ import { StoreAcquisitionService } from "/systems/foundryvtt-swse/scripts/engine
 
 import { sameOwnership } from "/systems/foundryvtt-swse/scripts/engine/store/resale-authority.js";
 import { deriveTransactionType, legSummary, assetApprovalLockKey, sourceRollbackRefusal } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-helpers.js";
+import { compensateUnverified, establishRecovery, restoreVerified } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-recovery.js";
 const RESALE_AUTHORITY_GM_APPRAISAL = 'gm-appraisal';
 
 export class TransactionEngine {
@@ -192,86 +193,8 @@ export class TransactionEngine {
   }
 
 
-  /**
-   * TI-2 (review TI2-R1): the caller's own proof that the change landed ran and FAILED after the charge was committed. Compensation is targeted, never a
-   * whole-actor restore: the credits are put back with ONE write only if the live balance is still exactly the post-charge value (read-compare-restore),
-   * and the audit record is marked Compensated in the same write. Anything else — the balance moved, the write failed, the write did not take — is
-   * `indeterminate` with evidence and is never retried.
-   */
-  static async #compensateUnverified(actor, { transactionId, source, normalizedCost, creditsBefore, creditsAfter, reason, ownLockKey }) {
-    const base = { success: false, verificationFailed: true, transactionId };
-    const what = `the change could not be verified (${reason})`;
-    if (!(normalizedCost > 0)) {return { ...base, compensated: true, error: `Transaction failed: ${what}; nothing was charged.` };}
-    // TI2-R4: the read, the comparison and the write below are one decision. Another TransactionEngine operation for this actor that is ALREADY running may be
-    // mid-write, so the refund is not attempted (unresolved, with evidence); one that STARTS meanwhile is refused by the reconciliation guard. Writers outside
-    // the commerce authority (a sheet edit, a talent) cannot be coordinated here: the final balance is verified instead, and a mismatch is unresolved.
-    const inFlight = [...this._mutationLocks].filter((key) => key.startsWith(`${actor.id}:`) && key !== ownLockKey);
-    const evidence = { creditsBefore, expectedCredits: creditsAfter, observedCredits: LedgerService.getCurrentCredits(actor), inFlight };
-    if (inFlight.length > 0) {
-      swseLogger.error('TransactionEngine: unverified change not compensated; another operation on this actor is in flight', { transactionId, ...evidence });
-      return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and another credit operation for this actor is in flight, so the refund was NOT attempted. Reconcile transaction ${transactionId}.`, evidence };
-    }
-    this._creditReconciliations.add(actor.id);
-    try {
-      const observed = LedgerService.getCurrentCredits(actor);
-      evidence.observedCredits = observed;
-      if (observed !== creditsAfter) {
-        swseLogger.error('TransactionEngine: unverified change could not be compensated; the balance changed after the charge', { transactionId, ...evidence });
-        return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and the balance changed after the charge, so it was NOT refunded automatically. Reconcile transaction ${transactionId}.`, evidence };
-      }
-      try {
-        await ActorEngine.applyMutationPlan(actor, { set: {
-          'system.credits': creditsBefore,
-          [`flags.foundryvtt-swse.transactions.${transactionId}.status`]: 'Compensated',
-          [`flags.foundryvtt-swse.transactions.${transactionId}.compensatedReason`]: reason
-        } }, { validate: true, rederive: false, source: `${source}.compensation` });
-      } catch (error) {
-        swseLogger.error('TransactionEngine: compensation write failed', { transactionId, error: error?.message });
-        return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and the refund write failed (${error?.message}). Reconcile transaction ${transactionId}.`, evidence: { ...evidence, compensationError: error?.message ?? String(error) } };
-      }
-      const afterRefund = LedgerService.getCurrentCredits(actor);
-      if (afterRefund !== creditsBefore) {
-        return { ...base, indeterminate: true, error: `Transaction unresolved: ${what}, and the refund could not be confirmed (balance ${afterRefund}). Reconcile transaction ${transactionId}.`, evidence: { ...evidence, observedAfterRefund: afterRefund } };
-      }
-      return { ...base, compensated: true, rolledBack: true, error: `Transaction failed: ${what}; the charge of ${normalizedCost} credits was refunded.` };
-    } finally {
-      this._creditReconciliations.delete(actor.id);
-    }
-  }
 
-  /**
-   * TI-2 (TX-08): recovery must be ESTABLISHED, not assumed. A snapshot counts only when it was created AND is retrievable from the actor afterwards
-   * (createSnapshot resolving is not proof that anything was stored) AND is a full-actor v2 snapshot, the only kind the exact restore can verify.
-   * Resolves { ok:true, snapshot } or { ok:false, error }. It never mutates anything but the snapshot history (the existing SnapshotManager write).
-   */
-  static async #establishRecovery(actor, label) {
-    try {
-      const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-      const snapshot = await SnapshotManager.createSnapshot(actor, label);
-      const stored = snapshot?.timestamp !== undefined ? SnapshotManager.getSnapshot(actor, snapshot.timestamp) : null;
-      if (!stored || stored.schemaVersion !== 2 || stored.scope !== 'full-actor') {
-        return { ok: false, error: new Error('the recovery snapshot was not found in the actor after it was created') };
-      }
-      return { ok: true, snapshot };
-    } catch (error) {
-      return { ok: false, error };
-    }
-  }
 
-  /**
-   * TI-2 (TX-08): a restore is reported as done ONLY when SnapshotManager.restoreSnapshot returned true (exact and identity-verified). The wrapper's
-   * documented failure is a non-throwing `false`, which callers previously ignored while logging "rollback successful". Whole-actor restore is the
-   * EXISTING mechanism and is not extended here (it can revert unrelated concurrent changes — TX-07b); this only makes its outcome honest.
-   */
-  static async #restoreVerified(actor, snapshot) {
-    try {
-      const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-      const restored = await SnapshotManager.restoreSnapshot(actor, snapshot?.timestamp ?? snapshot);
-      return restored === true ? { restored: true } : { restored: false, error: new Error('the snapshot restore reported failure (not restored, or not identity-exact)') };
-    } catch (error) {
-      return { restored: false, error };
-    }
-  }
 
   /**
    * Execute one actor-scoped contextual mutation transaction.
@@ -365,7 +288,7 @@ export class TransactionEngine {
 
       // TI-2: recovery is established FIRST (D1); the balance is read AFTER the (slow) snapshot, immediately before the plan is built, so the credit write
       // is computed from the freshest balance this client can see.
-      const recovery = await this.#establishRecovery(freshActor, `${transactionContext} transaction (${normalizedCost} credits)`);
+      const recovery = await establishRecovery(freshActor, `${transactionContext} transaction (${normalizedCost} credits)`);
       if (!recovery.ok) {
         swseLogger.error('TransactionEngine: Transaction refused; recovery could not be established', { transactionId, context: transactionContext, error: recovery.error?.message });
         return { success: false, transactionId, refused: 'recovery-unavailable', error: `Transaction refused: recovery could not be established (${recovery.error?.message ?? 'unknown'}). Nothing was changed.` };
@@ -451,7 +374,7 @@ export class TransactionEngine {
         try { verdict = await verify(freshActor); } catch (verifyError) { verdict = { ok: false, reason: `verification threw: ${verifyError?.message ?? verifyError}` }; }
         if (verdict?.ok !== true) {
           swseLogger.error('TransactionEngine: Mutation transaction failed verification', { transactionId, context: transactionContext, reason: verdict?.reason });
-          return await this.#compensateUnverified(freshActor, { transactionId, source: `${source}.${transactionContext}`, normalizedCost, creditsBefore, creditsAfter, reason: verdict?.reason ?? 'the change is not present', ownLockKey: lockKey });
+          return await compensateUnverified(this, freshActor, { transactionId, source: `${source}.${transactionContext}`, normalizedCost, creditsBefore, creditsAfter, reason: verdict?.reason ?? 'the change is not present', ownLockKey: lockKey });
         }
       }
 
@@ -494,7 +417,7 @@ export class TransactionEngine {
       });
 
       if (snapshotId) {
-        const restore = await this.#restoreVerified(freshActor, snapshotId);
+        const restore = await restoreVerified(freshActor, snapshotId);
         if (!restore.restored) {
           swseLogger.error('TransactionEngine: Rollback failed', { transactionId, snapshotId, error: restore.error?.message });
           return { success: false, transactionId, rollbackFailed: true, ...(planCleanupUnverified ? { indeterminate: true, createdActorIds: unresolvedCreatedIds } : {}), error: `Transaction failed and rollback failed: ${error.message}` };
@@ -706,7 +629,7 @@ export class TransactionEngine {
       // The mutation was attempted. A failure is only reported as definitive when the pre-adjustment state is VERIFIED restored; otherwise the
       // credits may have moved and the outcome is `indeterminate` (never an ordinary failure a caller could safely retry).
       const restore = snapshotId
-        ? await this.#restoreVerified(freshActor, snapshotId)
+        ? await restoreVerified(freshActor, snapshotId)
         : { restored: false, error: new Error('no rollback snapshot exists') };
       if (!restore.restored) {
         swseLogger.error('TransactionEngine: Credit adjustment rollback failed', { transactionId, snapshotId: Boolean(snapshotId), error: restore.error?.message });
@@ -888,8 +811,8 @@ export class TransactionEngine {
       const refundUnresolved = refund.rollbackFailed === true || refund.indeterminate === true;
       const restores = [];
       if (!refundUnresolved) {
-        if (fromSnapshot) {restores.push({ actor: 'sender', ...(await this.#restoreVerified(fromActor, fromSnapshot)) });}
-        if (toSnapshot) {restores.push({ actor: 'recipient', ...(await this.#restoreVerified(toActor, toSnapshot)) });}
+        if (fromSnapshot) {restores.push({ actor: 'sender', ...(await restoreVerified(fromActor, fromSnapshot)) });}
+        if (toSnapshot) {restores.push({ actor: 'recipient', ...(await restoreVerified(toActor, toSnapshot)) });}
       }
       if (restores.length > 0 && restores.every((r) => r.restored)) {
         swseLogger.warn('[TransactionEngine.creditTransfer] restored both actors from snapshot after refund failure', logContext);
@@ -1040,9 +963,9 @@ export class TransactionEngine {
     let assetSnapshot = null;
     try {
       // TI-2 (D1): a customization is refused unless recovery is established for every actor it will change (wallet, and the asset when distinct).
-      const walletRecovery = await this.#establishRecovery(walletActor, `${transactionContext} wallet transaction (${netCost} net credits)`);
+      const walletRecovery = await establishRecovery(walletActor, `${transactionContext} wallet transaction (${netCost} net credits)`);
       const assetRecovery = walletRecovery.ok && targetAsset.id !== walletActor.id
-        ? await this.#establishRecovery(targetAsset, `${transactionContext} asset mutation (${targetAsset.name})`)
+        ? await establishRecovery(targetAsset, `${transactionContext} asset mutation (${targetAsset.name})`)
         : { ok: true, snapshot: null };
       if (!walletRecovery.ok || !assetRecovery.ok) {
         const why = (walletRecovery.error ?? assetRecovery.error)?.message ?? 'unknown';
@@ -1190,8 +1113,8 @@ export class TransactionEngine {
 
       if (walletSnapshot || assetSnapshot) {
         const restores = [];
-        if (assetSnapshot && targetAsset.id !== walletActor.id) {restores.push(await this.#restoreVerified(targetAsset, assetSnapshot));}
-        if (walletSnapshot) {restores.push(await this.#restoreVerified(walletActor, walletSnapshot));}
+        if (assetSnapshot && targetAsset.id !== walletActor.id) {restores.push(await restoreVerified(targetAsset, assetSnapshot));}
+        if (walletSnapshot) {restores.push(await restoreVerified(walletActor, walletSnapshot));}
         if (restores.some((r) => !r.restored)) {
           swseLogger.error('TransactionEngine: Asset customization rollback failed', { transactionId, error: restores.find((r) => !r.restored)?.error?.message });
           return { success: false, transactionId, rollbackFailed: true, ...(error.verificationFailed ? { verificationFailed: true } : {}), error: `Asset customization failed and rollback failed: ${error.message}` };
@@ -1438,8 +1361,8 @@ export class TransactionEngine {
 
       if (ownerSnapshot || assetSnapshot) {
         const restores = [];
-        if (assetSnapshot) {restores.push(await this.#restoreVerified(freshAsset, assetSnapshot));}
-        if (ownerSnapshot) {restores.push(await this.#restoreVerified(ownerActor, ownerSnapshot));}
+        if (assetSnapshot) {restores.push(await restoreVerified(freshAsset, assetSnapshot));}
+        if (ownerSnapshot) {restores.push(await restoreVerified(ownerActor, ownerSnapshot));}
         if (restores.some((r) => !r.restored)) {
           swseLogger.error('TransactionEngine: Asset approval rollback failed', { transactionId, error: restores.find((r) => !r.restored)?.error?.message });
           return { success: false, transactionId, rollbackFailed: true, error: `Asset approval failed and rollback failed: ${error.message}` };
@@ -1537,7 +1460,7 @@ export class TransactionEngine {
     } catch (error) {
       swseLogger.error('TransactionEngine: Sale transaction failed', { transactionId, context: transactionContext, actor: freshActor?.id, itemId: ownedItemId, error: error.message });
       if (snapshotId) {
-        const restore = await this.#restoreVerified(freshActor, snapshotId);
+        const restore = await restoreVerified(freshActor, snapshotId);
         if (!restore.restored) {
           swseLogger.error('TransactionEngine: Sale rollback failed', { transactionId, snapshotId, error: restore.error?.message });
           return { success: false, transactionId, rollbackFailed: true, error: `Sale failed and rollback failed: ${error.message}` };
@@ -1628,7 +1551,7 @@ export class TransactionEngine {
       const creditsAfter = normalizeCredits(creditsBefore + amount);
 
       // 0. recovery is ESTABLISHED before anything irreversible happens
-      const recovery = await this.#establishRecovery(owner, `store-asset-sale ${transactionId}`);
+      const recovery = await establishRecovery(owner, `store-asset-sale ${transactionId}`);
       if (!recovery.ok) return { success: false, transactionId, error: `Asset sale refused: owner recovery could not be established (${recovery.error?.message ?? recovery.error}); nothing was changed.` };
 
       // 1. dispose the asset as PENDING, carrying this transaction's id
@@ -2003,7 +1926,7 @@ export class TransactionEngine {
       });
 
       if (snapshotId) {
-        const restore = await this.#restoreVerified(freshActor, snapshotId);
+        const restore = await restoreVerified(freshActor, snapshotId);
         if (!restore.restored) {
           swseLogger.error('TransactionEngine: Rollback reconciliation snapshot restore failed', { transactionId, snapshotId, error: restore.error?.message });
           return { success: false, transactionId, rollbackFailed: true, error: `Rollback reconciliation failed and snapshot restore failed: ${error.message}` };
