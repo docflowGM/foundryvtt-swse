@@ -807,7 +807,7 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3E",
-   "status": "PARTIALLY_COMPLETE_BLOCKED",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
@@ -815,13 +815,14 @@
     "combat features reform phases"
    ],
    "commits": [
-    "87aaa73be"
+    "87aaa73be",
+    "5e3cec963"
    ],
    "tests": [
     "tests/attack-chat-outcome-normalization.test.mjs"
    ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "Reviewed 3E: combat-ui-behavior-hotfix (680 lines) monkey-patches SWSEChat.postRoll and installs a delegated multi-attack/combat-option click handler. Folding the postRoll patch into SWSEChat and the handler into the combat UI is combat-runtime-risky and its action surface depends on the F-CMB-004 Combat Action Browser decision; deferred until a combat parity test exists (needs live acceptance). No change made. | Folded the SWSEChat.postRoll monkey-patch into SWSEChat (attack-chat-outcome.js, behavior verbatim). Remaining in combat-ui-behavior-hotfix: the delegated multi-attack / combat-option click handler (executeMultiAttackFromElement, executeCombatOptionAttackFromElement) and sheet render repairs; folding them needs a combat parity test and depends on the F-CMB-004 Combat Action Browser decision."
+   "notes": "Reviewed 3E: combat-ui-behavior-hotfix (680 lines) monkey-patches SWSEChat.postRoll and installs a delegated multi-attack/combat-option click handler. Folding the postRoll patch into SWSEChat and the handler into the combat UI is combat-runtime-risky and its action surface depends on the F-CMB-004 Combat Action Browser decision; deferred until a combat parity test exists (needs live acceptance). No change made. | Folded the SWSEChat.postRoll monkey-patch into SWSEChat (attack-chat-outcome.js, behavior verbatim). Remaining in combat-ui-behavior-hotfix: the delegated multi-attack / combat-option click handler (executeMultiAttackFromElement, executeCombatOptionAttackFromElement) and sheet render repairs; folding them needs a combat parity test and depends on the F-CMB-004 Combat Action Browser decision. | Owner ruling: fallback plan generators + duplicate hotfix route retired; FOUNDRY_ACCEPTANCE_PENDING"
   },
   {
    "id": "F-CUS-001",
