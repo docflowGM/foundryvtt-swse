@@ -4080,3 +4080,24 @@ Source of these entries: the owner-supplied "Independent Mechanical Calculator A
 - **Confirmed in code:** the derived skill pass always uses +5; the variant logic exists only in `HouseRuleMechanics.getSkillFocusBonus`, in a module no runtime entry point imports, so the variants are inert today.
 - **Unresolved question:** which level "½ Level" means (character vs heroic; rounding) and whether delayed activation compares character or heroic level.
 - **Implementation impact:** wiring variants into the derived pass blocked. RAW +5 is unchanged. **Status:** DEFERRED_RULES_REVIEW. **Resolution:** (blank)
+
+## Phase 3N-PRG — mannequin Stages A-C (appended 2026-11-27; earlier entries preserved)
+
+Discovered while building the parity harness (`tests/prg-mannequin-parity-stage-c.test.mjs`). The mannequin introduces no rule: it mirrors the existing finalizer + `hp-accounting` behavior exactly, so a ruling here changes those authorities and the mannequin follows. The implementer has no rulebook text; no interpretation is chosen.
+
+### PRG-RD-001 — Current HP when an HP-affecting feat raises maximum HP in the same progression transaction
+
+| Field | |
+|---|---|
+| Rules domain | Hit points (character creation / level-up) |
+| Feature | Toughness (and any feat with `abilityMeta.resourceRules.hitPoints`) acquired during chargen or level-up |
+| Source | Core Rulebook, Toughness feat and starting hit points (character creation). Page not verified by the implementer (no rulebook text available). |
+| Evidence | The finalizer's chargen plan sets `system.hp.value = system.hp.max = starting HP` (class base + CON modifier). The hp-recompute hooks then run `ActorEngine.recomputeHP`, whose planner (`hp-accounting.js#planHpRecompute`) adds the feat bonus to `system.hp.max` only. Offline result for a Level 1 Soldier (CON 13) taking Toughness: current 31 / maximum 32. At level-up the same path raises the maximum by the HP gain plus the feat delta while current HP follows `levelUpHpRecoveryMode` (default `none`). |
+| Confirmed behavior | Maximum HP is additive and history-preserving (existing owner decision recorded in `hp-accounting.js`). Current HP is never raised by the recompute. |
+| Unresolved question | Whether a character who gains maximum HP from a feat taken during character creation (or level-up) should also gain current HP, i.e. whether a newly created character starts at its full maximum including the feat bonus. |
+| Options | None supplied from a source by the implementer. |
+| Recommended ruling | None |
+| Implementation impact | `hp-accounting.js` / `ActorEngine.recomputeHP` (current-HP write) and the finalizer's chargen HP block; the mannequin's `currentHp` projection follows whichever is ruled. Not blocking Stages A-C. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
