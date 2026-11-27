@@ -33,24 +33,16 @@
  * Whole-actor snapshot restore is the existing recovery mechanism; it can revert unrelated concurrent changes in the failure window.
  */
 
-import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 // parseTransactionCost lives in transaction-helpers.js (re-exported for existing importers).
 export { parseTransactionCost } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-helpers.js";
-import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 
-import { stampAcquisitions, lotIdFor } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-record.js";
-import { StoreAcquisitionService } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js";
+import { assetApprovalLockKey, normalizeTransactionRecord, parseTransactionCost } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-helpers.js";
 
-import { sameOwnership } from "/systems/foundryvtt-swse/scripts/engine/store/resale-authority.js";
-import { deriveTransactionType, legSummary, assetApprovalLockKey, sourceRollbackRefusal, normalizeTransactionRecord, emitCommitted, parseTransactionCost } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-helpers.js";
-import { compensateUnverified, establishRecovery, restoreVerified } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-recovery.js";
 import { executeCreditAdjustmentImpl, executeCreditTransferImpl } from "/systems/foundryvtt-swse/scripts/engine/store/credit-settlements.js";
 import { executeRollbackCorrectionImpl } from "/systems/foundryvtt-swse/scripts/engine/store/rollback-settlement.js";
-import { executeAssetCustomizationTransactionImpl, executeAssetApprovalTransactionImpl, executeSaleTransactionImpl, executeAssetSaleTransactionImpl, reconcileAssetSaleImpl, observeAssetSale, revertAssetDisposition, otherLinkers, playerAccessOn } from "/systems/foundryvtt-swse/scripts/engine/store/asset-settlements.js";
-import { executeMutationTransactionImpl, prepareStoreAcquisitionPlans } from "/systems/foundryvtt-swse/scripts/engine/store/mutation-settlement.js";
+import { executeAssetCustomizationTransactionImpl, executeAssetApprovalTransactionImpl, executeSaleTransactionImpl, executeAssetSaleTransactionImpl, reconcileAssetSaleImpl } from "/systems/foundryvtt-swse/scripts/engine/store/asset-settlements.js";
+import { executeMutationTransactionImpl } from "/systems/foundryvtt-swse/scripts/engine/store/mutation-settlement.js";
 
 export class TransactionEngine {
   static _mutationLocks = new Set();
@@ -133,13 +125,6 @@ export class TransactionEngine {
       .sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
   }
 
-
-
-
-
-
-
-
   /**
    * Execute one actor-scoped contextual mutation transaction.
    *
@@ -181,7 +166,6 @@ export class TransactionEngine {
   static async executeCreditTransfer(context = {}, options = {}) {
     return executeCreditTransferImpl(this, ...arguments);
   }
-
 
   /**
    * Execute an owned asset customization transaction.
@@ -284,7 +268,6 @@ export class TransactionEngine {
     return reconcileAssetSaleImpl(this, ...arguments);
   }
 
-
   /**
    * Execute a GM rollback/reconciliation through the TransactionEngine.
    *
@@ -297,6 +280,5 @@ export class TransactionEngine {
   static async executeRollbackCorrection(context = {}, options = {}) {
     return executeRollbackCorrectionImpl(this, ...arguments);
   }
-
 
 }
