@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { deriveTransactionType, legSummary, assetApprovalLockKey, sourceRollbackRefusal } from '../scripts/engine/store/transaction-helpers.js';
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+registerFoundryPathLoader();
+const { deriveTransactionType, legSummary, assetApprovalLockKey, sourceRollbackRefusal, normalizeTransactionRecord } = await import('../scripts/engine/store/transaction-helpers.js');
 
 // 3N-TE.2: characterization of the pure helpers extracted verbatim from TransactionEngine.
 test('transaction type: context keywords win in a fixed order, then the sign of the amount', () => {
@@ -42,4 +44,32 @@ test('source rollback refusal: fails closed with a stable code per condition', (
   // flag read that throws falls back to actor.flags
   const throwing = { getFlag() { throw new Error('x'); }, flags: { 'foundryvtt-swse': { transactions: { tx1: { status: 'Committed' } } } } };
   assert.equal(sourceRollbackRefusal(throwing, 'tx1'), null);
+});
+
+test('record normalization (receipt view model): amounts, cost, item names, type derivation, rollback links and defaults', () => {
+  globalThis.game = { users: { get: (id) => (id === 'u1' ? { name: 'Alice' } : null) } };
+  const actor = { id: 'a1', name: 'Buyer' };
+  const purchase = normalizeTransactionRecord(actor, { id: 'tx1', context: 'store-purchase', createdAt: 5, cost: 100, userId: 'u1', audit: { items: [{ name: 'Blaster', quantity: 2 }, { name: 'Medpac' }] } });
+  assert.equal(purchase.transactionId, 'tx1');
+  assert.equal(purchase.amount, -100, 'a positive cost with no amount is a debit');
+  assert.equal(purchase.cost, 100);
+  assert.equal(purchase.type, 'Buy');
+  assert.equal(purchase.userName, 'Alice');
+  assert.deepEqual(purchase.itemNames, ['Blaster', 'Medpac']);
+  assert.equal(purchase.itemName, 'Blaster, Medpac');
+  assert.equal(purchase.itemCount, 3);
+  assert.equal(purchase.status, 'Success');
+  assert.equal(purchase.actorName, 'Buyer');
+  const grant = normalizeTransactionRecord(actor, { id: 't2', context: 'gm-grant', amount: 50 });
+  assert.equal(grant.amount, 50);
+  assert.equal(grant.cost, 50);
+  assert.equal(grant.type, 'Refund');
+  assert.equal(grant.itemName, 'Credit Transaction');
+  assert.equal(grant.userName, '—');
+  const rb = normalizeTransactionRecord(actor, { id: 't3', context: 'rollback', amount: 100, audit: { rollback: { sourceTransactionId: 'tx1', reason: 'GM' } }, rolledBackByTransactionId: 'x' });
+  assert.equal(rb.rollbackOf, 'tx1');
+  assert.equal(rb.rollbackReason, 'GM');
+  assert.equal(rb.rolledBackByTransactionId, 'x');
+  assert.equal(rb.type, 'Correction');
+  delete globalThis.game;
 });

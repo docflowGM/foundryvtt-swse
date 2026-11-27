@@ -49,7 +49,7 @@ import { stampAcquisitions, lotIdFor } from "/systems/foundryvtt-swse/scripts/en
 import { StoreAcquisitionService } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js";
 
 import { sameOwnership } from "/systems/foundryvtt-swse/scripts/engine/store/resale-authority.js";
-import { deriveTransactionType, legSummary, assetApprovalLockKey, sourceRollbackRefusal } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-helpers.js";
+import { deriveTransactionType, legSummary, assetApprovalLockKey, sourceRollbackRefusal, normalizeTransactionRecord } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-helpers.js";
 import { compensateUnverified, establishRecovery, restoreVerified } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-recovery.js";
 const RESALE_AUTHORITY_GM_APPRAISAL = 'gm-appraisal';
 
@@ -121,7 +121,7 @@ export class TransactionEngine {
     return Object.values(records || {})
       .filter(record => record && typeof record === 'object')
       .filter(record => !contextSet || contextSet.has(record.context))
-      .map(record => this.#normalizeTransactionRecord(actor, record))
+      .map(record => normalizeTransactionRecord(actor, record))
       .filter(record => includeZeroCost || Number(record.amount || 0) !== 0)
       .sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
   }
@@ -134,47 +134,6 @@ export class TransactionEngine {
       .sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
   }
 
-  static #normalizeTransactionRecord(actor, record) {
-    const audit = record.audit || {};
-    const amount = Number.isFinite(Number(record.amount))
-      ? Number(record.amount)
-      : (Number(record.cost) > 0 ? -normalizeCredits(record.cost) : 0);
-    const cost = Number.isFinite(Number(record.cost))
-      ? normalizeCredits(record.cost)
-      : Math.abs(normalizeCredits(amount));
-    const auditItems = Array.isArray(audit.items) ? audit.items.filter(item => item && typeof item === 'object') : [];
-    const itemNames = Array.isArray(audit.itemNames)
-      ? audit.itemNames.filter(Boolean)
-      : auditItems.map(item => item?.name).filter(Boolean);
-    const rollback = audit.rollback || {};
-
-    return {
-      id: record.id || record.transactionId || '',
-      transactionId: record.id || record.transactionId || '',
-      context: record.context || 'unknown',
-      timestamp: record.createdAt || record.timestamp || 0,
-      actorId: record.actorId || actor?.id || '',
-      actorName: record.actorName || actor?.name || 'Unknown Actor',
-      userId: record.userId || audit.userId || null,
-      userName: record.userName || audit.userName || game?.users?.get?.(record.userId || audit.userId)?.name || '—',
-      amount,
-      cost,
-      creditsBefore: record.creditsBefore ?? audit.creditsBefore ?? null,
-      creditsAfter: record.creditsAfter ?? audit.creditsAfter ?? null,
-      status: record.status || 'Success',
-      reason: record.reason || audit.reason || record.error || '',
-      source: record.source || audit.source || 'TransactionEngine',
-      type: record.type || deriveTransactionType(record.context, amount),
-      itemNames,
-      itemName: record.itemName || audit.itemName || (itemNames.length ? itemNames.join(', ') : audit.label || 'Credit Transaction'),
-      itemCount: Number(audit.itemCount ?? auditItems.reduce((sum, item) => sum + (Number(item?.quantity) || 1), 0) ?? itemNames.length ?? 0) || 0,
-      itemIds: auditItems.map(item => item?.id || item?.itemId).filter(Boolean),
-      rollbackOf: record.rollbackOf || audit.rollbackOf || rollback.sourceTransactionId || null,
-      rolledBackByTransactionId: record.rolledBackByTransactionId || audit.rolledBackByTransactionId || null,
-      rollbackReason: record.rollbackReason || audit.rollbackReason || rollback.reason || '',
-      audit
-    };
-  }
 
 
   /**
@@ -609,7 +568,7 @@ export class TransactionEngine {
       });
 
       const presentationError = this.#emitCommitted('swseCreditAdjustmentComplete', () => ({
-        transaction: this.#normalizeTransactionRecord(freshActor, transactionAudit.set[`flags.foundryvtt-swse.transactions.${transactionId}`]),
+        transaction: normalizeTransactionRecord(freshActor, transactionAudit.set[`flags.foundryvtt-swse.transactions.${transactionId}`]),
         actor: freshActor,
         success: true
       }));
@@ -1085,7 +1044,7 @@ export class TransactionEngine {
       // Owner ruling Q4 (TI-2): completion hooks are non-transactional. Once the customization is mechanically committed and verified, a failing listener
       // is reported as `presentationError` and never reverses it (no snapshot restore). Mechanical / persistence failures above still roll back both actors.
       const presentationError = this.#emitCommitted('swseAssetCustomizationTransactionComplete', () => ({
-        transaction: this.#normalizeTransactionRecord(walletActor, walletAudit),
+        transaction: normalizeTransactionRecord(walletActor, walletAudit),
         actor: walletActor,
         assetActor: targetAsset,
         success: true
@@ -1325,7 +1284,7 @@ export class TransactionEngine {
       });
 
       const presentationError = this.#emitCommitted('swseStoreAssetAcquired', () => ({
-        transaction: this.#normalizeTransactionRecord(ownerActor, transactionRecord),
+        transaction: normalizeTransactionRecord(ownerActor, transactionRecord),
         actor: ownerActor,
         assetActor: freshAsset,
         cost: normalizedCost,
@@ -1453,7 +1412,7 @@ export class TransactionEngine {
       await ActorEngine.applyMutationPlan(freshActor, mutationPlan, { validate, rederive, source: `${source}.${transactionContext}` });
 
       const presentationError = this.#emitCommitted('swseStoreSaleComplete', () => ({
-        transaction: this.#normalizeTransactionRecord(freshActor, saleRecord), actor: freshActor, itemData, salePrice: normalizedSalePrice, success: true
+        transaction: normalizeTransactionRecord(freshActor, saleRecord), actor: freshActor, itemData, salePrice: normalizedSalePrice, success: true
       }));
       swseLogger.info('TransactionEngine: Sale transaction complete', { transactionId, context: transactionContext, actor: freshActor.id, item: itemName, quantity: soldQty, salePrice: normalizedSalePrice, authority: verdict.authority });
       return { success: true, transactionId, error: null, creditsBefore, creditsAfter, amount: normalizedSalePrice, quantity: soldQty, authority: verdict.authority, ...(presentationError ? { presentationError } : {}) };
@@ -1609,7 +1568,7 @@ export class TransactionEngine {
           swseLogger.error('TransactionEngine: Asset sale committed but the asset status could not be finalized', { transactionId, asset: asset.id, error: error.message });
         }
         const presentationError = this.#emitCommitted('swseStoreSaleComplete', () => ({
-          transaction: this.#normalizeTransactionRecord(owner, record), actor: owner, itemData: { name: asset.name, type: asset.type }, salePrice: amount, success: true
+          transaction: normalizeTransactionRecord(owner, record), actor: owner, itemData: { name: asset.name, type: asset.type }, salePrice: amount, success: true
         }));
         swseLogger.info('TransactionEngine: Asset sale complete', { transactionId, owner: owner.id, asset: asset.id, amount });
         return { success: true, transactionId, error: null, creditsBefore, creditsAfter, amount,
@@ -1892,7 +1851,7 @@ export class TransactionEngine {
       });
 
       const presentationError = this.#emitCommitted('swseStoreRollbackCorrectionComplete', () => ({
-        transaction: this.#normalizeTransactionRecord(freshActor, transactionRecord),
+        transaction: normalizeTransactionRecord(freshActor, transactionRecord),
         actor: freshActor,
         sourceTransactionId,
         removedOwnedItemIds: itemIds,

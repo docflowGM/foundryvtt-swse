@@ -5,6 +5,8 @@
  * source-rollback refusal check. TransactionEngine remains the single economic-settlement coordinator and calls these directly.
  */
 
+import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+
 export function deriveTransactionType(context = '', amount = 0) {
   const key = String(context || '').toLowerCase();
   if (key.includes('refund') || key.includes('grant')) return 'Refund';
@@ -67,4 +69,46 @@ export function sourceRollbackRefusal(actor, sourceTransactionId) {
     };
   }
   return null;
+}
+
+export function normalizeTransactionRecord(actor, record) {
+  const audit = record.audit || {};
+  const amount = Number.isFinite(Number(record.amount))
+    ? Number(record.amount)
+    : (Number(record.cost) > 0 ? -normalizeCredits(record.cost) : 0);
+  const cost = Number.isFinite(Number(record.cost))
+    ? normalizeCredits(record.cost)
+    : Math.abs(normalizeCredits(amount));
+  const auditItems = Array.isArray(audit.items) ? audit.items.filter(item => item && typeof item === 'object') : [];
+  const itemNames = Array.isArray(audit.itemNames)
+    ? audit.itemNames.filter(Boolean)
+    : auditItems.map(item => item?.name).filter(Boolean);
+  const rollback = audit.rollback || {};
+
+  return {
+    id: record.id || record.transactionId || '',
+    transactionId: record.id || record.transactionId || '',
+    context: record.context || 'unknown',
+    timestamp: record.createdAt || record.timestamp || 0,
+    actorId: record.actorId || actor?.id || '',
+    actorName: record.actorName || actor?.name || 'Unknown Actor',
+    userId: record.userId || audit.userId || null,
+    userName: record.userName || audit.userName || game?.users?.get?.(record.userId || audit.userId)?.name || '—',
+    amount,
+    cost,
+    creditsBefore: record.creditsBefore ?? audit.creditsBefore ?? null,
+    creditsAfter: record.creditsAfter ?? audit.creditsAfter ?? null,
+    status: record.status || 'Success',
+    reason: record.reason || audit.reason || record.error || '',
+    source: record.source || audit.source || 'TransactionEngine',
+    type: record.type || deriveTransactionType(record.context, amount),
+    itemNames,
+    itemName: record.itemName || audit.itemName || (itemNames.length ? itemNames.join(', ') : audit.label || 'Credit Transaction'),
+    itemCount: Number(audit.itemCount ?? auditItems.reduce((sum, item) => sum + (Number(item?.quantity) || 1), 0) ?? itemNames.length ?? 0) || 0,
+    itemIds: auditItems.map(item => item?.id || item?.itemId).filter(Boolean),
+    rollbackOf: record.rollbackOf || audit.rollbackOf || rollback.sourceTransactionId || null,
+    rolledBackByTransactionId: record.rolledBackByTransactionId || audit.rolledBackByTransactionId || null,
+    rollbackReason: record.rollbackReason || audit.rollbackReason || rollback.reason || '',
+    audit
+  };
 }
