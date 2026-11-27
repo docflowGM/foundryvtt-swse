@@ -1151,7 +1151,6 @@
         "scripts/apps/progression-framework/shell/progression-shell.js",
         "scripts/data/authority/talent-prerequisite-authority.js",
         "scripts/data/blaster-upgrades.js",
-        "scripts/data/droid-modifications.js",
         "scripts/data/droid-systems.js",
         "scripts/domain/vehicles/vehicle-evidence-authority.js",
         "scripts/engine/abilities/active/active-adapter.js",

@@ -5,12 +5,12 @@
  "aggregate": {
   "staticImportCycles": 1,
   "filesInStaticCycles": 17,
-  "unreachableRuntimeModules": 463,
+  "unreachableRuntimeModules": 358,
   "testOnlyRuntimeModules": 181,
-  "exactFunctionCloneGroupsRuntime": 30,
-  "compatPatchModules": 20,
-  "chatMessageCreateOutsideSwseChat": 4,
-  "runtimeDirectDocumentWriteSites": 173
+  "exactFunctionCloneGroupsRuntime": 27,
+  "compatPatchModules": 19,
+  "chatMessageCreateOutsideSwseChat": 3,
+  "runtimeDirectDocumentWriteSites": 171
  },
  "perKey": {
   "P-A02": {
@@ -118,7 +118,6 @@
    "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js": 8
   },
   "P-A09-modules": {
-   "scripts/engine/progression/engine/apply-progression-patch.js": 1,
    "scripts/engine/progression/engine/progression-patch.js": 1,
    "scripts/engine/progression/helpers/species-patch.js": 1,
    "scripts/governance/snapshot/deletion-aware-patch.js": 1,
