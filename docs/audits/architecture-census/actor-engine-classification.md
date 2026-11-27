@@ -27,8 +27,8 @@ Counts: DELEGATE_TO_EXISTING_DOMAIN_ENGINE 15; EXTRACT_INTERNAL_IMPLEMENTATION 3
 | `deleteEmbeddedDocuments` | 989–1012 | KEEP_IN_FACADE | - | public |
 | `moveEmbeddedDocuments` | 1035–1090 | KEEP_IN_FACADE | - | public (1 caller) |
 | `applyDelta` | 1106–1208 | RETAIN_PENDING_PARITY | AE.6 | 2 callers, 0 tests: needs characterization first |
-| `_preflightAdoptionPayloads` | 1257–1278 | EXTRACT_INTERNAL_IMPLEMENTATION | AE.5 | adoption payload preflight |
-| `apply` | 1280–1397 | KEEP_IN_FACADE | - | public (136 callers) |
+| `_preflightAdoptionPayloads` | 1257–1278 | EXTRACTED (AE.5, delegate retained) | AE.5 | apply-plan.js;  adoption payload preflight |
+| `apply` | 1280–1397 | EXTRACTED (AE.5, delegate retained) | AE.5 | apply-plan.js;  public (136 callers) |
 | `applyDamage` | 1424–1554 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  public; orchestration extracted to a damage coordinator behind it |
 | `rechargeShields` | 1574–1599 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  shield domain |
 | `applyHealing` | 1611–1672 | EXTRACTED (AE.6, delegate retained) | AE.6 | damage-condition-orchestration.js;  public; 0 tests: characterize first |
