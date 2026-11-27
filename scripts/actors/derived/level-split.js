@@ -71,10 +71,40 @@ export function getHeroicHalfLevel(actor) {
 }
 
 /**
- * Half-level for calculations that should respect:
- * - NPC statblock mode: use actor.system.level (legacy / printed)
- * - NPC progression mode: heroic levels only
- * - PCs: heroic levels (normally equals total)
+ * 3N-DC: ONE level authority, three distinct rules (Core Rulebook, Combat chapter; owner directive):
+ *   - SKILLS            use one-half CHARACTER level (heroic + nonheroic)       -> getHalfCharacterLevel
+ *   - PERSONAL DAMAGE   uses one-half HEROIC level                              -> getHalfHeroicLevel
+ *   - DEFENSES          use HEROIC level (getHeroicLevel, applied by DefenseCalculator)
+ * Statblock NPCs keep the published total (system.level) for both halves. An actor with no class items at all (sparse/legacy data) falls back to
+ * system.level rather than silently to zero.
+ */
+function isStatblockNpc(actor) {
+  return actor?.type === 'npc' && getNpcMode(actor) !== 'progression';
+}
+
+function sparseTotal(actor) {
+  return Number(actor?.system?.level) || 1;
+}
+
+/** One-half CHARACTER level, rounded down: the skill-check half level. */
+export function getHalfCharacterLevel(actor) {
+  if (isStatblockNpc(actor)) return Math.floor(sparseTotal(actor) / 2);
+  const { totalLevel } = getLevelSplit(actor);
+  return Math.floor((totalLevel > 0 ? totalLevel : sparseTotal(actor)) / 2);
+}
+
+/** One-half HEROIC level, rounded down: the personal-weapon-damage half level. Nonheroic levels never count. */
+export function getHalfHeroicLevel(actor) {
+  if (isStatblockNpc(actor)) return Math.floor(sparseTotal(actor) / 2);
+  const { heroicLevel, totalLevel } = getLevelSplit(actor);
+  if (totalLevel <= 0) return Math.floor(sparseTotal(actor) / 2);
+  return Math.floor(heroicLevel / 2);
+}
+
+/**
+ * @deprecated 3N-DC: ambiguous (heroic for some callers, character for others). Use getHalfCharacterLevel (skills) or getHalfHeroicLevel (damage).
+ * Kept ONLY for the Block house rule, whose intended half level is an open rules question (DC-RULE-001 in the rules register); behaves as the
+ * pre-DC helper did so that house rule is unchanged.
  */
 export function getEffectiveHalfLevel(actor) {
   const totalLevel = Number(actor?.system?.level) || 1;

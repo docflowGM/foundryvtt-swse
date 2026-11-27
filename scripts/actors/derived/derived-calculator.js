@@ -31,7 +31,7 @@ import { DerivedOverrideEngine } from "/systems/foundryvtt-swse/scripts/engine/a
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
-import { getEffectiveHalfLevel, getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { getHalfCharacterLevel, getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { CANONICAL_SKILL_DEFS, normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 import { isRankedModeEnabled, deriveTrainedFromRanks } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
@@ -506,7 +506,7 @@ export class DerivedCalculator {
       // Half-level is derived from the level-split authority, not a persisted system field.
       // system.halfLevel can be absent/stale during Foundry prepareData/update cycles,
       // which caused trained skills to miss the +1 at level 2 and similar level-up flows.
-      const halfLevel = getEffectiveHalfLevel(actor);
+      const halfLevel = getHalfCharacterLevel(actor); // skills: one-half CHARACTER level (3N-DC)
       const isDroid = actor?.type === 'droid' || actor.system.isDroid || false;
       const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
       const talentNames = this._getTalentNameSet(actor);

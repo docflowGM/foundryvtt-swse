@@ -1,4 +1,4 @@
-import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { getHalfCharacterLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 /**
@@ -178,7 +178,7 @@ const SKILLS_DATA_MODEL = {
  * Call this in your Actor's prepareData() method
  */
 function calculateSkills(actor) {
-  const halfLevel = getEffectiveHalfLevel(actor);
+  const halfLevel = getHalfCharacterLevel(actor);
   const abilities = actor.system.attributes;
 
   // Ability name mapping (convert skill ability to actual ability key)
@@ -251,7 +251,7 @@ class SWSEActor extends Actor {
 
     // Calculate half level
     const level = this.system.level || 1;
-    this.system.halfLevel = getEffectiveHalfLevel(this);
+    this.system.halfLevel = getHalfCharacterLevel(this);
 
     // Calculate ability modifiers
     for (const [key, ability] of Object.entries(this.system.attributes)) {

@@ -17,7 +17,7 @@ import { summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts
 import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine.js";
 import { ActionEconomyPersistence } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js";
 import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, getEffectiveCritRange, getCriticalMultiplier } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
-import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { getHalfCharacterLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 import { ResolutionContext } from "/systems/foundryvtt-swse/scripts/engine/resolution/resolution-context.js";
@@ -2028,7 +2028,7 @@ if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {
       }
 
       const parts = [];
-      const halfLevel = getEffectiveHalfLevel(actor);
+      const halfLevel = getHalfCharacterLevel(actor);
       parts.push(`½ Level +${halfLevel}`);
       if (skill.trained) {parts.push(`Trained +5`);}
       if (skill.focused) {parts.push(`Skill Focus +5`);}

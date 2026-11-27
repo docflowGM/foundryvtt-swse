@@ -6,7 +6,7 @@
  */
 
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
-import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { getHalfHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { getReadiedWeapons, isWeaponReadied } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { isArmorItemEquipped, isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
@@ -889,7 +889,7 @@ export function getHalfLevelDamageBonus(actor, item = null, context = {}) {
   // docs/audits/v2-damage-modifier-authority-audit-correction-1.md §4.
   const weaponForGate = context.item ?? context.weapon ?? item;
   if (isVehicleWeapon(weaponForGate)) return 0;
-  const level = getEffectiveHalfLevel(actor);
+  const level = getHalfHeroicLevel(actor); // personal weapon damage: one-half HEROIC level (3N-DC)
   if (!level) return 0;
   const enriched = { ...context, item: context.item ?? item, weapon: context.weapon ?? item };
   if (isForcePowerDamageContext(enriched) && !forcePowerDamageAddsHalfLevel()) return 0;

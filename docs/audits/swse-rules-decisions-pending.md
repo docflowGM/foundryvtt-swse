@@ -4010,3 +4010,16 @@ Improved Bantha Rush (BAB +1), Whirlwind Attack (Intelligence 13), Great Cleave 
 - **Recommended ruling:** none.
 - **Implementation impact:** blocks compiling these records' prerequisites into the generated canonical prerequisite index (3N-PRQ.1B) as `compiled`; they stay `unresolved`/`source review required` and are never treated as eligible. No runtime behavior changes now.
 - **Status:** `DEFERRED_RULES_REVIEW`. **Decision authority:** project owner. **Resolution:** (blank)
+
+## Phase 3N-DC — half-level helper (appended 2026-11-27; earlier entries preserved)
+
+### DC-RULE-001 — Block house rule: which half level does its attack bonus use?
+- **Decision ID:** DC-RULE-001. **Rules domain:** house rule (Block mechanic). **Feature:** `scripts/houserules/houserule-block-mechanic.js` `executeBlock`, attack bonus = BAB + half level + ability modifier + weapon bonus + block penalty.
+- **Source:** the project's own house-rule module; no printed source cited in the module.
+- **Evidence (paraphrased):** the module added a "half level" from the pre-3N-DC ambiguous helper `getEffectiveHalfLevel` (heroic-based for characters, published total for statblock NPCs). Under the owner's 3N-DC level rules, skills use one-half character level and personal weapon damage uses one-half heroic level; an attack roll is neither.
+- **Confirmed behavior:** nothing about this house rule's intended half level is documented.
+- **Unresolved question:** should the Block attack bonus use one-half heroic level, one-half character level, or no half level.
+- **Options (source-supported only):** none in the repository.
+- **Recommended ruling:** none.
+- **Implementation impact:** the deprecated `getEffectiveHalfLevel` stays solely for this caller (behavior unchanged) until ruled; every other caller was migrated to `getHalfCharacterLevel` (skills) / `getHalfHeroicLevel` (damage).
+- **Status:** `DEFERRED_RULES_REVIEW`. **Decision authority:** project owner. **Resolution:** (blank)
