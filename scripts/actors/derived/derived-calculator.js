@@ -31,6 +31,7 @@ import { DerivedOverrideEngine } from "/systems/foundryvtt-swse/scripts/engine/a
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
+import { actorHasSkillFocusForSkill } from "/systems/foundryvtt-swse/scripts/actors/derived/skill-focus-identity.js";
 import { getHalfCharacterLevel, getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { CANONICAL_SKILL_DEFS, normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
@@ -677,7 +678,15 @@ export class DerivedCalculator {
         const nonFocusModifierBonus = (skillFocusModifierBonus > 0 && rawFeatBonus >= skillFocusModifierBonus)
           ? rawFeatBonus - skillFocusModifierBonus
           : rawFeatBonus;
-        const featBonus = nonFocusModifierBonus + effectiveSFBonus;
+        let featBonus = nonFocusModifierBonus + effectiveSFBonus;
+        // 3N-DC P0 (F-ACT-015): single canonical Skill Focus non-stacking. This is the former runtime `computeAll()` wrapper in
+        // force-suite-runtime-repairs.js, folded in verbatim: a focused skill whose actor owns the Skill Focus feat for it never also keeps a
+        // second +5 from the modifier aggregate that the Skill Focus recognizer above did not identify.
+        let duplicateSkillFocusSuppressed = 0;
+        if (skill.focused && focusBonus > 0 && featBonus >= 5 && actorHasSkillFocusForSkill(actor, skillKey)) {
+          duplicateSkillFocusSuppressed = 5;
+          featBonus -= duplicateSkillFocusSuppressed;
+        }
         total += featBonus;
 
         // PHASE 4: Get state-dependent modifiers for this skill.
@@ -723,7 +732,7 @@ export class DerivedCalculator {
           { key: 'misc', label: 'Misc', value: skillMiscMod, source: 'actor.system.skills' },
           { key: 'species', label: 'Species / special ability', value: speciesBonus, source: 'species' },
           { key: 'trained', label: rankedMode ? 'Ranks' : 'Trained', value: rankedMode ? rankBonus : trainedBonus, source: rankedMode ? 'ranks' : 'training' },
-          { key: 'halfLevel', label: '1/2 heroic level', value: halfLevelBonus, source: 'level' },
+          { key: 'halfLevel', label: '1/2 character level', value: halfLevelBonus, source: 'level' },
           { key: 'focus', label: 'Skill Focus', value: focusBonus, source: 'focus' },
           { key: 'occupation', label: 'Occupation', value: occupationBonusValue, source: 'occupation' },
           { key: 'modifiers', label: 'Feat / equipment / effects', value: featBonus, source: 'modifier-engine' },
@@ -762,6 +771,7 @@ export class DerivedCalculator {
           trainedBonus,
           rankBonus,
           focusBonus,
+          ...(duplicateSkillFocusSuppressed ? { skillFocusNonStacking: true, duplicateSkillFocusSuppressed } : {}),
           stateBonus: stateBonus,
           armorPenalty: armorPenalty,
           conditionPenalty: conditionPenalty,
@@ -769,7 +779,8 @@ export class DerivedCalculator {
           math: {
             total,
             parts: skillBreakdown,
-            verified: Math.abs(breakdownTotal - total) <= 0.001
+            verified: Math.abs(breakdownTotal - total) <= 0.001,
+            ...(duplicateSkillFocusSuppressed ? { skillFocusNonStacking: true, duplicateSkillFocusSuppressed } : {})
           }
         };
       }

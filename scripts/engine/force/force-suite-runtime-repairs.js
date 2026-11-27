@@ -19,50 +19,15 @@ function repaintForceSheet(actor) {
 let registered = false;
 const TELEKINETIC_MESSAGE_PATCH_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.telekineticMessage.v1');
 const FORCE_EXECUTOR_ROLLBACK_PATCH_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.rollback.v1');
-const SKILL_FOCUS_NON_STACK_PATCH_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.skillFocusNonStack.v1');
 const FORCE_SUITE_ACTION_DELEGATE_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.actionDelegate.v1');
 
 function normalizeName(value = '') {
   return String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/\s*\(\d+\)\s*$/, '');
 }
 
-function normalizeChoiceKey(value = '') {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '');
-}
-
 function actorHasTalent(actor, talentName) {
   const wanted = normalizeName(talentName);
   return Array.from(actor?.items ?? []).some(item => item?.type === 'talent' && normalizeName(item?.name) === wanted);
-}
-
-function actorHasSkillFocusForSkill(actor, skillKey) {
-  const wanted = normalizeChoiceKey(skillKey);
-  if (!wanted) return false;
-  for (const item of actor?.items ?? []) {
-    if (item?.type !== 'feat') continue;
-    if (normalizeName(item?.name) !== 'skill focus') continue;
-    const choices = [
-      item?.system?.selectedChoice,
-      item?.flags?.swse?.selectedChoice,
-      item?.flags?.['foundryvtt-swse']?.selectedChoice,
-      item?.system?.choice,
-      item?.system?.focusedSkill,
-      item?.system?.skill
-    ];
-    for (const choice of choices) {
-      if (!choice) continue;
-      if (typeof choice === 'string') {
-        if (normalizeChoiceKey(choice) === wanted) return true;
-        continue;
-      }
-      const choiceValues = [choice.id, choice.key, choice.value, choice.slug, choice.label, choice.name, choice.skill, choice.target];
-      if (choiceValues.some(value => normalizeChoiceKey(value) === wanted)) return true;
-    }
-  }
-  return false;
 }
 
 function encounterId() {
@@ -240,58 +205,6 @@ function installForcePowerErrorRollback() {
   };
 
   ForceExecutor[FORCE_EXECUTOR_ROLLBACK_PATCH_FLAG] = true;
-}
-
-function suppressDuplicateSkillFocusInUpdates(updates, actor) {
-  const skills = updates?.['system.derived.skills'];
-  if (!skills || typeof skills !== 'object') return;
-
-  for (const [skillKey, skill] of Object.entries(skills)) {
-    if (!skill || skill.focused !== true) continue;
-    if (!actorHasSkillFocusForSkill(actor, skillKey)) continue;
-
-    const featBonus = Number(skill.featBonus) || 0;
-    const focusBonus = Number(skill.focusBonus) || 0;
-    const parts = Array.isArray(skill.math?.parts) ? skill.math.parts : (Array.isArray(skill.breakdown) ? skill.breakdown : []);
-    const modifierPart = parts.find(part => part?.key === 'modifiers')
-      ?? parts.find(part => /feat|equipment|effect|modifier/i.test(String(part?.label || part?.source || '')));
-    const modifierValue = Number(modifierPart?.value) || 0;
-    const duplicateAmount = focusBonus > 0 && Math.max(featBonus, modifierValue) >= 5 ? 5 : 0;
-    if (!duplicateAmount) continue;
-
-    skill.total = (Number(skill.total) || 0) - duplicateAmount;
-    skill.featBonus = featBonus - duplicateAmount;
-    skill.skillFocusNonStacking = true;
-    skill.duplicateSkillFocusSuppressed = duplicateAmount;
-
-    if (modifierPart) modifierPart.value = modifierValue - duplicateAmount;
-    if (skill.math) {
-      skill.math.total = skill.total;
-      const recomputed = parts.reduce((sum, part) => sum + (Number(part?.value) || 0), 0);
-      skill.math.verified = Math.abs(recomputed - skill.total) <= 0.001;
-      skill.math.skillFocusNonStacking = true;
-      skill.math.duplicateSkillFocusSuppressed = duplicateAmount;
-    }
-  }
-}
-
-function installSkillFocusNonStackingGuard() {
-  if (DerivedCalculator[SKILL_FOCUS_NON_STACK_PATCH_FLAG]) return;
-  const originalComputeAll = DerivedCalculator.computeAll;
-  if (typeof originalComputeAll !== 'function') return;
-
-  DerivedCalculator.computeAll = async function patchedComputeAll(actor, ...args) {
-    const updates = await originalComputeAll.call(this, actor, ...args);
-    try {
-      suppressDuplicateSkillFocusInUpdates(updates, actor);
-    } catch (err) {
-      console.warn('SWSE | Skill Focus non-stacking guard failed', err);
-    }
-    return updates;
-  };
-
-  DerivedCalculator.clearCaches?.();
-  DerivedCalculator[SKILL_FOCUS_NON_STACK_PATCH_FLAG] = true;
 }
 
 function rootFromHtml(html) {
@@ -620,7 +533,6 @@ export function registerForceSuiteRuntimeRepairs() {
   installTelepathicIntruderBonus();
   installTelekineticRepeatActionRepair();
   installForcePowerErrorRollback();
-  installSkillFocusNonStackingGuard();
   installForceSuiteActionDelegate();
   if (registered) return;
   registered = true;
