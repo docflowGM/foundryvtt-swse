@@ -4101,3 +4101,12 @@ Discovered while building the parity harness (`tests/prg-mannequin-parity-stage-
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+## Transaction & Progression SSOT addendum — published-rule questions (appended 2026-11-27; status DEFERRED_RULES_REVIEW)
+
+### TPS-RD-001 — Droid construction allowance, restricted/expiring grants, class/talent credit timing
+- **Domain:** progression economy. **Features:** droid construction credits; starting-class credits; Wealth talent credits; Wealth timing/availability. **Source:** the owner addendum gives illustrative amounts only and says the exact SWSE sourcebook rules must be verified; no printed page is established here.
+- **Confirmed (code):** the allowance is a setting-backed single pool (`ProgressionRules.getDroidConstructionCredits`); grants carry only display labels; no restriction/expiry exists in code.
+- **Unresolved:** the printed amounts, which purchases a droid allowance may fund, whether unspent allowance expires or becomes usable credits, and when Wealth/class credits are available relative to the droid-building step.
+- **Options:** none source-supported yet. **Recommended ruling:** none.
+- **Implementation impact:** the provisional-ledger mechanism is built rule-neutral (grant attributes are supplied by callers); wiring concrete restricted/expiring grants for droid construction, and any change to current amounts, is blocked on this ruling. **Status:** `DEFERRED_RULES_REVIEW`. **Decision authority:** project owner. **Resolution:** (blank)

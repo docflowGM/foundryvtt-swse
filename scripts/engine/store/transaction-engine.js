@@ -33,6 +33,7 @@
  * Whole-actor snapshot restore is the existing recovery mechanism; it can revert unrelated concurrent changes in the failure window.
  */
 
+import { createProvisionalLedger } from '/systems/foundryvtt-swse/scripts/engine/store/provisional-ledger.js';
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 // parseTransactionCost lives in transaction-helpers.js (re-exported for existing importers).
 export { parseTransactionCost } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-helpers.js";
@@ -97,6 +98,11 @@ export class TransactionEngine {
    * credit movement. Legacy purchaseHistory can mirror this for old UI, but it
    * must not be treated as the credit SSOT.
    */
+  /** Draft (provisional) purchasing-power ledger for progression/mannequin builds: pure, persists nothing (see provisional-ledger.js). */
+  static createProvisionalLedger() {
+    return createProvisionalLedger();
+  }
+
   static getActorTransactions(actor, options = {}) {
     const { includeZeroCost = false, contexts = null } = options;
     if (!actor) return [];
