@@ -172,6 +172,6 @@ test('C4 the per-attack dialog of a multi-attack sequence never offers Charge', 
   assert.equal(seq.options.some((o) => o.id === 'powerfulCharge'), false, 'a Charge-dependent option is not offered inside a sequence');
   assert.ok(seq.options.some((o) => o.id === 'powerAttack'), 'everything else is unchanged');
   assert.deepEqual(seq.staleOptionIds.concat(RC.deriveAttackModalState(a, sword, { melee: true, selection: {}, sequence: true, combatOptions: { powerfulCharge: true } }).staleOptionIds), ['powerfulCharge'], 'a previously ticked Charge option is reported stale');
-  const src = fs.readFileSync('scripts/engine/combat/features/combat-feature-handlers.js', 'utf8') + fs.readFileSync('scripts/patches/combat-ui-behavior-hotfix.js', 'utf8');
-  assert.ok((src.match(/sequence: true/g) ?? []).length >= 2, 'both multiattack dialogs declare the sequence');
+  const src = fs.readFileSync('scripts/engine/combat/features/combat-feature-handlers.js', 'utf8');
+  assert.ok((src.match(/sequence: true/g) ?? []).length >= 1, 'the single multiattack dialog (canonical executor) declares the sequence (F-CMB-007: the hotfix route is retired)');
 });

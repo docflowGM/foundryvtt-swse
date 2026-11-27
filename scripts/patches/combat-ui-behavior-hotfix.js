@@ -1,7 +1,6 @@
 import { SWSEChat } from '/systems/foundryvtt-swse/scripts/chat/swse-chat.js';
 import { rollAttack } from '/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js';
-import { actorEntitledToMultiAttackPackage, buildFullAttackSequence, multiAttackChargeViolation, FULL_ATTACK_PACKAGES, getReadiedWeaponSelection, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
-import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
+import { getReadiedWeaponSelection } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
 import { showRollModifiersDialog } from '/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
 import {
   isRangedWeapon as canonicalIsRangedWeapon,
@@ -302,15 +301,6 @@ function combatRowFromElement(element) {
   return element.closest?.('.combat-action-row, .swse-combat-action-card, .action-row, .swse-concept-action-row--combat') ?? element;
 }
 
-function multiAttackKind(element) {
-  const row = combatRowFromElement(element);
-  const text = [row?.dataset?.actionId, row?.dataset?.actionKey, row?.dataset?.swseCanonicalActionKey, row?.querySelector?.('.action-name')?.textContent, element?.title, element?.textContent].join(' ');
-  const key = compact(text);
-  if (key.includes('tripleattack')) return 'triple';
-  if (key.includes('doubleattack')) return 'double';
-  return null;
-}
-
 function combatOptionSpecForElement(element) {
   const row = combatRowFromElement(element);
   const key = canonicalActionKey(row);
@@ -320,27 +310,6 @@ function combatOptionSpecForElement(element) {
     if (compact(name) === compactKey) return spec;
   }
   return null;
-}
-
-function fallbackMultiAttackPlan(actor, packageType, weapon) {
-  const penalty = packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK ? -10 : -5;
-  const count = packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK ? 3 : 2;
-  return {
-    legal: !!weapon,
-    packageType,
-    actionType: 'full-round',
-    warnings: weapon ? [] : ['No ready weapon. Ready one weapon (or choose which ready weapon to use) before using this attack.'],
-    breakdown: [`${packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK ? 'Triple' : 'Double'} Attack fallback: ${penalty} per attack.`],
-    attacks: Array.from({ length: count }, (_, index) => ({
-      weapon,
-      label: `${weapon?.name ?? 'Weapon'} — Attack ${index + 1}`,
-      weaponGroup: getWeaponGroup(weapon),
-      basePenalty: penalty,
-      reduction: 0,
-      finalPenalty: penalty,
-      penaltySource: packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK ? 'Triple Attack' : 'Double Attack'
-    }))
-  };
 }
 
 function equippedWeaponForSpec(actor, spec = {}) {
@@ -380,91 +349,6 @@ function applyForcedAttackOption(options = {}, spec = {}) {
     actionName: spec.label ?? options.actionName,
     rollNote: [options.rollNote, spec.note].filter(Boolean).join(' | ')
   };
-}
-
-async function executeMultiAttackFromElement(element, kind) {
-  const actor = actorFromElement(element);
-  if (!actor) {
-    ui?.notifications?.warn?.('Could not resolve actor for multiattack. Reopen the sheet and try again.');
-    return;
-  }
-
-  const equipped = getReadiedWeaponSelection(actor);
-  const packageType = kind === 'triple' ? FULL_ATTACK_PACKAGES.TRIPLE_ATTACK : FULL_ATTACK_PACKAGES.DOUBLE_ATTACK;
-  let plan = buildFullAttackSequence(actor, { requestedPackage: packageType, primaryWeapon: equipped.primary });
-  if (!plan?.legal) {
-    // the fallback plan must never grant a package the actor does not own (same entitlement answer as the combat-feature router)
-    if (!actorEntitledToMultiAttackPackage(actor, packageType, equipped.primary)) {
-      ui?.notifications?.warn?.(plan?.warnings?.join(' ') || `${kind === 'triple' ? 'Triple' : 'Double'} Attack is not unlocked for this actor and weapon.`);
-      return;
-    }
-    plan = fallbackMultiAttackPlan(actor, packageType, equipped.primary);
-  }
-  if (!plan?.legal || !plan.attacks?.length) {
-    ui?.notifications?.warn?.(plan?.warnings?.join(' ') || 'No legal multiattack sequence is available.');
-    return;
-  }
-
-  const actionName = kind === 'triple' ? 'Triple Attack' : 'Double Attack';
-  let spend = null;
-  let rolled = 0;
-
-  for (let index = 0; index < plan.attacks.length; index += 1) {
-    const step = plan.attacks[index];
-    const weapon = step.weapon;
-    const options = await showRollModifiersDialog({
-      title: `${actionName}: ${step.label}`,
-      rollType: 'attack',
-      actor,
-      weapon,
-      sourceElement: element,
-      showCover: true,
-      showConcealment: true,
-      showForcePoint: true,
-      sequence: true
-    });
-
-    if (!options) {
-      if (!rolled && spend?.rollback) await spend.rollback();
-      return;
-    }
-
-    { const chargeBlock = multiAttackChargeViolation({ packageType, ...options });
-      if (chargeBlock) { ui?.notifications?.warn?.(chargeBlock); if (!rolled && spend?.rollback) await spend.rollback(); return; } }
-
-    if (!spend) {
-      spend = await ActionEconomyConsumption.spend(actor, 'full-round', {
-        actionName,
-        actionId: kind === 'triple' ? 'triple-attack' : 'double-attack',
-        source: 'combat-ui-behavior-hotfix'
-      }, { notify: true });
-      if (spend?.allowed === false || spend?.permitted === false) return;
-    }
-
-    const result = await rollAttack(actor, weapon, {
-      ...options,
-      sourceElement: element,
-      sequencePenalty: Number(step.finalPenalty ?? 0) + Number(options.sequencePenalty ?? 0),
-      actionId: kind === 'triple' ? 'triple-attack' : 'double-attack',
-      actionName,
-      actionData: {
-        packageType,
-        attackIndex: index + 1,
-        attackCount: plan.attacks.length,
-        penaltySource: step.penaltySource,
-        basePenalty: step.basePenalty,
-        reduction: step.reduction,
-        finalPenalty: step.finalPenalty
-      },
-      rollNote: [options.rollNote, `${actionName} ${index + 1}/${plan.attacks.length}: ${step.penaltySource} ${step.finalPenalty}`].filter(Boolean).join(' | ')
-    });
-
-    if (!result && !rolled && spend?.rollback) {
-      await spend.rollback();
-      return;
-    }
-    if (result) rolled += 1;
-  }
 }
 
 async function executeCombatOptionAttackFromElement(element, spec) {
@@ -518,17 +402,14 @@ function installCombatActionDelegate() {
   document.addEventListener('click', event => {
     const element = event.target?.closest?.('[data-action="swse-v2-use-action"], .combat-action-row, .swse-combat-action-card, .action-row, .swse-concept-action-row--combat');
     if (!element) return;
-    const kind = multiAttackKind(element);
-    const optionSpec = kind ? null : combatOptionSpecForElement(element);
-    if (!kind && !optionSpec) return;
+    // Double/Triple Attack are NOT handled here (F-CMB-007): the legacy action bridge routes them to the canonical executor.
+    const optionSpec = combatOptionSpecForElement(element);
+    if (!optionSpec) return;
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation?.();
-    const promise = kind
-      ? executeMultiAttackFromElement(element, kind)
-      : executeCombatOptionAttackFromElement(element, optionSpec);
-    promise.catch(err => {
-      const label = kind ? (kind === 'triple' ? 'Triple Attack' : 'Double Attack') : optionSpec?.label ?? 'Combat option';
+    executeCombatOptionAttackFromElement(element, optionSpec).catch(err => {
+      const label = optionSpec?.label ?? 'Combat option';
       console.error(`SWSE | ${label} execution failed`, err);
       ui?.notifications?.error?.(`${label} failed: ${err.message}`);
     });

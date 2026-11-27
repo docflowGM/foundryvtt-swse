@@ -3703,17 +3703,19 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3E",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": true,
    "rulesQuestion": true,
    "requiredDecision": null,
    "dependencies": [
     "owner ruling on house-rule formula"
    ],
-   "commits": [],
+   "commits": [
+    "e5984a732"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "Owner ruling: DerivedCalculator single DT authority; ThresholdEngine consumes; tests damage-threshold-single-authority. Not FOUNDRY_TESTED."
   },
   {
    "id": "F-CMB-004",

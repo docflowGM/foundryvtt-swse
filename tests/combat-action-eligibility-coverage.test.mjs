@@ -65,14 +65,12 @@ test('the sheet gate precedes the workflow registry; nested calls are trusted on
 });
 
 // ---- 3. every alternate multi-attack route -------------------------------------------------------------------------------------------------
-test('every multi-attack fallback plan in the codebase is guarded by the shared entitlement answer', () => {
+test('no multi-attack fallback plan generator remains: buildFullAttackSequence is the only sequence calculator (F-CMB-007)', () => {
   const sites = [];
   for (const p of SCRIPTS) {
-    const src = read(p);
-    for (const m of src.matchAll(/=\s*fallbackMultiAttackPlan\(/g)) sites.push({ p: p.replace(/\\/g, '/'), before: src.slice(Math.max(0, m.index - 900), m.index) });
+    if (/fallbackMultiAttackPlan\(/.test(read(p))) sites.push(p.replace(/\\/g, '/'));
   }
-  assert.deepEqual(sites.map((s) => s.p).sort(), ['scripts/engine/combat/features/combat-feature-handlers.js', 'scripts/patches/combat-ui-behavior-hotfix.js']);
-  for (const s of sites) assert.match(s.before, /actorEntitledToMultiAttackPackage\(/, `${s.p}: the fallback is only reachable for an entitled actor`);
+  assert.deepEqual(sites, [], 'the independent fallback attack-plan generators are retired');
 });
 
 test('the shared multi-attack entitlement answer reuses the authority: Double needs Double Attack for the weapon, Triple needs both', async () => {
