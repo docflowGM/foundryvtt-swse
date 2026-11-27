@@ -4101,17 +4101,19 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3G",
-   "status": "OPEN",
+   "status": "IMPLEMENTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "B-CLS"
    ],
-   "commits": [],
+   "commits": [
+    "a73123067"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "PRG D1 (summary rail) + D2 (historical context) route projected/historical BAB through BABCalculator; remaining BAB copies: checker calculateBabFromClassState, class-suggestion-utilities. FOUNDRY_ACCEPTANCE_PENDING"
   },
   {
    "id": "F-ROL-001",
