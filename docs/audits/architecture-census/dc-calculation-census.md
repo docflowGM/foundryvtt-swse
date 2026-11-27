@@ -1,0 +1,29 @@
+# 3N-DC.1 — derived-mechanics calculation census (working document, 2026-11-27)
+
+Scope: where each derived mechanic is calculated, which module is the authority, and which duplicate or contextual formulas remain. Classes: CANONICAL_AUTHORITY, CANONICAL_DELEGATE, READ_ONLY_CONSUMER, CONTEXTUAL_CONTRIBUTION, DUPLICATE_FORMULA, COMPATIBILITY_DEBT, UNREACHABLE, UNVERIFIED. This is a first pass assembled from the P0 work and targeted searches; rows marked UNVERIFIED need a per-site read before any change. Nothing here is a rules ruling.
+
+| Mechanic | Canonical authority | Status after the P0 tranche | Remaining duplicates / notes |
+|---|---|---|---|
+| Half level (skills) | `level-split.js#getHalfCharacterLevel` | CANONICAL_AUTHORITY; callers migrated (derived-calculator skills, enhanced-rolls, skills-reference ×2) | sheet display fallbacks `Math.floor(level / 2)` in `sheets/v2/character-sheet/concept-context.js` (~769, 833) and `sheets/v2/npc/follower-sheet-parity.js` (176), and the "1/2 heroic level" labels in `concept-context.js:49` / `character-like-sheet.js:1046` — DUPLICATE_FORMULA + stale label (UNVERIFIED whether they feed totals or only display) |
+| Half level (personal weapon damage) | `level-split.js#getHalfHeroicLevel` | CANONICAL_AUTHORITY; `combat-stat-rules`, `combat-feat-damage-rule-resolver` migrated | `poison-engine` `@halfHeroicLevel` (own `Math.floor(heroicLevel/2)`), `phase4-force-modifier-automation` (heroic/2), `derived-override-engine._getHalfLevel` (`Math.floor(level/2)`) — CONTEXTUAL or DUPLICATE (each needs a source check) |
+| Half level (Block house rule) | none decided | COMPATIBILITY_DEBT, DC-RULE-001 in the rules register | `getEffectiveHalfLevel` kept for this one caller only |
+| Defenses | `DefenseCalculator.calculate` | CANONICAL_AUTHORITY; condition-track penalty now applied once (20/19/18/15/10) | follower defense wrapper in `patches/follower-npc-sheet-parity-hotfix.js` is a second authority (owner decision F-NPC-003); `rolls/defenses.js` import removed |
+| Condition-track penalty | `ConditionTrackRules` (table), applied by DefenseCalculator (defenses) and DerivedCalculator (skills) | one application per target now | penalty table duplicated 6× and ConditionEngine diverges at step 5 (F-CMB-006); `DefenseCalculator.getConditionPenalty` keeps its own `[0,-1,-2,-5,-10,0]` table (DUPLICATE_FORMULA) |
+| Skill totals | `DerivedCalculator.computeAll` skill pass | CANONICAL_AUTHORITY; Skill Focus is one calculation; armor penalty applied once via ModifierEngine | `levelup-shared.js` / `skills-reference.js#calculateSkills` legacy calculators (UNVERIFIED reachability) |
+| Armor check penalty | `armor-usage-resolver.js#resolveArmorUsageEffects` via ModifierEngine | single application | `armor` breakdown row is 0 by design; consumers of the persisted `system.armor.checkPenalty` field (none found writing it) |
+| Derived overrides | `DerivedOverrideEngine.apply` | applies to the real object values | typed ModifierEngine contributions are preferred but not yet used for these (later DC step); second application path (`_computeDerivedAsync` merge) not yet audited |
+| HP | `ActorEngine.recomputeHP` / `hp-accounting` (max); `DerivedCalculator` mirrors | current 0 preserved | `HPCalculator.calculate()` audit/retirement pending its consumers |
+| BAB | `BABCalculator` | provenance now explicit (`derived.babProvenance`) | estimation copies: `levelup-shared.js#calculateTotalBAB` (name-table fallback), `summary-step.js#_computeProjectedBAB`, `prereq-adapter.js`, legacy prerequisite checker, ActorPrerequisiteSnapshot — DUPLICATE_FORMULA (PRQ/PRG will route them) |
+| Ability modifier | no single named authority | UNVERIFIED | `Math.floor((x - 10) / 2)` appears at ~71 sites in `scripts/` (top: starship-maneuver-manager 5, attribute-step 3, schema-adapters 2, defense-calculator 2, progression-finalizer 2, summary-step 2, character-like-sheet 2, skills-reference 2, suggestion scorers) — most are one-liners over a score; a `getAbilityMod`-style helper exists in `utils/schema-adapters.js`; F-MEN-005 / F-VEH-010 track two ability-source precedence defects |
+| Initiative | `DerivedCalculator` (derived.initiative) | UNVERIFIED | two assignments in one pass: a dex-only placeholder (`total: dexMod + adjustment`) is overwritten later by the initiative skill total (Force Intuition substitution); dependency ordering within the pass is implicit |
+| Grapple | `combat-stat-rules.js#computeGrappleBonus` | CANONICAL_AUTHORITY (shared with `combat-stats-tooltip`) | `summary-step.js` projection arithmetic (PRG replaces) |
+| Damage Threshold | `DerivedCalculator` + `ThresholdEngine` | two formulas (F-CMB-003) | **OWNER DECISION** (enhanced-formula ambiguity); vehicles have their own value (`vehicle-derived-builder`) |
+| Speed | `DerivedOverrideEngine` target `speed.*`; sheet builders | UNVERIFIED | |
+| Force Point max | `ForcePointsService` / `data/force-points.js` | CONTEXTUAL (own half-level term `Math.floor(totalLevel / 2)`) | rules-sensitive; do not alter without a ruling |
+
+## Next DC steps (derived from this census)
+1. Per-site read of the UNVERIFIED rows; migrate display-only duplicates to the level authority and fix the stale "1/2 heroic level" labels (character-level for skills).
+2. Route the BAB estimation copies through `BABCalculator` provenance (with PRQ/PRG), then retire them.
+3. Decide, with the owner, the Damage Threshold single authority and DC-RULE-001.
+4. Audit `_computeDerivedAsync` vs `ActorEngine.recalcAll` result parity and stale-async protection; make initiative's pass ordering explicit.
+5. Add regression-matrix fixtures per mechanic (rulebook-backed values only; no invented numbers) and the Derived Mechanical Authority Certification Report.
