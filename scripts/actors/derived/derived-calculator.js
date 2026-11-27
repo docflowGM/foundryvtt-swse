@@ -928,27 +928,14 @@ export class DerivedCalculator {
         const damageThresholdAdjustment = (modifierMap['defense.damageThreshold'] || 0) + (thresholdFeatRules.flatBonus || 0);
         let damageThreshold = thresholdDefenseBase + getDamageThresholdSizeBonus(actor) + damageThresholdAdjustment;
 
+        // OPTIONAL house rule (enableEnhancedMassiveDamage + modifyDamageThresholdFormula; not published RAW). Owner ruling F-CMB-003: add the selected level
+        // modifier ONCE to the correctly calculated RAW threshold above (which already holds Fortitude/substituted defense, the size bonus and published
+        // feat/talent modifiers): fullLevel -> + heroic level, halfLevel -> + floor(heroic level / 2). The size bonus is never added a second time and
+        // a zero heroic level is never silently replaced by total character level (a Nonheroic-only actor has no heroic level to add).
         if (enableEnhanced && modifyFormula) {
-
-          const formulaType =
-            safeGet('damageThresholdFormulaType', 'fullLevel');
-
-          const computedHeroicLevel =
-            heroicLevel || actor.system.level || 1;
-
-          const sizeMod = getDamageThresholdSizeBonus(actor);
-
-          if (formulaType === 'halfLevel') {
-            damageThreshold =
-              damageThreshold +
-              Math.floor(computedHeroicLevel / 2) +
-              sizeMod;
-          } else {
-            damageThreshold =
-              damageThreshold +
-              computedHeroicLevel +
-              sizeMod;
-          }
+          const formulaType = safeGet('damageThresholdFormulaType', 'fullLevel');
+          const enhancedHeroicLevel = Math.max(0, Number(heroicLevel) || 0);
+          damageThreshold += formulaType === 'halfLevel' ? Math.floor(enhancedHeroicLevel / 2) : enhancedHeroicLevel;
         }
 
         updates['system.derived.damageThreshold'] = damageThreshold;

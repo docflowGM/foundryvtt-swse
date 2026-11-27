@@ -245,15 +245,9 @@ export class ThresholdEngine {
       return fortDefense + vehicleLevel + sizeMod;
     }
 
-    // Character / Droid / NPC
-    const fortTotal = system.derived?.defenses?.fortitude?.total ?? 10;
-    const heroicLevel = system.heroicLevel ?? system.level ?? 1;
-    const sizeMod = getDamageThresholdSizeBonus(actor);
-
-    if (formulaType === 'halfLevel') {
-      return fortTotal + Math.floor(heroicLevel / 2) + sizeMod;
-    }
-    return fortTotal + heroicLevel + sizeMod;
+    // Character / Droid / NPC: DerivedCalculator's certified DT (published modifiers, substituted defense, size bonus and, when the optional house rule is
+    // enabled, the level modifier added once) is the single authority. ThresholdEngine no longer reconstructs the optional formula itself (F-CMB-003).
+    return this.computeBaseThreshold(actor);
   }
 
   /**

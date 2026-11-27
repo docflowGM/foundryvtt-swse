@@ -16,7 +16,6 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
 
-import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 export class BlockMechanicalAlternative {
   /**
    * Initialize Block Mechanic Alternative
@@ -118,10 +117,11 @@ export class BlockMechanicalAlternative {
       const blockPenalty = this.getBlockPenalty(actor);
       const abilityMod = actor.system?.attributes[weapon.system?.attackAttribute || 'str']?.mod || 0;
       const bab = actor.system?.bab || 0;
-      const halfLvl = getEffectiveHalfLevel(actor);
       const weaponBonus = weapon.system?.attackBonus || 0;
 
-      const totalBonus = bab + halfLvl + abilityMod + weaponBonus + blockPenalty;
+      // Owner ruling (DC-RULE-001): the OPTIONAL alternative Block weapon attack uses the normal attack formula (BAB + ability + weapon + the house-rule
+      // repeat-attempt penalty) and appends NO half-level bonus. This is a house rule, not the published Jedi Block talent (a Use the Force reaction).
+      const totalBonus = bab + abilityMod + weaponBonus + blockPenalty;
 
       // Roll the block attack
       const rollFormula = `1d20 + ${totalBonus}`;

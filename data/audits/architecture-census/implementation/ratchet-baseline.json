@@ -5,8 +5,8 @@
  "aggregate": {
   "staticImportCycles": 1,
   "filesInStaticCycles": 18,
-  "unreachableRuntimeModules": 464,
-  "testOnlyRuntimeModules": 180,
+  "unreachableRuntimeModules": 463,
+  "testOnlyRuntimeModules": 181,
   "exactFunctionCloneGroupsRuntime": 30,
   "compatPatchModules": 20,
   "chatMessageCreateOutsideSwseChat": 4,

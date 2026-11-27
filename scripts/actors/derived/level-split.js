@@ -102,26 +102,6 @@ export function getHalfHeroicLevel(actor) {
 }
 
 /**
- * @deprecated 3N-DC: ambiguous (heroic for some callers, character for others). Use getHalfCharacterLevel (skills) or getHalfHeroicLevel (damage).
- * Kept ONLY for the Block house rule, whose intended half level is an open rules question (DC-RULE-001 in the rules register); behaves as the
- * pre-DC helper did so that house rule is unchanged.
- */
-export function getEffectiveHalfLevel(actor) {
-  const totalLevel = Number(actor?.system?.level) || 1;
-  const type = actor?.type;
-
-  if (type === 'npc') {
-    const mode = getNpcMode(actor);
-    if (mode !== 'progression') {return Math.floor(totalLevel / 2);}
-    return getHeroicHalfLevel(actor);
-  }
-
-  const { heroicLevel, totalLevel: sumTotal } = getLevelSplit(actor);
-  const effective = (heroicLevel > 0 ? heroicLevel : (sumTotal > 0 ? sumTotal : totalLevel));
-  return Math.floor((Number(effective) || 0) / 2);
-}
-
-/**
  * Core system “soft cap” policy helper.
  * Epic override is opt-in via world setting.
  */

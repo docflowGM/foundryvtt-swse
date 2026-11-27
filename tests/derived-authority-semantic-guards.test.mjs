@@ -9,9 +9,9 @@ const files = [];
 const src = new Map(files.map((f) => [f, fs.readFileSync(f, 'utf8')]));
 const uncomment = (t) => t.replace(/\/\*[\s\S]*?\*\/|(^|[^:\\])\/\/.*$/gm, '$1');
 
-test_('the ambiguous getEffectiveHalfLevel has exactly one live caller (the Block house rule, DC-RULE-001)', () => {
-  const users = [...src].filter(([f, t]) => f !== 'scripts/actors/derived/level-split.js' && /\bgetEffectiveHalfLevel\b/.test(uncomment(t))).map(([f]) => f);
-  assert.deepEqual(users, ['scripts/houserules/houserule-block-mechanic.js']);
+test_('the ambiguous getEffectiveHalfLevel is retired: no definition and no caller (DC-RULE-001 ruled: the alternative Block gets no half level)', () => {
+  const users = [...src].filter(([, t]) => /\bgetEffectiveHalfLevel\b/.test(uncomment(t))).map(([f]) => f);
+  assert.deepEqual(users, []);
 });
 test_('nothing monkey-patches DerivedCalculator.computeAll (Skill Focus is one calculation)', () => {
   // The two dev/validation harnesses below swap computeAll temporarily and restore it in the same function; they are not runtime patches.
