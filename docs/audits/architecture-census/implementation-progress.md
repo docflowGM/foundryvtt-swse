@@ -116,3 +116,9 @@ Each remaining site was classified; none is an unreviewed bypass of a *mechanica
 
 ## Owner ruling F-NPC-003 (appended 2026-11-27)
 - The monkey-patched follower `DefenseCalculator.calculate` wrapper is deleted. The canonical calculator now applies the published follower rules itself: owner heroic level (incl. owner-flag fallback), class save bonuses 0 for followers, template +2 (aggressive Fort / defensive Ref / utility Will) via `scripts/domain/followers/follower-defense-rules.js`, follower Reflex armor = max(owner level, armor). Droid followers keep STR for Fortitude (the wrapper had forced CON). Test `follower-defense-single-authority`. FOUNDRY_ACCEPTANCE_PENDING: follower sheet/rolls agreement.
+
+## Calculator-audit items (appended 2026-11-27)
+- **DC-A01 done offline:** `combat-stat-rules.js` read `forcePowerDamageAddsHalfLevel` from namespace `swse` (setting is registered under `foundryvtt-swse`, so enabling it did nothing); now `HouseRuleService.getBoolean`. Test `force-power-half-level-setting-namespace` (default off, enabled, disabled-again, elemental exclusion, ordinary weapon unaffected).
+- **DC-A09 done:** manifest wording corrected to half CHARACTER level; test `houserule-skill-half-level-wording`.
+- **DC-A02, DC-A03, DC-A05 deferred** to the rules register (no source text available to the implementer; no interpretation chosen).
+- Remaining from the audit and in progress: DC-A07 (single derived-application path), DC-A08 (initiative intermediate, condition-track table duplicates), DC-A06 (BAB estimates in other adapters).

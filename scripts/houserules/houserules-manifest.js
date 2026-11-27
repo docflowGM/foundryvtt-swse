@@ -2184,7 +2184,7 @@ export const HOUSERULE_MANIFEST = [
     key: 'disableHalfLevelSkillBonus',
     name: 'Disable Half-Level Skill Bonus',
     category: 'skills',
-    description: 'When enabled, removes the universal +½ heroic level contribution from all skill checks.',
+    description: 'When enabled, removes the universal +½ character level contribution from all skill checks.',
     type: 'boolean',
     choices: null,
     default: false,

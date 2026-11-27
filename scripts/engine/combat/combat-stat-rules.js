@@ -5,6 +5,7 @@
  * the rules that are shared by derived stats, roll previews, and damage rolls.
  */
 
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { getHalfHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
@@ -847,11 +848,8 @@ function isExcludedElementalDamage(context = {}) {
 }
 
 function forcePowerDamageAddsHalfLevel() {
-  try {
-    return game?.settings?.get?.('swse', HALF_LEVEL_DAMAGE_HOUSE_RULE_KEY) === true;
-  } catch (_err) {
-    return false;
-  }
+  // DC-A01: the setting lives in the system namespace; HouseRuleService is the only settings reader (default off).
+  return HouseRuleService.getBoolean(HALF_LEVEL_DAMAGE_HOUSE_RULE_KEY, false) === true;
 }
 
 function isForcePowerDamageContext(context = {}) {

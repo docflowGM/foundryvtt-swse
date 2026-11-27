@@ -4058,3 +4058,25 @@ Improved Bantha Rush (BAB +1), Whirlwind Attack (Intelligence 13), Great Cleave 
 - **Implementation:** `DefenseCalculator.calculate` is the only authority (owner-level lookup incl. owner flag fallback, class save bonuses 0 for followers, template bonus via `scripts/domain/followers/follower-defense-rules.js`, follower armor = max(level, armor)). Wrapper removed; the sheet helper re-exports the shared template rule.
 - **Tests:** `tests/follower-defense-single-authority.test.mjs` (organic and droid, unequal STR/CON, three templates, ability mods, armor below/above level, owner advancement, Nonheroic class, single-result, wrapper retired).
 - **Status:** RESOLVED; IMPLEMENTED, OFFLINE_TESTED; FOUNDRY_ACCEPTANCE_PENDING (follower sheet vs rolls).
+
+## Phase 3N-DC — independent calculator audit items needing rulings (appended 2026-11-27; status DEFERRED_RULES_REVIEW)
+
+Source of these entries: the owner-supplied "Independent Mechanical Calculator Audit" (commit 4b840a5). The implementer has no rulebook text and has not verified the page citations; no interpretation is chosen and **no recommended ruling** is given.
+
+### DC-A02 — Heuristic-processor droids and untrained skills
+- **Domain:** droids / skills. **Feature:** derived `canUseUntrained` for droids (`derived-calculator.js` droid untrained restriction). **Source (per audit):** Core Rulebook pp. 187, 190.
+- **Confirmed in code:** the four-skill untrained restriction is applied to every untrained droid without reading the installed processor.
+- **Unresolved question:** exact published untrained-use rule for heuristic vs basic processors, and how processor type is recorded on droid actors (data shape not established by a source).
+- **Implementation impact:** droid `canUseUntrained` derivation blocked. **Status:** DEFERRED_RULES_REVIEW. **Decision authority:** project owner. **Resolution:** (blank)
+
+### DC-A03 — Nonheroic Force Point maximum and Second Wind eligibility
+- **Domain:** resources. **Feature:** `force-points-service.js` maximum; `SecondWindRules.js` heroic eligibility (`actor.type === 'character'`). **Source (per audit):** Core Rulebook pp. 146, 277.
+- **Confirmed in code:** both treat any positive total level / any `character` actor as eligible without checking heroic level.
+- **Unresolved question:** the exact published Nonheroic Force Point / Second Wind exceptions and whether any house-rule allowance applies.
+- **Implementation impact:** eligibility predicates blocked. **Status:** DEFERRED_RULES_REVIEW. **Resolution:** (blank)
+
+### DC-A05 — Skill Focus house-rule variants (scaled / delayed)
+- **Domain:** skills (house rule, default off). **Feature:** `skillFocusVariant`, `skillFocusActivationLevel`. **Source:** project house-rule manifest (no published source).
+- **Confirmed in code:** the derived skill pass always uses +5; the variant logic exists only in `HouseRuleMechanics.getSkillFocusBonus`, in a module no runtime entry point imports, so the variants are inert today.
+- **Unresolved question:** which level "½ Level" means (character vs heroic; rounding) and whether delayed activation compares character or heroic level.
+- **Implementation impact:** wiring variants into the derived pass blocked. RAW +5 is unchanged. **Status:** DEFERRED_RULES_REVIEW. **Resolution:** (blank)
