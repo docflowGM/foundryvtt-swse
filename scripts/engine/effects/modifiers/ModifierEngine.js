@@ -1282,24 +1282,11 @@ export class ModifierEngine {
       // and included in system.derived.skills[skillKey].total, so we do NOT apply them
       // here to avoid double-counting. ModifierEngine only applies situational/temporary mods.
 
-      // Apply to defenses
-      for (const defense of ['defense.fortitude', 'defense.reflex', 'defense.will']) {
-        try {
-          modifiers.push(createModifier({
-            source: ModifierSource.CONDITION,
-            sourceId: `condition.step${step}`,
-            sourceName: conditionLabel,
-            target: defense,
-            type: ModifierType.PENALTY,
-            value: penalty,
-            enabled: true,
-            priority: 20,
-            description: conditionLabel
-          }));
-        } catch (err) {
-          swseLogger.warn(`Failed to create condition modifier for ${defense}:`, err);
-        }
-      }
+      // 3N-DC P0: the condition-track penalty to DEFENSES is applied exactly once, by DefenseCalculator (its `conditionPenalty`, which also drives the
+      // defense breakdown). This collector used to push a second, identical penalty modifier onto defense.fortitude/reflex/will, so every defense
+      // counted the penalty twice (steps 1-4 gave 18/16/10/1 instead of 19/18/15/10). Skills are likewise pre-computed in DerivedCalculator. The
+      // method is kept (returns no modifiers) so the collector list and its callers are unchanged.
+      void penalty; void conditionLabel;
     } catch (err) {
       swseLogger.warn(`[ModifierEngine] Error collecting condition modifiers:`, err);
     }
