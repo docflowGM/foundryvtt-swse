@@ -5,6 +5,7 @@
  * source-rollback refusal check. TransactionEngine remains the single economic-settlement coordinator and calls these directly.
  */
 
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 
 export function deriveTransactionType(context = '', amount = 0) {
@@ -111,4 +112,19 @@ export function normalizeTransactionRecord(actor, record) {
     rollbackReason: record.rollbackReason || audit.rollbackReason || rollback.reason || '',
     audit
   };
+}
+
+/**
+ * TI-2 (review TI2-R2): completion hooks are PRESENTATION. They run only after the transaction committed, a throwing listener must never be
+ * mistaken for a failed transaction (the old inline calls sat inside the transaction's `try`, so a throwing listener triggered the rollback of a
+ * committed change). Returns null, or a short description of the listener failure for the caller to report as `presentationError`.
+ */
+export function emitCommitted(name, build) {
+  try {
+    Hooks.callAll?.(name, build());
+    return null;
+  } catch (error) {
+    swseLogger.error(`TransactionEngine: ${name} failed after the transaction committed; the transaction is NOT undone`, { error: error?.message });
+    return `${name}: ${error?.message ?? error}`;
+  }
 }

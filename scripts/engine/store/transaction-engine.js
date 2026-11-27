@@ -49,8 +49,9 @@ import { stampAcquisitions, lotIdFor } from "/systems/foundryvtt-swse/scripts/en
 import { StoreAcquisitionService } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js";
 
 import { sameOwnership } from "/systems/foundryvtt-swse/scripts/engine/store/resale-authority.js";
-import { deriveTransactionType, legSummary, assetApprovalLockKey, sourceRollbackRefusal, normalizeTransactionRecord } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-helpers.js";
+import { deriveTransactionType, legSummary, assetApprovalLockKey, sourceRollbackRefusal, normalizeTransactionRecord, emitCommitted } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-helpers.js";
 import { compensateUnverified, establishRecovery, restoreVerified } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-recovery.js";
+import { executeCreditAdjustmentImpl, executeCreditTransferImpl } from "/systems/foundryvtt-swse/scripts/engine/store/credit-settlements.js";
 const RESALE_AUTHORITY_GM_APPRAISAL = 'gm-appraisal';
 
 export class TransactionEngine {
@@ -136,20 +137,6 @@ export class TransactionEngine {
 
 
 
-  /**
-   * TI-2 (review TI2-R2): completion hooks are PRESENTATION. They run only after the transaction committed, a throwing listener must never be
-   * mistaken for a failed transaction (the old inline calls sat inside the transaction's `try`, so a throwing listener triggered the rollback of a
-   * committed change). Returns null, or a short description of the listener failure for the caller to report as `presentationError`.
-   */
-  static #emitCommitted(name, build) {
-    try {
-      Hooks.callAll?.(name, build());
-      return null;
-    } catch (error) {
-      swseLogger.error(`TransactionEngine: ${name} failed after the transaction committed; the transaction is NOT undone`, { error: error?.message });
-      return `${name}: ${error?.message ?? error}`;
-    }
-  }
 
 
 
@@ -446,160 +433,7 @@ export class TransactionEngine {
    * not directly mutate system.credits.
    */
   static async executeCreditAdjustment(context = {}, options = {}) {
-    const {
-      actor,
-      amount = 0,
-      reason = '',
-      transactionContext = 'store-credit-adjustment',
-      audit = {}
-    } = context;
-
-    const {
-      validate = true,
-      rederive = true,
-      source = 'TransactionEngine.executeCreditAdjustment'
-    } = options;
-
-    const transactionId = `tx_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
-
-    if (!this._allowedCreditAdjustmentContexts.has(transactionContext)) {
-      return { success: false, transactionId, error: `Unsupported credit adjustment context: ${transactionContext}` };
-    }
-
-    if (!actor) return { success: false, transactionId, error: 'No actor provided' };
-
-    const freshActor = game?.actors?.get?.(actor.id) || actor;
-    if (!freshActor) return { success: false, transactionId, error: 'Actor no longer exists' };
-    if (freshActor.isOwner === false) return { success: false, transactionId, error: 'Insufficient permissions for transaction' };
-
-    const normalizedAmount = normalizeCredits(amount);
-    if (!Number.isFinite(normalizedAmount) || normalizedAmount === 0) {
-      return { success: false, transactionId, error: 'Credit adjustment amount must be a non-zero number' };
-    }
-
-    const lockKey = `${freshActor.id}:${transactionContext}:credit-adjustment`;
-    if (this._creditReconciliations.has(freshActor.id)) {
-      return { success: false, transactionId, error: 'Credits for this actor are being reconciled; try again in a moment.' };
-    }
-    if (this._mutationLocks.has(lockKey)) {
-      return { success: false, transactionId, error: 'Credit adjustment already in progress' };
-    }
-
-    this._mutationLocks.add(lockKey);
-
-    let snapshotId = null;
-    let mutationStarted = false;
-    try {
-      const creditsBefore = LedgerService.getCurrentCredits(freshActor);
-      const creditsAfter = normalizeCredits(creditsBefore + normalizedAmount);
-      if (creditsAfter < 0) {
-        return {
-          success: false,
-          transactionId,
-          error: `Insufficient credits for correction (have ${creditsBefore}, adjustment ${normalizedAmount})`
-        };
-      }
-
-      const transactionAudit = {
-        set: {
-          'system.credits': creditsAfter,
-          [`flags.foundryvtt-swse.transactions.${transactionId}`]: {
-            id: transactionId,
-            context: transactionContext,
-            type: deriveTransactionType(transactionContext, normalizedAmount),
-            status: 'Success',
-            cost: Math.abs(normalizedAmount),
-            amount: normalizedAmount,
-            creditsBefore,
-            creditsAfter,
-            createdAt: Date.now(),
-            actorId: freshActor.id,
-            actorName: freshActor.name,
-            userId: game?.user?.id ?? null,
-            userName: game?.user?.name ?? null,
-            reason,
-            source,
-            audit: {
-              ...audit,
-              reason,
-              creditsBefore,
-              creditsAfter
-            }
-          }
-        }
-      };
-
-      // TI4-C0 (credit-adjustment safety): the rollback snapshot is a PRECONDITION, not best effort. If it cannot be established, the adjustment is refused
-      // BEFORE any credit mutation begins, so a later failure can always be compensated (or honestly reported as unverified) instead of silently
-      // leaving moved credits behind an ordinary `success:false`.
-      try {
-        const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-        snapshotId = await SnapshotManager.createSnapshot(
-          freshActor,
-          `${transactionContext} credit adjustment (${normalizedAmount} credits)`
-        );
-      } catch (snapshotError) {
-        swseLogger.error('TransactionEngine: Credit adjustment refused; rollback snapshot could not be created', {
-          transactionId,
-          context: transactionContext,
-          error: snapshotError?.message
-        });
-        return { success: false, transactionId, error: `Credit adjustment refused: the rollback snapshot could not be created (${snapshotError?.message ?? snapshotError}); no credits were changed.` };
-      }
-      if (!snapshotId) {
-        swseLogger.error('TransactionEngine: Credit adjustment refused; rollback snapshot was not produced', { transactionId, context: transactionContext });
-        return { success: false, transactionId, error: 'Credit adjustment refused: no rollback snapshot was produced; no credits were changed.' };
-      }
-
-      mutationStarted = true;
-      await ActorEngine.applyMutationPlan(freshActor, transactionAudit, {
-        validate,
-        rederive,
-        source: `${source}.${transactionContext}`
-      });
-
-      swseLogger.info('TransactionEngine: Credit adjustment complete', {
-        transactionId,
-        context: transactionContext,
-        actor: freshActor.id,
-        amount: normalizedAmount,
-        creditsBefore,
-        creditsAfter
-      });
-
-      const presentationError = this.#emitCommitted('swseCreditAdjustmentComplete', () => ({
-        transaction: normalizeTransactionRecord(freshActor, transactionAudit.set[`flags.foundryvtt-swse.transactions.${transactionId}`]),
-        actor: freshActor,
-        success: true
-      }));
-
-      return { success: true, transactionId, error: null, creditsBefore, creditsAfter, amount: normalizedAmount, ...(presentationError ? { presentationError } : {}) };
-    } catch (error) {
-      swseLogger.error('TransactionEngine: Credit adjustment failed', {
-        transactionId,
-        context: transactionContext,
-        actor: freshActor?.id,
-        error: error.message
-      });
-
-      // Failed before the credit mutation began: nothing was written, so this is a definitive failure.
-      if (!mutationStarted) return { success: false, transactionId, error: error.message };
-
-      // The mutation was attempted. A failure is only reported as definitive when the pre-adjustment state is VERIFIED restored; otherwise the
-      // credits may have moved and the outcome is `indeterminate` (never an ordinary failure a caller could safely retry).
-      const restore = snapshotId
-        ? await restoreVerified(freshActor, snapshotId)
-        : { restored: false, error: new Error('no rollback snapshot exists') };
-      if (!restore.restored) {
-        swseLogger.error('TransactionEngine: Credit adjustment rollback failed', { transactionId, snapshotId: Boolean(snapshotId), error: restore.error?.message });
-        return { success: false, transactionId, rollbackFailed: true, indeterminate: true, partialMutationPossible: true, error: `Credit adjustment failed and rollback failed: ${error.message}` };
-      }
-      swseLogger.info('TransactionEngine: Credit adjustment rollback successful', { transactionId });
-
-      return { success: false, transactionId, error: error.message };
-    } finally {
-      this._mutationLocks.delete(lockKey);
-    }
+    return executeCreditAdjustmentImpl(this, ...arguments);
   }
 
   /**
@@ -608,226 +442,7 @@ export class TransactionEngine {
    * debit first, credit second, and compensate the debit if the credit leg fails.
    */
   static async executeCreditTransfer(context = {}, options = {}) {
-    const {
-      fromActor,
-      toActor,
-      amount = 0,
-      reason = '',
-      transactionContext = 'holonet-credit-transfer',
-      audit = {}
-    } = context;
-
-    const {
-      validate = true,
-      rederive = true,
-      source = 'TransactionEngine.executeCreditTransfer'
-    } = options;
-
-    const value = normalizeCredits(amount);
-    const transferId = `tx_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
-    const logContext = {
-      transferId,
-      transactionContext,
-      source,
-      fromActorId: fromActor?.id ?? null,
-      fromActorName: fromActor?.name ?? null,
-      toActorId: toActor?.id ?? null,
-      toActorName: toActor?.name ?? null,
-      amount: value,
-      auditSource: audit?.source ?? null,
-      holonetThreadId: audit?.threadId ?? null,
-      holonetTransferId: audit?.transferId ?? null,
-      validate,
-      rederive
-    };
-    swseLogger.debug('[TransactionEngine.creditTransfer] requested', logContext);
-
-    if (!fromActor || !toActor) {
-      const error = 'Credit transfer requires source and target actors';
-      swseLogger.error('[TransactionEngine.creditTransfer] rejected: missing actor', { ...logContext, error });
-      return { success: false, transactionId: transferId, error };
-    }
-    if (!Number.isFinite(value) || value <= 0) {
-      const error = 'Credit transfer amount must be positive';
-      swseLogger.error('[TransactionEngine.creditTransfer] rejected: invalid amount', { ...logContext, error });
-      return { success: false, transactionId: transferId, error };
-    }
-    if (!this._allowedCreditAdjustmentContexts.has(transactionContext)) {
-      const error = `Unsupported credit transfer context: ${transactionContext}`;
-      swseLogger.error('[TransactionEngine.creditTransfer] rejected: unsupported context', { ...logContext, error });
-      return { success: false, transactionId: transferId, error };
-    }
-
-    // Capture pre-transfer snapshots so both actors can be restored if a leg
-    // fails and the compensating refund cannot complete (two-actor atomicity).
-    let fromSnapshot = null;
-    let toSnapshot = null;
-    try {
-      const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-      fromSnapshot = await SnapshotManager.createSnapshot(fromActor, `${transactionContext} sender before transfer ${transferId}`);
-      toSnapshot = await SnapshotManager.createSnapshot(toActor, `${transactionContext} recipient before transfer ${transferId}`);
-    } catch (snapErr) {
-      swseLogger.warn('[TransactionEngine.creditTransfer] snapshot failed; falling back to compensating-refund rollback only', { ...logContext, error: snapErr.message });
-    }
-
-    swseLogger.debug('[TransactionEngine.creditTransfer] debit leg starting', logContext);
-    const debit = await this.executeCreditAdjustment({
-      actor: fromActor,
-      amount: -value,
-      reason: reason || `Transfer credits to ${toActor.name}`,
-      transactionContext,
-      audit: {
-        ...audit,
-        transferId,
-        transferLeg: 'debit',
-        toActorId: toActor.id,
-        toActorName: toActor.name
-      }
-    }, { source: `${source}.debit`, validate, rederive });
-
-    if (!debit.success) {
-      swseLogger.error('[TransactionEngine.creditTransfer] debit leg failed', { ...logContext, debitTransactionId: debit.transactionId, error: debit.error });
-      // TI-2 (TI2-R3): the leg's own unresolved state is carried through (a debit whose rollback failed may have left the sender charged).
-      return {
-        success: false,
-        transactionId: transferId,
-        debitTransactionId: debit.transactionId,
-        error: debit.error,
-        ...(debit.rollbackFailed ? { rollbackFailed: true } : {}),
-        ...(debit.indeterminate ? { indeterminate: true } : {}),
-        ...(debit.rollbackFailed || debit.indeterminate ? { evidence: { debit: legSummary(debit) } } : {})
-      };
-    }
-    swseLogger.debug('[TransactionEngine.creditTransfer] debit leg complete', { ...logContext, debitTransactionId: debit.transactionId });
-
-    swseLogger.debug('[TransactionEngine.creditTransfer] credit leg starting', { ...logContext, debitTransactionId: debit.transactionId });
-    const credit = await this.executeCreditAdjustment({
-      actor: toActor,
-      amount: value,
-      reason: reason || `Received credits from ${fromActor.name}`,
-      transactionContext,
-      audit: {
-        ...audit,
-        transferId,
-        transferLeg: 'credit',
-        fromActorId: fromActor.id,
-        fromActorName: fromActor.name,
-        debitTransactionId: debit.transactionId
-      }
-    }, { source: `${source}.credit`, validate, rederive });
-
-    if (!credit.success) {
-      // TI-2 (TI2-R3): the recipient leg is itself UNRESOLVED (its own rollback failed or its outcome is unknown): the recipient may already hold the
-      // credits, so refunding the sender automatically could create credits. Report it; do not guess, retry or restore.
-      if (credit.rollbackFailed === true || credit.indeterminate === true) {
-        swseLogger.error('[TransactionEngine.creditTransfer] credit leg UNRESOLVED; the debit is NOT refunded automatically', {
-          ...logContext, debitTransactionId: debit.transactionId, failedCreditTransactionId: credit.transactionId, error: credit.error
-        });
-        return {
-          success: false,
-          transactionId: transferId,
-          debitTransactionId: debit.transactionId,
-          failedCreditTransactionId: credit.transactionId,
-          indeterminate: true,
-          ...(credit.rollbackFailed ? { rollbackFailed: true } : {}),
-          error: `Credit transfer could not be reconciled: the recipient leg is unresolved (${credit.error}). The sender was debited ${value} and was NOT refunded automatically because the recipient may already hold the credits. Reconcile transactions ${debit.transactionId} and ${credit.transactionId}.`,
-          evidence: { debit: legSummary(debit), credit: legSummary(credit) }
-        };
-      }
-      swseLogger.error('[TransactionEngine.creditTransfer] credit leg failed; refunding debit', {
-        ...logContext,
-        debitTransactionId: debit.transactionId,
-        failedCreditTransactionId: credit.transactionId,
-        error: credit.error
-      });
-      const refund = await this.executeCreditAdjustment({
-        actor: fromActor,
-        amount: value,
-        reason: `Refund failed transfer to ${toActor.name}`,
-        transactionContext: 'holonet-credit-transfer-refund',
-        audit: {
-          ...audit,
-          transferId,
-          failedCreditTransactionId: credit.transactionId,
-          debitTransactionId: debit.transactionId,
-          toActorId: toActor.id,
-          toActorName: toActor.name
-        }
-      }, { source: `${source}.refundDebit`, validate, rederive });
-      const ids = {
-        transactionId: transferId,
-        debitTransactionId: debit.transactionId,
-        failedCreditTransactionId: credit.transactionId,
-        refundTransactionId: refund.transactionId
-      };
-      if (refund.success) {
-        swseLogger.warn('[TransactionEngine.creditTransfer] debit refunded after credit leg failure', { ...logContext, ...ids });
-        return { success: false, ...ids, compensated: true, error: credit.error || 'Credit leg failed' };
-      }
-      swseLogger.error('[TransactionEngine.creditTransfer] debit refund failed after credit leg failure', { ...logContext, ...ids, error: refund.error });
-      // Last-resort (EXISTING behavior, not extended): restore both actors to their pre-transfer snapshots. It is NOT attempted when the refund itself is
-      // unresolved (its outcome is unknown, so the actor's state cannot be assumed), and it only counts when every restore was observed to succeed.
-      const refundUnresolved = refund.rollbackFailed === true || refund.indeterminate === true;
-      const restores = [];
-      if (!refundUnresolved) {
-        if (fromSnapshot) {restores.push({ actor: 'sender', ...(await restoreVerified(fromActor, fromSnapshot)) });}
-        if (toSnapshot) {restores.push({ actor: 'recipient', ...(await restoreVerified(toActor, toSnapshot)) });}
-      }
-      if (restores.length > 0 && restores.every((r) => r.restored)) {
-        swseLogger.warn('[TransactionEngine.creditTransfer] restored both actors from snapshot after refund failure', logContext);
-        return { success: false, ...ids, compensated: true, recovery: 'snapshot-restore', error: credit.error || 'Credit leg failed' };
-      }
-      swseLogger.error('[TransactionEngine.creditTransfer] recovery FAILED after refund failure; manual reconciliation required', { ...logContext, ...ids });
-      return {
-        success: false,
-        ...ids,
-        rollbackFailed: true,
-        ...(refundUnresolved ? { indeterminate: true } : {}),
-        error: `Credit transfer could not be reconciled: the recipient leg failed (${credit.error}), the sender's refund failed (${refund.error}), and ${refundUnresolved ? 'the refund outcome is unresolved' : (restores.length ? 'the snapshot restore did not succeed' : 'no snapshot was available to restore')}. The sender may still be debited ${value}. Reconcile transactions ${ids.debitTransactionId}, ${ids.failedCreditTransactionId} and ${ids.refundTransactionId}.`,
-        evidence: {
-          debit: legSummary(debit),
-          credit: legSummary(credit),
-          refund: legSummary(refund),
-          restores: restores.map((r) => ({ actor: r.actor, restored: r.restored, error: r.error?.message ?? null })),
-          snapshotsAvailable: !!(fromSnapshot || toSnapshot)
-        }
-      };
-    }
-    swseLogger.debug('[TransactionEngine.creditTransfer] credit leg complete', { ...logContext, debitTransactionId: debit.transactionId, creditTransactionId: credit.transactionId });
-
-    const presentationError = this.#emitCommitted('swseCreditTransferComplete', () => ({
-      transaction: {
-        id: transferId,
-        transactionId: transferId,
-        fromActorId: fromActor.id,
-        fromActorName: fromActor.name,
-        toActorId: toActor.id,
-        toActorName: toActor.name,
-        amount: value,
-        context: transactionContext,
-        debitTransactionId: debit.transactionId,
-        creditTransactionId: credit.transactionId,
-        audit
-      },
-      fromActor,
-      toActor,
-      success: true
-    }));
-
-    swseLogger.info('[TransactionEngine.creditTransfer] complete', {
-      ...logContext,
-      debitTransactionId: debit.transactionId,
-      creditTransactionId: credit.transactionId
-    });
-    return {
-      success: true,
-      transactionId: transferId,
-      debitTransactionId: debit.transactionId,
-      creditTransactionId: credit.transactionId,
-      amount: value,
-      error: null,
-      ...(presentationError ? { presentationError } : {})
-    };
+    return executeCreditTransferImpl(this, ...arguments);
   }
 
 
@@ -1043,7 +658,7 @@ export class TransactionEngine {
 
       // Owner ruling Q4 (TI-2): completion hooks are non-transactional. Once the customization is mechanically committed and verified, a failing listener
       // is reported as `presentationError` and never reverses it (no snapshot restore). Mechanical / persistence failures above still roll back both actors.
-      const presentationError = this.#emitCommitted('swseAssetCustomizationTransactionComplete', () => ({
+      const presentationError = emitCommitted('swseAssetCustomizationTransactionComplete', () => ({
         transaction: normalizeTransactionRecord(walletActor, walletAudit),
         actor: walletActor,
         assetActor: targetAsset,
@@ -1283,7 +898,7 @@ export class TransactionEngine {
         source: `${source}.${transactionContext}.owner`
       });
 
-      const presentationError = this.#emitCommitted('swseStoreAssetAcquired', () => ({
+      const presentationError = emitCommitted('swseStoreAssetAcquired', () => ({
         transaction: normalizeTransactionRecord(ownerActor, transactionRecord),
         actor: ownerActor,
         assetActor: freshAsset,
@@ -1411,7 +1026,7 @@ export class TransactionEngine {
 
       await ActorEngine.applyMutationPlan(freshActor, mutationPlan, { validate, rederive, source: `${source}.${transactionContext}` });
 
-      const presentationError = this.#emitCommitted('swseStoreSaleComplete', () => ({
+      const presentationError = emitCommitted('swseStoreSaleComplete', () => ({
         transaction: normalizeTransactionRecord(freshActor, saleRecord), actor: freshActor, itemData, salePrice: normalizedSalePrice, success: true
       }));
       swseLogger.info('TransactionEngine: Sale transaction complete', { transactionId, context: transactionContext, actor: freshActor.id, item: itemName, quantity: soldQty, salePrice: normalizedSalePrice, authority: verdict.authority });
@@ -1567,7 +1182,7 @@ export class TransactionEngine {
           finalizeError = error;
           swseLogger.error('TransactionEngine: Asset sale committed but the asset status could not be finalized', { transactionId, asset: asset.id, error: error.message });
         }
-        const presentationError = this.#emitCommitted('swseStoreSaleComplete', () => ({
+        const presentationError = emitCommitted('swseStoreSaleComplete', () => ({
           transaction: normalizeTransactionRecord(owner, record), actor: owner, itemData: { name: asset.name, type: asset.type }, salePrice: amount, success: true
         }));
         swseLogger.info('TransactionEngine: Asset sale complete', { transactionId, owner: owner.id, asset: asset.id, amount });
@@ -1850,7 +1465,7 @@ export class TransactionEngine {
         source: `${source}.store-rollback-reconciliation`
       });
 
-      const presentationError = this.#emitCommitted('swseStoreRollbackCorrectionComplete', () => ({
+      const presentationError = emitCommitted('swseStoreRollbackCorrectionComplete', () => ({
         transaction: normalizeTransactionRecord(freshActor, transactionRecord),
         actor: freshActor,
         sourceTransactionId,
