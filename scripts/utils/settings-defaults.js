@@ -24,6 +24,7 @@ export const SETTINGS_DEFAULTS = {
     allowAbilityReroll: true,
     allowPlayersNonheroic: false,
     maxStartingCredits: false,
+    wealthPayoutMode: 'noble-levels',
     holonetRequireCreditTransferApproval: false,
     holonetPartyFundEnabled: false,
     holonetPartyFundBalance: 0,

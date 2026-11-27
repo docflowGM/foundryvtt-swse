@@ -97,23 +97,47 @@ function isLineageEligibleClass(classSelection = null) {
   return key === 'noble' || key === 'corporateagent';
 }
 
-function computePendingLineageEligibleLevel(selections = {}, sessionState = {}) {
-  if (!isLineageEligibleClass(selections.class)) return 0;
+function isNobleClass(classSelection = null) {
+  const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
+  const key = normalizeNameKey(classModel?.name || classModel?.label || classModel?.id || classSelection?.name || classSelection);
+  return key === 'noble';
+}
+
+/** The class levels Wealth counts. 'noble-levels' (RAW, Core p.44, default): Noble only. 'lineage-levels' (Expanded Wealth house rule): Lineage-eligible classes. */
+function isWealthCountedClass(classSelection, mode) {
+  return mode === 'lineage-levels' ? isLineageEligibleClass(classSelection) : isNobleClass(classSelection);
+}
+
+function resolveWealthPayoutMode() {
+  return ProgressionRules.getWealthPayoutMode();
+}
+
+function computePendingLineageEligibleLevel(selections = {}, sessionState = {}, mode = resolveWealthPayoutMode()) {
+  if (!isWealthCountedClass(selections.class, mode)) return 0;
   const rawLevel = Number(selections?.survey?.startingLevel ?? sessionState?.targetLevel ?? sessionState?.progressionSession?.targetLevel ?? 1) || 1;
   return Math.max(1, Math.floor(rawLevel));
 }
 
-function computeWealthCreditGrant(selections = {}, actor = null, sessionState = {}) {
+function computeWealthCreditGrant(selections = {}, actor = null, sessionState = {}, mode = resolveWealthPayoutMode()) {
   if (!hasWealthTalentSelection(selections)) return 0;
-  const lineageLevel = computePendingLineageEligibleLevel(selections, sessionState);
+  const lineageLevel = computePendingLineageEligibleLevel(selections, sessionState, mode);
   return Math.max(0, lineageLevel * 5000);
+}
+
+function appendWealthGrantLog(existing = {}, entry = {}) {
+  const log = Array.isArray(existing.grantLog) ? existing.grantLog.map((e) => ({ ...e })) : [];
+  const keyOf = (e) => `${e.characterLevel}`;
+  const next = log.filter((e) => keyOf(e) !== keyOf(entry));
+  next.push({ characterLevel: entry.characterLevel, mode: entry.mode, classLevelBasis: entry.classLevelBasis, credits: entry.credits, source: entry.source });
+  return next.sort((a, b) => Number(a.characterLevel || 0) - Number(b.characterLevel || 0));
 }
 
 function withWealthProgressionHistory(actor, selections = {}, sessionState = {}) {
   const raw = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
   const history = globalThis.foundry?.utils?.deepClone ? foundry.utils.deepClone(raw) : JSON.parse(JSON.stringify(raw || {}));
   const key = 'swse.talent.wealth';
-  const lineageLevel = computePendingLineageEligibleLevel(selections, sessionState);
+  const mode = resolveWealthPayoutMode();
+  const lineageLevel = computePendingLineageEligibleLevel(selections, sessionState, mode);
   const existing = history[key] || { levelsGranted: [] };
   const levels = new Set((Array.isArray(existing.levelsGranted) ? existing.levelsGranted : []).map(Number).filter(Number.isFinite));
   for (let level = 1; level <= lineageLevel; level += 1) levels.add(level);
@@ -122,6 +146,10 @@ function withWealthProgressionHistory(actor, selections = {}, sessionState = {})
     levelsGranted: Array.from(levels).sort((a, b) => a - b),
     lastGrantedAt: existing.lastGrantedAt || new Date().toISOString(),
     lastGrantedCredits: existing.lastGrantedCredits || lineageLevel * 5000,
+    // Provenance: the payout mode and class-level basis the credits were computed under (history is never recomputed when the setting changes).
+    lastMode: existing.lastMode || mode,
+    lastClassLevelBasis: existing.lastClassLevelBasis ?? lineageLevel,
+    grantLog: existing.grantLog?.length ? existing.grantLog : appendWealthGrantLog(existing, { characterLevel: Number(sessionState?.targetLevel ?? selections?.survey?.startingLevel ?? 1) || 1, mode, classLevelBasis: lineageLevel, credits: lineageLevel * 5000, source: 'chargen-finalizer' }),
     source: existing.source || 'chargen-finalizer',
   };
   return history;
@@ -139,10 +167,10 @@ function resolveLevelupSelectedClass(selections = {}, sessionState = {}) {
   return selections?.class || sessionState?.progressionSession?.getSelection?.('class') || sessionState?.progressionSession?.draftSelections?.class || sessionState?.draftSelections?.class || sessionState?.class || null;
 }
 
-function getLineageEligibleClassLevelCountAfterLevelup(actor, selections = {}, sessionState = {}) {
+function getLineageEligibleClassLevelCountAfterLevelup(actor, selections = {}, sessionState = {}, mode = resolveWealthPayoutMode()) {
   const lineageLevelsByClass = new Map();
   const addClassLevel = (classEntry) => {
-    if (!classEntry || !isLineageEligibleClass(classEntry)) return;
+    if (!classEntry || !isWealthCountedClass(classEntry, mode)) return;
     const key = classAggregationKey(classEntry);
     if (!key) return;
     const level = readClassLevelValue(classEntry);
@@ -153,7 +181,7 @@ function getLineageEligibleClassLevelCountAfterLevelup(actor, selections = {}, s
   for (const classEntry of Array.isArray(actor?.system?.progression?.classLevels) ? actor.system.progression.classLevels : []) addClassLevel(classEntry);
   let lineageLevelCount = Array.from(lineageLevelsByClass.values()).reduce((sum, level) => sum + level, 0);
   const selectedClass = resolveLevelupSelectedClass(selections, sessionState);
-  if (isLineageEligibleClass(selectedClass)) lineageLevelCount += 1;
+  if (isWealthCountedClass(selectedClass, mode)) lineageLevelCount += 1;
   return lineageLevelCount;
 }
 
@@ -167,13 +195,13 @@ function getLevelupCharacterLevelKey(actor, selections = {}, sessionState = {}) 
   return Number.isFinite(fallback) ? Math.max(1, Math.floor(fallback)) : 1;
 }
 
-function computeLevelupWealthCreditGrant(actor, selections = {}, sessionState = {}) {
+function computeLevelupWealthCreditGrant(actor, selections = {}, sessionState = {}, mode = resolveWealthPayoutMode()) {
   if (!hasWealthTalentSelection(selections) && !actorHasWealthTalent(actor)) return 0;
   const history = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
   const characterLevel = getLevelupCharacterLevelKey(actor, selections, sessionState);
   const grantedCharLevels = history?.['swse.talent.wealth']?.characterLevelsGranted || [];
   if (grantedCharLevels.map(Number).includes(characterLevel)) return 0;
-  const lineageLevelCount = getLineageEligibleClassLevelCountAfterLevelup(actor, selections, sessionState);
+  const lineageLevelCount = getLineageEligibleClassLevelCountAfterLevelup(actor, selections, sessionState, mode);
   return Math.max(0, lineageLevelCount * 5000);
 }
 
@@ -181,7 +209,8 @@ function withLevelupWealthProgressionHistory(actor, selections = {}, sessionStat
   const raw = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
   const history = globalThis.foundry?.utils?.deepClone ? foundry.utils.deepClone(raw) : JSON.parse(JSON.stringify(raw || {}));
   const key = 'swse.talent.wealth';
-  const lineageLevelCount = getLineageEligibleClassLevelCountAfterLevelup(actor, selections, sessionState);
+  const mode = resolveWealthPayoutMode();
+  const lineageLevelCount = getLineageEligibleClassLevelCountAfterLevelup(actor, selections, sessionState, mode);
   const characterLevel = getLevelupCharacterLevelKey(actor, selections, sessionState);
   const existing = history[key] || { levelsGranted: [], characterLevelsGranted: [] };
   const levels = new Set((Array.isArray(existing.levelsGranted) ? existing.levelsGranted : []).map(Number).filter(Number.isFinite));
@@ -195,6 +224,10 @@ function withLevelupWealthProgressionHistory(actor, selections = {}, sessionStat
     lastLineageLevelCount: lineageLevelCount,
     lastGrantedAt: new Date().toISOString(),
     lastGrantedCredits: creditDelta,
+    // Provenance: mode and class-level basis at the time of THIS grant; earlier grantLog entries keep the mode they were awarded under.
+    lastMode: mode,
+    lastClassLevelBasis: lineageLevelCount,
+    grantLog: appendWealthGrantLog(existing, { characterLevel, mode, classLevelBasis: lineageLevelCount, credits: creditDelta, source: 'levelup-finalizer' }),
     source: 'levelup-finalizer',
   };
   return history;
@@ -287,16 +320,21 @@ export class ProgressionEconomyPlanBuilder {
    * (roll / maximum / average) and already contains class+background credits; Wealth is added unless that resolution already included it.
    * @returns {{startingCredits:number, grants:object[], settlement:object}}
    */
-  static compileChargenCreditGrants({ summary = {}, baseStartingCredits = 0, wealthBonus = 0 } = {}) {
+  static compileChargenCreditGrants({ summary = {}, baseStartingCredits = 0, wealthBonus = 0, wealthMode = null, wealthClassLevelBasis = null } = {}) {
     const explicit = Number(summary.startingCredits || 0) || 0;
     const sources = Array.isArray(summary.startingCreditsBreakdown) ? summary.startingCreditsBreakdown : [];
     const explicitIncludesWealth = sources.some(source => normalizeNameKey(source?.label || source?.source || '') === 'wealthtalent');
     const ledger = createProvisionalLedger();
     const classBackground = explicit > 0 ? explicit : (Number(baseStartingCredits) || 0);
     if (classBackground > 0) ledger.registerGrant({ id: 'chargen:starting-credits', source: explicit > 0 ? 'player-resolved-starting-credits' : 'class-background-starting-credits', amount: classBackground, step: 'summary', eligibleCategories: '*', policy: 'persist' });
-    if (wealthBonus > 0 && !(explicit > 0 && explicitIncludesWealth)) ledger.registerGrant({ id: 'chargen:wealth-talent', source: 'wealth-talent', amount: wealthBonus, step: 'talent', eligibleCategories: '*', policy: 'persist' });
+    if (wealthBonus > 0 && !(explicit > 0 && explicitIncludesWealth)) ledger.registerGrant({ id: 'chargen:wealth-talent', source: 'wealth-talent', amount: wealthBonus, step: 'talent', ruleRef: wealthMode ? `wealth-payout:${wealthMode}:levels=${wealthClassLevelBasis ?? 'n/a'}` : null, eligibleCategories: '*', policy: 'persist' });
     const settlement = ledger.finalize();
     return { startingCredits: settlement.liquidCredits, grants: ledger.snapshot().grants, settlement };
+  }
+
+  /** Wealth history with grant provenance (mode + class-level basis) for a level-up; pure, used by the plan compiler. */
+  static withLevelupWealthHistory(actor, selections = {}, sessionState = {}, creditDelta = 0) {
+    return withLevelupWealthProgressionHistory(actor, selections, sessionState, creditDelta);
   }
 
   /** The ONE Wealth-talent grant calculation for chargen (previews and finalization both call this). */
@@ -329,9 +367,11 @@ export class ProgressionEconomyPlanBuilder {
     }
 
     const baseStartingCredits = computeStartingCredits(clazz, background);
-    const wealthBonus = computeWealthCreditGrant(selections, actor, sessionState);
+    const wealthMode = resolveWealthPayoutMode();
+    const wealthBonus = computeWealthCreditGrant(selections, actor, sessionState, wealthMode);
+    const wealthClassLevelBasis = computePendingLineageEligibleLevel(selections, sessionState, wealthMode);
     // The grants are summed by the provisional ledger (stable ids, no double counting); the plan receives its liquid total.
-    const { startingCredits } = ProgressionEconomyPlanBuilder.compileChargenCreditGrants({ summary, baseStartingCredits, wealthBonus });
+    const { startingCredits } = ProgressionEconomyPlanBuilder.compileChargenCreditGrants({ summary, baseStartingCredits, wealthBonus, wealthMode, wealthClassLevelBasis });
     // Galactic Profile: the authored wallet is the EXACT final balance (all grants already included; 0 is valid).
     // Class credits, background credits, Wealth and the actor-backed chargen store are NOT applied on top of it.
     const profileWallet = profileWalletCredits(selections.profileApplication?.economy);

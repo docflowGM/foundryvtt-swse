@@ -16,6 +16,11 @@ globalThis.localStorage = globalThis.localStorage ?? { getItem: () => null, setI
 globalThis.document = globalThis.document ?? { createElement: () => ({ style: {}, appendChild() {}, setAttribute() {} }), readyState: 'complete', addEventListener() {}, removeEventListener() {}, activeElement: null, body: { appendChild() {} }, head: { appendChild() {} } };
 globalThis.Hooks = { on() {}, once() {}, callAll() {}, call() {} };
 globalThis.ui = { notifications: { warn() {}, info() {}, error() {} } };
+// The default payout mode is RAW (noble-levels); the lineage-tree rows below run under the Expanded Wealth house rule (WEALTH-RD-001).
+const store = new Map();
+globalThis.game = { ...(globalThis.game ?? {}), settings: { get: (ns, k) => store.get(k), set: async (ns, k, v) => { store.set(k, v); }, settings: { has: (k) => k === 'foundryvtt-swse.wealthPayoutMode' } }, actors: { get: () => null } };
+const mode = (v) => { if (v === undefined) store.delete('wealthPayoutMode'); else store.set('wealthPayoutMode', v); };
+mode('lineage-levels');
 
 const { SummaryStep } = await import('../scripts/apps/progression-framework/steps/summary-step.js');
 const { ProgressionEconomyPlanBuilder } = await import('../scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js');

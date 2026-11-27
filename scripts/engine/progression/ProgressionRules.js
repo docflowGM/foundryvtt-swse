@@ -43,6 +43,14 @@ export class ProgressionRules {
     return HouseRuleService.getString('startingCreditMode', 'roll');
   }
 
+  /**
+   * Wealth talent payout basis (OWNER-APPROVED HOUSE RULE WEALTH-RD-001). 'noble-levels' = RAW (Core p.44): 5,000 x Noble class levels (the default).
+   * 'lineage-levels' = Expanded Wealth: 5,000 x levels in Lineage-eligible classes. Anything missing, legacy or unknown resolves to RAW.
+   */
+  static getWealthPayoutMode() {
+    return HouseRuleService.getString('wealthPayoutMode', 'noble-levels') === 'lineage-levels' ? 'lineage-levels' : 'noble-levels';
+  }
+
   static getMaxStartingCreditsEnabled() {
     return HouseRuleService.getBoolean('maxStartingCredits', false);
   }

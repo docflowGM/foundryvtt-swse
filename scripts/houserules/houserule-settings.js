@@ -87,6 +87,19 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  register('wealthPayoutMode', {
+    name: 'Wealth Talent Payout',
+    hint: 'How many class levels the Wealth talent multiplies by 5,000 credits. RAW (Core p.44): Noble class levels only. Expanded Wealth (house rule): every Lineage-eligible class level, e.g. Corporate Agent. Changing this never rewrites credits already awarded.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      'noble-levels': 'RAW — Noble class levels only (default)',
+      'lineage-levels': 'Expanded Wealth — Lineage-eligible class levels (house rule)'
+    },
+    default: 'noble-levels'
+  });
+
   register('characterCreation', {
     name: 'Character Creation Settings',
     hint: 'Internal structured config object.',

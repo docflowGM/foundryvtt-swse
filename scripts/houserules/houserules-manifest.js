@@ -101,6 +101,22 @@ export const HOUSERULE_MANIFEST = [
     config: true
   },
   {
+    key: 'wealthPayoutMode',
+    name: 'Wealth Talent Payout',
+    category: 'characterCreation',
+    description: 'Class levels the Wealth talent multiplies by 5,000 credits. RAW (Core p.44) counts Noble class levels only; Expanded Wealth counts every Lineage-eligible class level. Never rewrites credits already awarded.',
+    type: 'string',
+    choices: {
+      'noble-levels': 'RAW — Noble class levels only (default)',
+      'lineage-levels': 'Expanded Wealth — Lineage-eligible class levels (house rule)'
+    },
+    default: 'noble-levels',
+    status: 'wired',
+    tags: ['house-rule'],
+    presetVisible: false,
+    config: true
+  },
+  {
     key: 'characterCreation',
     name: 'Character Creation Settings (Internal)',
     category: 'characterCreation',
