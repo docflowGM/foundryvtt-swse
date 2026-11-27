@@ -5,7 +5,7 @@
  "aggregate": {
   "staticImportCycles": 1,
   "filesInStaticCycles": 17,
-  "unreachableRuntimeModules": 320,
+  "unreachableRuntimeModules": 319,
   "testOnlyRuntimeModules": 181,
   "exactFunctionCloneGroupsRuntime": 26,
   "compatPatchModules": 19,
@@ -146,7 +146,7 @@
    "scripts/engine/vehicles/vehicle-logistics-service.js": 2,
    "scripts/utils/actor-utils.js": 1,
    "scripts/sheets/v2/actor-sheet-base.js": 1,
-   "scripts/sheets/v2/character-like-sheet.js": 2,
+   "scripts/sheets/v2/character-like-sheet.js": 1,
    "scripts/sheets/v2/character-sheet/form.js": 1
   },
   "P-A16": {

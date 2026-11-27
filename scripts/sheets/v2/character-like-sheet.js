@@ -1,3 +1,4 @@
+import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
 import { activateCombatTab } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-tab-ui.js";
 import { activateEquipmentWorkspace } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-ui.js";
 import { authorizeDroidComponentOperation } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-component-operation-gate.js";
@@ -6082,9 +6083,19 @@ const forcePoints = [];
         }
         const current = Number(this.actor.system?.credits ?? 0) || 0;
         const next = Math.max(0, current + amount);
+        const applied = next - current; // removing more than the balance clamps at 0, as before
         try {
+          // The wallet change is a TransactionEngine credit adjustment (snapshot-protected, ledgered); the sheet only adds its status-feed entry.
+          if (applied !== 0) {
+            const result = await TransactionEngine.executeCreditAdjustment({
+              actor: this.actor,
+              amount: applied,
+              reason: 'Character sheet credit adjustment',
+              transactionContext: 'sheet-credit-adjustment'
+            }, { source: 'character-sheet-add-credits' });
+            if (!result?.success) throw new Error(result?.error || 'credit adjustment failed');
+          }
           await ActorEngine.updateActor(this.actor, {
-            'system.credits': next,
             'flags.swse.character.statusFeed': prependStatusFeed({
               id: `credits-${Date.now()}`,
               label: amount > 0 ? 'Credits Added' : 'Credits Spent',

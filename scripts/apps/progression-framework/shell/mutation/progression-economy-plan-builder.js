@@ -7,6 +7,7 @@
  * finalizer to merge and apply through ActorEngine.
  */
 
+import { createProvisionalLedger } from '/systems/foundryvtt-swse/scripts/engine/store/provisional-ledger.js';
 import { profileWalletCredits } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/profile-economy-plan-builder.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 import { buildChargenLedger, buildLevelUpLedger, HP_LEDGER_PATH } from '/systems/foundryvtt-swse/scripts/engine/HP/hp-accounting.js';
@@ -281,6 +282,23 @@ function normalizeAttributeValues(attr = {}, actor = null) {
 }
 
 export class ProgressionEconomyPlanBuilder {
+  /**
+   * Chargen starting-credit grants as provisional-ledger grants with stable ids and provenance. `summary.startingCredits` is the player-resolved amount
+   * (roll / maximum / average) and already contains class+background credits; Wealth is added unless that resolution already included it.
+   * @returns {{startingCredits:number, grants:object[], settlement:object}}
+   */
+  static compileChargenCreditGrants({ summary = {}, baseStartingCredits = 0, wealthBonus = 0 } = {}) {
+    const explicit = Number(summary.startingCredits || 0) || 0;
+    const sources = Array.isArray(summary.startingCreditsBreakdown) ? summary.startingCreditsBreakdown : [];
+    const explicitIncludesWealth = sources.some(source => normalizeNameKey(source?.label || source?.source || '') === 'wealthtalent');
+    const ledger = createProvisionalLedger();
+    const classBackground = explicit > 0 ? explicit : (Number(baseStartingCredits) || 0);
+    if (classBackground > 0) ledger.registerGrant({ id: 'chargen:starting-credits', source: explicit > 0 ? 'player-resolved-starting-credits' : 'class-background-starting-credits', amount: classBackground, step: 'summary', eligibleCategories: '*', policy: 'persist' });
+    if (wealthBonus > 0 && !(explicit > 0 && explicitIncludesWealth)) ledger.registerGrant({ id: 'chargen:wealth-talent', source: 'wealth-talent', amount: wealthBonus, step: 'talent', eligibleCategories: '*', policy: 'persist' });
+    const settlement = ledger.finalize();
+    return { startingCredits: settlement.liquidCredits, grants: ledger.snapshot().grants, settlement };
+  }
+
   /** The ONE Wealth-talent grant calculation for chargen (previews and finalization both call this). */
   static computeChargenWealthGrant(selections = {}, actor = null, sessionState = {}) {
     return computeWealthCreditGrant(selections, actor, sessionState);
@@ -311,13 +329,9 @@ export class ProgressionEconomyPlanBuilder {
     }
 
     const baseStartingCredits = computeStartingCredits(clazz, background);
-    const explicitStartingCredits = Number(summary.startingCredits || 0) || 0;
     const wealthBonus = computeWealthCreditGrant(selections, actor, sessionState);
-    const explicitSources = Array.isArray(summary.startingCreditsBreakdown) ? summary.startingCreditsBreakdown : [];
-    const explicitIncludesWealth = explicitSources.some(source => normalizeNameKey(source?.label || source?.source || '') === 'wealthtalent');
-    const startingCredits = explicitStartingCredits > 0
-      ? explicitStartingCredits + (wealthBonus > 0 && !explicitIncludesWealth ? wealthBonus : 0)
-      : baseStartingCredits + wealthBonus;
+    // The grants are summed by the provisional ledger (stable ids, no double counting); the plan receives its liquid total.
+    const { startingCredits } = ProgressionEconomyPlanBuilder.compileChargenCreditGrants({ summary, baseStartingCredits, wealthBonus });
     // Galactic Profile: the authored wallet is the EXACT final balance (all grants already included; 0 is valid).
     // Class credits, background credits, Wealth and the actor-backed chargen store are NOT applied on top of it.
     const profileWallet = profileWalletCredits(selections.profileApplication?.economy);

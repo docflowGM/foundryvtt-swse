@@ -171,7 +171,6 @@ export const PHASE0_CENSUS = Object.freeze({
     'scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js',
     'scripts/apps/follower-creator.js',
     'scripts/domain/droids/droid-modification-factory.js',
-    'scripts/domain/vehicles/vehicle-modification-factory.js',
     'scripts/engine/crafting/lightsaber-construction-engine.js'
   ],
   forcePoints: [

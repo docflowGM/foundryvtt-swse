@@ -67,6 +67,7 @@ export class TransactionEngine {
     'store-custom-approval',
     'store-custom-approval-refund',
     'gm-credit-adjustment',
+    'sheet-credit-adjustment',   // an owner's manual wallet adjustment from the character sheet (recorded as a Correction)
     'gm-credit-refund',
     'store-rollback-reconciliation',
     'game-credit-escrow',
