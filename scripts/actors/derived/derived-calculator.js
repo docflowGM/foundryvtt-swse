@@ -267,7 +267,8 @@ export class DerivedCalculator {
         total: actor.system.hp?.max || 1,
         adjustment: 0 // Adjustments are part of ActorEngine.recomputeHP, not derived
       };
-      const bab = await BABCalculator.calculate(classLevels, { adjustment: babAdjustment });
+      const babDetail = await BABCalculator.calculateDetailed(classLevels, { adjustment: babAdjustment });
+      const bab = babDetail.total;
       const defenses = await DefenseCalculator.calculate(actor, classLevels, { adjustments: defenseAdjustments });
 
       // Build update object (all writes go to system.derived.*)
@@ -350,6 +351,8 @@ export class DerivedCalculator {
       if (bab >= 0) {
         updates['system.derived.bab'] = bab;
         updates['system.derived.babAdjustment'] = babAdjustment;
+        // 3N-DC: say whether this BAB is certified (exact class progression) or an estimate / startup-deferred value. Additive; `bab` stays numeric.
+        updates['system.derived.babProvenance'] = babDetail.provenance;
       }
 
       // ========================================
