@@ -1893,7 +1893,7 @@ export function registerHouseruleSettings() {
 
   register('disableHalfLevelSkillBonus', {
     name: 'Disable Half-Level Skill Bonus',
-    hint: 'When enabled, removes the universal +1/2 heroic level contribution from all skill checks. Orthogonal to progression mode.',
+    hint: 'When enabled, removes the universal +1/2 character level contribution from all skill checks. Orthogonal to progression mode.',
     scope: 'world',
     config: true,
     type: Boolean,

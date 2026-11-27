@@ -46,7 +46,7 @@ function normalizeSkillBreakdownParts(skill = {}, fallback = {}) {
   }
   return [
     { key: 'ability', label: `${String(fallback.selectedAbility || '').toUpperCase()} modifier`, value: Number(fallback.abilityMod) || 0, source: 'ability' },
-    { key: 'halfLevel', label: '1/2 heroic level', value: Number(fallback.halfLevel) || 0, source: 'level' },
+    { key: 'halfLevel', label: '1/2 character level', value: Number(fallback.halfLevel) || 0, source: 'level' },
     { key: 'trained', label: 'Trained', value: fallback.trained ? 5 : 0, source: 'training' },
     { key: 'focus', label: 'Skill Focus', value: fallback.focused ? 5 : 0, source: 'focus' },
     { key: 'misc', label: 'Misc', value: Number(fallback.miscMod) || 0, source: 'actor.system.skills' },

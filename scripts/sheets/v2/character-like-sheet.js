@@ -1043,7 +1043,7 @@ export class SWSEV2CharacterLikeSheet extends SWSEV2ActorSheetBase {
         : (Array.isArray(derivedData?.breakdown) ? derivedData.breakdown : []);
       const sourceParts = parts.length ? parts : [
         { key: 'ability', label: `${String(fallbackParts.selectedAbility || '').toUpperCase()} modifier`, value: fallbackParts.abilityMod },
-        { key: 'halfLevel', label: '1/2 heroic level', value: fallbackParts.halfLevel },
+        { key: 'halfLevel', label: '1/2 character level', value: fallbackParts.halfLevel },
         { key: 'trained', label: 'Trained', value: fallbackParts.trained ? 5 : 0 },
         { key: 'focus', label: 'Skill Focus', value: fallbackParts.focused ? 5 : 0 },
         { key: 'misc', label: 'Misc', value: fallbackParts.miscMod }
