@@ -709,13 +709,11 @@ export class DerivedCalculator {
         total += stateBonus;
 
         // Apply armor check penalty (if skill is affected by armor)
-        let armorPenalty = 0;
-        if (skillDef.armorPenalty) {
-          armorPenalty = actor.system.derived?.armor?.checkPenalty ||
-                         actor.system.armor?.checkPenalty ||
-                         0;
-          total += armorPenalty;
-        }
+        // 3N-DC P0: the armor check penalty is applied ONCE, as typed modifiers from ModifierEngine (armor-usage-resolver: resolveArmorUsageEffects).
+        // This pass used to read a persisted `system.armor.checkPenalty` / `system.derived.armor.checkPenalty` (no live writer; legacy data only) and
+        // add it again, so an actor carrying that stale field counted the penalty twice. The breakdown keeps its `armor` row at 0 (the real penalty is
+        // inside the modifier-engine part) so consumers' shape is unchanged.
+        const armorPenalty = 0;
 
         // Apply condition track penalty
         const conditionPenalty = actor.system.derived?.damage?.conditionPenalty || 0;
