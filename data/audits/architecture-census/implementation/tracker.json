@@ -1840,15 +1840,17 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3O",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "a816a71b0"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "legacy execute()/PlacementRouter proven unreachable and removed"
   },
   {
    "id": "F-TAL-011",
