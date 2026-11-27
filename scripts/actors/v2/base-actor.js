@@ -2,7 +2,7 @@
 import { SWSEActorBase } from "/systems/foundryvtt-swse/scripts/actors/base/swse-actor-base.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
-import { stampDerivedGeneration, getDerivedAppliedSignature, announceDerivedApplied } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
+import { stampDerivedGeneration, applyDerivedSnapshot, getDerivedAppliedSignature, announceDerivedApplied } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
 import { AbilityExecutionCoordinator } from "/systems/foundryvtt-swse/scripts/engine/abilities/ability-execution-coordinator.js";
 import { computeCharacterDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/character-actor.js";
 import { computeNpcDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/npc-actor.js";
@@ -163,25 +163,10 @@ export class SWSEV2BaseActor extends SWSEActorBase {
         const currentSignature = DerivedCalculator.getActorComputeSignature?.(this) ?? null;
         if (currentSignature && currentSignature !== signature) return;
       }
-      let changed = false;
-
-      // Merge computed values into system.derived, but only mark the actor for a
-      // follow-up repaint when the authoritative derived snapshot actually
-      // differs. This preserves the point-edit pattern: actor updates still
-      // recalc once, but no extra async repaint is requested for identical totals.
-      if (updates) {
-        for (const [path, value] of Object.entries(updates)) {
-          const parts = path.split('.');
-          if (parts.length === 3 && parts[0] === 'system' && parts[1] === 'derived') {
-            // system.derived.field → system.derived[field]
-            const field = parts[2];
-            if (!this._swseDerivedValuesEqual(system.derived?.[field], value)) {
-              system.derived[field] = value;
-              changed = true;
-            }
-          }
-        }
-      }
+      // One shared application routine (DC-A07): the same result leaves the same state on every derived-write path. A repaint is requested only
+      // when the authoritative derived snapshot actually differs.
+      system.derived ??= {};
+      const changed = updates ? applyDerivedSnapshot(system.derived, updates) : false;
 
       // Record which signature the CURRENT destination now reflects,
       // regardless of whether this pass changed anything -- this is what lets
@@ -254,14 +239,6 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     }
   }
 
-  _swseDerivedValuesEqual(left, right) {
-    if (left === right) return true;
-    try {
-      return JSON.stringify(left) === JSON.stringify(right);
-    } catch (_err) {
-      return false;
-    }
-  }
 
   /* ------------------------------------------------------------------------ */
   /* Action Execution v2 Contract                                              */

@@ -7,7 +7,7 @@
  */
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
-import { stampDerivedGeneration, announceDerivedApplied } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
+import { stampDerivedGeneration, applyDerivedSnapshot, announceDerivedApplied } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
 
 // Injected by ActorEngine (configureDerivedRecalc): both belong to the DerivedCalculator/ModifierEngine/ActorEngine static import cycle.
 let DerivedCalculator = null;
@@ -20,29 +20,8 @@ export function configureDerivedRecalc(deps = {}) {
 export function applyDerivedUpdates(engine, actor, updates, signature = null) {
     if (!actor?.system || !updates || typeof updates !== 'object') return;
 
-    const expanded = foundry.utils.expandObject(updates);
-    const derivedUpdate = expanded?.system?.derived;
-    if (!derivedUpdate || typeof derivedUpdate !== 'object') return;
-
     actor.system.derived ??= {};
-
-    // HARDENING: system.derived.skills must remain the engine-owned object map.
-    // Some sheet/view-model paths render skill rows as arrays; if that display shape ever
-    // leaks onto actor.system.derived.skills, later skill edits repaint every total as 0
-    // because ModifierEngine and the concept sheet read an array instead of keyed skills.
-    if (derivedUpdate.skills && typeof derivedUpdate.skills === 'object' && !Array.isArray(derivedUpdate.skills)) {
-      if (!actor.system.derived.skills || typeof actor.system.derived.skills !== 'object' || Array.isArray(actor.system.derived.skills)) {
-        actor.system.derived.skills = {};
-      }
-    }
-
-    foundry.utils.mergeObject(actor.system.derived, derivedUpdate, {
-      inplace: true,
-      insertKeys: true,
-      insertValues: true,
-      overwrite: true,
-      recursive: true
-    });
+    applyDerivedSnapshot(actor.system.derived, updates);
 
     // Stamp the same runtime-only derived-generation authority
     // SWSEV2BaseActor._computeDerivedAsync() uses (see derived-generation.js)

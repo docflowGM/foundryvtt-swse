@@ -69,3 +69,41 @@ export function getDerivedAppliedSignature(actor) {
 export function announceDerivedApplied(actor, signature = null) {
   try { globalThis.Hooks?.callAll?.('swseDerivedApplied', actor, signature); } catch (_err) { /* listeners must never break derived application */ }
 }
+
+function derivedValuesEqual(left, right) {
+  if (left === right) return true;
+  try {
+    return JSON.stringify(left) === JSON.stringify(right);
+  } catch (_err) {
+    return false;
+  }
+}
+
+/**
+ * The ONE routine that writes a DerivedCalculator.computeAll() result into `system.derived` (DC-A07). Both the prepareDerivedData path
+ * (SWSEV2BaseActor._computeDerivedAsync) and the recalcAll/progression path (ActorEngine._applyDerivedUpdates) call it, so the same result always
+ * leaves the same state. Each `system.derived.<field>` is REPLACED (no deep merge), so a key dropped from a newer result shape cannot survive from
+ * an older one. `system.derived.skills` stays the engine-owned object map (an array display shape is never written).
+ * @returns {boolean} true when any field changed
+ */
+export function applyDerivedSnapshot(derived, updates) {
+  if (!derived || typeof derived !== 'object' || !updates || typeof updates !== 'object') return false;
+  let changed = false;
+  for (const [path, value] of Object.entries(updates)) {
+    const parts = path.split('.');
+    if (parts.length < 3 || parts[0] !== 'system' || parts[1] !== 'derived') continue;
+    const fieldPath = parts.slice(2);
+    if (fieldPath[0] === 'skills' && fieldPath.length === 1 && (value == null || typeof value !== 'object' || Array.isArray(value))) continue;
+    let target = derived;
+    for (const key of fieldPath.slice(0, -1)) {
+      if (target[key] == null || typeof target[key] !== 'object') target[key] = {};
+      target = target[key];
+    }
+    const last = fieldPath[fieldPath.length - 1];
+    if (!derivedValuesEqual(target[last], value)) {
+      target[last] = value;
+      changed = true;
+    }
+  }
+  return changed;
+}
