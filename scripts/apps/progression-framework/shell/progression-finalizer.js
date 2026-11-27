@@ -383,6 +383,16 @@ export class ProgressionFinalizer {
         throw new Error('Finalization requires a persisted world actor; the draft actor has not been created yet');
       }
 
+      // IDEMPOTENCY GUARD: the plan stamps `system.progression.completedSessionId`. Re-finalizing the SAME session on an actor that already carries the
+      // stamp would re-grant credits/items/levels, so it is refused before anything is compiled or applied. `committed: true` keeps the draft lifecycle from
+      // ever discarding the actor on this refusal.
+      const thisSessionId = sessionState.sessionId || sessionState.progressionSession?.sessionId || null;
+      const completedSessionId = actor?.system?.progression?.completedSessionId ?? null;
+      if (thisSessionId && thisSessionId !== 'unknown' && completedSessionId && String(completedSessionId) === String(thisSessionId)) {
+        swseLogger.warn('[ProgressionFinalizer] Refusing to finalize a session that was already finalized', { actorId: actor.id, sessionId: thisSessionId });
+        return { success: false, alreadyFinalized: true, committed: true, error: 'This progression session has already been finalized for this actor; nothing was changed.' };
+      }
+
       this._assertNpcProgressionAuthority(sessionState, actor);
 
       // PHASE 1: Validate readiness
