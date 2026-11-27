@@ -3,6 +3,7 @@
 // UNIFIED Prerequisite Validator (v3)
 // ============================================
 
+import { compiledPrerequisiteEntryFor } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/canonical-prerequisite-index.js';
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
@@ -726,6 +727,12 @@ export class PrerequisiteChecker {
             };
         }
 
+        // PRQ.1D: a COMPILED canonical-index entry is evaluated from its structure, never by re-parsing prose.
+        const compiledFeat = compiledPrerequisiteEntryFor('feat', feat);
+        if (compiledFeat) {
+            return this._evaluateCompiledEntry(compiledFeat, actor, pending, feat.name);
+        }
+
         // Canon raw prerequisite text is treated as the current source of truth.
         if (typeof prereqData === 'string' && prereqData.trim() && prereqData.trim().toLowerCase() !== 'none') {
             return this._evaluateLegacyStringPrerequisites(
@@ -794,6 +801,12 @@ export class PrerequisiteChecker {
                 missing: [droidOnlyBlockReason],
                 details: { droidChassisGate: droidOnlyBlockReason }
             };
+        }
+
+        // PRQ.1D: a COMPILED canonical-index entry is evaluated from its structure, never by re-parsing prose.
+        const compiledTalent = compiledPrerequisiteEntryFor('talent', talent);
+        if (compiledTalent) {
+            return this._evaluateCompiledEntry(compiledTalent, actor, pending, talent.name);
         }
 
         if (typeof prereqData === 'string' && prereqData.trim() && prereqData.trim().toLowerCase() !== 'none') {
@@ -1091,6 +1104,15 @@ export class PrerequisiteChecker {
      *
      * @private
      */
+    /**
+     * PRQ.1D: evaluate a COMPILED canonical-index entry through the structured-condition interpreter. The result names the index entry so a consumer can
+     * tell compiled evaluation from the compatibility path.
+     */
+    static _evaluateCompiledEntry(entry, actor, pending, nameForError) {
+        const result = this._evaluateStructuredPrerequisites(entry.structure.conditions, actor, pending, nameForError);
+        return { ...result, details: { ...result.details, canonicalIndex: { uuid: entry.uuid, state: entry.state } } };
+    }
+
     static _evaluateStructuredPrerequisites(parsed, actor, pending, nameForError) {
         if (!parsed || parsed.length === 0) {
             return { met: true, missing: [], details: {} };

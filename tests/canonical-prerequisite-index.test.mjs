@@ -26,9 +26,10 @@ test('an empty condition list never means eligible: no COMPILED entry is empty; 
   }
 });
 test('counts match the PRQ.0A census (feats: 96 structured, 196 text-only; talents: 327 structured, 288 text-only)', () => {
-  assert.equal(index.counts.feat.COMPILED + (index.counts.feat.PARTIALLY_COMPILED ?? 0), 96);
+  const structured = (c) => c.COMPILED + (c.PARTIALLY_COMPILED ?? 0) + (c.TEXT_STRUCTURE_CONFLICT ?? 0) + (c.SOURCE_REVIEW_REQUIRED ?? 0); // demoted states still carry the structure
+  assert.equal(structured(index.counts.feat), 96);
   assert.equal(index.counts.feat.UNRESOLVED, 196);
-  assert.equal(index.counts.talent.COMPILED + (index.counts.talent.PARTIALLY_COMPILED ?? 0), 327);
+  assert.equal(structured(index.counts.talent), 327);
   assert.equal(index.counts.talent.UNRESOLVED, 288);
 });
 test('REGRESSION (approved ruling, not reopened): Outlaw "Find an Opening" requires the OUTLAW "Seize the Moment", never the Provocateur one', () => {
@@ -61,4 +62,12 @@ test('the verifier passes on the committed file and never rewrites it', () => {
   const out = execFileSync('node', ['tools/verify-canonical-prerequisite-index.mjs'], { encoding: 'utf8' });
   assert.match(out, /index is current: 1540 entries/);
   assert.equal(fs.readFileSync('data/generated/canonical-prerequisite-index.json', 'utf8'), before);
+});
+
+test('records with an unresolved source disagreement are never COMPILED (PRQ-SRC-001..004 stay held; eligibility behavior unchanged for them)', () => {
+  const byName = (n) => Object.values(index.entries).filter((e) => e.name === n);
+  for (const n of ['Burst Fire', 'Triple Attack', 'Power Blast', 'Improved Bantha Rush', 'Whirlwind Attack', 'Great Cleave', 'Wookiee Grip', 'Squadron Tactics']) {
+    for (const e of byName(n)) assert.notEqual(e.state, 'COMPILED', `${n} is held for an owner source ruling`);
+  }
+  for (const e of Object.values(index.entries)) if (e.state === 'TEXT_STRUCTURE_CONFLICT' || e.state === 'SOURCE_REVIEW_REQUIRED') assert.ok(e.reasons.some((r) => /source ruling pending/.test(r)), e.name);
 });

@@ -11,6 +11,10 @@
 // Usage: node tools/build-canonical-prerequisite-index.mjs [--out data/generated/canonical-prerequisite-index.json] [--stdout]
 import fs from 'node:fs';
 import { canonicalTalentUuid } from '../scripts/data/talent-source-identity.js';
+import { textStructureDisagreements, clauseBag } from './lib/prq-facts.mjs';
+import { normalizeAuthorityKey } from '../scripts/data/authority/authority-key-normalizer.js';
+import { FEAT_PREREQUISITE_AUTHORITY } from '../scripts/data/authority/feat-prerequisite-authority.js';
+import { TALENT_PREREQUISITE_AUTHORITY } from '../scripts/data/authority/talent-prerequisite-authority.js';
 
 export const SCHEMA = 'swse.canonical-prerequisite-index.v1';
 const FEAT_PACK = 'foundryvtt-swse.feats';
@@ -59,6 +63,16 @@ export function buildIndex({ feats = load('packs/feats.db'), talents = load('pac
       if (leaves.length === 0) entry.reasons.push('structure has no conditions');
       entry.structure = { type: st.type, conditions: leaves, provenance: { source: st._source ?? null } };
       entry.state = entry.reasons.length ? 'PARTIALLY_COMPILED' : 'COMPILED';
+      // A structure that mechanically disagrees with its own text (ability minimum / BAB), or whose text differs in substance from the name-keyed authority
+      // table, is NOT trusted as compiled: which representation is the published prerequisite is an owner source ruling (rules register PRQ-SRC-001..005).
+      // Demotion never makes anything eligible; the runtime keeps its previous behavior for these records.
+      if (entry.state === 'COMPILED') {
+        const conflicts = textStructureDisagreements(text, st);
+        const auth = (domain === 'feat' ? FEAT_PREREQUISITE_AUTHORITY : TALENT_PREREQUISITE_AUTHORITY)[normalizeAuthorityKey(rec.name)];
+        const authDiffers = auth && clauseBag(text) !== clauseBag(auth.prerequisite);
+        if (conflicts.length) { entry.state = 'TEXT_STRUCTURE_CONFLICT'; entry.reasons.push(...conflicts.map((c) => `text/structure disagreement (${c}); source ruling pending (PRQ-SRC-001..004)`)); }
+        else if (authDiffers) { entry.state = 'SOURCE_REVIEW_REQUIRED'; entry.reasons.push('production text differs in substance from the name-keyed authority table; source ruling pending (PRQ-SRC-005)'); }
+      }
     } else if (text === undefined || text === null) {
       entry.state = 'SOURCE_MISSING';
     } else if (NONE(text)) {
