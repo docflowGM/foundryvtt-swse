@@ -52,6 +52,7 @@ import { stampAcquisitions, lotIdFor } from "/systems/foundryvtt-swse/scripts/en
 import { StoreAcquisitionService } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js";
 
 import { sameOwnership } from "/systems/foundryvtt-swse/scripts/engine/store/resale-authority.js";
+import { deriveTransactionType, legSummary, assetApprovalLockKey, sourceRollbackRefusal } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-helpers.js";
 const RESALE_AUTHORITY_GM_APPRAISAL = 'gm-appraisal';
 
 export class TransactionEngine {
@@ -165,7 +166,7 @@ export class TransactionEngine {
       status: record.status || 'Success',
       reason: record.reason || audit.reason || record.error || '',
       source: record.source || audit.source || 'TransactionEngine',
-      type: record.type || this.#deriveTransactionType(record.context, amount),
+      type: record.type || deriveTransactionType(record.context, amount),
       itemNames,
       itemName: record.itemName || audit.itemName || (itemNames.length ? itemNames.join(', ') : audit.label || 'Credit Transaction'),
       itemCount: Number(audit.itemCount ?? auditItems.reduce((sum, item) => sum + (Number(item?.quantity) || 1), 0) ?? itemNames.length ?? 0) || 0,
@@ -177,16 +178,6 @@ export class TransactionEngine {
     };
   }
 
-  static #deriveTransactionType(context = '', amount = 0) {
-    const key = String(context || '').toLowerCase();
-    if (key.includes('refund') || key.includes('grant')) return 'Refund';
-    if (key.includes('rollback') || key.includes('correction') || key.includes('adjustment')) return 'Correction';
-    if (key.includes('sell') || key.includes('sale')) return 'Sell';
-    if (key.includes('custom-approval')) return 'Approval Purchase';
-    if (key.includes('purchase') || Number(amount) < 0) return 'Buy';
-    if (Number(amount) > 0) return 'Credit';
-    return 'Transaction';
-  }
 
   /**
    * TI-2 (review TI2-R2): completion hooks are PRESENTATION. They run only after the transaction committed, a throwing listener must never be
@@ -203,10 +194,6 @@ export class TransactionEngine {
     }
   }
 
-  /** Reconciliation evidence for one leg of a multi-leg operation. */
-  static #legSummary(leg = {}) {
-    return { transactionId: leg.transactionId ?? null, success: leg.success === true, error: leg.error ?? null, rollbackFailed: leg.rollbackFailed === true, indeterminate: leg.indeterminate === true };
-  }
 
   /**
    * TI-2 (review TI2-R1): the caller's own proof that the change landed ran and FAILED after the charge was committed. Compensation is targeted, never a
@@ -640,7 +627,7 @@ export class TransactionEngine {
           [`flags.foundryvtt-swse.transactions.${transactionId}`]: {
             id: transactionId,
             context: transactionContext,
-            type: this.#deriveTransactionType(transactionContext, normalizedAmount),
+            type: deriveTransactionType(transactionContext, normalizedAmount),
             status: 'Success',
             cost: Math.abs(normalizedAmount),
             amount: normalizedAmount,
@@ -829,7 +816,7 @@ export class TransactionEngine {
         error: debit.error,
         ...(debit.rollbackFailed ? { rollbackFailed: true } : {}),
         ...(debit.indeterminate ? { indeterminate: true } : {}),
-        ...(debit.rollbackFailed || debit.indeterminate ? { evidence: { debit: this.#legSummary(debit) } } : {})
+        ...(debit.rollbackFailed || debit.indeterminate ? { evidence: { debit: legSummary(debit) } } : {})
       };
     }
     swseLogger.debug('[TransactionEngine.creditTransfer] debit leg complete', { ...logContext, debitTransactionId: debit.transactionId });
@@ -865,7 +852,7 @@ export class TransactionEngine {
           indeterminate: true,
           ...(credit.rollbackFailed ? { rollbackFailed: true } : {}),
           error: `Credit transfer could not be reconciled: the recipient leg is unresolved (${credit.error}). The sender was debited ${value} and was NOT refunded automatically because the recipient may already hold the credits. Reconcile transactions ${debit.transactionId} and ${credit.transactionId}.`,
-          evidence: { debit: this.#legSummary(debit), credit: this.#legSummary(credit) }
+          evidence: { debit: legSummary(debit), credit: legSummary(credit) }
         };
       }
       swseLogger.error('[TransactionEngine.creditTransfer] credit leg failed; refunding debit', {
@@ -919,9 +906,9 @@ export class TransactionEngine {
         ...(refundUnresolved ? { indeterminate: true } : {}),
         error: `Credit transfer could not be reconciled: the recipient leg failed (${credit.error}), the sender's refund failed (${refund.error}), and ${refundUnresolved ? 'the refund outcome is unresolved' : (restores.length ? 'the snapshot restore did not succeed' : 'no snapshot was available to restore')}. The sender may still be debited ${value}. Reconcile transactions ${ids.debitTransactionId}, ${ids.failedCreditTransactionId} and ${ids.refundTransactionId}.`,
         evidence: {
-          debit: this.#legSummary(debit),
-          credit: this.#legSummary(credit),
-          refund: this.#legSummary(refund),
+          debit: legSummary(debit),
+          credit: legSummary(credit),
+          refund: legSummary(refund),
           restores: restores.map((r) => ({ actor: r.actor, restored: r.restored, error: r.error?.message ?? null })),
           snapshotsAvailable: !!(fromSnapshot || toSnapshot)
         }
@@ -1227,17 +1214,13 @@ export class TransactionEngine {
    * the credit deduction, owner actor linkage, TransactionEngine audit, and
    * draft actor ownership transfer are coordinated from one commerce boundary.
    */
-  /** The lock that serializes every DECISION about one (owner, draft asset) pair: the approval transaction and a denial take the same key. */
-  static #assetApprovalLockKey(ownerActorId, assetActorId, transactionContext = 'store-custom-approval') {
-    return `${ownerActorId}:${assetActorId}:${transactionContext}:asset-approval`;
-  }
 
   /**
    * TI-3 (review TI3-R2): acquire the decision lock for an (owner, draft asset) pair. Returns a release function, or null when an approval (or another
    * decision) for that pair is already running. Same client only (L1); it makes a denial's check-and-delete exclusive with an approval of the same asset.
    */
   static acquireAssetDecisionLock(ownerActorId, assetActorId, transactionContext = 'store-custom-approval') {
-    const key = this.#assetApprovalLockKey(ownerActorId, assetActorId, transactionContext);
+    const key = assetApprovalLockKey(ownerActorId, assetActorId, transactionContext);
     if (this._mutationLocks.has(key)) return null;
     this._mutationLocks.add(key);
     return () => { this._mutationLocks.delete(key); };
@@ -1285,7 +1268,7 @@ export class TransactionEngine {
       return { success: false, transactionId, error: 'Invalid approval cost' };
     }
 
-    const lockKey = this.#assetApprovalLockKey(ownerActor.id, freshAsset.id, transactionContext);
+    const lockKey = assetApprovalLockKey(ownerActor.id, freshAsset.id, transactionContext);
     if (this._creditReconciliations.has(ownerActor.id)) {
       return { success: false, transactionId, error: 'Credits for this actor are being reconciled; try again in a moment.' };
     }
@@ -1841,48 +1824,6 @@ export class TransactionEngine {
     }
   }
 
-  /**
-   * TI4-C0/G20 — inspect the CURRENT, authoritative state of a rollback's source transaction on the live actor.
-   * Returns null when the rollback may proceed, otherwise a refusal `{ code, error, ... }`. Never throws. Reads the actor's flags (the stored record),
-   * never a caller-supplied transaction object or UI flag such as `canRollback`.
-   *
-   * - empty/absent `sourceTransactionId`: nothing to check (legitimate source-less correction).
-   * - id that is not a plain string, or that contains '.', or is a prototype property: `SOURCE_TRANSACTION_ID_INVALID`
-   *   (the id becomes part of a flag path; a '.' would nest it and a missing record would be silently materialised as a stub).
-   * - no record / non-object record: `SOURCE_TRANSACTION_NOT_FOUND` / `SOURCE_TRANSACTION_MALFORMED` (fail closed: the engine would otherwise create a
-   *   stub source record when marking it).
-   * - record already `Rolled Back`: `SOURCE_TRANSACTION_ALREADY_ROLLED_BACK` (its first rollback's id is reported, never overwritten).
-   * Same-client only; this is not compare-and-swap.
-   */
-  static #sourceRollbackRefusal(actor, sourceTransactionId) {
-    if (sourceTransactionId === undefined || sourceTransactionId === null || sourceTransactionId === '') return null;
-    if (typeof sourceTransactionId !== 'string' || !sourceTransactionId.trim() || sourceTransactionId.includes('.') || sourceTransactionId !== sourceTransactionId.trim()
-      || ['__proto__', 'constructor', 'prototype'].includes(sourceTransactionId)) {
-      return { code: 'SOURCE_TRANSACTION_ID_INVALID', error: 'Rollback refused: the source transaction id is not valid.' };
-    }
-    let records;
-    try {
-      records = actor.getFlag?.('foundryvtt-swse', 'transactions') || actor.flags?.['foundryvtt-swse']?.transactions || {};
-    } catch (_err) {
-      records = actor.flags?.['foundryvtt-swse']?.transactions || {};
-    }
-    if (!records || typeof records !== 'object' || !Object.prototype.hasOwnProperty.call(records, sourceTransactionId)) {
-      return { code: 'SOURCE_TRANSACTION_NOT_FOUND', error: `Rollback refused: source transaction ${sourceTransactionId} was not found on this actor.` };
-    }
-    const record = records[sourceTransactionId];
-    if (!record || typeof record !== 'object' || Array.isArray(record)) {
-      return { code: 'SOURCE_TRANSACTION_MALFORMED', error: `Rollback refused: source transaction ${sourceTransactionId} has a malformed record.` };
-    }
-    if (String(record.status ?? '').trim().toLowerCase() === 'rolled back') {
-      return {
-        code: 'SOURCE_TRANSACTION_ALREADY_ROLLED_BACK',
-        alreadyRolledBack: true,
-        rolledBackByTransactionId: record.rolledBackByTransactionId ?? null,
-        error: `Rollback refused: source transaction ${sourceTransactionId} was already rolled back${record.rolledBackByTransactionId ? ` by ${record.rolledBackByTransactionId}` : ''}.`
-      };
-    }
-    return null;
-  }
 
   /**
    * Execute a GM rollback/reconciliation through the TransactionEngine.
@@ -1939,7 +1880,7 @@ export class TransactionEngine {
     let snapshotId = null;
     try {
       // TI4-C0/G20: the source transaction's authoritative state is checked INSIDE the lock, before any snapshot or mutation.
-      const sourceRefusal = this.#sourceRollbackRefusal(freshActor, sourceTransactionId);
+      const sourceRefusal = sourceRollbackRefusal(freshActor, sourceTransactionId);
       if (sourceRefusal) {
         swseLogger.warn('TransactionEngine: Rollback reconciliation refused', { transactionId, sourceTransactionId, code: sourceRefusal.code });
         return { success: false, transactionId, ...sourceRefusal };
@@ -2018,7 +1959,7 @@ export class TransactionEngine {
 
       // TI4-C0/G20: the snapshot above was awaited; re-read the live source record so a rollback that landed meanwhile is not replayed.
       // (Same-client protection only — not compare-and-swap; another client can still race this.)
-      const lateRefusal = this.#sourceRollbackRefusal(freshActor, sourceTransactionId);
+      const lateRefusal = sourceRollbackRefusal(freshActor, sourceTransactionId);
       if (lateRefusal) {
         swseLogger.warn('TransactionEngine: Rollback reconciliation refused before applying (source changed during preparation)', { transactionId, sourceTransactionId, code: lateRefusal.code });
         return { success: false, transactionId, ...lateRefusal };
