@@ -157,6 +157,12 @@ export class SWSEV2BaseActor extends SWSEActorBase {
       // Pass the signature already computed above so computeAll() doesn't
       // repeat the same items/effects scan-sort-join for identical actor state.
       const updates = await DerivedCalculator.computeAll(this, { signature });
+      // 3N-DC: stale-async protection. The source may have changed while computeAll() was pending; a result for an older signature must neither be
+      // merged over the newer destination nor be stamped as applied. The next prepareDerivedData() recomputes against the current source.
+      if (signature) {
+        const currentSignature = DerivedCalculator.getActorComputeSignature?.(this) ?? null;
+        if (currentSignature && currentSignature !== signature) return;
+      }
       let changed = false;
 
       // Merge computed values into system.derived, but only mark the actor for a
