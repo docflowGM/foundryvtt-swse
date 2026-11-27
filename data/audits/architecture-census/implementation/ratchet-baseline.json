@@ -68,7 +68,7 @@
   },
   "P-A03": {
    "scripts/engine/progression/xp-engine.js": 2,
-   "scripts/governance/actor-engine/actor-engine.js": 2
+   "scripts/governance/actor-engine/derived-recalc.js": 2
   },
   "P-A04": {
    "scripts/sheets/v2/character-like-sheet.js": 4,
