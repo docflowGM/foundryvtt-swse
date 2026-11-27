@@ -1354,7 +1354,7 @@ export class TalentStep extends ProgressionStepPlugin {
     const talents = await this._getTalentsForTreeCached(tree, shell?.actor);
     const otherSelectedKeys = this._getSelectedTalentKeys(shell, { excludeSlotType: this._slotType });
     const ownedTalentKeys = this._getOwnedTalentKeys(shell?.actor);
-    const evaluationActor = this._buildEvaluationActorForPrereqs(shell?.actor, shell);
+    const evaluationActor = await this._buildEvaluationActorForPrereqs(shell?.actor, shell);
     const legal = [];
 
     for (const talent of talents || []) {
@@ -1630,7 +1630,18 @@ export class TalentStep extends ProgressionStepPlugin {
     };
   }
 
-  _buildEvaluationActorForPrereqs(actor, shell) {
+  /** Synchronous historical actor for the class-grant ledger only (no BAB needed: `historicalBab` stays "not computed"). The live actor outside recovery. */
+  _buildGrantLedgerActor(actor, shell) {
+    const recoveryContext = this.descriptor?.reconciliationContext || null;
+    if (!recoveryContext) return actor;
+    return PrereqAdapter.buildHistoricalEvaluationBase(actor, recoveryContext, {
+      draftSelections: shell?.progressionSession?.draftSelections || {},
+      stepId: this.descriptor?.stepId || null,
+    });
+  }
+
+  /** Historical (recovery-slot) evaluation actor with BAB from BABCalculator; the live actor outside recovery. Async because BAB is. */
+  async _buildEvaluationActorForPrereqs(actor, shell) {
     const recoveryContext = this.descriptor?.reconciliationContext || null;
     if (!recoveryContext) return actor;
     return PrereqAdapter.buildHistoricalEvaluationContext(actor, recoveryContext, {
@@ -1699,7 +1710,7 @@ export class TalentStep extends ProgressionStepPlugin {
 
     // Derive class-granted features (feats, proficiencies, force sensitivity)
     if (selectedClass && shell?.actor) {
-      const ledger = buildClassGrantLedger(this._buildEvaluationActorForPrereqs(shell.actor, shell) || shell.actor, selectedClass, basePending);
+      const ledger = buildClassGrantLedger(this._buildGrantLedgerActor(shell.actor, shell), selectedClass, basePending);
       return this._scopePendingAbilityDataForRecovery(mergeLedgerIntoPending(basePending, ledger), shell);
     }
 
@@ -2682,7 +2693,7 @@ export class TalentStep extends ProgressionStepPlugin {
     const nodeStates = {};
     const shell = context?.shell || null;
     const pendingAbilityData = this._buildPendingAbilityData(shell);
-    const evaluationActor = this._buildEvaluationActorForPrereqs(shell?.actor, shell);
+    const evaluationActor = await this._buildEvaluationActorForPrereqs(shell?.actor, shell);
     const otherSelectedKeys = this._getSelectedTalentKeys(shell, { excludeSlotType: this._slotType });
     const ownedTalentKeys = this._getOwnedTalentKeys(shell?.actor);
     const selectedTreeAvailable = this._isTalentTreeAvailable(selectedTree);
@@ -2953,7 +2964,7 @@ export class TalentStep extends ProgressionStepPlugin {
     // Evaluate talent legality using the same pending state as the planner list.
     const actor = shell?.actor || null;
     const pendingAbilityData = this._buildPendingAbilityData(shell);
-    const evaluationActor = this._buildEvaluationActorForPrereqs(actor, shell);
+    const evaluationActor = await this._buildEvaluationActorForPrereqs(actor, shell);
     const prereqDetails = actor ? await this._getPrerequisiteDetails(evaluationActor || actor, talent, pendingAbilityData) : { legal: true, missing: [], blocking: [] };
     const selectedTreeAvailable = this._isTalentTreeAvailable(selectedTree);
     const treeAccessBlock = selectedTreeAvailable ? '' : this._treeUnavailableMessage(selectedTree);
@@ -3165,7 +3176,7 @@ export class TalentStep extends ProgressionStepPlugin {
         if (choiceMeta?.required && choiceSource !== 'grantPool') {
           const pendingForChoice = this._buildPendingAbilityData(shell);
           pendingForChoice.selectedTalents = currentSelections;
-          const evaluationActor = this._buildEvaluationActorForPrereqs(shell.actor, shell);
+          const evaluationActor = await this._buildEvaluationActorForPrereqs(shell.actor, shell);
           const selectedChoice = await FeatChoiceDialog.prompt(evaluationActor || shell.actor, talent, {
             title: `Choose: ${talent.name}`,
             context: { pending: pendingForChoice }

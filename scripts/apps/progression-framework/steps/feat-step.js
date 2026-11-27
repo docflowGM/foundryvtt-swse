@@ -669,7 +669,7 @@ export class FeatStep extends ProgressionStepPlugin {
     const legal = [];
     this._availabilityByFeatId = new Map();
     const pendingAbilityData = this._buildPendingAbilityData(shell);
-    const evaluationActor = this._buildEvaluationActorForPrereqs(actor, shell);
+    const evaluationActor = await this._buildEvaluationActorForPrereqs(actor, shell);
     const classLookupKeys = resolveClassLookupKeysForFeatStep(shell);
     const isMulticlassStartingFeatSlot = this._isLevelupMulticlassStartingFeatSlot(shell);
     const multiclassStartingFeatNames = isMulticlassStartingFeatSlot
@@ -1167,7 +1167,7 @@ export class FeatStep extends ProgressionStepPlugin {
     return resolveClassLookupKeysForFeatStep(shell);
   }
 
-  _buildEvaluationActorForPrereqs(actor, shell) {
+  async _buildEvaluationActorForPrereqs(actor, shell) {
     const recoveryContext = this.descriptor?.reconciliationContext || null;
     if (!recoveryContext) return actor;
     return PrereqAdapter.buildHistoricalEvaluationContext(actor, recoveryContext, {
@@ -2199,7 +2199,7 @@ export class FeatStep extends ProgressionStepPlugin {
       if (choiceMeta?.required && choiceSource !== 'grantPool') {
         const pendingForChoice = this._buildPendingAbilityData(shell);
         pendingForChoice.selectedFeats = currentSlotSelections;
-        const evaluationActor = this._buildEvaluationActorForPrereqs(shell.actor, shell);
+        const evaluationActor = await this._buildEvaluationActorForPrereqs(shell.actor, shell);
         const selectedChoice = await FeatChoiceDialog.prompt(evaluationActor || shell.actor, feat, {
           title: localizeProgressionText('SWSE.Progression.Feat.Messages.ChooseTitle', { feat: feat.name }),
           context: { pending: pendingForChoice }

@@ -691,6 +691,31 @@ export class PrerequisiteChecker {
      * @returns {Object} - { met: boolean, missing: string[], details: object }
      */
     static checkFeatPrerequisites(actor, feat, pending = {}) {
+        return this._withHistoricalContext(actor, () => this._checkFeatCore(actor, feat, pending));
+    }
+
+    /**
+     * 3N-PRG D2: a historical-evaluation actor (PrereqAdapter) that failed to build is never evaluated as if it were the live actor, and an unmet
+     * result lists the items that could not be credited for lack of acquisition provenance.
+     */
+    static _withHistoricalContext(actor, evaluate) {
+        const progression = actor?.system?.progression;
+        if (progression?.historicalEvaluation && progression.historicalContextError) {
+            return {
+                met: false,
+                unresolved: true,
+                missing: [`Prerequisites could not be evaluated for this historical level (${progression.historicalContextError})`],
+                details: { historicalContextError: progression.historicalContextError }
+            };
+        }
+        const result = evaluate();
+        if (progression?.historicalEvaluation && result && result.met === false && progression.historicalUnresolvedItems?.length) {
+            return { ...result, details: { ...(result.details || {}), historicalUnresolvedItems: progression.historicalUnresolvedItems } };
+        }
+        return result;
+    }
+
+    static _checkFeatCore(actor, feat, pending = {}) {
         // Support both document and name
         if (typeof feat === 'string') {
             feat = { name: feat, system: {} };
@@ -778,6 +803,10 @@ export class PrerequisiteChecker {
      * @returns {Object} - { met: boolean, missing: string[], details: object }
      */
     static checkTalentPrerequisites(actor, talent, pending = {}) {
+        return this._withHistoricalContext(actor, () => this._checkTalentCore(actor, talent, pending));
+    }
+
+    static _checkTalentCore(actor, talent, pending = {}) {
         // Support both document and name
         if (typeof talent === 'string') {
             talent = { name: talent, system: {} };
@@ -1684,6 +1713,14 @@ export class PrerequisiteChecker {
     }
 
     static _checkBabCondition(prereq, actor, pending) {
+        const historicalBab = actor?.system?.progression?.historicalEvaluation ? actor.system.progression.historicalBab : null;
+        if (actor?.system?.progression?.historicalEvaluation && !historicalBab?.resolved) {
+            return {
+                met: false,
+                unresolved: true,
+                message: `Base attack bonus at this level could not be determined (${historicalBab?.reason || 'no class-level history'})`
+            };
+        }
         const bab = getBaseAttackBonus(actor, pending);
         const required = prereq.minimum ?? prereq.min ?? 0;
         const met = bab >= required;
@@ -3095,6 +3132,11 @@ function getTotalLevel(actor) {
  */
 function getBaseAttackBonus(actor, pending = {}) {
     if (!actor) {return 0;}
+
+    // 3N-PRG D2: a historical-evaluation context carries its own BAB, computed by BABCalculator over reconstructed class levels (or unresolved).
+    // The live actor's BAB fields and class items never decide a historical prerequisite.
+    const historical = actor.system?.progression?.historicalEvaluation ? actor.system.progression.historicalBab : null;
+    if (actor.system?.progression?.historicalEvaluation) {return historical?.resolved ? (Number(historical.value) || 0) : 0;}
 
     const directBab = maxNumeric([
         actor.system?.bab?.total,
