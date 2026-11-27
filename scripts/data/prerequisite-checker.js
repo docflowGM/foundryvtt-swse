@@ -1280,7 +1280,9 @@ export class PrerequisiteChecker {
             case 'or':
                 return this._checkOrCondition(prereq, actor, pending);
             default:
-                return { met: true, message: '' };
+                // An unrecognized structured condition is never silently satisfied (PRQ contract: unknown clause => not verified). Every type in the
+                // production feat/talent structures has a handler above (tests/structured-prerequisite-unknown-clause.test.mjs).
+                return { met: false, message: `Prerequisite could not be verified (unsupported condition type "${type}")` };
         }
     }
 
