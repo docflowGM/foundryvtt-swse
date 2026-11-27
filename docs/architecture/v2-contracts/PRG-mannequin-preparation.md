@@ -24,3 +24,6 @@ Written in `tests/summary-step-projection-baseline.test.mjs`: same-class level-u
 
 Original list:
 Characterize today's summary output for: same-class level-up, new-class multiclass, prestige entry, ability-score level, wounded actor. They become the parity fixtures required by the PRG addendum §12. They are deliberately deferred: they need the finalized DerivedCalculator contract to decide which differences are corrections rather than regressions.
+
+## Update 2026-11-27 — Stage D (summary rail) done
+`summary-step.js#_buildLevelupSummary` now takes every projected value (BAB, Reflex/Fortitude/Will, Damage Threshold, grapple, max HP, Second Wind) from `getMannequinProjection` (`shell/mannequin/mannequin-builder.js`); an unresolved value is shown as pending. Deleted from `summary-step.js`: `_computeProjectedBAB`, `_getMaxDefenseBonuses`, `_getProjectedDefenseBonuses`, the delta arithmetic, `afterDT = afterFort`, the grapple delta and the inline Second Wind formula. Parity evidence: `tests/prg-mannequin-parity-stage-c.test.mjs`. Still open: `prereq-adapter.js` actor construction, `ProjectionEngine`/`SelectedRailContext` feeding, finalization preflight on the mannequin, `class-suggestion-utilities#calculateTotalBAB`.

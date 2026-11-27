@@ -28,7 +28,7 @@ import { applyDeleteOps, applySetOps, applyUpdateOps, applyAddOps } from '/syste
 import { validateMutationPlan } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/mutation-plan-helpers.js';
 import { getCanonicalAbilityMod } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/canonical-actor-shapes.js';
 import { DerivedCalculator } from '/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js';
-import { applyDerivedSnapshot } from '/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js';
+import { applyDerivedSnapshot, ensureDerivedState } from '/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js';
 import { planHpRecompute, HP_LEDGER_PATH } from '/systems/foundryvtt-swse/scripts/engine/HP/hp-accounting.js';
 import { SecondWindRules } from '/systems/foundryvtt-swse/scripts/engine/combat/SecondWindRules.js';
 import { MetaResourceFeatResolver } from '/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js';
@@ -130,7 +130,7 @@ export function createMannequinSnapshot(actor) {
     items: Array.from(actor.items?.contents ?? actor.items ?? []).map(plainDocument).filter(Boolean),
     effects: Array.from(actor.effects?.contents ?? actor.effects ?? []).map(plainDocument).filter(Boolean),
   };
-  if (actor.system?.derived && snapshot.system && !snapshot.system.derived) snapshot.system.derived = plainClone(actor.system.derived);
+  if (actor.system?.derived && snapshot.system && !snapshot.system.derived) ensureDerivedState(snapshot.system, plainClone(actor.system.derived));
   return deepFreeze(snapshot);
 }
 
@@ -389,8 +389,7 @@ export async function projectMannequin(build, sessionState = {}) {
   const mannequin = build.mannequin;
   try {
     const updates = await DerivedCalculator.computeAll(mannequin, { signature: null });
-    mannequin.system.derived ??= {};
-    applyDerivedSnapshot(mannequin.system.derived, updates);
+    applyDerivedSnapshot(ensureDerivedState(mannequin.system), updates);
   } finally {
     DerivedCalculator.clearCaches(mannequin.id);
   }
@@ -431,6 +430,7 @@ export function isMannequinPreviewCurrent(previewKey, token) {
 export async function getMannequinProjection(actor, sessionState, options = {}) {
   const previewKey = options.previewKey ?? `${actor?.id ?? options.snapshot?.sourceActorId ?? 'draft'}`;
   const token = ++_previewSequence;
+  if (_latestPreviewToken.size > 64) _latestPreviewToken.clear(); // bounded: more than 64 distinct preview keys resets (an older in-flight build then reads as stale, never as current)
   _latestPreviewToken.set(previewKey, token);
   const build = await buildMannequin(actor, sessionState, { snapshot: options.snapshot, token });
   if (!isMannequinPreviewCurrent(previewKey, token)) return { stale: true, token, previewKey };

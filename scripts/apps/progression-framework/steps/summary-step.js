@@ -5,6 +5,7 @@
  * Level-up: delta review surface showing only what changed.
  */
 
+import { getMannequinProjection } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mannequin/mannequin-builder.js';
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ProjectionEngine } from '../shell/projection-engine.js';
 import { getStepGuidance } from './mentor-step-integration.js';
@@ -554,36 +555,30 @@ export class SummaryStep extends ProgressionStepPlugin {
 
     const beforeAttributes = this._getCurrentAttributeScores(actor);
     const afterAttributes = this._getProjectedAttributeScores(projection, beforeAttributes);
+    // 3N-PRG Stage D: every "after" value comes from the progression mannequin (the real compiled plan applied non-persistently, derived through
+    // BABCalculator / DefenseCalculator / DerivedCalculator / hp-accounting / SecondWindRules). No formula lives here; an unresolved value is PENDING.
+    const mannequin = await this._projectMannequin(shell, actor, session);
+    const afterBAB = mannequin?.bab ?? null;
+    const afterReflex = mannequin?.defenses?.reflex ?? null;
+    const afterFort = mannequin?.defenses?.fortitude ?? null;
+    const afterWill = mannequin?.defenses?.will ?? null;
+    const afterHP = mannequin?.maxHp ?? null;
+    const afterGrapple = mannequin?.grapple ?? null;
+    const afterSecondWind = mannequin?.secondWind?.healing ?? null;
+    const afterDT = mannequin?.damageThreshold ?? null;
+
     const beforeBAB = this._getCurrentBAB(actor);
-    const afterBAB = await this._computeProjectedBAB(actor, selectedClass);
-    const currentStrMod = this._abilityMod(beforeAttributes.str);
-    const afterStrMod = this._abilityMod(afterAttributes.str);
-    const currentDexMod = this._abilityMod(beforeAttributes.dex);
-    const afterDexMod = this._abilityMod(afterAttributes.dex);
-    const currentWisMod = this._abilityMod(beforeAttributes.wis);
-    const afterWisMod = this._abilityMod(afterAttributes.wis);
-
-    const currentClassBonuses = await this._getMaxDefenseBonuses(currentClasses);
-    const afterClassBonuses = await this._getProjectedDefenseBonuses(currentClasses, selectedClass);
-
     const beforeReflex = this._getDefenseTotal(actor, 'reflex');
     const beforeFort = this._getDefenseTotal(actor, 'fortitude');
     const beforeWill = this._getDefenseTotal(actor, 'will');
-    const afterReflex = beforeReflex - currentDexMod - (currentClassBonuses.reflex || 0) + afterDexMod + (afterClassBonuses.reflex || 0);
-    const afterFort = beforeFort - currentStrMod - (currentClassBonuses.fortitude || 0) + afterStrMod + (afterClassBonuses.fortitude || 0);
-    const afterWill = beforeWill - currentWisMod - (currentClassBonuses.will || 0) + afterWisMod + (afterClassBonuses.will || 0);
-
     const beforeHP = this._getCurrentHPMax(actor);
-    const afterHP = beforeHP + (Number(this._hpGainState.gain) || 0);
     const beforeGrapple = this._getCurrentGrapple(actor);
-    const afterGrapple = beforeGrapple - beforeBAB - currentStrMod + afterBAB + afterStrMod;
-    const beforeSecondWind = Number(actor.system?.secondWind?.healing || (5 + Math.floor(currentLevel / 4) * 5));
-    const afterSecondWind = Number(actor.system?.secondWind?.misc || 0) + (5 + Math.floor(newLevel / 4) * 5);
+    const beforeSecondWind = Number(actor.system?.secondWind?.healing || 0);
     const beforeDT = this._getCurrentDamageThreshold(actor, beforeFort);
-    const afterDT = afterFort;
 
     const statChanges = [];
     const pushStat = (label, before, after, opts = {}) => {
+      if (after === null || after === undefined) { statChanges.push({ label, before, after: null, pending: true }); return; }
       if (before === after && !opts.force) return;
       statChanges.push({ label, before, after, pending: !!opts.pending });
     };
@@ -850,35 +845,6 @@ export class SummaryStep extends ProgressionStepPlugin {
     return Math.floor((Number(score || 10) - 10) / 2);
   }
 
-  async _computeProjectedBAB(actor, selectedClass) {
-    const { calculateTotalBAB } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
-    const clone = globalThis.foundry?.utils?.deepClone || ((value) => JSON.parse(JSON.stringify(value || {})));
-    const synthetic = {
-      system: clone(actor?.system || {}),
-      items: Array.from(actor?.items || []).map(i => ({ type: i.type, name: i.name, id: i.id, system: clone(i.system || {}) }))
-    };
-    const className = selectedClass?.name || selectedClass?.className || selectedClass?.id;
-    if (className) {
-      const selectedKey = this._normalizeSummaryKey(className);
-      const existing = synthetic.items.find(i => i.type === 'class' && (this._normalizeSummaryKey(i.name) === selectedKey || this._normalizeSummaryKey(i.system?.classId) === selectedKey));
-      if (existing) {
-        existing.system.level = Number(existing.system.level || existing.system.levels || existing.system.rank || 0) + 1;
-      } else {
-        synthetic.items.push({
-          type: 'class',
-          name: className,
-          system: {
-            ...clone(selectedClass?.system || {}),
-            level: 1,
-            classId: selectedClass?.id || selectedClass?.classId || selectedClass?.sourceId || className,
-          }
-        });
-      }
-    }
-    const projected = Number(calculateTotalBAB(synthetic));
-    return Number.isFinite(projected) ? projected : this._getCurrentBAB(actor);
-  }
-
   _normalizeSummaryKey(value) {
     return String(value || '')
       .trim()
@@ -888,41 +854,23 @@ export class SummaryStep extends ProgressionStepPlugin {
       .replace(/^_+|_+$/g, '');
   }
 
-  async _getMaxDefenseBonuses(classEntries) {
-    const { getClassDefenseBonuses } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
-    const maxes = { fortitude: 0, reflex: 0, will: 0 };
-    for (const entry of classEntries || []) {
-      let defenses = entry?.system?.defenses;
-      if (!defenses || (defenses.fortitude == null && defenses.reflex == null && defenses.will == null)) {
-        try {
-          defenses = await getClassDefenseBonuses(entry.name);
-        } catch (err) {
-          defenses = { fortitude: 0, reflex: 0, will: 0 };
-        }
-      }
-      maxes.fortitude = Math.max(maxes.fortitude, Number(defenses?.fortitude || 0));
-      maxes.reflex = Math.max(maxes.reflex, Number(defenses?.reflex || 0));
-      maxes.will = Math.max(maxes.will, Number(defenses?.will || 0));
+  /** Progression mannequin projection for the level-up review (null when it cannot be built; values it cannot resolve stay null/pending). */
+  async _projectMannequin(shell, actor, session) {
+    try {
+      const projection = await getMannequinProjection(actor, {
+        mode: 'levelup',
+        actor,
+        progressionSession: session,
+        steps: shell.steps || [],
+        stepData: shell.stepData || {},
+        mentor: shell.mentor || {},
+        sessionId: shell.element?.dataset?.sessionId || 'levelup-review',
+      }, { previewKey: `levelup-summary:${actor.id}` });
+      return projection?.stale ? null : projection;
+    } catch (err) {
+      swseLogger.warn?.('[SummaryStep] mannequin projection unavailable; level-up stats stay pending', err);
+      return null;
     }
-    return maxes;
-  }
-
-  async _getProjectedDefenseBonuses(currentClasses, selectedClass) {
-    const current = await this._getMaxDefenseBonuses(currentClasses);
-    const className = selectedClass?.name || selectedClass?.id;
-    if (!className) return current;
-    const existing = (currentClasses || []).find(c => c.name === className);
-    if (existing) return current;
-    const { getClassDefenseBonuses } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
-    let defenses = selectedClass?.system?.defenses;
-    if (!defenses || (defenses.fortitude == null && defenses.reflex == null && defenses.will == null)) {
-      defenses = await getClassDefenseBonuses(className);
-    }
-    return {
-      fortitude: Math.max(current.fortitude, Number(defenses?.fortitude || 0)),
-      reflex: Math.max(current.reflex, Number(defenses?.reflex || 0)),
-      will: Math.max(current.will, Number(defenses?.will || 0)),
-    };
   }
 
   _getAddedNames(actor, projectedList, itemType) {

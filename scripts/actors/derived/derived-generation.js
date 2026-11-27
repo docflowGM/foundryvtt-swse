@@ -107,3 +107,11 @@ export function applyDerivedSnapshot(derived, updates) {
   }
   return changed;
 }
+
+/** Seed `system.derived` (snapshot/mannequin construction): the derived-state writers live in scripts/actors/ (A-03). Returns the destination object. */
+export function ensureDerivedState(system, initial = null) {
+  if (!system || typeof system !== 'object') return null;
+  if (initial && typeof initial === 'object') system.derived = initial;
+  else system.derived ??= {};
+  return system.derived;
+}
