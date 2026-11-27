@@ -113,3 +113,6 @@ Each remaining site was classified; none is an unreviewed bypass of a *mechanica
 
 ## Owner ruling F-CMB-007 (appended 2026-11-27)
 - Removed both independent fallback attack-plan generators (`combat-feature-handlers.js`, `combat-ui-behavior-hotfix.js`) and the hotfix's duplicate Double/Triple click route. `buildFullAttackSequence` is the only sequence calculator; legacy bridge -> `executeCombatFeatureMultiattack` is the single UI route. Failing-before: an entitled actor with a multi-shot-prohibited weapon reached the roll dialog via the fallback. Test `multiattack-single-sequence-authority`; two older source-contract tests updated; weapon closure census regenerated. FOUNDRY_ACCEPTANCE_PENDING: launching Double/Triple from the sheet.
+
+## Owner ruling F-NPC-003 (appended 2026-11-27)
+- The monkey-patched follower `DefenseCalculator.calculate` wrapper is deleted. The canonical calculator now applies the published follower rules itself: owner heroic level (incl. owner-flag fallback), class save bonuses 0 for followers, template +2 (aggressive Fort / defensive Ref / utility Will) via `scripts/domain/followers/follower-defense-rules.js`, follower Reflex armor = max(owner level, armor). Droid followers keep STR for Fortitude (the wrapper had forced CON). Test `follower-defense-single-authority`. FOUNDRY_ACCEPTANCE_PENDING: follower sheet/rolls agreement.

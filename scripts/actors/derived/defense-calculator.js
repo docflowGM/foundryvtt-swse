@@ -15,6 +15,7 @@
  */
 
 import { serenityTranceActive } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/serenity-state.js";
+import { followerTemplateDefenseBonus } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-defense-rules.js';
 import { actorUsesResolvedSnapshot } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getHeroicLevel, getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
@@ -51,7 +52,7 @@ function isFollowerNpc(actor) {
 function getFollowerDefenseLevel(actor, fallbackHeroicLevel = 0) {
   if (!isFollowerNpc(actor)) return Number(fallbackHeroicLevel) || 0;
 
-  const ownerId = actor?.system?.npcProfile?.owner?.actorId || actor?.flags?.swse?.follower?.ownerId || null;
+  const ownerId = actor?.system?.npcProfile?.owner?.actorId || actor?.flags?.swse?.follower?.ownerId || actor?.getFlag?.('foundryvtt-swse', 'ownerId') || null;
   const owner = ownerId ? globalThis.game?.actors?.get?.(String(ownerId).replace(/^Actor\./, '')) : null;
   const ownerHeroicLevel = owner ? getHeroicLevel(owner) : 0;
   const storedFollowerLevel = Number(actor?.system?.level ?? actor?.system?.attributes?.level ?? 0) || 0;
@@ -716,6 +717,10 @@ export class DefenseCalculator {
       this._getSaveBonus(safeClassLevels, 'will')
     ]);
 
+    // F-NPC-003: followers take the OWNER's heroic level and no Nonheroic class save benefits; template +2 is added below.
+    const followerActor = isFollowerNpc(actor);
+    const followerTemplate = (defense) => (followerActor ? followerTemplateDefenseBonus(actor, defense) : 0);
+
     const adjustments = options?.adjustments ?? {};
     const fortAdjust = Number(adjustments.fort ?? 0) || 0;
     const refAdjust = Number(adjustments.ref ?? 0) || 0;
@@ -783,7 +788,7 @@ export class DefenseCalculator {
     let reflexAbilityResolution = this._resolveDefenseAbilityFromProfile(actor, 'reflex', reflexAbilityKey, getAbilityMod, defenseProfile);
     reflexAbilityKey = reflexAbilityResolution.key;
     let reflexAbilityMod = reflexAbilityResolution.mod;
-    const reflexClassBonus = Number(computedRefClassBonus ?? reflexState.classBonus ?? 0) || 0;
+    const reflexClassBonus = followerActor ? 0 : Number(computedRefClassBonus ?? reflexState.classBonus ?? 0) || 0;
     const reflexMiscBonus = getMiscBonus(reflexState);
     // Equipped armor is the SSOT for armor Reflex contribution.  Older actor
     // records may retain system.defenses.reflex.armor from a previous sheet
@@ -836,12 +841,15 @@ export class DefenseCalculator {
         reflexLevelTerm = Math.max(heroicLevel + Math.floor(reflexArmorBonus / 2), reflexArmorBonus);
       } else if (armorProficient && hasArmoredDefense) {
         reflexLevelTerm = Math.max(heroicLevel, reflexArmorBonus);
+      } else if (followerActor) {
+        // Follower rule (owner ruling F-NPC-003): the higher of the armor bonus and the owner's heroic-level contribution; never both.
+        reflexLevelTerm = Math.max(heroicLevel, reflexArmorBonus);
       } else {
         reflexLevelTerm = reflexArmorBonus;
       }
     }
     const reflexBase = 10 + reflexLevelTerm + reflexClassBonus + reflexSizeModifier;
-    const reflexTotalBeforePin = Math.max(1, reflexBase + reflexAbilityMod + reflexMiscBonus + reflexSpeciesBonus + refStateBonus + refAdjust + conditionPenalty + shieldReflexPenalty);
+    const reflexTotalBeforePin = Math.max(1, reflexBase + reflexAbilityMod + reflexMiscBonus + reflexSpeciesBonus + refStateBonus + refAdjust + conditionPenalty + shieldReflexPenalty + followerTemplate('reflex'));
     // Pin (SWSE RAW): a Pinned creature loses its POSITIVE Dexterity bonus
     // to Reflex Defense -- not a flat universal penalty. This mirrors the
     // flat-footed treatment's own component-aware Dex-strip immediately
@@ -880,7 +888,7 @@ export class DefenseCalculator {
       fortAbilityKey = fortAbilityResolution.key;
     }
     const fortAbilityMod = fortAbilityResolution.mod;
-    const fortClassBonus = Number(computedFortClassBonus ?? fortitudeState.classBonus ?? 0) || 0;
+    const fortClassBonus = followerActor ? 0 : Number(computedFortClassBonus ?? fortitudeState.classBonus ?? 0) || 0;
     const fortMiscBonus = getMiscBonus(fortitudeState);
     let fortArmorBonus = equippedArmor && armorProficient
       ? Number(equippedArmorStats?.fortitudeBonus ?? 0) || 0
@@ -889,13 +897,13 @@ export class DefenseCalculator {
       fortArmorBonus += 1;
     }
     const fortBase = 10 + heroicLevel + fortClassBonus + fortAbilityMod + fortArmorBonus;
-    const fortTotal = Math.max(1, fortBase + fortMiscBonus + fortSpeciesBonus + fortStateBonus + fortAdjust + conditionPenalty);
+    const fortTotal = Math.max(1, fortBase + fortMiscBonus + fortSpeciesBonus + fortStateBonus + fortAdjust + conditionPenalty + followerTemplate('fortitude'));
 
     let willAbilityKey = String(willState.ability || 'wis').toLowerCase();
     const willAbilityResolution = this._resolveDefenseAbilityFromProfile(actor, 'will', willAbilityKey, getAbilityMod, defenseProfile);
     willAbilityKey = willAbilityResolution.key;
     const willAbilityMod = willAbilityResolution.mod;
-    const willClassBonus = Number(computedWillClassBonus ?? willState.classBonus ?? 0) || 0;
+    const willClassBonus = followerActor ? 0 : Number(computedWillClassBonus ?? willState.classBonus ?? 0) || 0;
     const willMiscBonus = getMiscBonus(willState);
     const willArmorBonus = defenseProfile.defenseArmorRules.has('APPLY_ARMOR_FORT_EQUIPMENT_TO_WILL')
       && equippedArmor
@@ -905,7 +913,7 @@ export class DefenseCalculator {
     const willBase = 10 + heroicLevel + willClassBonus + willAbilityMod;
     const psychicCitadelBonus = this._hasTalent(defenseProfile, 'Psychic Citadel') ? getForceAdeptTalentClassLevel(actor, heroicLevel) : 0;
     const implantWillPenalty = ImplantRules.getWillDefensePenalty(actor);
-    const willTotal = Math.max(1, willBase + willMiscBonus + willSpeciesBonus + willArmorBonus + psychicCitadelBonus + willStateBonus + willAdjust + conditionPenalty + implantWillPenalty);
+    const willTotal = Math.max(1, willBase + willMiscBonus + willSpeciesBonus + willArmorBonus + psychicCitadelBonus + willStateBonus + willAdjust + conditionPenalty + implantWillPenalty + followerTemplate('will'));
 
     const flatFootedBase = reflexBase;
     // Flat-footed removes a positive Dexterity bonus, but never removes a

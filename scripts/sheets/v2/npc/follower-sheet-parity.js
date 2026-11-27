@@ -1,12 +1,13 @@
 // Follower-on-NPC-sheet parity (folded from patches/follower-npc-sheet-parity-hotfix.js, F-PAT-002).
 // SWSEV2NpcSheet._prepareContext / _wireNpcConceptSheetEvents call applyFollowerContext / injectFollowerSheetControls directly.
-// Logic moved verbatim; the follower DefenseCalculator patch (shadow defense authority, owner decision) stays in the hotfix.
+// Logic moved verbatim; follower defenses are computed by the canonical DefenseCalculator (F-NPC-003).
 import { InventoryEngine } from '/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js';
 import { PortraitUploadController } from '/systems/foundryvtt-swse/scripts/sheets/v2/shared/PortraitUploadController.js';
 import { SWSEStore } from '/systems/foundryvtt-swse/scripts/apps/store/store-main.js';
 import { buildVirtualUnarmedWeapon } from '/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
+import { followerTemplateType, followerTemplateDefenseBonus } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-defense-rules.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 
@@ -134,31 +135,8 @@ export function conditionPenalty(actor) {
   return [0, -1, -2, -5, -10, 0][raw] ?? 0;
 }
 
-export function templateType(actor) {
-  const raw = String(
-    actor?.flags?.swse?.follower?.templateType
-    || actor?.system?.progression?.followerTemplateType
-    || actor?.system?.progression?.followerTemplate
-    || actor?.system?.followerType
-    || actor?.system?.npcProfile?.template
-    || ''
-  ).toLowerCase();
-  if (raw.includes('aggressive')) return 'aggressive';
-  if (raw.includes('defensive')) return 'defensive';
-  if (raw.includes('utility')) return 'utility';
-  return '';
-}
-
-export function templateDefenseBonus(actor, defense) {
-  const explicit = actor?.system?.progression?.followerTemplateDefenseBonus || {};
-  const direct = finite(explicit?.[defense], NaN);
-  if (Number.isFinite(direct)) return direct;
-  const type = templateType(actor);
-  if (type === 'aggressive' && defense === 'fortitude') return 2;
-  if (type === 'defensive' && defense === 'reflex') return 2;
-  if (type === 'utility' && defense === 'will') return 2;
-  return 0;
-}
+export const templateType = followerTemplateType;
+export const templateDefenseBonus = followerTemplateDefenseBonus;
 
 export function speciesPassiveTotal(actor, targets = []) {
   const passive = actor?.flags?.swse?.speciesPassiveBonuses || {};

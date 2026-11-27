@@ -4048,3 +4048,13 @@ Improved Bantha Rush (BAB +1), Whirlwind Attack (Intelligence 13), Great Cleave 
 - **Resolution / implementation:** `buildFullAttackSequence` is the sole sequence calculator. Both fallback generators and the hotfix's duplicate Double/Triple click route are removed; the legacy action bridge → `executeCombatFeatureMultiattack` is the single UI route. Charge-combination prohibition (`multiAttackChargeViolation`) unchanged.
 - **Tests:** `tests/multiattack-single-sequence-authority.test.mjs` (two at −5, three at −10, scoped feat eligibility, Triple requires Double, missing feat, prohibited weapon form refused by the executor — failing before the change, no fallback/duplicate route in source).
 - **Status:** RESOLVED; IMPLEMENTED, OFFLINE_TESTED; not FOUNDRY_TESTED.
+
+---
+
+### F-NPC-003 — Follower defenses — RESOLVED (owner ruling, 2026-11-27)
+- **Domain:** NPC followers. **Source:** Clone Wars Campaign Guide pp. 32–34; Core Rulebook pp. 145–146.
+- **Ruling (RAW):** follower defense = 10 + owner's heroic level + relevant ability modifier (Reflex DEX; Fortitude CON for living, STR for droid/nonliving; Will WIS) + legal bonuses. Templates: +2 Fortitude (aggressive), +2 Reflex (defensive), +2 Will (utility). Armor affects Reflex under the nonstacking rule (the higher of the armor bonus and the owner's heroic-level contribution). No Nonheroic class benefits; no generic max(STR, CON).
+- **Original question (preserved):** a monkey-patched wrapper re-computed follower defenses after `DefenseCalculator.calculate` (forced CON for Fortitude even for droids, re-derived totals), a second authority for the same numbers.
+- **Implementation:** `DefenseCalculator.calculate` is the only authority (owner-level lookup incl. owner flag fallback, class save bonuses 0 for followers, template bonus via `scripts/domain/followers/follower-defense-rules.js`, follower armor = max(level, armor)). Wrapper removed; the sheet helper re-exports the shared template rule.
+- **Tests:** `tests/follower-defense-single-authority.test.mjs` (organic and droid, unequal STR/CON, three templates, ability mods, armor below/above level, owner advancement, Nonheroic class, single-result, wrapper retired).
+- **Status:** RESOLVED; IMPLEMENTED, OFFLINE_TESTED; FOUNDRY_ACCEPTANCE_PENDING (follower sheet vs rolls).
