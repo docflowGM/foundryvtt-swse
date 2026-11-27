@@ -537,8 +537,9 @@ const setUser = (isGM, id = isGM ? 'gm' : 'p1') => { globalThis.game.user = { id
   assert.ok(!fs.existsSync('scripts/apps/item-selling-system.js'), 'legacy item seller deleted');
   const resaleSrc = ['scripts/engine/store/resale-authority.js', 'scripts/engine/store/resale-service.js', 'scripts/engine/store/acquisition-record.js', 'scripts/apps/store/resale-ui.js'].map(read).join('\n').replace(/\/\*[\s\S]*?\*\/|(^|[^:])\/\/.*$/gm, '$1');
   assert.doesNotMatch(resaleSrc, /system\??\.price|calculateRawSellPrice/, 'no obsolete price field in the resale code');
-  const te = read('scripts/engine/store/transaction-engine.js');
-  const sale = te.slice(te.indexOf('static async executeSaleTransaction('), te.indexOf('static async executeAssetSaleTransaction('));
+  // 3N-TE.4: the sale settlements live in asset-settlements.js (the engine keeps thin delegates).
+  const te = read('scripts/engine/store/asset-settlements.js');
+  const sale = te.slice(te.indexOf('export async function executeSaleTransactionImpl('), te.indexOf('export async function executeAssetSaleTransactionImpl('));
   assert.doesNotMatch(sale, /salePrice = 0|normalizeCredits\(salePrice\)/, 'the sale transaction does not take a caller payout');
   assert.match(sale, /ResaleService\.verifyForCommit/);
   const gmsvc = read('scripts/ui/shell/gm/GMStoreOperationsService.js');

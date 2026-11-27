@@ -128,3 +128,10 @@ export function emitCommitted(name, build) {
     return `${name}: ${error?.message ?? error}`;
   }
 }
+
+/** H7: a cost is a finite number or a non-empty numeric string; anything else is NaN (refused by the caller). An omitted cost defaults to 0 upstream. */
+export function parseTransactionCost(value) {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string' && value.trim() !== '') return Number(value);
+  return NaN;
+}
