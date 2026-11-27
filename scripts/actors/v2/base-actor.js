@@ -1,4 +1,5 @@
 // scripts/actors/v2/base-actor.js
+import { conditionTrackPenaltyForStep } from '/systems/foundryvtt-swse/scripts/utils/condition-track-penalty.js';
 import { SWSEActorBase } from "/systems/foundryvtt-swse/scripts/actors/base/swse-actor-base.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
@@ -315,8 +316,7 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     const s = step === undefined ? this.getConditionTrackState().step : Number(step);
     const stepNum = Number.isFinite(s) ? s : 0;
     // Official SWSE: Normal(0), -1(1), -2(2), -5(3), -10(4), Helpless(5)
-    const penalties = [0, -1, -2, -5, -10, 0]; // helpless = no numeric penalty
-    return penalties[stepNum] ?? 0;
+    return conditionTrackPenaltyForStep(stepNum); // helpless = no numeric penalty
   }
 
   async setConditionTrackStep(step, { force = false } = {}) {

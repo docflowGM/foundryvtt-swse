@@ -1,6 +1,7 @@
 // Follower-on-NPC-sheet parity (folded from patches/follower-npc-sheet-parity-hotfix.js, F-PAT-002).
 // SWSEV2NpcSheet._prepareContext / _wireNpcConceptSheetEvents call applyFollowerContext / injectFollowerSheetControls directly.
 // Logic moved verbatim; follower defenses are computed by the canonical DefenseCalculator (F-NPC-003).
+import { conditionTrackPenaltyForStep } from '/systems/foundryvtt-swse/scripts/utils/condition-track-penalty.js';
 import { InventoryEngine } from '/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js';
 import { PortraitUploadController } from '/systems/foundryvtt-swse/scripts/sheets/v2/shared/PortraitUploadController.js';
 import { SWSEStore } from '/systems/foundryvtt-swse/scripts/apps/store/store-main.js';
@@ -132,7 +133,7 @@ export function conditionPenalty(actor) {
   if (Number.isFinite(direct)) return direct;
   const raw = Number(actor?.system?.conditionTrack?.current ?? actor?.system?.conditionTrack?.value ?? 0) || 0;
   if (raw < 0) return raw;
-  return [0, -1, -2, -5, -10, 0][raw] ?? 0;
+  return conditionTrackPenaltyForStep(raw);
 }
 
 export const templateType = followerTemplateType;

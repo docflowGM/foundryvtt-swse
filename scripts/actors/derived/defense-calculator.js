@@ -14,6 +14,7 @@
  *   Fortitude = STR only
  */
 
+import { conditionTrackPenaltyForStep } from '/systems/foundryvtt-swse/scripts/utils/condition-track-penalty.js';
 import { serenityTranceActive } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/serenity-state.js";
 import { followerTemplateDefenseBonus } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-defense-rules.js';
 import { actorUsesResolvedSnapshot } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
@@ -766,8 +767,7 @@ export class DefenseCalculator {
       const derivedPenalty = actor.system?.derived?.damage?.conditionPenalty;
       if (Number.isFinite(Number(derivedPenalty))) return Number(derivedPenalty);
       const step = Number(actor.system?.conditionTrack?.current ?? 0) || 0;
-      const penalties = [0, -1, -2, -5, -10, 0];
-      return penalties[step] ?? 0;
+      return conditionTrackPenaltyForStep(step);
     };
 
     const conditionPenalty = getConditionPenalty();

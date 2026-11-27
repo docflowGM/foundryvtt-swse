@@ -1,3 +1,4 @@
+import { conditionTrackPenaltyForStep } from '/systems/foundryvtt-swse/scripts/utils/condition-track-penalty.js';
 import { ResolutionContext } from '../../engine/resolution/resolution-context.js';
 import { RULES } from '../../engine/execution/rules/rule-enum.js';
 import { getHalfLevelDamageBonus, isMeleeWeapon as isRawMeleeWeapon, isRangedWeapon as isRawRangedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
@@ -27,8 +28,7 @@ import { resolveAttackBonus, resolveDamageBonus } from "/systems/foundryvtt-swse
  * @returns {number} Penalty value
  */
 export function getConditionPenalty(ctStep) {
-  const penalties = [0, -1, -2, -5, -10, 0];
-  return penalties[Math.clamp(ctStep, 0, 5)] ?? 0;
+  return conditionTrackPenaltyForStep(ctStep);
 }
 
 /* -------------------------------------------------------------------------- */
