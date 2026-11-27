@@ -71,3 +71,42 @@ const grants = (l) => l
 const src = fs.readFileSync('scripts/engine/store/provisional-ledger.js', 'utf8');
 assert.doesNotMatch(src.replace(/\/\*[\s\S]*?\*\//g, ''), /\bimport\b|game\.|ActorEngine|\.update\(|setFlag|ChatMessage|settings/, 'the ledger is pure data');
 process.stdout.write('provisional-ledger: ok\n');
+
+// ---- Phase 2 hardening (post-review) -----------------------------------------------------------------------------------------------------------------
+// 1. A RESTRICTED grant never becomes liquid, whatever its expiry policy: eligibility restriction and expiry are independent.
+{
+  const l = TransactionEngine.createProvisionalLedger()
+    .registerGrant({ id: 'droid-only', amount: 1000, eligibleCategories: [droid], policy: 'persist' })
+    .registerGrant({ id: 'general', amount: 5000, eligibleCategories: '*', policy: 'persist' })
+    .registerGrant({ id: 'general-expiring', amount: 300, eligibleCategories: '*', policy: 'expire-at-finalization' })
+    .registerGrant({ id: 'droid-expiring', amount: 200, eligibleCategories: [droid], policy: 'expire-at-finalization' });
+  const f = l.finalize();
+  assert.equal(f.liquidCredits, 5000, 'only unrestricted, persistent funds are liquid');
+  assert.equal(f.expired, 500, 'both expiring grants expire (restricted or not)');
+  assert.deepEqual(f.retainedRestricted, [{ grantId: 'droid-only', amount: 1000, eligibleCategories: [droid] }], 'a persistent restricted remainder stays restricted and is reported, never merged into liquid credits');
+  const b = l.balances(); assert.equal(b.liquid, 5000); assert.equal(b.restricted, 1200); assert.equal(b.unrestricted, 5300);
+  // a purchase that uses part of the restricted persistent grant leaves the rest restricted
+  l.purchase({ id: 'c', category: droid, cost: 700 });
+  const f2 = l.finalize();
+  assert.equal(f2.liquidCredits, 5000); assert.deepEqual(f2.retainedRestricted.map((r) => [r.grantId, r.amount]), [['droid-only', 500]]);
+}
+// 2. quote(): a caller-supplied id can neither replace the reserved quote id nor collide with a recorded purchase
+{
+  const l = grants(TransactionEngine.createProvisionalLedger());
+  l.purchase({ id: 'real', category: 'equipment', cost: 6500 });
+  const q = l.quote({ id: 'real', category: 'equipment', cost: 50 });
+  assert.equal(q.affordable, false, 'a quote with the same id as a recorded purchase is evaluated as an EXTRA purchase, not as that purchase');
+  assert.equal(l.statusOf('real').valid, true, 'the recorded purchase is unaffected by the quote');
+  assert.throws(() => l.purchase({ id: '__quote__x', category: 'equipment', cost: 1 }), /reserved/, 'ids with the quote prefix are reserved');
+  assert.equal(l.snapshot().purchases.length, 1, 'a quote records nothing');
+}
+// 3. snapshot() cannot be used to change the ledger
+{
+  const l = grants(TransactionEngine.createProvisionalLedger());
+  const snap = l.snapshot();
+  snap.grants.find((g) => g.id === 'droid-allowance').eligibleCategories.push('equipment');
+  snap.grants[1].amount = 999999; snap.purchases.push({ id: 'x', category: 'equipment', cost: 1 });
+  assert.equal(l.quote({ category: 'equipment', cost: 6500 }).affordable, true);
+  assert.equal(l.balances('equipment').eligiblePurchasingPower, 6500, 'the restricted grant did not become eligible for equipment through the snapshot');
+  assert.equal(l.snapshot().purchases.length, 0);
+}

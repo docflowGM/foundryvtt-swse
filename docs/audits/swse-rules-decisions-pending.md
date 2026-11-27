@@ -4110,3 +4110,15 @@ Discovered while building the parity harness (`tests/prg-mannequin-parity-stage-
 - **Unresolved:** the printed amounts, which purchases a droid allowance may fund, whether unspent allowance expires or becomes usable credits, and when Wealth/class credits are available relative to the droid-building step.
 - **Options:** none source-supported yet. **Recommended ruling:** none.
 - **Implementation impact:** the provisional-ledger mechanism is built rule-neutral (grant attributes are supplied by callers); wiring concrete restricted/expiring grants for droid construction, and any change to current amounts, is blocked on this ruling. **Status:** `DEFERRED_RULES_REVIEW`. **Decision authority:** project owner. **Resolution:** (blank)
+
+### TPS-RD-001 — source evidence recorded 2026-11-27 (original question above preserved; status remains DEFERRED_RULES_REVIEW until the owner approves a mapping)
+Evidence supplied by the project owner from the uploaded rulebooks (page numbers as supplied; the implementer has no rulebook text and has not independently verified them):
+| Creation method | Published rule (paraphrased) | Source as supplied |
+| --- | --- | --- |
+| Custom droid | Up to 1,000 credits may be spent on additional locomotion systems, appendages and accessories; the unspent allowance is lost; normal class starting credits are granted separately | Core Rulebook p. 186 |
+| Standard droid model | The model's final cost may not exceed 5,000 credits; an unspent budget is not retained; class starting credits are separate | Core Rulebook p. 187 |
+| Stock droid chassis | Starting credits come from the character's class and may buy droid systems, weapons and other equipment; no separate 1,000-credit allowance is specified for this method | Scavenger's Guide to Droids p. 10 |
+| Wealth talent | Grants 5,000 credits × Noble class level whenever the character gains a level, including the level at which Wealth is taken; the credits are freely spendable; their stated location affects when they are accessible | Core Rulebook p. 44 |
+- **Confirmed distinction (as supplied):** a construction allowance (custom droid), a model cost cap (standard model) and ordinary class/Wealth credits are three different mechanisms and are not one universal droid credit pool. The 5,000 standard-model figure is a cap on the model, not a transferable wallet grant.
+- **Still unresolved (owner):** (a) the mapping of each creation method onto ledger grants and eligible categories; (b) how credits with a stated accessible location are presented and when they become spendable; (c) any optional house rule overriding the published construction methods. The ledger carries a restricted persistent remainder as `retainedRestricted` and never converts it to liquid credits; whether any carry-over is allowed is part of (a).
+- **Implementation impact:** no droid/Wealth grant mapping is implemented. **Recommended ruling:** none. **Status:** `DEFERRED_RULES_REVIEW`. **Resolution:** (blank)

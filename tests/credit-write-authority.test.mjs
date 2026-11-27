@@ -17,9 +17,18 @@ const ALLOWED = {
   'scripts/engine/abilities/progression/progression-event-processor.js': 'LEGACY_DEBT: Wealth-talent credit grant; runtime-unreachable (test-only import), duplicates the plan compiler',
   'scripts/engine/progression/engine/equipment-engine.js': 'LEGACY_DEBT: runtime-unreachable (only imported by the legacy confirm-step), retire with it',
 };
-const WRITE_RX = /['"]system\.credits['"]\s*(?::|\]\s*=)|system\.credits\s*=[^=]/;
+// Write shapes: dotted-key object entries / assignments, compound assignment, setProperty/updateSource targets, nested `system: { credits: ... }` literals,
+// computed or concatenated keys. Still a static text ratchet (a determined indirect write can evade it), not proof of authority.
+const WRITE_RXS = [
+  /['"]system\.credits['"]\s*(?::|\]\s*=)/,
+  /system\.credits\s*(?:[-+*\/]|\?\?|\|\|)?=[^=]/,
+  /(?:setProperty|updateSource|mergeObject)\s*\([^)]*['"]system\.credits['"]/,
+  /\bsystem\s*:\s*\{[^}]*\bcredits\s*:/,
+  /['"]system['"]\s*\]\s*\[\s*['"]credits['"]|\[\s*['"]credits['"]\s*\]\s*(?:[-+*\/]|\?\?|\|\|)?=[^=]/,
+  /\.system\.credits\s*(?:\+\+|--)/,
+];
 const FORM_FIELD_MAP = /['"]system\.credits['"]\s*:\s*['"](?:number|Credits)['"]/; // field type / label maps are not writes
-const WRITE = { test: (line) => WRITE_RX.test(line) && !FORM_FIELD_MAP.test(line) };
+const WRITE = { test: (line) => WRITE_RXS.some((rx) => rx.test(line)) && !FORM_FIELD_MAP.test(line) };
 const SKIP_DIRS = ['scripts/engine/store/', 'scripts/governance/actor-engine/'];
 
 const out = [];

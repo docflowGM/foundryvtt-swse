@@ -13,11 +13,13 @@
  *    persisting), then unrestricted, then by priority, then registration order. It is funded in full or not at all (never partial); idempotent by id.
  *  - Everything is DERIVED from the ordered (grants, purchases) lists on every call, so replay after an upstream change is deterministic: purchases
  *    that are no longer affordable or eligible are reported `invalid` with a reason; they never produce a negative balance.
- *  - finalize(): the liquid credits left, the amounts that expire, and the allocation record. Persisting any of it is the caller's TransactionEngine
+ *  - finalize(): the liquid credits left (unrestricted, persistent funds ONLY), the amounts that expire, the restricted remainders that stay restricted
+ *    (`retainedRestricted`; how such a remainder is carried is a rule question, TPS-RD-001, never decided here), and the allocation record. Persisting any of it is the caller's TransactionEngine
  *    settlement, not this module.
  */
 
 const POLICIES = new Set(['persist', 'expire-at-finalization']);
+const QUOTE_PREFIX = '__quote__';
 
 function fail(message) { throw new Error(`ProvisionalLedger: ${message}`); }
 const money = (n) => Math.round(Number(n) * 100) / 100;
@@ -33,7 +35,7 @@ function normalizeGrant(raw) {
   const eligibleCategories = eligible === '*' ? '*' : [...new Set((Array.isArray(eligible) ? eligible : [eligible]).map((c) => String(c)))].sort();
   if (eligibleCategories !== '*' && eligibleCategories.length === 0) fail(`grant "${id}" lists no eligible category (use '*' for unrestricted)`);
   return Object.freeze({
-    id, amount, policy, eligibleCategories,
+    id, amount, policy, eligibleCategories: eligibleCategories === '*' ? '*' : Object.freeze(eligibleCategories),
     source: raw.source ?? null, step: raw.step ?? null, ruleRef: raw.ruleRef ?? null,
     priority: Number.isFinite(Number(raw.priority)) ? Number(raw.priority) : 0,
   });
@@ -42,6 +44,7 @@ function normalizeGrant(raw) {
 function normalizePurchase(raw) {
   const id = String(raw?.id ?? '').trim();
   if (!id) fail('a purchase needs a stable id');
+  if (id.startsWith(QUOTE_PREFIX) && !raw.__quote) fail(`purchase id "${id}" uses the reserved quote prefix`);
   const cost = money(raw.cost);
   if (!Number.isFinite(cost) || cost < 0) fail(`purchase "${id}" cost must be a non-negative number`);
   const category = String(raw.category ?? '').trim();
@@ -88,9 +91,15 @@ export function evaluateProvisionalLedger(grants, purchases) {
     allocations.push({ purchaseId: p.id, category: p.category, cost: p.cost, draws });
   }
   const left = grants.map((g) => ({ grantId: g.id, remaining: remaining.get(g.id), policy: g.policy, restricted: isRestricted(g) }));
+  // Eligibility restriction and expiry are INDEPENDENT. Only an UNRESTRICTED, PERSISTENT remainder is liquid; a restricted persistent remainder stays
+  // restricted (reported, never merged into liquid credits); an expiring remainder expires whether or not it is restricted.
   const expiring = money(left.filter((l) => l.policy === 'expire-at-finalization').reduce((s, l) => s + l.remaining, 0));
-  const liquid = money(left.filter((l) => l.policy !== 'expire-at-finalization').reduce((s, l) => s + l.remaining, 0));
-  return { allocations, invalid, left, expiring, liquid };
+  const liquid = money(left.filter((l) => l.policy !== 'expire-at-finalization' && !l.restricted).reduce((s, l) => s + l.remaining, 0));
+  const byGrant = new Map(grants.map((g) => [g.id, g]));
+  const retainedRestricted = left
+    .filter((l) => l.policy !== 'expire-at-finalization' && l.restricted && l.remaining > 0)
+    .map((l) => ({ grantId: l.grantId, amount: l.remaining, eligibleCategories: [...byGrant.get(l.grantId).eligibleCategories] }));
+  return { allocations, invalid, left, expiring, liquid, retainedRestricted };
 }
 
 export function createProvisionalLedger() {
@@ -125,10 +134,12 @@ export function createProvisionalLedger() {
     },
     /** Would this purchase be fully funded right now (after all recorded purchases)? Read-only. */
     quote(raw) {
-      const p = normalizePurchase({ id: '__quote__', ...raw });
+      // the quote id is internal: a caller-supplied id is ignored and can never match a recorded purchase
+      const quoteId = `${QUOTE_PREFIX}${purchases.length}`;
+      const p = normalizePurchase({ category: raw?.category, cost: raw?.cost, id: quoteId, __quote: true });
       const out = evaluateProvisionalLedger(grants, [...purchases, p]);
-      const bad = out.invalid.find((x) => x.id === '__quote__');
-      return bad ? { affordable: false, reason: bad.reason } : { affordable: true, draws: out.allocations.at(-1).draws };
+      const bad = out.invalid.find((x) => x.id === quoteId);
+      return bad ? { affordable: false, reason: bad.reason } : { affordable: true, draws: out.allocations.at(-1).draws.map((d) => ({ ...d })) };
     },
     statusOf(id) {
       const out = evaluateProvisionalLedger(grants, purchases);
@@ -152,9 +163,9 @@ export function createProvisionalLedger() {
     /** Finalization view: only VALID purchases settle; restricted/expiring residuals expire and never become liquid credits. Pure: persists nothing. */
     finalize() {
       const out = evaluateProvisionalLedger(grants, purchases);
-      return { liquidCredits: out.liquid, expired: out.expiring, allocations: out.allocations, invalid: out.invalid, complete: out.invalid.length === 0 };
+      return { liquidCredits: out.liquid, expired: out.expiring, retainedRestricted: out.retainedRestricted, allocations: out.allocations, invalid: out.invalid, complete: out.invalid.length === 0 };
     },
-    snapshot() { return { grants: grants.map((g) => ({ ...g })), purchases: purchases.map((p) => ({ ...p })) }; },
+    snapshot() { return { grants: grants.map((g) => ({ ...g, eligibleCategories: g.eligibleCategories === '*' ? '*' : [...g.eligibleCategories] })), purchases: purchases.map((p) => ({ ...p })) }; },
   };
   return api;
 }
