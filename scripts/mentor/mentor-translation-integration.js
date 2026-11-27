@@ -288,5 +288,5 @@ export class MentorTranslationIntegration {
 }
 
 // Export for convenience
-export { AurebeshTranslator } from "/systems/foundryvtt-swse/scripts/engine/mentor/aurebesh-translator.js";
+export { AurebeshTranslator } from "/systems/foundryvtt-swse/scripts/ui/dialogue/aurebesh-translator.js";
 export { TRANSLATION_PRESETS } from "/systems/foundryvtt-swse/scripts/ui/dialogue/translation-presets.js";

@@ -28,3 +28,23 @@ export const DialogPort = Object.freeze({
 export function openForceAlchemyWorkbenchPort(...args) {
   return resolvePort('forceAlchemyWorkbench')(...args);
 }
+
+/**
+ * Shell document-mutation guard (registered by ui/shell/ShellMutationGuard.js). Engines wrap a deliberate document write in it; when the shell module is not
+ * loaded (headless/tests) there is no guard to satisfy, so the write simply runs.
+ */
+export function withShellDocumentMutationPort(host, fn, options) {
+  const guard = registry.get('shellMutationGuard');
+  return guard ? guard.withDocumentMutation(host, fn, options) : (typeof fn === 'function' ? fn() : undefined);
+}
+
+/** Force power / regimen roll-option dialogs (registered by sheets/v2/character-sheet/force-roll-dialog.js). */
+export const ForceRollDialogPort = Object.freeze({
+  promptPower: (...args) => resolvePort('forceRollDialog').promptForcePowerRollOptions(...args),
+  promptRegimen: (...args) => resolvePort('forceRollDialog').promptForceRegimenRollOptions(...args),
+});
+
+/** Launches a progression-suite step (registered by apps/progression-framework/progression-suite-launcher.js). */
+export function launchProgressionSuiteStepPort(...args) {
+  return resolvePort('progressionSuiteLauncher')(...args);
+}

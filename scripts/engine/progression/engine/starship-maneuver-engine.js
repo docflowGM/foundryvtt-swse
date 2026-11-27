@@ -16,7 +16,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ManeuverSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/maneuvers/maneuver-slot-validator.js";
-import { launchProgressionSuiteStep } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-suite-launcher.js";
+import { launchProgressionSuiteStepPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 
 export class StarshipManeuverEngine {
   /**
@@ -91,7 +91,7 @@ export class StarshipManeuverEngine {
     }
 
     try {
-      const shell = await launchProgressionSuiteStep(actor, 'starship-maneuvers', {
+      const shell = await launchProgressionSuiteStepPort(actor, 'starship-maneuvers', {
         reason: 'starship-maneuver-trigger',
         source: 'starship-maneuver-engine',
         requestedCount: Math.max(0, Number(count) || 0),

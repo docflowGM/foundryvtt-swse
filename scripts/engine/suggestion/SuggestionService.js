@@ -12,7 +12,7 @@
  * - Optionally persist minimal SuggestionState in actor flags
  */
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ShellMutationGuard } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js";
+import { withShellDocumentMutationPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 // Lazy: the Coordinator imports this module, so a static import here would be a cycle (F-SUG cycle break).
 const getSuggestionEngineCoordinator = async () => (await import("/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js")).SuggestionEngineCoordinator;
@@ -619,7 +619,7 @@ export class SuggestionService {
       snapshot = state;
     }
 
-    const write = () => ShellMutationGuard.withDocumentMutation(null, () => actor.setFlag('foundryvtt-swse', 'suggestionState', snapshot), {
+    const write = () => withShellDocumentMutationPort(null, () => actor.setFlag('foundryvtt-swse', 'suggestionState', snapshot), {
       reason,
       surfaceId: 'progression'
     });

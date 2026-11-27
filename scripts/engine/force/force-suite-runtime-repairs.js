@@ -2,7 +2,7 @@ import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/for
 import { ForceRegimenExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-regimen-executor.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
-import { promptForcePowerRollOptions, promptForceRegimenRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
+import { ForceRollDialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 
 /**
  * Repaint the actor's sheet without a data render. Formerly done by scripts/patches/force-suite-render-guard-hotfix.js, which wrapped every open
@@ -316,7 +316,7 @@ async function executeRepairedForceButton(button) {
   }
 
   const isRecovery = power.system?.discarded ?? false;
-  const rollOptions = isRecovery ? null : await promptForcePowerRollOptions({ actor, power, sourceElement: button });
+  const rollOptions = isRecovery ? null : await ForceRollDialogPort.promptPower({ actor, power, sourceElement: button });
   if (!isRecovery && !rollOptions) return;
 
   button.disabled = true;
@@ -441,7 +441,7 @@ async function handleUseForceRegimen(button) {
   }
   button.disabled = true;
   try {
-    const rollOptions = await promptForceRegimenRollOptions({ actor, regimen, sourceElement: button });
+    const rollOptions = await ForceRollDialogPort.promptRegimen({ actor, regimen, sourceElement: button });
     if (!rollOptions) return;
     const result = await ForceRegimenExecutor.executeRegimen(actor, itemId, rollOptions);
     if (result?.success) {

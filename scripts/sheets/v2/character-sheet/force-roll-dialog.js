@@ -1,3 +1,4 @@
+import { registerUiPort } from '/systems/foundryvtt-swse/scripts/utils/ui-ports.js';
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 
 /**
@@ -528,3 +529,5 @@ export async function promptForceRegimenRollOptions({ actor, regimen, sourceElem
     }).render(true);
   });
 }
+
+registerUiPort('forceRollDialog', { promptForcePowerRollOptions, promptForceRegimenRollOptions });

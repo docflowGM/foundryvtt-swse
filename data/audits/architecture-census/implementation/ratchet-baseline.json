@@ -98,12 +98,8 @@
   },
   "P-A07-ui": {
    "scripts/engine/combat/features/combat-feature-panel-renderer.js>scripts/sheets/v2/character-sheet/combat-feature-sheet-adapter.js": 1,
-   "scripts/engine/combat/ui/CombatUIAdapter.js>scripts/ui/chat/chat-interaction-bridge.js": 1,
    "scripts/engine/crew/ally-assignment-service.js>scripts/apps/progression-framework/adapters/follower-mutation-transaction.js": 1,
    "scripts/engine/crew/ally-assignment-service.js>scripts/apps/follower-creator.js": 1,
-   "scripts/engine/force/force-suite-runtime-repairs.js>scripts/sheets/v2/character-sheet/force-roll-dialog.js": 1,
-   "scripts/engine/mentor/aurebesh-translator.js>scripts/ui/dialogue/aurebesh-translator.js": 1,
-   "scripts/engine/progression/engine/starship-maneuver-engine.js>scripts/apps/progression-framework/progression-suite-launcher.js": 1,
    "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js>scripts/apps/progression-framework/steps/force-power-step.js": 1,
    "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js>scripts/apps/progression-framework/steps/talent-step.js": 1,
    "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js>scripts/apps/progression-framework/steps/feat-step.js": 1,
@@ -112,8 +108,7 @@
    "scripts/engine/progression/profile/galactic-profile-service.js>scripts/apps/progression-framework/adapters/progression-subtype-adapter-registry.js": 1,
    "scripts/engine/progression/profile/galactic-profile-service.js>scripts/apps/progression-framework/shell/progression-session.js": 1,
    "scripts/engine/progression/profile/galactic-profile-service.js>scripts/apps/progression-framework/shell/active-step-computer.js": 1,
-   "scripts/engine/progression/utils/acquisition-authority.js>scripts/apps/progression-framework/shell/progression-reconciler.js": 1,
-   "scripts/engine/suggestion/SuggestionService.js>scripts/ui/shell/ShellMutationGuard.js": 1
+   "scripts/engine/progression/utils/acquisition-authority.js>scripts/apps/progression-framework/shell/progression-reconciler.js": 1
   },
   "P-A08": {},
   "P-A09-prototype": {
