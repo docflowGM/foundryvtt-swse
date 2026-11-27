@@ -1989,13 +1989,6 @@ export class ProgressionFinalizer {
     }
   }
 
-  static _hasWealthTalentSelection(selections = {}) {
-    const talentSelections = [
-      ...(Array.isArray(selections.talents) ? selections.talents : []),
-      ...this._collectSelectionEntries(selections, ['talent']),
-    ];
-    return this._selectionListHasName(talentSelections, ['Wealth']);
-  }
 
   static _isLineageEligibleClass(classSelection = null) {
     const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
@@ -2027,98 +2020,13 @@ export class ProgressionFinalizer {
 
 
 
-  static _actorHasWealthTalent(actor) {
-    return actor?.items?.some?.(item => item?.type === 'talent' && this._selectionListHasName([item], ['Wealth'])) === true;
-  }
 
 
-  static _readClassLevelValue(classEntry = null) {
-    return Math.max(0, Number(
-      classEntry?.system?.level
-      ?? classEntry?.system?.levels
-      ?? classEntry?.system?.rank
-      ?? classEntry?.level
-      ?? classEntry?.classLevel
-      ?? 0
-    ) || 0);
-  }
 
-  static _classAggregationKey(classEntry = null) {
-    return this._normalizeNameKey(
-      classEntry?.system?.classId
-      || classEntry?.system?.sourceId
-      || classEntry?.system?.className
-      || classEntry?.classId
-      || classEntry?.sourceId
-      || classEntry?.id
-      || classEntry?.name
-      || classEntry?.className
-      || classEntry
-    );
-  }
 
-  static _resolveLevelupSelectedClass(selections = {}, sessionState = {}) {
-    return selections?.class
-      || sessionState?.progressionSession?.getSelection?.('class')
-      || sessionState?.progressionSession?.draftSelections?.class
-      || sessionState?.draftSelections?.class
-      || sessionState?.class
-      || null;
-  }
 
-  static _getLineageEligibleClassLevelCountAfterLevelup(actor, selections = {}, sessionState = {}) {
-    const lineageLevelsByClass = new Map();
-    const addClassLevel = (classEntry) => {
-      if (!classEntry || !this._isLineageEligibleClass(classEntry)) return;
-      const key = this._classAggregationKey(classEntry);
-      if (!key) return;
-      const level = this._readClassLevelValue(classEntry);
-      lineageLevelsByClass.set(key, Math.max(lineageLevelsByClass.get(key) || 0, level));
-    };
 
-    for (const classItem of actor?.items || []) {
-      if (classItem?.type === 'class') addClassLevel(classItem);
-    }
-    for (const classEntry of Array.isArray(actor?.system?.classes) ? actor.system.classes : []) {
-      addClassLevel(classEntry);
-    }
-    for (const classEntry of Array.isArray(actor?.system?.progression?.classLevels) ? actor.system.progression.classLevels : []) {
-      addClassLevel(classEntry);
-    }
 
-    let lineageLevelCount = Array.from(lineageLevelsByClass.values()).reduce((sum, level) => sum + level, 0);
-    const selectedClass = this._resolveLevelupSelectedClass(selections, sessionState);
-    if (this._isLineageEligibleClass(selectedClass)) {
-      // The actor still contains the pre-level-up class state at finalization time.
-      // Add this event's selected class level once so Noble 1 grants 5000, Noble 2
-      // grants 10000, and non-Lineage classes after Noble keep paying based on the
-      // existing Noble/Lineage levels.
-      lineageLevelCount += 1;
-    }
-    return lineageLevelCount;
-  }
-
-  static _getLevelupCharacterLevelKey(actor, selections = {}, sessionState = {}) {
-    try {
-      const levelContext = buildLevelUpEventContext(actor, sessionState.progressionSession, { selectedClass: selections.class });
-      const enteringLevel = Number(levelContext?.enteringLevel);
-      if (Number.isFinite(enteringLevel) && enteringLevel > 0) return Math.floor(enteringLevel);
-    } catch (_err) {}
-    const fallback = Number(sessionState?.targetLevel ?? actor?.system?.level ?? 1);
-    return Number.isFinite(fallback) ? Math.max(1, Math.floor(fallback)) : 1;
-  }
-
-  static _computeLevelupWealthCreditGrant(actor, selections = {}, sessionState = {}) {
-    if (!this._hasWealthTalentSelection(selections) && !this._actorHasWealthTalent(actor)) return 0;
-
-    const history = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
-    const characterLevel = this._getLevelupCharacterLevelKey(actor, selections, sessionState);
-    const grantedCharLevels = history?.['swse.talent.wealth']?.characterLevelsGranted || [];
-    if (grantedCharLevels.map(Number).includes(characterLevel)) return 0;
-
-    const lineageLevelCount = this._getLineageEligibleClassLevelCountAfterLevelup(actor, selections, sessionState);
-    return Math.max(0, lineageLevelCount * 5000);
-  }
 
 
   static _resolveLevelUpCurrentHp({ currentHpValue = 0, hpGain = 0, nextHpMax = 1, mode = 'none' } = {}) {

@@ -5,6 +5,7 @@
  * Level-up: delta review surface showing only what changed.
  */
 
+import { ProgressionEconomyPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js';
 import { getMannequinProjection } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mannequin/mannequin-builder.js';
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ProjectionEngine } from '../shell/projection-engine.js';
@@ -17,7 +18,6 @@ import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/en
 import { ProgressionFinalizer } from '../shell/progression-finalizer.js';
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
 import { buildClassSkillKeySet, buildSkillDisplay, normalizeSkillKey } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-display.js';
-import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { HPGeneratorEngine } from '/systems/foundryvtt-swse/scripts/engine/HP/HPGeneratorEngine.js';
 import { RollEngine } from '/systems/foundryvtt-swse/scripts/engine/roll-engine.js';
 import { resolveLevelUpHitDie } from '/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js';
@@ -1479,7 +1479,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       ...(selections || {}),
       class: selectedClass || selections?.class || session?.getSelection?.('class') || session?.draftSelections?.class || null,
     };
-    return ProgressionFinalizer._computeLevelupWealthCreditGrant(actor, effectiveSelections, {
+    return ProgressionEconomyPlanBuilder.computeLevelupWealthGrant(actor, effectiveSelections, {
       mode: 'levelup',
       progressionSession: session || globalThis.game?.swse?.currentProgressionShell?.progressionSession || null,
       targetLevel: session?.targetLevel,
@@ -1518,18 +1518,9 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   _computeWealthCreditGrant(classModel, selections = {}) {
-    const talents = [
-      ...(Array.isArray(selections?.talents) ? selections.talents : []),
-      ...this._collectSelectionEntries(selections, ['talent']),
-    ];
-    const hasWealth = talents.some(talent => String(talent?.name || talent?.label || talent?.id || talent || '').toLowerCase().replace(/[^a-z0-9]+/g, '') === 'wealth');
-    if (!hasWealth) return 0;
-    const classKey = String(classModel?.name || classModel?.label || classModel?.id || selections?.class?.name || selections?.class || '')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '');
-    if (classKey !== 'noble' && classKey !== 'corporateagent') return 0;
-    const level = Math.max(1, Number(selections?.survey?.startingLevel ?? this._startingLevel ?? 1) || 1);
-    return level * 5000;
+    // Canonical calculation: ProgressionEconomyPlanBuilder (the compiler that writes the credits at finalization).
+    const effective = { ...(selections || {}), class: selections?.class || classModel || null };
+    return ProgressionEconomyPlanBuilder.computeChargenWealthGrant(effective, null, { targetLevel: this._startingLevel });
   }
 
   _parseMaxCredits(value) {
@@ -1713,62 +1704,15 @@ export class SummaryStep extends ProgressionStepPlugin {
     return 'RX-44';
   }
 
-  async _stageStartingCreditsForStore(actor, shell = null) {
-    const expectedBudget = Math.max(0, Number(this._summary?.startingCredits || 0));
-    if (!actor || expectedBudget <= 0) return;
-
-    const existingState = actor.getFlag?.('swse', 'chargenStore') || actor.flags?.swse?.chargenStore || {};
-    const previousBudget = Math.max(0, Number(existingState.startingCredits || 0));
-    const currentCredits = Math.max(0, Number(actor.system?.credits ?? 0) || 0);
-
-    let nextCredits = currentCredits;
-    if (!existingState.initialized) {
-      nextCredits = Math.max(currentCredits, expectedBudget);
-    } else if (expectedBudget > previousBudget) {
-      nextCredits = currentCredits + (expectedBudget - previousBudget);
-    }
-
-    if (nextCredits === currentCredits && existingState.initialized && previousBudget === expectedBudget) return;
-
-    await ActorEngine.updateActor(actor, {
-      'system.credits': nextCredits,
-      'flags.swse.chargenStore': {
-        initialized: true,
-        startingCredits: expectedBudget,
-        lastStagedCredits: nextCredits,
-        sessionId: shell?.sessionId || shell?.progressionSession?.sessionId || null,
-        updatedAt: new Date().toISOString(),
-      },
-    }, {
-      source: 'SummaryStep.enterStore.stageStartingCredits',
-      meta: { guardKey: 'chargen-store-starting-credits' },
-    });
-  }
-
+  /**
+   * Chargen shopping is DEFERRED until the character exists. Progression is draft-only until final confirmation: the store buys against a real actor's
+   * wallet and items, so opening it here would require writing starting credits and a staging flag onto the actor before confirmation (the retired
+   * staging path), which also left a cancelled creation with a changed wallet. Starting credits are compiled once, at finalization, by
+   * ProgressionEconomyPlanBuilder; shopping then uses the ordinary store. Nothing is written here.
+   */
   async enterStore(actor, shell = null) {
-    // A Galactic Profile session carries its equipment and exact final balance as DRAFT-ONLY economy state in the
-    // single MutationPlan. The chargen store stages credits and a flag on the actor before confirmation, which would
-    // violate "no actor mutation before final confirmation" and could double-charge, so it is not opened here.
-    if (shell?.progressionSession?.draftSelections?.profileApplication?.economy) {
-      globalThis.ui?.notifications?.info?.('This Galactic Profile already includes its starting equipment and credits. Shopping opens after the character is created.');
-      return null;
-    }
-    const { SWSEStore } = await import('../../../apps/store/store-main.js');
-    await this._stageStartingCreditsForStore(actor, shell);
-    return SWSEStore.open(actor, {
-      closeAfterCheckout: true,
-      entryOrigin: 'chargen-summary',
-      onCheckoutComplete: async () => {
-        await this._aggregateSummary(shell);
-        shell?.requestRender?.({ preserveScroll: true, reason: 'chargen-store-checkout' });
-      },
-      onClose: async () => {
-        await this._aggregateSummary(shell);
-        shell?.requestRender?.({ preserveScroll: true, reason: 'chargen-store-close' });
-      },
-    }).catch(err => {
-      swseLogger.error('[SummaryStep.enterStore] Failed to open store', err);
-    });
+    globalThis.ui?.notifications?.info?.('Shopping opens after the character is created. Your starting credits are granted when you finish.');
+    return null;
   }
 
   async handleAction(action, event, target, shell) {

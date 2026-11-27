@@ -140,7 +140,7 @@
   },
   "P-A10": {
    "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js": 1,
-   "scripts/apps/progression-framework/steps/summary-step.js": 2,
+   "scripts/apps/progression-framework/steps/summary-step.js": 1,
    "scripts/domain/vehicles/vehicle-modification-rules.js": 1,
    "scripts/engine/store/ledger-service.js": 2,
    "scripts/engine/vehicles/vehicle-logistics-service.js": 2,

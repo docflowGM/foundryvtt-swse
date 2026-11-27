@@ -11,7 +11,6 @@ const ALLOWED = {
   'scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js': 'PLAN_COMPILER',
   'scripts/domain/vehicles/vehicle-modification-factory.js': 'LEGACY_DEBT: vehicle modification plan writes the wallet (route through TransactionEngine)',
   'scripts/apps/follower-creator.js': 'LEGACY_DEBT: follower creation sets starting/zero credits (follower lifecycle; route through the provisional ledger)',
-  'scripts/apps/progression-framework/steps/summary-step.js': 'LEGACY_DEBT: preview plan value `system.credits: nextCredits`',
   'scripts/sheets/v2/character-like-sheet.js': 'LEGACY_DEBT: sheet credit edit',
   'scripts/sheets/v2/actor-sheet-base.js': 'LEGACY_DEBT: sheet reset',
   'scripts/engine/abilities/progression/progression-event-processor.js': 'LEGACY_DEBT: Wealth-talent credit grant; runtime-unreachable (test-only import), duplicates the plan compiler',

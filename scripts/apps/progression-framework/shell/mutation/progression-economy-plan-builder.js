@@ -281,6 +281,16 @@ function normalizeAttributeValues(attr = {}, actor = null) {
 }
 
 export class ProgressionEconomyPlanBuilder {
+  /** The ONE Wealth-talent grant calculation for chargen (previews and finalization both call this). */
+  static computeChargenWealthGrant(selections = {}, actor = null, sessionState = {}) {
+    return computeWealthCreditGrant(selections, actor, sessionState);
+  }
+
+  /** The ONE Wealth-talent grant calculation for a level-up (previews and finalization both call this). */
+  static computeLevelupWealthGrant(actor, selections = {}, sessionState = {}) {
+    return computeLevelupWealthCreditGrant(actor, selections, sessionState);
+  }
+
   static buildChargenSet({ actor, selections = {}, sessionState = {}, isDroidProgression = false } = {}) {
     const set = {};
     const summary = selections.survey || {};
