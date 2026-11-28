@@ -92,9 +92,11 @@ test('old vehicle sheet reads live HP before stale hull and exposes read-only so
   assert.match(context, /vehicleRuntimeProjection = getVehicleRuntimeProjection\(actor\)/);
   assert.match(context, /vehicleRuntimeProjection,/);
   assert.match(sheet, /classifyVehicleActorSource\(this\.actor, undefined, \{ mode: 'runtime' \}\)/);
-  assert.match(sheet, /sourceAssessment\.kind === 'canonical'/);
-  assert.match(sheet, /'system\.hp\.value'/);
-  assert.doesNotMatch(sheet.slice(sheet.indexOf('const canonicalWritable ='),sheet.indexOf('const isWritable =')),
+  const contract = readFileSync('scripts/sheets/v2/vehicle-sheet/vehicle-edit-form-contract.js', 'utf8');
+  assert.match(sheet, /isVehicleFieldWritable\(path, sourceAssessment\.kind\)/);
+  assert.match(contract, /kind === 'canonical'/);
+  assert.match(contract, /'system\.hp\.value'/);
+  assert.doesNotMatch(contract.slice(contract.indexOf('VEHICLE_CANONICAL_WRITABLE ='),contract.indexOf('Nullable-integer')),
     /system\.hull|system\.weapons|system\.reflexDefense|system\.fortitudeDefense|system\.cost/);
 });
 

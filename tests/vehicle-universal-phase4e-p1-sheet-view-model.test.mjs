@@ -182,5 +182,7 @@ test('printed attack reference has no Fire control and canonical edit tab only e
 });
 
 test('sheet submit policy still protects source fields (P0 gate unchanged)', () => {
-  assert.match(sheet, /canonicalWritable = new Set\(\[\s*'name', 'img', 'system\.hp\.value', 'system\.shields\.value',/);
+  const contract = readFileSync('scripts/sheets/v2/vehicle-sheet/vehicle-edit-form-contract.js', 'utf8');
+  assert.match(contract, /VEHICLE_CANONICAL_WRITABLE = Object\.freeze\(new Set\(\[\s*'name', 'img', 'system\.hp\.value', 'system\.shields\.value',/);
+  assert.match(sheet, /isVehicleFieldWritable\(path, sourceAssessment\.kind\)/);
 });

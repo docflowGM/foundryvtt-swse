@@ -39,6 +39,7 @@ import { EnhancedCommander } from "/systems/foundryvtt-swse/scripts/engine/comba
 import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
 import { SWSEV2ActorSheetBase } from "/systems/foundryvtt-swse/scripts/sheets/v2/actor-sheet-base.js";
 import { activateBrowseInspect } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/browse-inspect-ui.js";
+import { isVehicleFieldWritable, coerceVehicleFieldValue } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-edit-form-contract.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 
 /**
@@ -879,55 +880,12 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
 
   async _onSubmitVehicleActorForm(event) {
     event?.preventDefault?.();
-    const writableExact = new Set([
-      'name',
-      'img',
-      'system.category',
-      'system.type',
-      'system.size',
-      'system.challengeLevel',
-      'system.cost',
-      'system.availability',
-      'system.hull.value',
-      'system.hull.max',
-      'system.shields.value',
-      'system.shields.max',
-      'system.shieldRating',
-      'system.damageReduction',
-      'system.reflexDefense',
-      'system.fortitudeDefense',
-      'system.damageThreshold',
-      'system.armorBonus',
-      'system.speed',
-      'system.maxVelocity',
-      'system.maneuver',
-      'system.hyperdrive',
-      'system.crew',
-      'system.crewQuality',
-      'system.passengers',
-      'system.cargo',
-      'system.payload',
-      'system.cover',
-      'system.notes',
-      'system.description',
-      'system.details.notes'
-    ]);
-    const writablePatterns = [
-      /^system\.weapons\.\d+\.(name|arc|attackBonus|damage|range|fireControl|notes)$/,
-      /^system\.attributes\.(str|dex|int|wis|cha)\.(base|racial|temp)$/
-    ];
     const sourceAssessment = classifyVehicleActorSource(this.actor, undefined, { mode: 'runtime' });
     if (sourceAssessment.kind === 'invalid-canonical')
       throw new Error('UNIVERSAL_VEHICLE_SHEET_INVALID_SOURCE: ' + sourceAssessment.errors.join(','));
     // Source-only Actors are not free-form templates: mutable runtime state
     // and callsign/notes are separate from published source facts.
-    const canonicalWritable = new Set([
-      'name', 'img', 'system.hp.value', 'system.shields.value',
-      'system.notes', 'system.details.notes', 'system.description'
-    ]);
-    const isWritable = (path) => sourceAssessment.kind === 'canonical'
-      ? canonicalWritable.has(path)
-      : writableExact.has(path) || writablePatterns.some(pattern => pattern.test(path));
+    const isWritable = (path) => isVehicleFieldWritable(path, sourceAssessment.kind);
     const root = this.element instanceof HTMLElement ? this.element : null;
     const source = event?.target?.closest?.('form') || root;
     if (!source) return;
@@ -937,7 +895,7 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
       const path = field.getAttribute('name');
       if (!path || !isWritable(path)) return;
       if (field.type === 'checkbox') allowed[path] = field.checked;
-      else allowed[path] = field.value;
+      else allowed[path] = coerceVehicleFieldValue(path, field.value);
     });
 
     if (!Object.keys(allowed).length) return;
