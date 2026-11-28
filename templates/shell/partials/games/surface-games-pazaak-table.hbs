@@ -197,7 +197,7 @@
       </aside>
     </div>
 
-    {{#if vm.activeTable.pazaak.viewerSeat.hasHand}}
+    {{#if vm.activeTable.pazaak.viewerSeat}}
     <section class="swse-pazaak-hand-panel swse-pazaak-hand-dock {{#unless vm.activeTable.pazaak.viewerSeat.canAct}}is-waiting{{/unless}}">
       <div class="swse-pazaak-builder-head swse-pazaak-hand-head">
         <div>
@@ -218,6 +218,7 @@
         </div>
       </div>
 
+      {{#unless vm.activeTable.pazaak.viewerSeat.hasHand}}<p class="swse-pazaak-preview">No side cards left in your hand. You can still stand or end your turn.</p>{{/unless}}
       <div class="swse-pazaak-hand-grid swse-pazaak-hand-row">
         {{#each vm.activeTable.pazaak.viewerSeat.hand}}
         <article class="swse-pazaak-hand-card tone-{{this.tone}} {{#if this.canPlay}}is-playable{{/if}}">

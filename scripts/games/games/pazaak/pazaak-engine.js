@@ -495,6 +495,11 @@ function applySeatSideCard(session, state, seat, player, cardInstanceId, choice 
   pushPazaakEvent(session, state, 'play-side-card', seat.seatId, next.lastAction, { cardLabel: label, tone: result.playedCard?.tone || 'card' });
   const status = finalizeTurnStatus(session, state, seat.seatId, { allowRepair: false });
   if (!['bust', 'twenty', 'filled'].includes(status)) {
+    if (!profile) {
+      // Human seat: playing a side card does NOT end the turn. The seat keeps the turn (phase "action-spent": no second side card)
+      // and must explicitly Stand or End Turn. Forced results (bust / 20 / full board) still resolve and advance below.
+      return { ok: true };
+    }
     next.lastAction = 'Played a side card and ended the turn.';
     pushPazaakEvent(session, state, 'end-turn', seat.seatId, next.lastAction, { tone: 'turn' });
   }

@@ -179,7 +179,8 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
     showHand: isViewer,
     canAct: canChooseAction,
     canStand: canChooseAction,
-    canEndTurn: canChooseAction && !actionSpent,
+    canEndTurn: canChooseAction,
+    canPlaySideCard: canChooseAction && !actionSpent && hand.length > 0,
     rulesHint: bustRisk ? 'Over 20: play a negative side card now or bust when you end/stand.' : (canChooseAction ? 'Choose one action: play one side card, stand, or end turn.' : ''),
     statusLabel: isThinking ? 'THINKING' : (player.bust ? 'BUST' : (bustRisk ? 'REPAIR OR BUST' : (player.filledTable ? 'FULL BOARD' : (player.stood ? 'STAND' : (isCurrent ? 'TURN' : 'WAIT')))))
   };
