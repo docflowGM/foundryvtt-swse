@@ -1,5 +1,5 @@
 import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js';
-import { buildSkillDisplay } from '../utils/skill-display.js';
+import { buildSkillDisplay } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-display.js';
 
 export class CustomPlanetBackgroundDialog extends SWSEApplicationV2 {
   static DEFAULT_OPTIONS = {

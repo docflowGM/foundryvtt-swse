@@ -27,6 +27,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { VehicleRules } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle/VehicleRules.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 export class SubsystemEngine {
 
@@ -205,13 +206,10 @@ export class SubsystemEngine {
 
     await this._setSubsystemTier(vehicle, subsystem, newTier);
 
-    await ChatMessage.create({
-      content: `<div class="swse-subsystem-msg">
+    await SWSEChat.postHTML({ actor: vehicle, content: `<div class="swse-subsystem-msg">
         <strong>Subsystem Repaired — ${vehicle.name}</strong><br>
         ${this._formatSubsystemName(subsystem)}: ${currentTier} → ${newTier}
-      </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: vehicle })
-    });
+      </div>` });
 
     return { oldTier: currentTier, newTier };
   }
@@ -339,13 +337,10 @@ export class SubsystemEngine {
   /** @private */
   static async _postEscalationMessage(vehicle, subsystem, oldTier, newTier, penalties) {
     const desc = penalties.description ?? '';
-    await ChatMessage.create({
-      content: `<div class="swse-subsystem-msg">
+    await SWSEChat.postHTML({ actor: vehicle, content: `<div class="swse-subsystem-msg">
         <strong>Subsystem Damaged — ${vehicle.name}</strong><br>
         ${this._formatSubsystemName(subsystem)}: ${oldTier} → <strong>${newTier}</strong>
         ${desc ? `<br><em>${desc}</em>` : ''}
-      </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: vehicle })
-    });
+      </div>` });
   }
 }

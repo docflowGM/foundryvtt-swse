@@ -57,14 +57,6 @@ const STYLE_IDS = Object.freeze([
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-force-alchemy.css',
   },
   {
-    id: 'swse-app-responsive-galactic-records-css',
-    href: 'systems/foundryvtt-swse/styles/system/app-responsive-galactic-records.css',
-  },
-  {
-    id: 'swse-app-responsive-actor-creation-entry-css',
-    href: 'systems/foundryvtt-swse/styles/system/app-responsive-actor-creation-entry.css',
-  },
-  {
     id: 'swse-app-responsive-assets-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-assets.css',
   },
@@ -273,12 +265,8 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.sa-win--phase5),
     .application:has([data-force-alchemy-root]),
     .application:has(.sa-body),
-    .application:has(.galactic-records-browser),
     .application:has(.browser-content),
     .application:has(.templates-list),
-    .application:has(.actor-creation-entry),
-    .application:has(.entry-choices),
-    .application:has(.entry-choice-card),
     .application:has(.swse-shell-surface--asset-bay),
     .application:has(.swse-asset-bay-grid),
     .application:has(.swse-asset-bay-mode-pills),

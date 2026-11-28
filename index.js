@@ -88,6 +88,7 @@ import { installSwseFlagScopeCompatibility } from "./scripts/utils/flags/swse-fl
 import { registerNpcDamageHydrationHooks } from "./scripts/engine/import/npc-damage-hydration-hooks.js";
 import { AttackRollDiagnostics } from "./scripts/engine/combat/attack-roll-diagnostics.js";
 import { registerActorPerfDiagnostics } from "./scripts/utils/actor-perf-diagnostics.js";
+import { isResponsibleGM } from "./scripts/utils/responsible-gm.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
 
@@ -303,7 +304,8 @@ Hooks.once("ready", async () => {
 
   onDiscoveryReady();
 
-  if (game.user.isGM) {
+  // F-MIG-002: only the responsible (active) GM runs world-data load and startup migrations; with two GMs connected, both clients no longer run them.
+  if (isResponsibleGM()) {
     await WorldDataLoader.autoLoad();
     try {
       await repairWorldForcePowerAbilityMeta({ silent: true });

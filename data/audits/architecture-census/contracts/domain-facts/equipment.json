@@ -1,0 +1,1080 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "equipment",
+ "name": "Weapons, armor, equipment, inventory and encumbrance",
+ "kind": "mechanical",
+ "files": 377,
+ "runtimeSloc": 15576,
+ "runtimeFiles": 92,
+ "counts": {
+  "files": 377,
+  "runtimeModules": 91,
+  "runtimeSloc": 15473,
+  "reachability": {
+   "orphan-unreferenced": 3,
+   "reachable-static": 85,
+   "test-only-import": 3
+  },
+  "nonRuntimeByRole": {
+   "asset": 4,
+   "data": 12,
+   "evidence-data": 49,
+   "evidence-or-doc": 92,
+   "module": 1,
+   "presentation-style": 6,
+   "presentation-template": 17,
+   "test": 47,
+   "tool": 58
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/items/weapon-runtime/index.js",
+   "consumers": 71,
+   "sloc": 25,
+   "role": "composition-wiring",
+   "exports": [],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 360
+  },
+  {
+   "path": "scripts/items/weapon-branch-resolver.js",
+   "consumers": 36,
+   "sloc": 337,
+   "role": "normalizer",
+   "exports": [
+    "resolveWeaponBranchFamily",
+    "getWeaponBranch",
+    "isRangedWeapon",
+    "isMeleeWeapon",
+    "isLightWeaponForActor",
+    "isNaturalWeaponOnly",
+    "isNaturalOrUnarmedWeapon",
+    "defaultAttackAttributeForBranch",
+    "normalizeWeaponForWrite",
+    "normalizeWeaponBranchFamily",
+    "isTruthyEquipState",
+    "isItemEquipped"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 369
+  },
+  {
+   "path": "scripts/engine/equipment/combat-readiness.js",
+   "consumers": 35,
+   "sloc": 74,
+   "role": "module",
+   "exports": [
+    "readCombatReadiness",
+    "describeWeaponReadiness",
+    "getWeaponReadiness",
+    "isWeaponReadied",
+    "isWeaponHeld",
+    "getReadiedWeapons",
+    "listWeaponReadiness",
+    "VIRTUAL_UNARMED_ID",
+    "isVirtualUnarmedAttack",
+    "isCombatSourceReady",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/inventory/ammo-system.js",
+   "consumers": 33,
+   "sloc": 333,
+   "role": "module-with-writes",
+   "exports": [
+    "AmmoSystem",
+    "default"
+   ],
+   "writes": 3,
+   "actorEngineCalls": 3,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/items/armor-data-resolver.js",
+   "consumers": 27,
+   "sloc": 396,
+   "role": "normalizer",
+   "exports": [
+    "ARMOR_TYPE_OPTIONS",
+    "ARMOR_SIZE_OPTIONS",
+    "ARMOR_AVAILABILITY_OPTIONS",
+    "ARMOR_STORAGE_CONTRACT",
+    "normalizeArmorType",
+    "isEnergyShieldItem",
+    "isArmorItemEquipped",
+    "armorProficiencyRank",
+    "armorProficiencyCovers",
+    "getArmorProficiencyPenalty",
+    "collectActorArmorProficiencies",
+    "actorHasArmorProficiencyForType"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 355
+  },
+  {
+   "path": "scripts/engine/inventory/InventoryEngine.js",
+   "consumers": 23,
+   "sloc": 331,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "InventoryEngine"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 8,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/items/weapon-runtime/ability-selector.js",
+   "consumers": 20,
+   "sloc": 33,
+   "role": "module",
+   "exports": [
+    "canonicalFeatSlug",
+    "featIs",
+    "featKeyOf",
+    "abilityChoiceMatchesWeapon",
+    "abilityKeysOfActor"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/items/weapon-runtime/special-mechanics.js",
+   "consumers": 20,
+   "sloc": 483,
+   "role": "module",
+   "exports": [
+    "POLICY",
+    "TIMING",
+    "FAMILIES",
+    "DEFER_OWNER_BY_FAMILY",
+    "DEFER_OWNER_BY_ID",
+    "extractSpecialMechanics",
+    "damageShapeFromMechanics",
+    "evaluateConditionalDamage",
+    "replaceBaseDieSize",
+    "sizeIndex",
+    "evaluateTargetSizeCondition",
+    "evaluateCtRiderAttackCondition"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/items/weapon-runtime/attack-consumer.js",
+   "consumers": 19,
+   "sloc": 303,
+   "role": "module",
+   "exports": [
+    "hasCanonicalHint",
+    "resolveAttackWeaponRuntime",
+    "resolveCanonicalAttackProficiency",
+    "resolveActorRange",
+    "rangeBandForDistance",
+    "resolveCanonicalAbilityAttackBonus",
+    "summarizeAttackRuntime",
+    "effectiveDamageMode",
+    "weaponFormRecord",
+    "assertDamageSelectionResolvable",
+    "assertAttackFormResolvable",
+    "assertDistanceInRange"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/items/weapon-runtime/errors.js",
+   "consumers": 15,
+   "sloc": 42,
+   "role": "module",
+   "exports": [
+    "WeaponRuntimeError",
+    "ERROR_CODES",
+    "reportWeaponRuntimeError"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/items/weapon-runtime/canonical-range.js",
+   "consumers": 13,
+   "sloc": 115,
+   "role": "module",
+   "exports": [
+    "RANGE_BANDS",
+    "normalizeRangeBand",
+    "resolveCanonicalRange",
+    "assertRangeSelectionResolvable",
+    "canonicalRangePenalty",
+    "canonicalDamageRangePenalty",
+    "resolveRangeEnvironment",
+    "RELATION_RANGE_GRANT",
+    "familyBandSquares",
+    "applyAbilityRangeGrants",
+    "bandForDistance"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/engine/equipment/equipment-transaction-journal.js",
+   "consumers": 12,
+   "sloc": 132,
+   "role": "module",
+   "exports": [
+    "JOURNAL_SCHEMA_VERSION",
+    "JOURNAL_MAX_ENTRIES",
+    "TXN_PHASE",
+    "RESOLVED_PHASES",
+    "JOURNAL_STATUS",
+    "JournalError",
+    "readJournal",
+    "toStored",
+    "isUnresolved",
+    "findEntry",
+    "unresolvedItemIds",
+    "addPreparedEntry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/equipment/intent-fingerprint.js",
+   "consumers": 12,
+   "sloc": 116,
+   "role": "module",
+   "exports": [
+    "MAX_DEPTH",
+    "CanonicalizationError",
+    "canonicalize",
+    "utf8Bytes",
+    "sha256Hex",
+    "fingerprintIntent",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/items/weapon-runtime/area-shape.js",
+   "consumers": 12,
+   "sloc": 56,
+   "role": "module",
+   "exports": [
+    "resolveAreaShape",
+    "resolveDetonation",
+    "validateDetonationTimer",
+    "resolveAutofireArea",
+    "summarizeAreaShape"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/items/weapon-runtime/wielding-size.js",
+   "consumers": 11,
+   "sloc": 127,
+   "role": "module",
+   "exports": [
+    "sizeIndexOf",
+    "sizeRulesOf",
+    "effectiveSizeOf",
+    "classifySize",
+    "resolveEffectiveWieldingSize",
+    "sizeStateOf",
+    "ownedSizeStateOf",
+    "wornClassOf",
+    "resolveHeldGroup",
+    "designedTwoHandedOf"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/engine/encumbrance/EncumbranceEngine.js",
+   "consumers": 10,
+   "sloc": 148,
+   "role": "engine-or-service",
+   "exports": [
+    "EncumbranceEngine",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/equipment/anatomy-resolver.js",
+   "consumers": 10,
+   "sloc": 283,
+   "role": "normalizer",
+   "exports": [
+    "ANATOMY_STATUS",
+    "FUNCTIONAL_STATES",
+    "ANATOMY_SOURCE",
+    "TEMPORARY_UNRESOLVED_EXCEPTION_TRAIT_IDS",
+    "TEMPORARY_FAIL_CLOSED_PUBLICATION_IDENTITIES",
+    "AnatomyInputError",
+    "resolveEffectiveAnatomy",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 362
+  },
+  {
+   "path": "scripts/engine/equipment/equipment-state-coordinator.js",
+   "consumers": 9,
+   "sloc": 537,
+   "role": "module",
+   "exports": [
+    "GM_LOCAL_CONTEXT",
+    "INTENT_TYPES",
+    "GRIPS",
+    "OWNED_PATHS",
+    "IGNITE_PATHS",
+    "COMBINED_DRAW_IGNITE_ACTION_ID",
+    "OUTCOME",
+    "DEFERRED_DECISION_ID",
+    "EquipmentIntentError",
+    "validateIntent",
+    "planEquipmentIntent",
+    "executeEquipmentIntent"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 2,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/visuals/weapon-visual-profile-resolver.js",
+   "consumers": 9,
+   "sloc": 239,
+   "role": "normalizer",
+   "exports": [
+    "WeaponVisualProfileResolver",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/items/weapon-runtime/attack-shape.js",
+   "consumers": 9,
+   "sloc": 218,
+   "role": "module",
+   "exports": [
+    "normalizeToken",
+    "groupTokenFromChoice",
+    "resolveAttackShape",
+    "abilityProhibitedForShape",
+    "sequenceConstraintViolation",
+    "featChoiceMatchesShape",
+    "featChoiceSelectors",
+    "canonicalSelectionFromContext"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/items/weapon-runtime/condition-policy.js",
+   "consumers": 9,
+   "sloc": 153,
+   "role": "module",
+   "exports": [
+    "REQUIREMENT_TYPES",
+    "policyFor",
+    "conditionContextKeys",
+    "registeredConditionCount",
+    "registeredConditionKeys",
+    "SIZE_RANK",
+    "evaluateCondition"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 369
+  },
+  {
+   "path": "scripts/engine/inventory/item-activation-state.js",
+   "consumers": 8,
+   "sloc": 5,
+   "role": "module",
+   "exports": [
+    "isItemActivated",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/items/weapon-runtime/control-rules.js",
+   "consumers": 8,
+   "sloc": 182,
+   "role": "engine-or-service",
+   "exports": [
+    "CONTROL_STATES",
+    "MANEUVERS",
+    "sizeRankOf",
+    "sizeGate",
+    "rangeGate",
+    "controlDeclarationOf",
+    "maneuverLegality",
+    "dueRecurring",
+    "recurringEventId",
+    "controlRecord",
+    "CONTROL_END_REASONS",
+    "grabAttackPenalty"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/items/weapon-runtime/owned-state.js",
+   "consumers": 8,
+   "sloc": 109,
+   "role": "module",
+   "exports": [
+    "WIELDED",
+    "STOCK",
+    "patchOwnedState",
+    "wieldingConstraintsOf",
+    "resolveWielding",
+    "resolveOpportunityEligibility",
+    "opportunityChoices",
+    "resolveReach",
+    "DURATION_ROUNDS",
+    "currentMachineState",
+    "machineTransitionAllowed",
+    "machineAfterTransition"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/items/weapon-runtime/weapon-authority-registry.js",
+   "consumers": 7,
+   "sloc": 49,
+   "role": "registry",
+   "exports": [
+    "WeaponAuthorityRegistry",
+    "setSharedWeaponAuthorityRegistry",
+    "getSharedWeaponAuthorityRegistry",
+    "getWeaponAuthorityRegistryLoadFailure",
+    "resetSharedWeaponAuthorityRegistry",
+    "loadWeaponAuthorityRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/items/swse-item-sheet.js",
+   "sloc": 2524,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/custom-item-dialog.js",
+   "sloc": 852,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/items/item-defaults.js",
+   "sloc": 615,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/equipment/equipment-state-coordinator.js",
+   "sloc": 537,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/items/weapon-runtime/special-mechanics.js",
+   "sloc": 483,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/equipment/equipment-skill-hook-resolver.js",
+   "sloc": 438,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/items/armor-data-resolver.js",
+   "sloc": 396,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/items/weapon-branch-resolver.js",
+   "sloc": 337,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/equipment/equipment-normalizer.js",
+   "sloc": 335,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/inventory/ammo-system.js",
+   "sloc": 333,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/apps/custom-item-dialog.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 852,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/character-sheet/inventory-ui.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 134,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/equipment/equipment-player-request-route.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 87,
+   "tests": 2
+  },
+  {
+   "path": "scripts/engine/equipment/equipment-request-transport.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 71,
+   "tests": 2
+  },
+  {
+   "path": "scripts/engine/equipment/equipment-executor-lease.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 44,
+   "tests": 1
+  },
+  {
+   "path": "scripts/utils/item-filters.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 38,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "actor-core": 11,
+  "combat": 11,
+  "ui-shell": 9,
+  "infrastructure": 8,
+  "droids": 8,
+  "customization": 6,
+  "species": 4,
+  "feats": 3,
+  "force": 3,
+  "dev-tooling": 2,
+  "settings-config": 2,
+  "data-registries": 2,
+  "abilities-effects": 2
+ },
+ "dependedOnByDomains": {
+  "combat": 103,
+  "ui-shell": 39,
+  "customization": 13,
+  "rolls": 9,
+  "talents": 8,
+  "infrastructure": 7,
+  "abilities-effects": 7,
+  "store-economy": 6,
+  "feats": 5,
+  "mentor-suggestion": 5,
+  "compat-patches": 5,
+  "actor-core": 4,
+  "force": 2,
+  "progression": 2,
+  "droids": 2,
+  "vehicles": 1,
+  "species": 1,
+  "skills": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 24,
+   "sites": [
+    {
+     "path": "scripts/items/swse-item-sheet.js",
+     "domain": "equipment",
+     "reach": "reachable-static",
+     "count": 19,
+     "lines": [
+      226,
+      233,
+      1135,
+      1144,
+      1228,
+      1689,
+      1956,
+      2133,
+      2456,
+      2477,
+      2485,
+      2492,
+      2510,
+      2515,
+      2544,
+      2568,
+      2582,
+      2598,
+      2809
+     ]
+    },
+    {
+     "path": "scripts/engine/inventory/ammo-system.js",
+     "domain": "equipment",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      212,
+      277,
+      434
+     ]
+    },
+    {
+     "path": "scripts/apps/gear-templates-engine.js",
+     "domain": "equipment",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      137,
+      156
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A04-presentation-direct-writes",
+   "invariant": "A-04",
+   "count": 2,
+   "sites": [
+    {
+     "path": "scripts/apps/gear-templates-engine.js",
+     "domain": "equipment",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      137,
+      156
+     ]
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "damage-formula",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "droids",
+    "species",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/items/weapon-runtime/attack-consumer.js:238 resolveCanonicalDamage"
+   ]
+  },
+  {
+   "responsibility": "damage-application",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/items/weapon-runtime/attack-consumer.js:238 resolveCanonicalDamage"
+   ]
+  },
+  {
+   "responsibility": "attack-bonus",
+   "otherDomains": [
+    "combat",
+    "data-registries",
+    "rolls",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/items/weapon-runtime/attack-consumer.js:115 resolveCanonicalAbilityAttackBonus",
+    "scripts/items/weapon-runtime/proficiency-resolver.js:205 resolveAbilityAttackBonus"
+   ]
+  },
+  {
+   "responsibility": "price-computation",
+   "otherDomains": [
+    "combat",
+    "customization",
+    "droids",
+    "feats",
+    "mentor-suggestion",
+    "skills",
+    "store-economy"
+   ],
+   "sites": [
+    "scripts/apps/gear-templates-engine.js:42 getTemplateCost",
+    "scripts/data/gear-templates.js:169 calculateTemplateCost",
+    "scripts/engine/inventory/ammo-system.js:90 resolveAmmoCost",
+    "scripts/items/weapon-runtime/canonical-resource.js:15 resolveCanonicalResourceCost"
+   ]
+  },
+  {
+   "responsibility": "encumbrance",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "infrastructure",
+    "progression"
+   ],
+   "sites": [
+    "scripts/engine/encumbrance/EncumbranceEngine.js:35 calculateEncumbrance",
+    "scripts/engine/encumbrance/EncumbranceEngine.js:250 _defaultEncumbranceState"
+   ]
+  },
+  {
+   "responsibility": "modifier-aggregation",
+   "otherDomains": [
+    "abilities-effects",
+    "combat",
+    "feats",
+    "rolls",
+    "skills",
+    "species"
+   ],
+   "sites": [
+    "scripts/items/weapon-runtime/special-mechanics.js:496 resolveAttackStageModifiers"
+   ]
+  }
+ ],
+ "exactClones": [
+  {
+   "tokens": 170,
+   "sites": [
+    "scripts/apps/custom-item-dialog.js:30 scalarFormValue",
+    "scripts/engine/items/safe-item-factory.js:67 normalizeScalarText",
+    "scripts/items/item-defaults.js:121 normalizeScalarText",
+    "scripts/sheets/v2/context/RowTransformers.js:22 safeText"
+   ]
+  }
+ ],
+ "duplicateSymbolNames": [
+  {
+   "name": "isMeleeWeapon",
+   "files": [
+    "scripts/combat/utils/combat-utils.js",
+    "scripts/engine/combat/combat-stat-rules.js",
+    "scripts/items/weapon-branch-resolver.js"
+   ]
+  },
+  {
+   "name": "ATTACK_ABILITY_OVERRIDE_FLAG",
+   "files": [
+    "scripts/engine/combat/combat-stat-rules.js",
+    "scripts/items/weapon-runtime/attack-ability-override.js"
+   ]
+  },
+  {
+   "name": "bandForDistance",
+   "files": [
+    "scripts/domain/vehicles/vehicle-weapon-range.js",
+    "scripts/items/weapon-runtime/canonical-range.js"
+   ]
+  },
+  {
+   "name": "canonicalFeatSlug",
+   "files": [
+    "scripts/items/weapon-runtime/ability-selector.js",
+    "scripts/utils/canonical-ability-identity.js"
+   ]
+  },
+  {
+   "name": "canonicalize",
+   "files": [
+    "scripts/domain/vehicles/vehicle-postcondition.js",
+    "scripts/engine/equipment/intent-fingerprint.js"
+   ]
+  },
+  {
+   "name": "canonicalSelectionFromContext",
+   "files": [
+    "scripts/engine/combat/weapon-target-gate-classifiers.js",
+    "scripts/items/weapon-runtime/attack-shape.js"
+   ]
+  },
+  {
+   "name": "controlDeclarationOf",
+   "files": [
+    "scripts/engine/combat/weapon-control-effects.js",
+    "scripts/items/weapon-runtime/control-rules.js"
+   ]
+  },
+  {
+   "name": "evaluateCondition",
+   "files": [
+    "scripts/items/weapon-runtime/condition-policy.js",
+    "scripts/mentor/mentor-conditional-variants.js"
+   ]
+  },
+  {
+   "name": "getSkills",
+   "files": [
+    "scripts/core/swse-data.js",
+    "scripts/utils/item-filters.js"
+   ]
+  },
+  {
+   "name": "isRangedWeapon",
+   "files": [
+    "scripts/engine/combat/combat-stat-rules.js",
+    "scripts/items/weapon-branch-resolver.js"
+   ]
+  },
+  {
+   "name": "normalizeRangeBand",
+   "files": [
+    "scripts/engine/combat/weapon-target-gate-classifiers.js",
+    "scripts/items/weapon-runtime/canonical-range.js"
+   ]
+  },
+  {
+   "name": "RANGE_BANDS",
+   "files": [
+    "scripts/domain/vehicles/vehicle-weapon-range.js",
+    "scripts/items/weapon-runtime/canonical-range.js"
+   ]
+  },
+  {
+   "name": "readAttackAbilityOverride",
+   "files": [
+    "scripts/engine/combat/combat-stat-rules.js",
+    "scripts/items/weapon-runtime/attack-ability-override.js"
+   ]
+  }
+ ],
+ "liveHooks": [],
+ "nonRuntimeEvidence": [
+  "data/audits/equipment-acceptance-debt.json",
+  "data/audits/frozen/pre-cutover-weapons.db",
+  "data/audits/item-canonicalization-rolling-authority.json",
+  "data/audits/item-phase-0-ssot-census.json",
+  "data/audits/item-weapons-phase-2b-kotor-standalone-authority.json",
+  "data/audits/item-weapons-phase-2c-galaxy-at-war-standalone-authority.json",
+  "data/audits/item-weapons-phase-2e-clone-wars-standalone-authority.json",
+  "data/audits/item-weapons-phase-2f-jedi-academy-standalone-authority.json",
+  "data/audits/item-weapons-phase-2g-legacy-era-standalone-authority.json",
+  "data/audits/item-weapons-phase-2h-unknown-regions-standalone-authority.json",
+  "data/audits/item-weapons-phase-2i-rebellion-era-standalone-authority.json",
+  "data/audits/item-weapons-phase-2j-scum-and-villainy-standalone-authority.json",
+  "data/audits/item-weapons-phase-2k-galaxy-of-intrigue-standalone-authority.json",
+  "data/audits/item-weapons-phase-2l-threats-of-the-galaxy-standalone-authority.json",
+  "data/audits/item-weapons-phase-3a-cross-publication-reconciliation.json",
+  "data/audits/item-weapons-phase-3b-canonical-authority.json",
+  "data/audits/item-weapons-phase-3c-production-disposition-ledger.json",
+  "data/audits/item-weapons-phase-3d-global-freeze.json",
+  "data/audits/item-weapons-phase-4a-simple-semantic-rolling.json",
+  "data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json",
+  "data/audits/item-weapons-phase-4d-rifle-semantic-rolling.json",
+  "data/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.json",
+  "data/audits/item-weapons-phase-4f-heavy-semantic-rolling.json",
+  "data/audits/item-weapons-phase-4g-exotic-census.json",
+  "data/audits/item-weapons-phase-4g-exotic-semantic-rolling.json",
+  "data/audits/item-weapons-phase-4h-authority-reconciliation.json",
+  "data/audits/item-weapons-phase-4h-b-global-semantic-qa.json",
+  "data/audits/item-weapons-phase-4h-d-phase-4-certification.json",
+  "data/audits/item-weapons-phase-4h-global-semantic-authority.json",
+  "data/audits/item-weapons-schema-v2.9-ammo-normalization.json",
+  "data/audits/phase-5c-weapon-projection-report.json",
+  "data/audits/weapon-phase-5a-runtime-consumer-matrix.json",
+  "data/audits/weapon-phase-5b-consumption-map.json",
+  "data/audits/weapon-phase-5b-r-condition-policy-census.json",
+  "data/audits/weapon-phase-5b-r-mode-reconciliation.json",
+  "data/audits/weapon-phase-5b-schema-field-census.json",
+  "data/audits/weapon-phase-5b-special-mechanic-consumption.json",
+  "data/audits/weapon-phase-5d-e-special-mechanic-census.json",
+  "data/audits/weapon-phase-5d-g-attack-form-census.json",
+  "data/audits/weapon-phase-5d-h-closure-census.json",
+  "data/audits/weapon-phase-5d-i-a-input-manifest.json",
+  "data/audits/weapon-phase-5d-i-b-input-manifest.json",
+  "data/audits/weapon-phase-5d-i-c-a-input-manifest.json",
+  "data/audits/weapon-phase-5d-i-c-b-input-manifest.json",
+  "data/audits/weapon-phase-5d-i-c-c-input-manifest.json",
+  "data/audits/weapon-phase-5d-i-d-input-manifest.json",
+  "data/audits/weapon-v2-3gate-field-consumers.json",
+  "data/audits/weapon-v2-3gate-gate-a-crosswalk.json",
+  "data/audits/weapon-v2-3gate-math-matrix.json",
+  "docs/architecture/character-item-compendium-ssot.md",
+  "docs/architecture/equipment-ecosystem-authority-contract-v1.md",
+  "docs/architecture/equipment-ecosystem-e3a4-clean-break-posture-contract.md",
+  "docs/architecture/equipment-ecosystem-e4c0-ssot-persistence-contract.md",
+  "docs/audits/branch-consolidation-inventory-2026-11-19.json",
+  "docs/audits/branch-consolidation-inventory-2026-11-19.md",
+  "docs/audits/combat-phase-0b-action-inventory.json",
+  "docs/audits/combat-phase-0e-weapon-mode-ammo-ledger.json",
+  "docs/audits/combat-phase-0g-damage-type-inventory.json",
+  "docs/audits/equipment-ecosystem-e0-baseline.md",
+  "docs/audits/equipment-ecosystem-e0-consumer-matrix.md",
+  "docs/audits/equipment-ecosystem-e0-e1-handoff.md",
+  "docs/audits/equipment-ecosystem-e0-e9-roadmap.md",
+  "docs/audits/equipment-ecosystem-e2b-i1-schema-foundation-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e2b-i3a-biological-integration-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e2b-i3b-universal-integrity-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e3a2-physical-occupancy-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e3a3-weapon-grip-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e3a4-posture-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e3a5-effective-posture-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e4c0-consumer-cutover-manifest.md",
+  "docs/audits/equipment-ecosystem-e4c0-execution-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e4c1-wp1-wp2-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e4c1-wp3a-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e4c1-wp4-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e4c1-wp5-c1-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e4c1-wp5-c2-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e4c1-wp5-c3-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e4c1-wp5-checkpoint.md",
+  "docs/audits/equipment-ecosystem-eq-int-1-checkpoint.md",
+  "docs/audits/equipment-ecosystem-wp3b-g18-g36-checkpoint.md",
+  "docs/audits/equipment-ecosystem-wp3b-gate1-checkpoint.md",
+  "docs/audits/equipment-workspace-convergence-audit.md",
+  "docs/audits/equipment-workspace-integration-map.md",
+  "docs/audits/equipment-workspace-post-redesign-review.md",
+  "docs/audits/item-canonicalization-rolling-authority.md",
+  "docs/audits/item-phase-0-ssot-census.md",
+  "docs/audits/item-weapons-phase-2b-kotor-standalone-authority.md",
+  "docs/audits/item-weapons-phase-2c-galaxy-at-war-standalone-authority.md",
+  "docs/audits/item-weapons-phase-2e-clone-wars-standalone-authority.md",
+  "docs/audits/item-weapons-phase-2f-jedi-academy-standalone-authority.md",
+  "docs/audits/item-weapons-phase-2g-legacy-era-standalone-authority.md",
+  "docs/audits/item-weapons-phase-2h-unknown-regions-standalone-authority.md",
+  "docs/audits/item-weapons-phase-2i-rebellion-era-standalone-authority.md",
+  "docs/audits/item-weapons-phase-2j-scum-and-villainy-standalone-authority.md",
+  "docs/audits/item-weapons-phase-2k-galaxy-of-intrigue-standalone-authority.md",
+  "docs/audits/item-weapons-phase-2l-threats-of-the-galaxy-standalone-authority.md",
+  "docs/audits/item-weapons-phase-3a-cross-publication-reconciliation.md",
+  "docs/audits/item-weapons-phase-3b-canonical-authority.md",
+  "docs/audits/item-weapons-phase-3c-production-disposition-ledger.md",
+  "docs/audits/item-weapons-phase-3d-global-freeze.md",
+  "docs/audits/item-weapons-phase-4a-simple-semantic-rolling.md",
+  "docs/audits/item-weapons-phase-4c-pistol-semantic-rolling.md",
+  "docs/audits/item-weapons-phase-4d-rifle-semantic-rolling.md",
+  "docs/audits/item-weapons-phase-4e-advanced-melee-semantic-rolling.md",
+  "docs/audits/item-weapons-phase-4f-heavy-semantic-rolling.md",
+  "docs/audits/item-weapons-phase-4g-exotic-census.md",
+  "docs/audits/item-weapons-phase-4g-exotic-semantic-rolling.md",
+  "docs/audits/item-weapons-phase-4h-authority-reconciliation.md",
+  "docs/audits/item-weapons-phase-4h-b-global-semantic-qa.md",
+  "docs/audits/item-weapons-phase-4h-d-phase-4-certification.md",
+  "docs/audits/item-weapons-phase-4h-global-semantic-authority.md",
+  "docs/audits/item-weapons-schema-v2.9-ammo-normalization.md",
+  "docs/audits/phase-5c-weapon-compatibility-projection.md",
+  "docs/audits/reconciliation-v2-phase0-inventory.md",
+  "docs/audits/weapon-phase-5a-runtime-adapter-contract.md",
+  "docs/audits/weapon-phase-5a-runtime-ingestion-map.md",
+  "docs/audits/weapon-phase-5b-canonical-consumption-architecture.md",
+  "docs/audits/weapon-phase-5b-implementation-roadmap.md",
+  "docs/audits/weapon-phase-5b-r-runtime-authority-reconciliation.md",
+  "docs/audits/weapon-phase-5d-a-attack-profile-proficiency-consumption.md",
+  "docs/audits/weapon-phase-5d-b-profile-selection-attack-ability.md",
+  "docs/audits/weapon-phase-5d-c-damage-consumption.md",
+  "docs/audits/weapon-phase-5d-d-range-resource-consumption.md",
+  "docs/audits/weapon-phase-5d-e-special-effect-consumption.md",
+  "docs/audits/weapon-phase-5d-f-multiattack-convergence.md",
+  "docs/audits/weapon-phase-5d-g-fire-state-area-selectors.md",
+  "docs/audits/weapon-phase-5d-h-executable-field-closure.md",
+  "docs/audits/weapon-phase-5d-i-a-core-attack-residuals.md",
+  "docs/audits/weapon-phase-5d-i-b-wielding-activation-threat.md",
+  "docs/audits/weapon-phase-5d-i-c-a-outcome-persistent-effects.md",
+  "docs/audits/weapon-phase-5d-i-c-b-grapple-control.md",
+  "docs/audits/weapon-phase-5d-i-c-c-reaction-defense.md",
+  "docs/audits/weapon-phase-5d-i-d-a-stealth-sensing.md",
+  "docs/audits/weapon-phase-5d-i-d-b1-mounting.md",
+  "docs/audits/weapon-phase-5d-i-d-b2-wielding-size.md",
+  "docs/audits/weapon-phase-5d-i-d-b4-durability.md",
+  "docs/audits/weapon-phase-5d-i-d-b5-stock.md",
+  "docs/audits/weapon-phase-5d-i-d-coverage-matrix.md",
+  "docs/audits/weapon-phase-5d-i-d-f-ammo-power-reload.md",
+  "docs/audits/weapon-v2-3gate-consumer-closure.md",
+  "docs/reports/asset-inventory.json"
+ ],
+ "tests": [
+  "tests/_scratch-manifest.mjs",
+  "tests/_scratch2.mjs",
+  "tests/_scratch3.mjs",
+  "tests/canonical-item-pack-parity.test.mjs",
+  "tests/equipment-actor-parity.test.mjs",
+  "tests/equipment-droid-draw-authority.test.mjs",
+  "tests/equipment-e2a-anatomy-resolver.test.mjs",
+  "tests/equipment-e2a-droid-appendage-projection.test.mjs",
+  "tests/equipment-e3a1-species-permissions.test.mjs",
+  "tests/equipment-e3a2-physical-occupancy.test.mjs",
+  "tests/equipment-e3a3-weapon-grip-integration.test.mjs",
+  "tests/equipment-e3a4-posture-foundation.test.mjs",
+  "tests/equipment-e3a5-effective-posture.test.mjs",
+  "tests/equipment-e4c1-wp1-wp2-foundation.test.mjs",
+  "tests/equipment-e4c1-wp3a-coordinator.test.mjs",
+  "tests/equipment-e4c1-wp4-writer-convergence.test.mjs",
+  "tests/equipment-e4c1-wp5-c1-attack-gate-and-firestate.test.mjs",
+  "tests/equipment-e4c1-wp5-combat-readiness.test.mjs",
+  "tests/equipment-follower-capability-parity.test.mjs",
+  "tests/equipment-g18-request-identity.test.mjs",
+  "tests/equipment-g36-gm-control.test.mjs",
+  "tests/equipment-g36-reconciliation.test.mjs",
+  "tests/equipment-lifecycle-slice.test.mjs",
+  "tests/equipment-possessions-browser.test.mjs",
+  "tests/equipment-skill-hook-roll-regression.test.mjs",
+  "tests/equipment-vertical-slice-draw-choice.test.mjs",
+  "tests/equipment-workspace.test.mjs",
+  "tests/equipment-wp3b-player-request-route.test.mjs",
+  "tests/equipment-wp3b-transport-hardening.test.mjs",
+  "tests/helpers/equipment-coordinator-harness.mjs",
+  "tests/helpers/ready-weapon-fixture.mjs",
+  "tests/helpers/weapon-runtime-fixture.mjs",
+  "tests/weapon-3gate-gate-a-crosswalk.test.mjs",
+  "tests/weapon-3gate-ledger.test.mjs",
+  "tests/weapon-3gate-w2-range-authority.test.mjs",
+  "tests/weapon-3gate-w4-golden-arithmetic.test.mjs",
+  "tests/weapon-branch-classification-authority.test.mjs",
+  "tests/weapon-branch-family-schema-authority.test.mjs",
+  "tests/weapon-phase-5d-i-d-a-residual-manifest.test.mjs",
+  "tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs",
+  "tests/weapon-readiness-production-path.test.mjs",
+  "tests/weapon-readiness-ui-contract.test.mjs",
+  "tests/weapon-runtime-5br-reconciliation.test.mjs",
+  "tests/weapon-runtime-builder-negative.test.mjs",
+  "tests/weapon-runtime-consumption-map.test.mjs",
+  "tests/weapon-runtime-proficiency.test.mjs",
+  "tests/weapon-runtime-registry-resolver.test.mjs"
+ ]
+}

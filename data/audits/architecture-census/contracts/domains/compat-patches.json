@@ -1,0 +1,1130 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-PAT",
+  "domain": "compat-patches",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "The compat-patches domain has no target-state authority (A-09). It holds 17 live hotfix modules loaded through a side-effect import chain, and this audit inventories 109 live runtime monkey-patch sites across the codebase (feats, compat-patches, progression, talents, force, infrastructure, combat, actor-core), including wrappers over core authorities (DerivedCalculator.computeAll, ModifierEngine, SWSEChat.postRoll) and order-dependent wrapper chains on CombatOptionResolver and ForceExecutor.",
+  "responsibilities": [
+    {
+      "id": "R-PAT-01",
+      "responsibility": "Load all hotfixes by side-effect import",
+      "owner": {
+        "path": "scripts/patches/runtime-bugfix-hotfixes-init.js",
+        "symbol": "(module body)"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/patches/runtime-bugfix-hotfixes-init.js:21",
+        "scripts/talents/squad-actions-init.js:6",
+        "index.js:91"
+      ],
+      "tests": [],
+      "notes": "A-09: transitional only"
+    },
+    {
+      "id": "R-PAT-02",
+      "responsibility": "Progression step behaviour overrides",
+      "owner": {
+        "path": "scripts/patches/progression-choice-language-hotfix.js",
+        "symbol": "registerProgressionChoiceLanguageHotfix"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/patches/progression-choice-language-hotfix.js:85",
+        "scripts/patches/progression-feat-chain-hotfix.js:63",
+        "scripts/patches/follower-progression-live-state-hotfix.js:85"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-PAT-03",
+      "responsibility": "Combat/attack corrections",
+      "owner": {
+        "path": "scripts/patches/attack-dialog-combat-corrections-hotfix.js",
+        "symbol": "registerAttackDialogCombatCorrectionsHotfix"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/patches/attack-dialog-combat-corrections-hotfix.js:121",
+        "scripts/patches/combat-ui-behavior-hotfix.js:282"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-PAT-04",
+      "responsibility": "Follower lifecycle repairs",
+      "owner": {
+        "path": "scripts/patches/follower-orphan-transfer-hotfix.js",
+        "symbol": "registerFollowerOrphanTransferHotfix"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/patches/follower-orphan-transfer-hotfix.js:99",
+        "scripts/patches/follower-repeatable-entitlement-hotfix.js:170"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-PAT-05",
+      "responsibility": "Sheet/defense hydration overrides",
+      "owner": {
+        "path": "scripts/patches/armor-hydration-defense-hotfix.js",
+        "symbol": "registerArmorHydrationDefenseHotfix"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/patches/armor-hydration-defense-hotfix.js:80",
+        "scripts/patches/follower-npc-sheet-parity-hotfix.js:276"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-PAT-06",
+      "responsibility": "Data-shape coherence guards",
+      "owner": {
+        "path": "scripts/patches/weapon-branch-coherence-hotfix.js",
+        "symbol": "registerWeaponBranchCoherenceHotfix"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/patches/weapon-branch-coherence-hotfix.js:101",
+        "scripts/patches/canonical-ability-prerequisite-hotfix.js:140"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "registerRuntimeBugfixHotfixes",
+      "path": "scripts/patches/runtime-bugfix-hotfixes.js",
+      "line": 1,
+      "consumers": 1,
+      "contract": "one of 17 register functions"
+    },
+    {
+      "symbol": "orphanFollowersForOwner",
+      "path": "scripts/patches/follower-orphan-transfer-hotfix.js",
+      "line": 1,
+      "consumers": 2,
+      "contract": "exported helper"
+    },
+    {
+      "symbol": "repairRepeatableFollowerEntitlements",
+      "path": "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+      "line": 1,
+      "consumers": 1,
+      "contract": "exported helper"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "none (A-09 target state is zero patches)"
+    ],
+    "prohibited": [
+      "any new runtime patch (A-09)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:90",
+        "to": "ProgressionFinalizer._canonicalSkillKey",
+        "evidence": "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:90"
+      },
+      {
+        "from": "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:100",
+        "to": "ProgressionFinalizer._extractSkillFocusKeysFromSelections",
+        "evidence": "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:100"
+      },
+      {
+        "from": "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:125",
+        "to": "FeatChoiceResolver.getStoredChoice",
+        "evidence": "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:125"
+      },
+      {
+        "from": "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:133",
+        "to": "FeatChoiceResolver.buildChoicePatch",
+        "evidence": "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:133"
+      },
+      {
+        "from": "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js:101",
+        "to": "ProgressionFinalizer._buildForceKnowledgePostApplyEntry",
+        "evidence": "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js:101"
+      },
+      {
+        "from": "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js:112",
+        "to": "ProgressionFinalizer._applyForceKnowledgePostApply",
+        "evidence": "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js:112"
+      },
+      {
+        "from": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:31",
+        "to": "GMApprovalsSurfaceService.buildViewModel",
+        "evidence": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:31"
+      },
+      {
+        "from": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:57",
+        "to": "GMApprovalOperationsService.parseApprovalKey",
+        "evidence": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:57"
+      },
+      {
+        "from": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:64",
+        "to": "GMApprovalOperationsService.approveRequest",
+        "evidence": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:64"
+      },
+      {
+        "from": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:76",
+        "to": "GMApprovalOperationsService.denyRequest",
+        "evidence": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:76"
+      },
+      {
+        "from": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:88",
+        "to": "GMApprovalOperationsService.finalizeWithEdits",
+        "evidence": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:88"
+      },
+      {
+        "from": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:100",
+        "to": "GMDatapad.prototype._getHomeBadgeCounts",
+        "evidence": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:100"
+      },
+      {
+        "from": "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js:199",
+        "to": "SWSEItemSheet.prototype._onRender",
+        "evidence": "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js:199"
+      },
+      {
+        "from": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:301",
+        "to": "TalentStep.prototype.onStepEnter",
+        "evidence": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:301"
+      },
+      {
+        "from": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:308",
+        "to": "TalentStep.prototype._getAvailableTrees",
+        "evidence": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:308"
+      },
+      {
+        "from": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:317",
+        "to": "TalentStep.prototype._getTree",
+        "evidence": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:317"
+      },
+      {
+        "from": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:325",
+        "to": "TalentStep.prototype._getTalentsForTree",
+        "evidence": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:325"
+      },
+      {
+        "from": "scripts/engine/combat/droid-combat-action-adapter.js:320",
+        "to": "CombatActionsMapper._ensureCoreManualCombatActions",
+        "evidence": "scripts/engine/combat/droid-combat-action-adapter.js:320"
+      },
+      {
+        "from": "scripts/engine/combat/droid-combat-action-adapter.js:327",
+        "to": "CombatActionsMapper.getAllActionsBySkill",
+        "evidence": "scripts/engine/combat/droid-combat-action-adapter.js:327"
+      },
+      {
+        "from": "scripts/engine/feats/action-speed-runtime-patches.js:152",
+        "to": "CombatActionsMapper.getAllCombatActions",
+        "evidence": "scripts/engine/feats/action-speed-runtime-patches.js:152"
+      },
+      {
+        "from": "scripts/engine/feats/action-speed-runtime-patches.js:160",
+        "to": "CombatActionsMapper.getAllActionsBySkill",
+        "evidence": "scripts/engine/feats/action-speed-runtime-patches.js:160"
+      },
+      {
+        "from": "scripts/engine/feats/combat-feat-damage-runtime-patches.js:41",
+        "to": "CombatOptionResolver.collectAttackModifiers",
+        "evidence": "scripts/engine/feats/combat-feat-damage-runtime-patches.js:41"
+      },
+      {
+        "from": "scripts/engine/feats/core-attack-option-runtime-patches.js:175",
+        "to": "CombatOptionResolver.getAvailableAttackOptions",
+        "evidence": "scripts/engine/feats/core-attack-option-runtime-patches.js:175"
+      },
+      {
+        "from": "scripts/engine/feats/core-attack-option-runtime-patches.js:181",
+        "to": "CombatOptionResolver.collectAttackModifiers",
+        "evidence": "scripts/engine/feats/core-attack-option-runtime-patches.js:181"
+      },
+      {
+        "from": "scripts/engine/feats/core-combat-reaction-runtime-patches.js:191",
+        "to": "Mapper._normalizeAction",
+        "evidence": "scripts/engine/feats/core-combat-reaction-runtime-patches.js:191"
+      },
+      {
+        "from": "scripts/engine/feats/core-combat-reaction-runtime-patches.js:198",
+        "to": "Mapper._ensureCoreManualCombatActions",
+        "evidence": "scripts/engine/feats/core-combat-reaction-runtime-patches.js:198"
+      },
+      {
+        "from": "scripts/engine/feats/defense-feat-runtime-patches.js:64",
+        "to": "ModifierEngine._getFeatModifiers",
+        "evidence": "scripts/engine/feats/defense-feat-runtime-patches.js:64"
+      },
+      {
+        "from": "scripts/engine/feats/droid-combat-runtime-patches.js:485",
+        "to": "CombatOptionResolver.collectAttackModifiers",
+        "evidence": "scripts/engine/feats/droid-combat-runtime-patches.js:485"
+      },
+      {
+        "from": "scripts/engine/feats/dual-wield-runtime-patches.js:12",
+        "to": "CombatOptionResolver.collectAttackModifiers",
+        "evidence": "scripts/engine/feats/dual-wield-runtime-patches.js:12"
+      },
+      {
+        "from": "scripts/engine/feats/force-training-entitlement-runtime-patches.js:134",
+        "to": "FeatGrantEntitlementResolver.getForceTrainingSlotsPerInstance",
+        "evidence": "scripts/engine/feats/force-training-entitlement-runtime-patches.js:134"
+      },
+      {
+        "from": "scripts/engine/feats/force-training-entitlement-runtime-patches.js:141",
+        "to": "FeatGrantEntitlementResolver.resolveForFeat",
+        "evidence": "scripts/engine/feats/force-training-entitlement-runtime-patches.js:141"
+      },
+      {
+        "from": "scripts/engine/feats/grapple-expanded-runtime-patches.js:123",
+        "to": "DamageSystem.applyPacketToActor",
+        "evidence": "scripts/engine/feats/grapple-expanded-runtime-patches.js:123"
+      },
+      {
+        "from": "scripts/engine/feats/grapple-runtime-patches.js:106",
+        "to": "SWSEGrappling._hasFeat",
+        "evidence": "scripts/engine/feats/grapple-runtime-patches.js:106"
+      },
+      {
+        "from": "scripts/engine/feats/grapple-runtime-patches.js:112",
+        "to": "SWSEGrappling.grappleCheck",
+        "evidence": "scripts/engine/feats/grapple-runtime-patches.js:112"
+      },
+      {
+        "from": "scripts/engine/feats/grapple-runtime-patches.js:161",
+        "to": "SWSEGrappling.getAvailableAdvancedManeuvers",
+        "evidence": "scripts/engine/feats/grapple-runtime-patches.js:161"
+      },
+      {
+        "from": "scripts/engine/feats/grapple-runtime-patches.js:199",
+        "to": "SWSEGrappling._validateAdvancedManeuver",
+        "evidence": "scripts/engine/feats/grapple-runtime-patches.js:199"
+      },
+      {
+        "from": "scripts/engine/feats/grapple-runtime-patches.js:233",
+        "to": "SWSEGrappling._opposedGrappleForManeuver",
+        "evidence": "scripts/engine/feats/grapple-runtime-patches.js:233"
+      },
+      {
+        "from": "scripts/engine/feats/grapple-runtime-patches.js:256",
+        "to": "SWSEGrappling.crushPinnedOpponent",
+        "evidence": "scripts/engine/feats/grapple-runtime-patches.js:256"
+      },
+      {
+        "from": "scripts/engine/feats/grapple-runtime-patches.js:288",
+        "to": "SWSEGrappling._advancedManeuverButtons",
+        "evidence": "scripts/engine/feats/grapple-runtime-patches.js:288"
+      },
+      {
+        "from": "scripts/engine/feats/grapple-runtime-patches.js:308",
+        "to": "SWSEGrappling._createGrappleCheckMessage",
+        "evidence": "scripts/engine/feats/grapple-runtime-patches.js:308"
+      },
+      {
+        "from": "scripts/engine/feats/pistoleer-runtime-patches.js:139",
+        "to": "CombatOptionResolver.collectAttackModifiers",
+        "evidence": "scripts/engine/feats/pistoleer-runtime-patches.js:139"
+      },
+      {
+        "from": "scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js:184",
+        "to": "SkillFeatResolver.getSkillCheckBonuses",
+        "evidence": "scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js:184"
+      },
+      {
+        "from": "scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js:199",
+        "to": "SkillFeatResolver.getSkillRerollOptions",
+        "evidence": "scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js:199"
+      },
+      {
+        "from": "scripts/engine/feats/riflemaster-runtime-patches.js:128",
+        "to": "CombatOptionResolver.collectAttackModifiers",
+        "evidence": "scripts/engine/feats/riflemaster-runtime-patches.js:128"
+      },
+      {
+        "from": "scripts/engine/feats/skill-feat-runtime-patches.js:361",
+        "to": "MetaResourceFeatResolver.getTemporaryDefenseRules",
+        "evidence": "scripts/engine/feats/skill-feat-runtime-patches.js:361"
+      },
+      {
+        "from": "scripts/engine/feats/skill-feat-runtime-patches.js:367",
+        "to": "MetaResourceFeatResolver.applyTemporaryDefenseRule",
+        "evidence": "scripts/engine/feats/skill-feat-runtime-patches.js:367"
+      },
+      {
+        "from": "scripts/engine/feats/skill-feat-runtime-patches.js:398",
+        "to": "SkillFeatResolver.getSkillRerollOptions",
+        "evidence": "scripts/engine/feats/skill-feat-runtime-patches.js:398"
+      },
+      {
+        "from": "scripts/engine/feats/skill-feat-runtime-patches.js:412",
+        "to": "SkillFeatResolver.resolveChatRerollButton",
+        "evidence": "scripts/engine/feats/skill-feat-runtime-patches.js:412"
+      },
+      {
+        "from": "scripts/engine/feats/skill-feat-runtime-patches.js:435",
+        "to": "SkillFeatResolver.resolveSkillUseSubstitution",
+        "evidence": "scripts/engine/feats/skill-feat-runtime-patches.js:435"
+      },
+      {
+        "from": "scripts/engine/feats/sniper-runtime-patches.js:127",
+        "to": "CombatOptionResolver.collectAttackModifiers",
+        "evidence": "scripts/engine/feats/sniper-runtime-patches.js:127"
+      },
+      {
+        "from": "scripts/engine/feats/team-feat-runtime-patches.js:154",
+        "to": "SkillFeatResolver.getSkillCheckBonuses",
+        "evidence": "scripts/engine/feats/team-feat-runtime-patches.js:154"
+      },
+      {
+        "from": "scripts/engine/force/force-power-final-integration.js:250",
+        "to": "ForceExecutor.executeForcePower",
+        "evidence": "scripts/engine/force/force-power-final-integration.js:250"
+      },
+      {
+        "from": "scripts/engine/force/force-suite-runtime-repairs.js:110",
+        "to": "ForceExecutor._getTelepathicIntruderBonus",
+        "evidence": "scripts/engine/force/force-suite-runtime-repairs.js:110"
+      },
+      {
+        "from": "scripts/engine/force/force-suite-runtime-repairs.js:135",
+        "to": "ForceExecutor._generateForcePowerRollMessage",
+        "evidence": "scripts/engine/force/force-suite-runtime-repairs.js:135"
+      },
+      {
+        "from": "scripts/engine/force/force-suite-runtime-repairs.js:176",
+        "to": "ForceExecutor.executeForcePower",
+        "evidence": "scripts/engine/force/force-suite-runtime-repairs.js:176"
+      },
+      {
+        "from": "scripts/engine/force/force-suite-runtime-repairs.js:271",
+        "to": "DerivedCalculator.computeAll",
+        "evidence": "scripts/engine/force/force-suite-runtime-repairs.js:271"
+      },
+      {
+        "from": "scripts/engine/force/phase3-force-power-corrections.js:114",
+        "to": "ForcePowerEffectsEngine._buildEffectDataForPower",
+        "evidence": "scripts/engine/force/phase3-force-power-corrections.js:114"
+      },
+      {
+        "from": "scripts/engine/force/phase4-force-modifier-automation.js:110",
+        "to": "ForcePowerEffectsEngine._buildEffectDataForPower",
+        "evidence": "scripts/engine/force/phase4-force-modifier-automation.js:110"
+      },
+      {
+        "from": "scripts/engine/force/phase5-force-healing-mitigation.js:30",
+        "to": "ForceExecutor.executeForcePower",
+        "evidence": "scripts/engine/force/phase5-force-healing-mitigation.js:30"
+      },
+      {
+        "from": "scripts/engine/force/phase6-force-direct-damage.js:170",
+        "to": "ForceExecutor.executeForcePower",
+        "evidence": "scripts/engine/force/phase6-force-direct-damage.js:170"
+      },
+      {
+        "from": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:102",
+        "to": "TalentStep.prototype._getTalent",
+        "evidence": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:102"
+      },
+      {
+        "from": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:109",
+        "to": "TalentStep.prototype._getTalentDescription",
+        "evidence": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:109"
+      },
+      {
+        "from": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:117",
+        "to": "TalentStep.prototype._getTalentBenefit",
+        "evidence": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:117"
+      },
+      {
+        "from": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:125",
+        "to": "TalentStep.prototype._getTalentPrerequisiteText",
+        "evidence": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:125"
+      },
+      {
+        "from": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:133",
+        "to": "TalentStep.prototype._buildCanonicalTalentSelection",
+        "evidence": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:133"
+      },
+      {
+        "from": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:150",
+        "to": "ForcePowerStep.prototype._getTelekineticProdigyResolution",
+        "evidence": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:150"
+      },
+      {
+        "from": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:382",
+        "to": "PrerequisiteChecker._actorHasNamedItem",
+        "evidence": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:382"
+      },
+      {
+        "from": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:391",
+        "to": "PrerequisiteChecker.checkFeatOwnership",
+        "evidence": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:391"
+      },
+      {
+        "from": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:399",
+        "to": "PrerequisiteChecker.checkTalentOwnership",
+        "evidence": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:399"
+      },
+      {
+        "from": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:407",
+        "to": "PrerequisiteChecker.getHouseruleGrantedFeats",
+        "evidence": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:407"
+      },
+      {
+        "from": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:416",
+        "to": "PrerequisiteChecker.getHouseruleGrantedTalents",
+        "evidence": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:416"
+      },
+      {
+        "from": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:431",
+        "to": "AbilityEngine.evaluateAcquisition",
+        "evidence": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:431"
+      },
+      {
+        "from": "scripts/patches/attack-dialog-combat-corrections-hotfix.js:121",
+        "to": "CombatOptionResolver.getAvailableAttackOptions",
+        "evidence": "scripts/patches/attack-dialog-combat-corrections-hotfix.js:121"
+      },
+      {
+        "from": "scripts/patches/attack-dialog-combat-corrections-hotfix.js:128",
+        "to": "CombatOptionResolver.collectAttackModifiers",
+        "evidence": "scripts/patches/attack-dialog-combat-corrections-hotfix.js:128"
+      },
+      {
+        "from": "scripts/patches/attack-dialog-combat-corrections-hotfix.js:342",
+        "to": "SWSERoll.rollAttack",
+        "evidence": "scripts/patches/attack-dialog-combat-corrections-hotfix.js:342"
+      },
+      {
+        "from": "scripts/patches/attack-dialog-combat-corrections-hotfix.js:349",
+        "to": "SWSERoll.rollAutofire",
+        "evidence": "scripts/patches/attack-dialog-combat-corrections-hotfix.js:349"
+      },
+      {
+        "from": "scripts/patches/canonical-ability-prerequisite-hotfix.js:140",
+        "to": "PrerequisiteChecker._checkAbilityRequirement",
+        "evidence": "scripts/patches/canonical-ability-prerequisite-hotfix.js:140"
+      },
+      {
+        "from": "scripts/patches/combat-ui-behavior-hotfix.js:282",
+        "to": "SWSEChat.postRoll",
+        "evidence": "scripts/patches/combat-ui-behavior-hotfix.js:282"
+      },
+      {
+        "from": "scripts/patches/follower-npc-sheet-parity-hotfix.js:286",
+        "to": "DefenseCalculator.calculate",
+        "evidence": "scripts/patches/follower-npc-sheet-parity-hotfix.js:286"
+      },
+      {
+        "from": "scripts/patches/follower-npc-sheet-parity-hotfix.js:470",
+        "to": "FollowerCreator._addFeatByName",
+        "evidence": "scripts/patches/follower-npc-sheet-parity-hotfix.js:470"
+      },
+      {
+        "from": "scripts/patches/follower-species-materialization-hotfix.js:38",
+        "to": "SpeciesRegistry._normalizeEntry",
+        "evidence": "scripts/patches/follower-species-materialization-hotfix.js:38"
+      },
+      {
+        "from": "scripts/patches/follower-species-materialization-hotfix.js:266",
+        "to": "FollowerCreator.createFollowerFromMutation",
+        "evidence": "scripts/patches/follower-species-materialization-hotfix.js:266"
+      },
+      {
+        "from": "scripts/patches/follower-species-materialization-hotfix.js:272",
+        "to": "FollowerCreator.updateFollowerFromMutation",
+        "evidence": "scripts/patches/follower-species-materialization-hotfix.js:272"
+      },
+      {
+        "from": "scripts/patches/runtime-bugfix-hotfixes.js:367",
+        "to": "TalentRegistry.getByTree",
+        "evidence": "scripts/patches/runtime-bugfix-hotfixes.js:367"
+      },
+      {
+        "from": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:260",
+        "to": "proto._isFeatSelected",
+        "evidence": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:260"
+      },
+      {
+        "from": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:270",
+        "to": "proto._buildPendingAbilityData",
+        "evidence": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:270"
+      },
+      {
+        "from": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:278",
+        "to": "proto._getLegalFeats",
+        "evidence": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:278"
+      },
+      {
+        "from": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:335",
+        "to": "proto._buildPendingAbilityData",
+        "evidence": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:335"
+      },
+      {
+        "from": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:343",
+        "to": "proto._getOwnedTalentKeys",
+        "evidence": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:343"
+      },
+      {
+        "from": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:365",
+        "to": "proto._getTreeInvestmentCount",
+        "evidence": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:365"
+      },
+      {
+        "from": "scripts/patches/armor-hydration-defense-hotfix.js:80",
+        "to": "proto.buildArmorSummaryPanel",
+        "evidence": "scripts/patches/armor-hydration-defense-hotfix.js:80"
+      },
+      {
+        "from": "scripts/patches/armor-hydration-defense-hotfix.js:94",
+        "to": "proto.buildInventoryPanel",
+        "evidence": "scripts/patches/armor-hydration-defense-hotfix.js:94"
+      },
+      {
+        "from": "scripts/patches/follower-npc-sheet-parity-hotfix.js:276",
+        "to": "proto._prepareContext",
+        "evidence": "scripts/patches/follower-npc-sheet-parity-hotfix.js:276"
+      },
+      {
+        "from": "scripts/patches/follower-npc-sheet-parity-hotfix.js:455",
+        "to": "proto._wireNpcConceptSheetEvents",
+        "evidence": "scripts/patches/follower-npc-sheet-parity-hotfix.js:455"
+      },
+      {
+        "from": "scripts/patches/follower-progression-live-state-hotfix.js:85",
+        "to": "prototype.contributeProjection",
+        "evidence": "scripts/patches/follower-progression-live-state-hotfix.js:85"
+      },
+      {
+        "from": "scripts/patches/follower-progression-live-state-hotfix.js:229",
+        "to": "prototype.onStepEnter",
+        "evidence": "scripts/patches/follower-progression-live-state-hotfix.js:229"
+      },
+      {
+        "from": "scripts/patches/follower-progression-live-state-hotfix.js:308",
+        "to": "prototype.getStepData",
+        "evidence": "scripts/patches/follower-progression-live-state-hotfix.js:308"
+      },
+      {
+        "from": "scripts/patches/follower-progression-live-state-hotfix.js:318",
+        "to": "prototype._addCustomLanguage",
+        "evidence": "scripts/patches/follower-progression-live-state-hotfix.js:318"
+      },
+      {
+        "from": "scripts/patches/progression-choice-language-hotfix.js:85",
+        "to": "proto._activateStep",
+        "evidence": "scripts/patches/progression-choice-language-hotfix.js:85"
+      },
+      {
+        "from": "scripts/patches/progression-choice-language-hotfix.js:125",
+        "to": "proto._restoreSelectedBonusLanguagesFromSession",
+        "evidence": "scripts/patches/progression-choice-language-hotfix.js:125"
+      },
+      {
+        "from": "scripts/patches/progression-choice-language-hotfix.js:134",
+        "to": "proto._getAvailableLanguages",
+        "evidence": "scripts/patches/progression-choice-language-hotfix.js:134"
+      },
+      {
+        "from": "scripts/patches/progression-choice-language-hotfix.js:153",
+        "to": "proto._restoreFollowerSelectedLanguages",
+        "evidence": "scripts/patches/progression-choice-language-hotfix.js:153"
+      },
+      {
+        "from": "scripts/patches/progression-choice-language-hotfix.js:169",
+        "to": "proto.getAllLanguages",
+        "evidence": "scripts/patches/progression-choice-language-hotfix.js:169"
+      },
+      {
+        "from": "scripts/patches/progression-choice-language-hotfix.js:223",
+        "to": "proto._isTalentAlreadyTakenElsewhere",
+        "evidence": "scripts/patches/progression-choice-language-hotfix.js:223"
+      },
+      {
+        "from": "scripts/patches/progression-feat-chain-hotfix.js:63",
+        "to": "proto.onItemCommitted",
+        "evidence": "scripts/patches/progression-feat-chain-hotfix.js:63"
+      },
+      {
+        "from": "scripts/utils/flags/swse-flags.js:48",
+        "to": "proto.getFlag",
+        "evidence": "scripts/utils/flags/swse-flags.js:48"
+      },
+      {
+        "from": "scripts/utils/flags/swse-flags.js:61",
+        "to": "proto.setFlag",
+        "evidence": "scripts/utils/flags/swse-flags.js:61"
+      },
+      {
+        "from": "scripts/utils/flags/swse-flags.js:65",
+        "to": "proto.unsetFlag",
+        "evidence": "scripts/utils/flags/swse-flags.js:65"
+      },
+      {
+        "from": "scripts/governance/actor-engine/actor-engine.js:103",
+        "to": "actor.items.filter/some/map/find (instance)",
+        "evidence": "scripts/governance/actor-engine/actor-engine.js:103"
+      }
+    ]
+  },
+  "subsystemContracts": [],
+  "contradictions": [
+    {
+      "id": "CR-PAT-01",
+      "existingSource": "docs/architecture/progression-architecture.md (global CR-07)",
+      "claim": "No runtime patching",
+      "observed": "~30 live sites patch progression steps/finalizer/resolvers",
+      "evidence": [
+        "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:102",
+        "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:90",
+        "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:260"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-PAT-02",
+      "existingSource": "docs/architecture/v2-contracts/A-global-invariants.md A-09 observed column",
+      "claim": "20 prototype monkey-patches",
+      "observed": "Wider scan: 108 live sites in 41 live files (static-method reassignment, proto aliases, Document.prototype)",
+      "evidence": [
+        "scripts/engine/feats/dual-wield-runtime-patches.js:12"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-PAT-03",
+      "existingSource": "scripts/governance/mutation/MutationInterceptor.js:99",
+      "claim": "No prototype patches",
+      "observed": "swse-flags patches foundry.abstract.Document.prototype getFlag/setFlag/unsetFlag",
+      "evidence": [
+        "scripts/utils/flags/swse-flags.js:48",
+        "index.js:101"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [],
+  "deferredRules": [],
+  "foundryAcceptance": [
+    {
+      "item": "Any fold-back of a class-F patch (combat attack options, follower lifecycle, progression steps)",
+      "source": "scripts/patches/runtime-bugfix-hotfixes-init.js:21"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-PAT-001",
+      "category": "legacy-compat",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "109 live runtime monkey-patch sites in live modules across 8 owner domains",
+      "affectedFiles": [
+        "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js",
+        "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js",
+        "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js",
+        "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js",
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js",
+        "scripts/engine/combat/droid-combat-action-adapter.js",
+        "scripts/engine/feats/action-speed-runtime-patches.js",
+        "scripts/engine/feats/combat-feat-damage-runtime-patches.js",
+        "scripts/engine/feats/core-attack-option-runtime-patches.js",
+        "scripts/engine/feats/core-combat-reaction-runtime-patches.js",
+        "scripts/engine/feats/defense-feat-runtime-patches.js",
+        "scripts/engine/feats/droid-combat-runtime-patches.js",
+        "scripts/engine/feats/dual-wield-runtime-patches.js",
+        "scripts/engine/feats/force-training-entitlement-runtime-patches.js",
+        "scripts/engine/feats/grapple-expanded-runtime-patches.js",
+        "scripts/engine/feats/grapple-runtime-patches.js",
+        "scripts/engine/feats/pistoleer-runtime-patches.js",
+        "scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js",
+        "scripts/engine/feats/riflemaster-runtime-patches.js",
+        "scripts/engine/feats/skill-feat-runtime-patches.js",
+        "scripts/engine/feats/sniper-runtime-patches.js",
+        "scripts/engine/feats/team-feat-runtime-patches.js",
+        "scripts/engine/force/force-power-final-integration.js",
+        "scripts/engine/force/force-suite-runtime-repairs.js",
+        "scripts/engine/force/phase3-force-power-corrections.js",
+        "scripts/engine/force/phase4-force-modifier-automation.js",
+        "scripts/engine/force/phase5-force-healing-mitigation.js",
+        "scripts/engine/force/phase6-force-direct-damage.js",
+        "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+        "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js",
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/patches/armor-hydration-defense-hotfix.js",
+        "scripts/patches/attack-dialog-combat-corrections-hotfix.js",
+        "scripts/patches/canonical-ability-prerequisite-hotfix.js",
+        "scripts/patches/combat-ui-behavior-hotfix.js",
+        "scripts/patches/follower-npc-sheet-parity-hotfix.js",
+        "scripts/patches/follower-progression-live-state-hotfix.js",
+        "scripts/patches/follower-species-materialization-hotfix.js",
+        "scripts/patches/progression-choice-language-hotfix.js",
+        "scripts/patches/progression-feat-chain-hotfix.js",
+        "scripts/patches/runtime-bugfix-hotfixes.js",
+        "scripts/utils/flags/swse-flags.js"
+      ],
+      "evidence": [
+        "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:90",
+        "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:100",
+        "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:125",
+        "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:133",
+        "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js:101",
+        "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js:112",
+        "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:31",
+        "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:57",
+        "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:64",
+        "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:76",
+        "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:88",
+        "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:100",
+        "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js:199",
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:301",
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:308",
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:317",
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:325",
+        "scripts/engine/combat/droid-combat-action-adapter.js:320",
+        "scripts/engine/combat/droid-combat-action-adapter.js:327",
+        "scripts/engine/feats/action-speed-runtime-patches.js:152",
+        "scripts/engine/feats/action-speed-runtime-patches.js:160",
+        "scripts/engine/feats/combat-feat-damage-runtime-patches.js:41",
+        "scripts/engine/feats/core-attack-option-runtime-patches.js:175",
+        "scripts/engine/feats/core-attack-option-runtime-patches.js:181",
+        "scripts/engine/feats/core-combat-reaction-runtime-patches.js:191",
+        "scripts/engine/feats/core-combat-reaction-runtime-patches.js:198",
+        "scripts/engine/feats/defense-feat-runtime-patches.js:64",
+        "scripts/engine/feats/droid-combat-runtime-patches.js:485",
+        "scripts/engine/feats/dual-wield-runtime-patches.js:12",
+        "scripts/engine/feats/force-training-entitlement-runtime-patches.js:134",
+        "scripts/engine/feats/force-training-entitlement-runtime-patches.js:141",
+        "scripts/engine/feats/grapple-expanded-runtime-patches.js:123",
+        "scripts/engine/feats/grapple-runtime-patches.js:106",
+        "scripts/engine/feats/grapple-runtime-patches.js:112",
+        "scripts/engine/feats/grapple-runtime-patches.js:161",
+        "scripts/engine/feats/grapple-runtime-patches.js:199",
+        "scripts/engine/feats/grapple-runtime-patches.js:233",
+        "scripts/engine/feats/grapple-runtime-patches.js:256",
+        "scripts/engine/feats/grapple-runtime-patches.js:288",
+        "scripts/engine/feats/grapple-runtime-patches.js:308"
+      ],
+      "observed": "Live sites by owner domain: feats 32, compat-patches 27, progression 24, talents 11, force 9, infrastructure 3, combat 2, actor-core 1 (instance patch of actor.items). Targets include DerivedCalculator.computeAll, ModifierEngine._getFeatModifiers, SWSEChat.postRoll, DamageSystem.applyPacketToActor, PrerequisiteChecker, AbilityEngine.evaluateAcquisition, TalentStep/ForcePowerStep prototypes, ProgressionFinalizer statics, Document.prototype flag methods. Every live site with its target is listed in dependencies.observedViolations (from = site, to = patched target).",
+      "intendedOwnership": "Behaviour lives in the owning module; no runtime reassignment (A-09).",
+      "contractRef": "A-09",
+      "proposedSolution": "Per owner domain, fold each wrapper body into the target method (or a declared extension registry, e.g. a CombatOptionResolver modifier-source registry) and delete the patch. Order: (1) patches on core authorities (DerivedCalculator.computeAll, ModifierEngine._getFeatModifiers, SWSEChat.postRoll, DamageSystem.applyPacketToActor, ActorEngine), (2) progression step patches, (3) combat option chains, (4) UI patches. Add a CI ratchet that fails on new reassignment sites.",
+      "alternatives": "Keep patches but centralise installation and assert installation in tests.",
+      "dependencies": [
+        "B-ACT F-ACT-015",
+        "feats/combat/progression/force/talents contracts"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "For each fold: behaviour parity test that previously ran with the patch installed; census ratchet.",
+      "foundryAcceptance": "Every class-F patch: live Foundry run of the affected flow.",
+      "scope": "L",
+      "simplificationBenefit": "Removes parallel execution paths and order dependence.",
+      "risk": "High if folded without parity tests; combat/progression are runtime-risk areas.",
+      "perfImpact": "low"
+    },
+    {
+      "id": "F-PAT-002",
+      "category": "bypass-engine",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Follower hotfixes write owner-actor flags directly and non-atomically",
+      "affectedFiles": [
+        "scripts/patches/follower-orphan-transfer-hotfix.js",
+        "scripts/patches/follower-repeatable-entitlement-hotfix.js"
+      ],
+      "evidence": [
+        "scripts/patches/follower-orphan-transfer-hotfix.js:99",
+        "scripts/patches/follower-orphan-transfer-hotfix.js:100",
+        "scripts/patches/follower-orphan-transfer-hotfix.js:225",
+        "scripts/patches/follower-orphan-transfer-hotfix.js:226",
+        "scripts/patches/follower-repeatable-entitlement-hotfix.js:170"
+      ],
+      "observed": "owner.setFlag(\"foundryvtt-swse\",\"followerSlots\") then a second setFlag(\"followers\") - two persisted writes outside ActorEngine; a failure between them leaves slots and roster inconsistent. Entitlement repair writes followerSlots on ready.",
+      "intendedOwnership": "Owner actor state through ActorEngine (A-02), one write per logical change.",
+      "contractRef": "A-02",
+      "proposedSolution": "Replace with one ActorEngine.updateActor(owner, {\"flags.foundryvtt-swse.followerSlots\":..., \"flags.foundryvtt-swse.followers\":...}) call; then fold the logic into npc-followers.",
+      "alternatives": "",
+      "dependencies": [
+        "npc-followers contract"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Fake-ActorEngine test: transfer produces one update with both keys.",
+      "foundryAcceptance": "Follower transfer when owner deleted, in Foundry.",
+      "scope": "S",
+      "simplificationBenefit": "Atomic follower roster update.",
+      "risk": "Medium (runtime-risk: ownership).",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-PAT-003",
+      "category": "dependency",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Hotfix layer composed by a hidden side-effect import chain",
+      "affectedFiles": [
+        "scripts/patches/runtime-bugfix-hotfixes-init.js",
+        "scripts/talents/squad-actions-init.js",
+        "index.js"
+      ],
+      "evidence": [
+        "index.js:91",
+        "scripts/talents/squad-actions-init.js:6",
+        "scripts/patches/runtime-bugfix-hotfixes-init.js:21"
+      ],
+      "observed": "A module described as \"Exposes a macro menu for Squad Actions talent\" side-effect imports the whole hotfix layer and two progression-finalizer patches; registration happens at module evaluation (before init) and its order relative to other patches depends on index.js import order.",
+      "intendedOwnership": "Composition root (index.js) calls explicit registration functions in a documented order.",
+      "contractRef": "A-09; R-PAT-01",
+      "proposedSolution": "Until patches are folded: move the imports into index.js as explicit calls inside init with a comment listing order dependencies; remove side-effect imports from squad-actions-init.js.",
+      "alternatives": "",
+      "dependencies": [
+        "B-INF"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Test that squad-actions-init has no side-effect imports.",
+      "foundryAcceptance": "Smoke load in Foundry.",
+      "scope": "S",
+      "simplificationBenefit": "Visible composition.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-PAT-004",
+      "category": "multiple-writers",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Wrapper chains on combat and Force execution entry points",
+      "affectedFiles": [
+        "scripts/engine/feats/combat-feat-damage-runtime-patches.js",
+        "scripts/engine/feats/core-attack-option-runtime-patches.js",
+        "scripts/engine/feats/droid-combat-runtime-patches.js",
+        "scripts/engine/feats/dual-wield-runtime-patches.js",
+        "scripts/engine/feats/pistoleer-runtime-patches.js",
+        "scripts/engine/feats/riflemaster-runtime-patches.js",
+        "scripts/engine/feats/sniper-runtime-patches.js",
+        "scripts/engine/force/force-power-final-integration.js",
+        "scripts/engine/force/force-suite-runtime-repairs.js",
+        "scripts/engine/force/phase5-force-healing-mitigation.js",
+        "scripts/engine/force/phase6-force-direct-damage.js",
+        "scripts/patches/attack-dialog-combat-corrections-hotfix.js"
+      ],
+      "evidence": [
+        "scripts/engine/feats/combat-feat-damage-runtime-patches.js:41",
+        "scripts/engine/feats/core-attack-option-runtime-patches.js:181",
+        "scripts/engine/feats/droid-combat-runtime-patches.js:485",
+        "scripts/engine/feats/dual-wield-runtime-patches.js:12",
+        "scripts/engine/feats/pistoleer-runtime-patches.js:139",
+        "scripts/engine/feats/riflemaster-runtime-patches.js:128",
+        "scripts/engine/feats/sniper-runtime-patches.js:127",
+        "scripts/patches/attack-dialog-combat-corrections-hotfix.js:128",
+        "scripts/engine/force/force-power-final-integration.js:250",
+        "scripts/engine/force/force-suite-runtime-repairs.js:176",
+        "scripts/engine/force/phase5-force-healing-mitigation.js:30",
+        "scripts/engine/force/phase6-force-direct-damage.js:170"
+      ],
+      "observed": "CombatOptionResolver.collectAttackModifiers is reassigned by 8 live modules and ForceExecutor.executeForcePower by 4; each wraps the previous value, so the effective behaviour is the composition in ES-module evaluation order, which no test pins.",
+      "intendedOwnership": "One resolver that iterates a declared contribution list (combat/force own the order).",
+      "contractRef": "A-09; A-01",
+      "proposedSolution": "Introduce explicit contributor registries (attack-modifier contributors; force-power post-execution steps) in combat/force and migrate each wrapper into a contributor with an explicit priority equal to its current effective order.",
+      "alternatives": "",
+      "dependencies": [
+        "combat contract",
+        "force contract"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Snapshot test of collectAttackModifiers output for a fixture actor with all relevant feats, before/after.",
+      "foundryAcceptance": "Attack rolls with stacked feat options; Force power execution.",
+      "scope": "M",
+      "simplificationBenefit": "Deterministic order; removes 12 wrappers.",
+      "risk": "High: attack math is a runtime-risk area.",
+      "perfImpact": "low"
+    },
+    {
+      "id": "F-PAT-005",
+      "category": "legacy-compat",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Document.prototype flag-scope patch affects every document type",
+      "affectedFiles": [
+        "scripts/utils/flags/swse-flags.js",
+        "scripts/actors/base/swse-actor-base.js"
+      ],
+      "evidence": [
+        "scripts/utils/flags/swse-flags.js:48",
+        "scripts/utils/flags/swse-flags.js:61",
+        "index.js:101",
+        "scripts/actors/base/swse-actor-base.js:463"
+      ],
+      "observed": "getFlag(\"swse\") reads canonical then legacy flags.swse; setFlag(\"swse\") writes canonical. Installed globally for all Documents (also other modules' documents). SWSEActorBase repeats the same remap. Direct writes to flags.swse via update() remain possible, so canonical can shadow fresher legacy values (see F-ACT-009).",
+      "intendedOwnership": "One flag namespace; migration instead of a global shim (A-09).",
+      "contractRef": "A-09; F-ACT-009",
+      "proposedSolution": "Owner decides canonical namespace; migrate persisted flags.swse into it (B-MIG), reroute flags.swse literal reads, then remove both shims.",
+      "alternatives": "",
+      "dependencies": [
+        "B-ACT F-ACT-009",
+        "B-MIG"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Round-trip flag tests per document type.",
+      "foundryAcceptance": "Flag reads on legacy worlds.",
+      "scope": "M",
+      "simplificationBenefit": "Removes a global prototype patch.",
+      "risk": "Medium (migration).",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-PAT-006",
+      "category": "documentation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Probe false positives and an exact clone",
+      "affectedFiles": [
+        "scripts/patches/follower-orphan-transfer-hotfix.js",
+        "scripts/patches/combat-ui-behavior-hotfix.js"
+      ],
+      "evidence": [
+        "scripts/patches/follower-orphan-transfer-hotfix.js:159",
+        "scripts/patches/follower-orphan-transfer-hotfix.js:334",
+        "scripts/patches/progression-ledger-reconciliation-hotfix.js:212",
+        "scripts/patches/combat-ui-behavior-hotfix.js:493",
+        "scripts/engine/combat/features/combat-feature-handlers.js:182"
+      ],
+      "observed": "Lines 159/334/212 are Set.delete on in-memory re-entrancy guards (false positives). combat-ui-behavior-hotfix.applyForcedAttackOption is an exact 176-token clone of combat-feature-handlers.applyForcedAttackOption.",
+      "intendedOwnership": "",
+      "contractRef": "A-02; A-01",
+      "proposedSolution": "Allow-list the Set.delete sites; replace the clone with an import of the combat-feature-handlers export.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-PAT-007",
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "50 unreachable monkey-patch sites in unreachable modules",
+      "affectedFiles": [
+        "scripts/core/forensic-sheet-diagnostic.js",
+        "scripts/debug/swse-debugger.js",
+        "scripts/engine/combat/aid-another-action-adapter.js",
+        "scripts/engine/combat/damage-engine-test.js",
+        "scripts/engine/combat/galaxy-intrigue-combat-action-adapter.js",
+        "scripts/engine/combat/unknown-regions-combat-action-adapter.js",
+        "scripts/engine/feats/attack-negation-runtime-patches.js",
+        "scripts/engine/feats/combat-feat-runtime-support.js",
+        "scripts/engine/feats/combat-mobility-power-runtime-patches.js",
+        "scripts/engine/feats/defense-avoidance-runtime-patches.js",
+        "scripts/engine/feats/force-point-service-runtime-patches.js",
+        "scripts/engine/feats/force-scoundrel-combat-runtime-patches.js",
+        "scripts/engine/feats/galaxy-intrigue-combat-runtime-patches.js",
+        "scripts/engine/feats/legacy-clone-combat-runtime-patches.js",
+        "scripts/engine/feats/mobility-positioning-runtime-patches.js",
+        "scripts/engine/feats/rebellion-combat-runtime-patches.js",
+        "scripts/engine/feats/relentless-attack-runtime-patches.js",
+        "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+        "scripts/engine/feats/sport-hunter-runtime-patches.js",
+        "scripts/engine/feats/starship-vehicle-runtime-patches.js",
+        "scripts/engine/feats/weapon-armor-rider-runtime-patches.js",
+        "scripts/engine/feats/weapon-autofire-rider-runtime-patches.js",
+        "scripts/engine/feats/weapon-miss-rider-runtime-patches.js",
+        "scripts/governance/mutation/batch-1-validation.js",
+        "scripts/governance/sentinel/enforcement-core.js",
+        "scripts/governance/sentinel/hook-investigator.js",
+        "scripts/governance/sentinel/layers/hooks-layer.js",
+        "scripts/governance/sentinel/layers/hooks-mutation-layer.js",
+        "scripts/governance/sentinel/sentry.js"
+      ],
+      "evidence": [
+        "scripts/debug/swse-debugger.js:171",
+        "scripts/debug/swse-debugger.js:193",
+        "scripts/engine/combat/aid-another-action-adapter.js:256",
+        "scripts/engine/combat/aid-another-action-adapter.js:263",
+        "scripts/engine/combat/aid-another-action-adapter.js:271",
+        "scripts/engine/combat/damage-engine-test.js:313",
+        "scripts/engine/combat/damage-engine-test.js:325",
+        "scripts/engine/combat/galaxy-intrigue-combat-action-adapter.js:93",
+        "scripts/engine/combat/galaxy-intrigue-combat-action-adapter.js:100",
+        "scripts/engine/combat/unknown-regions-combat-action-adapter.js:85",
+        "scripts/engine/combat/unknown-regions-combat-action-adapter.js:89",
+        "scripts/engine/feats/attack-negation-runtime-patches.js:101",
+        "scripts/engine/feats/combat-feat-runtime-support.js:198",
+        "scripts/engine/feats/combat-feat-runtime-support.js:204",
+        "scripts/engine/feats/combat-mobility-power-runtime-patches.js:157",
+        "scripts/engine/feats/combat-mobility-power-runtime-patches.js:165",
+        "scripts/engine/feats/defense-avoidance-runtime-patches.js:201",
+        "scripts/engine/feats/force-point-service-runtime-patches.js:19",
+        "scripts/engine/feats/force-point-service-runtime-patches.js:23",
+        "scripts/engine/feats/force-point-service-runtime-patches.js:27",
+        "scripts/engine/feats/force-point-service-runtime-patches.js:31",
+        "scripts/engine/feats/force-scoundrel-combat-runtime-patches.js:232",
+        "scripts/engine/feats/galaxy-intrigue-combat-runtime-patches.js:318",
+        "scripts/engine/feats/legacy-clone-combat-runtime-patches.js:198",
+        "scripts/engine/feats/mobility-positioning-runtime-patches.js:349",
+        "scripts/engine/feats/rebellion-combat-runtime-patches.js:270",
+        "scripts/engine/feats/relentless-attack-runtime-patches.js:105",
+        "scripts/engine/feats/second-wind-rider-runtime-patches.js:278",
+        "scripts/engine/feats/second-wind-rider-runtime-patches.js:292",
+        "scripts/engine/feats/second-wind-rider-runtime-patches.js:303"
+      ],
+      "observed": "Feat rider patches, combat action adapters, sentinel hook layers and enforcement-core patch targets but are never imported (registry reachability).",
+      "intendedOwnership": "No dormant patch code.",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete (legacy C) after owner confirms none is a pending integration; some feat riders (e.g. relentless-attack, sport-hunter) may be UNIMPLEMENTED features - list them to the feats owner first.",
+      "alternatives": "",
+      "dependencies": [
+        "feats contract"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Full CI.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "Removes dormant patches that could be re-wired accidentally.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    }
+  ]
+}

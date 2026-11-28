@@ -1,0 +1,187 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-SET",
+  "domain": "settings-config",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "settings-config is a small, conformant domain (two settings modules and two constants modules). The only issue is a duplicate isEpicOverrideEnabled in actor-core that bypasses HouseRuleService; general settings duplication is contracted in B-INF and B-HRL.",
+  "responsibilities": [
+    {
+      "id": "R-SET-01",
+      "responsibility": "Custom-content approval policy setting",
+      "owner": {
+        "path": "scripts/settings/custom-content-approval.js",
+        "symbol": "registerCustomContentApprovalSettings"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/settings/custom-content-approval.js:11",
+        "scripts/settings/custom-content-approval.js:13"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SET-02",
+      "responsibility": "Epic override setting and accessor",
+      "owner": {
+        "path": "scripts/settings/epic-override.js",
+        "symbol": "isEpicOverrideEnabled"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/settings/epic-override.js:9",
+        "scripts/settings/epic-override.js:21",
+        "scripts/core/settings.js:250"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SET-03",
+      "responsibility": "Capability slug constants",
+      "owner": {
+        "path": "scripts/constants/capability-slugs.js",
+        "symbol": "CAPABILITY_SLUGS"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/constants/capability-slugs.js:1"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SET-04",
+      "responsibility": "Beam style constants",
+      "owner": {
+        "path": "scripts/constants/beam-styles.js",
+        "symbol": "BEAM_STYLES"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/constants/beam-styles.js:1"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "getCustomContentApprovalPolicy",
+      "path": "scripts/settings/custom-content-approval.js",
+      "line": 1,
+      "consumers": 5,
+      "contract": ""
+    },
+    {
+      "symbol": "isEpicOverrideEnabled",
+      "path": "scripts/settings/epic-override.js",
+      "line": 20,
+      "consumers": 3,
+      "contract": ""
+    },
+    {
+      "symbol": "CAPABILITY_SLUGS",
+      "path": "scripts/constants/capability-slugs.js",
+      "line": 1,
+      "consumers": 4,
+      "contract": ""
+    },
+    {
+      "symbol": "getBeamStyle",
+      "path": "scripts/constants/beam-styles.js",
+      "line": 1,
+      "consumers": 2,
+      "contract": ""
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "houserules (HouseRuleService)"
+    ],
+    "prohibited": [
+      "engines reading game.settings directly (A-06)"
+    ],
+    "observedViolations": []
+  },
+  "subsystemContracts": [],
+  "contradictions": [],
+  "unimplemented": [],
+  "deferredRules": [],
+  "foundryAcceptance": [],
+  "findings": [
+    {
+      "id": "F-SET-001",
+      "category": "duplicate-authority",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Second isEpicOverrideEnabled reads game.settings directly",
+      "affectedFiles": [
+        "scripts/actors/derived/level-split.js",
+        "scripts/settings/epic-override.js"
+      ],
+      "evidence": [
+        "scripts/actors/derived/level-split.js:105",
+        "scripts/settings/epic-override.js:20"
+      ],
+      "observed": "level-split.js defines its own isEpicOverrideEnabled via game.settings.get; settings/epic-override.js exports one via HouseRuleService.isEnabled.",
+      "intendedOwnership": "One accessor via HouseRuleService (A-06).",
+      "contractRef": "A-06; A-01",
+      "proposedSolution": "Re-export the settings accessor from level-split (or import it) and delete the local copy.",
+      "alternatives": "",
+      "dependencies": [
+        "B-ACT"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Unit: both paths return the same value under fake settings.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-SET-002",
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Domain otherwise conformant",
+      "affectedFiles": [
+        "scripts/settings/custom-content-approval.js"
+      ],
+      "evidence": [
+        "scripts/settings/custom-content-approval.js:11"
+      ],
+      "observed": "Registration guards against double registration; no writes, no engine reads.",
+      "intendedOwnership": "",
+      "contractRef": "A-06",
+      "proposedSolution": "None; settings sprawl tracked in B-INF F-INF-003/004.",
+      "alternatives": "",
+      "dependencies": [
+        "B-INF",
+        "B-HRL"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None.",
+      "perfImpact": "none"
+    }
+  ]
+}

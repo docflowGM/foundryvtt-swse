@@ -106,13 +106,15 @@ async function openEffectWizardForSheet(sheet, { mode = 'basic', notify = false 
   return true;
 }
 
+const PRESENTED_THIS_SESSION = new WeakSet();
+
 function shouldAutoOpenWizard(sheet) {
   const item = sheet?.item;
   if (!isCustomTalentItem(item)) return false;
   if (sheet?.options?.openCustomTalentEffectWizard === true || sheet?.options?.openEffectWizardOnRender === true) return true;
   if (item?.getFlag?.('foundryvtt-swse', AUTO_OPEN_REQUEST_FLAG)) return true;
-  const presented = item?.getFlag?.('foundryvtt-swse', AUTO_OPEN_PRESENTED_FLAG);
-  if (presented) return false;
+  // F-TAL-005: "already presented" is session state (no document write during render). A legacy persisted flag is still honored.
+  if (PRESENTED_THIS_SESSION.has(item) || item?.getFlag?.('foundryvtt-swse', AUTO_OPEN_PRESENTED_FLAG)) return false;
   const source = String(item?.system?.source || '').toLowerCase();
   const fromWorkbench = source.includes('custom talent tree workbench') || !!item?.system?.customTreeId;
   const hasEffects = Array.from(item?.effects ?? []).length > 0;
@@ -124,7 +126,7 @@ async function markAutoOpenConsumed(item) {
     if (item?.unsetFlag && item.getFlag?.('foundryvtt-swse', AUTO_OPEN_REQUEST_FLAG)) {
       await item.unsetFlag('foundryvtt-swse', AUTO_OPEN_REQUEST_FLAG);
     }
-    if (item?.setFlag) await item.setFlag('foundryvtt-swse', AUTO_OPEN_PRESENTED_FLAG, true);
+    if (item) PRESENTED_THIS_SESSION.add(item);
   } catch (err) {
     console.warn('[SWSE] Failed to mark custom talent effect wizard auto-open consumed', err);
   }

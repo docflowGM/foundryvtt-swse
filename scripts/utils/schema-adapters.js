@@ -35,6 +35,7 @@
  * Callers should migrate to canonical paths when possible.
  */
 
+import { conditionTrackPenaltyForStep } from '/systems/foundryvtt-swse/scripts/utils/condition-track-penalty.js';
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 const ABILITY_KEYS = new Set(['str', 'dex', 'con', 'int', 'wis', 'cha']);
@@ -528,8 +529,7 @@ export class SchemaAdapters {
     const derivedPenalty = actor.system?.derived?.damage?.conditionPenalty;
     if (typeof derivedPenalty === 'number') return derivedPenalty;
     const currentCT = Number(actor.system?.conditionTrack?.current ?? 0);
-    const penalties = { 0: 0, 1: -1, 2: -2, 3: -5, 4: -10, 5: 0 };
-    return penalties[currentCT] ?? 0;
+    return conditionTrackPenaltyForStep(currentCT);
   }
 
   /**

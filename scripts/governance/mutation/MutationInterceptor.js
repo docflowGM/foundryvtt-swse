@@ -34,7 +34,6 @@
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import GovernanceDiagnostics from "/systems/foundryvtt-swse/scripts/governance/sentinel/governance-diagnostics.js";
 
 /**
  * PHASE 1 ENFORCEMENT LEVEL
@@ -56,6 +55,10 @@ const DEV_MODE = true;     // Always log all mutations with stack traces
 
 // Track which ActorEngine method is currently executing
 let _currentMutationContext = null;
+// Contexts nest (ActorEngine.updateActor -> recalcAll -> updateActorFlags, or two async ActorEngine calls interleaving). A single slot was
+// cleared by the INNER call's `finally`, leaving the OUTER call's remaining writes unauthorized (F-GOV-001). Keep a stack: clear pops one level,
+// authorization lasts until the outermost call clears. clearContext() on an empty stack is a no-op (unbalanced callers cannot go negative).
+const _contextStack = [];
 
 export class MutationInterceptor {
   /**
@@ -141,12 +144,15 @@ export class MutationInterceptor {
 
     // PHASE 5: Initialize Sentinel governance diagnostics
     if (DEV_MODE && defaultLevel === 'strict') {
-      const guardrails = GovernanceDiagnostics.verifyGuardrails();
-      if (guardrails.allActive) {
-        console.log(`[MutationInterceptor] ✅ All governance guardrails verified and active`);
-      } else {
-        console.warn(`[MutationInterceptor] ⚠️  Some governance guardrails not active:`, guardrails);
-      }
+      // Lazy import: governance-diagnostics imports this module, so a static import closed a two-file import cycle (F-GOV-001 follow-up).
+      import("/systems/foundryvtt-swse/scripts/governance/sentinel/governance-diagnostics.js").then(({ default: GovernanceDiagnostics }) => {
+        const guardrails = GovernanceDiagnostics.verifyGuardrails();
+        if (guardrails.allActive) {
+          console.log(`[MutationInterceptor] ✅ All governance guardrails verified and active`);
+        } else {
+          console.warn(`[MutationInterceptor] ⚠️  Some governance guardrails not active:`, guardrails);
+        }
+      }).catch((err) => console.warn('[MutationInterceptor] Governance diagnostics unavailable', err));
     }
 
     console.log(`[MutationInterceptor] ✅ Mutation context enforcement initialized (${defaultLevel.toUpperCase()} mode). No prototype patches. Guards via Sentinel+ActorEngine.`);
@@ -168,6 +174,7 @@ export class MutationInterceptor {
         `Nested mutations are not permitted during ${_currentMutationContext.operation}.`
       );
     }
+    _contextStack.push(context);
     _currentMutationContext = context;
   }
 
@@ -175,7 +182,8 @@ export class MutationInterceptor {
    * Clear the current mutation context (when ActorEngine finishes).
    */
   static clearContext() {
-    _currentMutationContext = null;
+    _contextStack.pop();
+    _currentMutationContext = _contextStack.length ? _contextStack[_contextStack.length - 1] : null;
   }
 
   /**

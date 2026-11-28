@@ -1,0 +1,672 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-SPC",
+  "domain": "species",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "Species content flows from SpeciesRegistry (publication versions, variant snapshots) through SpeciesGrantLedgerBuilder into a pure materialization consumed by progression SpeciesBackgroundPlanBuilder, then ActorEngine. Mutations in the domain go through ActorEngine except an annotated fallback. Conformance gaps are moderate: the activated-ability engine posts 12 gameplay chat messages directly (A-05); the atomic species-replacement transaction for existing actors is only called from the orphan drop-handler, so it is not wired; the 715-line SpeciesTraitEngine and scripts/species/index.js are dead. Mechanical-responsibility leads (condition steps, ability modifier, rage damage, modifier aggregation) are delegations or distinct mechanics, not duplicate authorities. All species rules questions remain in the register (SPECIES-RD-001..023); none were decided.",
+  "responsibilities": [
+    {
+      "id": "R-SPC-01",
+      "responsibility": "Species enumeration and lookup",
+      "owner": {
+        "path": "scripts/engine/registries/species-registry.js",
+        "symbol": "SpeciesRegistry"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/registries/species-registry.js:57",
+        "scripts/engine/registries/species-registry.js:599"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SPC-02",
+      "responsibility": "Publication-version selection",
+      "owner": {
+        "path": "scripts/species/species-publication-selection.js",
+        "symbol": "getPublicationStatus"
+      },
+      "status": [
+        "OBSERVED",
+        "DEFERRED_RULES_REVIEW"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/species/species-publication-selection.js:21"
+      ],
+      "tests": [
+        "tests/species-publication-selection.test.mjs"
+      ],
+      "notes": "SPECIES-RD-001/011"
+    },
+    {
+      "id": "R-SPC-03",
+      "responsibility": "Variant / resolved snapshot profile",
+      "owner": {
+        "path": "scripts/species/species-variant-profile.js",
+        "symbol": "applySpeciesVariantProfile"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/species/species-variant-profile.js:203",
+        "scripts/species/species-variant-profile.js:47"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SPC-04",
+      "responsibility": "Species grant ledger",
+      "owner": {
+        "path": "scripts/species/species-grant-ledger-builder.js",
+        "symbol": "SpeciesGrantLedgerBuilder"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/species/species-grant-ledger-builder.js:143"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SPC-05",
+      "responsibility": "Grant reconciliation keys/manifest",
+      "owner": {
+        "path": "scripts/species/species-grant-reconciliation.js",
+        "symbol": "computeSpeciesGrantKey"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:2",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:22"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SPC-06",
+      "responsibility": "Chargen species materialization into plan",
+      "owner": {
+        "path": "scripts/engine/progression/helpers/apply-canonical-species-to-actor.js",
+        "symbol": "applyCanonicalSpeciesToActor"
+      },
+      "status": [
+        "OBSERVED",
+        "APPROVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/apps/progression-framework/shell/mutation/species-background-plan-builder.js:83",
+        "scripts/engine/progression/helpers/apply-canonical-species-to-actor.js:72"
+      ],
+      "tests": [],
+      "notes": "Pure despite its name: no document writes in the file"
+    },
+    {
+      "id": "R-SPC-07",
+      "responsibility": "Atomic species replacement on existing actor",
+      "owner": {
+        "path": "scripts/species/species-plan-transaction.js",
+        "symbol": "buildSpeciesReplacementPlan"
+      },
+      "status": [
+        "OBSERVED",
+        "UNIMPLEMENTED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/drag-drop/drop-handler.js:19"
+      ],
+      "tests": [
+        "tests/species-drop-atomicity.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-SPC-08",
+      "responsibility": "Conditional species bonus feats",
+      "owner": {
+        "path": "scripts/engine/species/SpeciesConditionalGrantResolver.js",
+        "symbol": "SpeciesConditionalGrantResolver"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/species/SpeciesConditionalGrantResolver.js:102",
+        "scripts/engine/species/SpeciesConditionalGrantResolver.js:218",
+        "scripts/infrastructure/hooks/actor-hooks.js:85"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SPC-09",
+      "responsibility": "Species skill rerolls",
+      "owner": {
+        "path": "scripts/species/species-reroll-handler.js",
+        "symbol": "SpeciesRerollHandler"
+      },
+      "status": [
+        "OBSERVED",
+        "DEFERRED_RULES_REVIEW"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/species/species-reroll-handler.js:58",
+        "scripts/species/species-reroll-handler.js:556"
+      ],
+      "tests": [],
+      "notes": "SPECIES-RD-013"
+    },
+    {
+      "id": "R-SPC-10",
+      "responsibility": "Activated species abilities incl. Rage",
+      "owner": {
+        "path": "scripts/engine/species/species-activated-ability-engine.js",
+        "symbol": "SpeciesActivatedAbilityEngine"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/species/species-activated-ability-engine.js:12",
+        "scripts/engine/species/species-activated-ability-engine.js:93",
+        "scripts/engine/species/rage-engine.js:114"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-SPC-11",
+      "responsibility": "Anatomy schema v1",
+      "owner": {
+        "path": "scripts/species/species-anatomy-schema-v1.js",
+        "symbol": "SPECIES_ANATOMY_SCHEMA_VERSION"
+      },
+      "status": [
+        "OBSERVED",
+        "APPROVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/species/species-anatomy-schema-v1.js:1"
+      ],
+      "tests": [],
+      "notes": "docs/architecture/equipment-ecosystem-e2b-s2-species-anatomy-schema-contract-v1.md"
+    },
+    {
+      "id": "R-SPC-12",
+      "responsibility": "Legacy trait engine",
+      "owner": {
+        "path": "scripts/engine/systems/species/species-trait-engine.js",
+        "symbol": "SpeciesTraitEngine"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/engine/systems/species/species-trait-engine.js:1"
+      ],
+      "tests": [],
+      "notes": "Dead, legacy C"
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "SpeciesRegistry",
+      "path": "scripts/engine/registries/species-registry.js",
+      "line": 57,
+      "consumers": 38,
+      "contract": "getById/getByName/getAll/getByCategory/search"
+    },
+    {
+      "symbol": "applySpeciesVariantProfile",
+      "path": "scripts/species/species-variant-profile.js",
+      "line": 203,
+      "consumers": 23,
+      "contract": "base + variant -> resolved profile"
+    },
+    {
+      "symbol": "actorUsesResolvedSnapshot",
+      "path": "scripts/species/species-variant-profile.js",
+      "line": 47,
+      "consumers": 23,
+      "contract": "snapshot authority predicate"
+    },
+    {
+      "symbol": "SpeciesGrantLedgerBuilder",
+      "path": "scripts/species/species-grant-ledger-builder.js",
+      "line": 143,
+      "consumers": 2,
+      "contract": "species -> grant ledger"
+    },
+    {
+      "symbol": "SpeciesRerollHandler",
+      "path": "scripts/species/species-reroll-handler.js",
+      "line": 58,
+      "consumers": 5,
+      "contract": "reroll eligibility/use"
+    },
+    {
+      "symbol": "RageEngine",
+      "path": "scripts/engine/species/rage-engine.js",
+      "line": 114,
+      "consumers": 5,
+      "contract": "rage state and modifiers"
+    },
+    {
+      "symbol": "SpeciesConditionalGrantResolver",
+      "path": "scripts/engine/species/SpeciesConditionalGrantResolver.js",
+      "line": 59,
+      "consumers": 3,
+      "contract": "reconcile conditional bonus feats"
+    },
+    {
+      "symbol": "SpeciesActivatedAbilityEngine",
+      "path": "scripts/engine/species/species-activated-ability-engine.js",
+      "line": 12,
+      "consumers": 1,
+      "contract": "activate species ability"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "infrastructure",
+      "data-registries",
+      "abilities-effects (ConditionEngine)",
+      "governance (ActorEngine)"
+    ],
+    "prohibited": [
+      "UI",
+      "direct ChatMessage.create (A-05)",
+      "raw document writes (A-02)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/species/species-activated-ability-engine.js",
+        "to": "ChatMessage.create",
+        "evidence": "scripts/engine/species/species-activated-ability-engine.js:93"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-SPC-1",
+      "boundary": "Species -> progression",
+      "interface": "pending species context + grant ledger -> pure materialization -> SpeciesBackgroundPlanBuilder",
+      "status": [
+        "OBSERVED"
+      ]
+    },
+    {
+      "id": "C-SPC-2",
+      "boundary": "Species -> equipment (anatomy)",
+      "interface": "anatomy schema v1",
+      "status": [
+        "APPROVED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-SPC-01",
+      "existingSource": "scripts/engine/systems/species/species-trait-engine.js:3",
+      "claim": "Central engine for species traits",
+      "observed": "Orphan; live path is grant ledger + passive adapter",
+      "evidence": [
+        "scripts/engine/abilities/passive/species-trait-passive-adapter.js:18"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-SPC-02",
+      "existingSource": "scripts/species/index.js:3",
+      "claim": "Central export for species functionality",
+      "observed": "Orphan",
+      "evidence": [
+        "scripts/species/index.js:3"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-SPC-03",
+      "existingSource": "census registry reachability",
+      "claim": "species-plan-transaction.js is test-only",
+      "observed": "Imported by orphan drop-handler.js; not live either way",
+      "evidence": [
+        "scripts/drag-drop/drop-handler.js:19"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-SPC-01",
+      "item": "Atomic species replacement on an existing actor is not reachable at runtime",
+      "source": "scripts/species/species-plan-transaction.js",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-001"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-002"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-003"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-004"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-005"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-006"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-007"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-008"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-009"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-010"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-011"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-012"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-013"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-014"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-015"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-016"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-017"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-018"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-019"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-020"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-021"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-022"
+    },
+    {
+      "item": "See register entry",
+      "registerRef": "SPECIES-RD-023"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "Species change on an existing character",
+      "source": "R-SPC-07"
+    },
+    {
+      "item": "Activated species abilities in combat",
+      "source": "scripts/engine/species/species-activated-ability-engine.js:12"
+    },
+    {
+      "item": "Conditional bonus feats after skill training changes",
+      "source": "scripts/infrastructure/hooks/actor-hooks.js:85"
+    },
+    {
+      "item": "Live checklist",
+      "source": "docs/audits/swse-species-live-foundry-checklist.md"
+    }
+  ],
+  "findings": [
+    {
+      "category": "ownership-violation",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Activated species abilities post gameplay chat directly (12 sites)",
+      "affectedFiles": [
+        "scripts/engine/species/species-activated-ability-engine.js"
+      ],
+      "evidence": [
+        "scripts/engine/species/species-activated-ability-engine.js:93",
+        "scripts/engine/species/species-activated-ability-engine.js:142",
+        "scripts/engine/species/species-activated-ability-engine.js:183",
+        "scripts/engine/species/species-activated-ability-engine.js:223",
+        "scripts/engine/species/species-activated-ability-engine.js:253",
+        "scripts/engine/species/species-activated-ability-engine.js:270",
+        "scripts/engine/species/species-activated-ability-engine.js:289",
+        "scripts/engine/species/species-activated-ability-engine.js:344",
+        "scripts/engine/species/species-activated-ability-engine.js:383",
+        "scripts/engine/species/species-activated-ability-engine.js:415",
+        "scripts/engine/species/species-activated-ability-engine.js:433",
+        "scripts/engine/species/species-activated-ability-engine.js:455"
+      ],
+      "observed": "Every activation result is rendered by ChatMessage.create with inline content instead of the swse-chat service; state writes in the same engine go through ActorEngine.",
+      "intendedOwnership": "scripts/chat/swse-chat.js",
+      "contractRef": "A-05 | R-SPC-10",
+      "proposedSolution": "Introduce one postSpeciesAbilityResult(actor, result) via swse-chat and replace the 12 calls.",
+      "alternatives": "",
+      "dependencies": [
+        "chat domain"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Stub ChatMessage and assert swse-chat is used for each ability id",
+      "foundryAcceptance": "Activate each species ability; chat card renders",
+      "scope": "S",
+      "simplificationBenefit": "12 inline cards -> 1 template path",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-SPC-001"
+    },
+    {
+      "category": "unimplemented",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Atomic species replacement transaction is not wired to any live entry point",
+      "affectedFiles": [
+        "scripts/species/species-plan-transaction.js",
+        "scripts/drag-drop/drop-handler.js"
+      ],
+      "evidence": [
+        "scripts/drag-drop/drop-handler.js:19",
+        "scripts/drag-drop/drop-handler.js:233"
+      ],
+      "observed": "buildSpeciesReplacementPlan/applySpeciesPlanWithRollback are tested (tests/species-drop-atomicity.test.mjs) but their only runtime importer, drop-handler.js, has no importer (no static, dynamic, template or pack reference found). How a species is replaced on an existing actor via the V2 sheet was not traced (UNVERIFIED); progression handles chargen.",
+      "intendedOwnership": "Progression single-step or the sheet drop path calling the species plan transaction",
+      "contractRef": "A-15 | U-SPC-01",
+      "proposedSolution": "Owner decision: wire species replacement through progression (preferred, one path) or through the V2 sheet drop handler; then delete the other.",
+      "alternatives": "Delete species-plan-transaction.js if species change is progression-only",
+      "dependencies": [
+        "ui-shell (sheet drop)",
+        "progression"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "tests/species-drop-atomicity.test.mjs against the wired entry point",
+      "foundryAcceptance": "Change species on an existing character",
+      "scope": "M",
+      "simplificationBenefit": "One species change path",
+      "risk": "Medium",
+      "perfImpact": "none",
+      "id": "F-SPC-002"
+    },
+    {
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Dead SpeciesTraitEngine (715 SLOC) and species index module",
+      "affectedFiles": [
+        "scripts/engine/systems/species/species-trait-engine.js",
+        "scripts/species/index.js"
+      ],
+      "evidence": [
+        "scripts/engine/systems/species/species-trait-engine.js:1",
+        "scripts/species/index.js:1"
+      ],
+      "observed": "No static/dynamic/template/pack reference to either file. Legacy C.",
+      "intendedOwnership": "Grant ledger + passive adapter",
+      "contractRef": "A-09 | CR-SPC-01 | CR-SPC-02",
+      "proposedSolution": "Delete both.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Boot-graph check",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "-720 SLOC; removes a misleading \"central engine\"",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-SPC-003"
+    },
+    {
+      "category": "bypass-engine",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Annotated raw flag fallback in reroll handler",
+      "affectedFiles": [
+        "scripts/species/species-reroll-handler.js"
+      ],
+      "evidence": [
+        "scripts/species/species-reroll-handler.js:219",
+        "scripts/species/species-reroll-handler.js:237"
+      ],
+      "observed": "setFlag/unsetFlag used only when ActorEngine is absent; carries a mutation-exception comment as A-02 requires.",
+      "intendedOwnership": "ActorEngine",
+      "contractRef": "A-02",
+      "proposedSolution": "Remove the fallback (ActorEngine always exists at runtime) or keep as documented exception.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-SPC-004"
+    },
+    {
+      "category": "performance",
+      "severity": "low",
+      "status": "suspected",
+      "title": "Conditional-grant listeners schedule reconciliation on item and actor changes",
+      "affectedFiles": [
+        "scripts/engine/species/SpeciesConditionalGrantResolver.js",
+        "scripts/infrastructure/hooks/actor-hooks.js"
+      ],
+      "evidence": [
+        "scripts/engine/species/SpeciesConditionalGrantResolver.js:103",
+        "scripts/infrastructure/hooks/actor-hooks.js:85"
+      ],
+      "observed": "createItem/deleteItem of any owned feat and filtered updateActor changes schedule setTimeout reconcile passes; serialized per actor and guarded. Bulk progression finalization creating many feats could queue repeated passes (hypothesis).",
+      "intendedOwnership": "",
+      "contractRef": "OSI performance",
+      "proposedSolution": "Instrument pass count per finalize; coalesce per actor per tick if >1.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Count reconcile passes when 10 feats are created in one createEmbeddedDocuments call",
+      "foundryAcceptance": "Level-up with several feats",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low",
+      "perfImpact": "low",
+      "id": "F-SPC-005"
+    },
+    {
+      "category": "duplicate-authority",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Mechanical-responsibility leads are delegations, not duplicates",
+      "affectedFiles": [
+        "scripts/engine/species/rage-engine.js",
+        "scripts/engine/species/species-activated-ability-engine.js",
+        "scripts/species/species-variant-profile.js"
+      ],
+      "evidence": [
+        "scripts/engine/species/rage-engine.js:105",
+        "scripts/engine/species/species-activated-ability-engine.js:471",
+        "scripts/engine/species/species-activated-ability-engine.js:615",
+        "scripts/species/species-variant-profile.js:52"
+      ],
+      "observed": "Condition steps delegate to ConditionTrackRules/ConditionEngine; getAbilityMod reads the prepared mod first; normalizeAbilityMods normalizes data shape; rage attack/damage bonus is a distinct species mechanic.",
+      "intendedOwnership": "",
+      "contractRef": "A-01",
+      "proposedSolution": "None",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "",
+      "perfImpact": "none",
+      "id": "F-SPC-006"
+    }
+  ]
+}

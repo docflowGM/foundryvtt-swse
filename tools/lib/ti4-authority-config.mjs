@@ -171,7 +171,6 @@ export const PHASE0_CENSUS = Object.freeze({
     'scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js',
     'scripts/apps/follower-creator.js',
     'scripts/domain/droids/droid-modification-factory.js',
-    'scripts/domain/vehicles/vehicle-modification-factory.js',
     'scripts/engine/crafting/lightsaber-construction-engine.js'
   ],
   forcePoints: [
@@ -252,7 +251,6 @@ export const PHASE0_CENSUS = Object.freeze({
     'scripts/engine/customization/vehicle-customization-engine.js'
   ],
   progressionEntitlements: [
-    'scripts/engine/progression/engine/progression-engine.js',  // Phase 0 P52: legacy, no production caller by static search
     'scripts/apps/progression-framework/shell/progression-finalizer.js',
     'scripts/engine/abilities/progression/progression-event-processor.js',
     'scripts/patches/progression-ledger-reconciliation-hotfix.js'

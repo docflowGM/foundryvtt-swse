@@ -2,55 +2,32 @@ import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/for
 import { ForceRegimenExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-regimen-executor.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
-import { promptForcePowerRollOptions, promptForceRegimenRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
+import { ForceRollDialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
+
+/**
+ * Repaint the actor's sheet without a data render. Formerly done by scripts/patches/force-suite-render-guard-hotfix.js, which wrapped every open
+ * sheet's render() and inspected the call stack to recognise this module; the repaint now uses the sheet's coordinated requestSurfaceRender().
+ */
+function repaintForceSheet(actor) {
+  const sheet = actor?.sheet;
+  if (!sheet) return;
+  // The shell sheet's own coordinated, guarded repaint path; plain render(false) only for hosts that do not expose it.
+  if (typeof sheet.requestSurfaceRender === 'function') return sheet.requestSurfaceRender({ reason: 'force-suite-runtime-repaint', surfaceId: 'force' });
+  return sheet.render?.(false);
+}
 
 let registered = false;
 const TELEKINETIC_MESSAGE_PATCH_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.telekineticMessage.v1');
 const FORCE_EXECUTOR_ROLLBACK_PATCH_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.rollback.v1');
-const SKILL_FOCUS_NON_STACK_PATCH_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.skillFocusNonStack.v1');
 const FORCE_SUITE_ACTION_DELEGATE_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.actionDelegate.v1');
 
 function normalizeName(value = '') {
   return String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/\s*\(\d+\)\s*$/, '');
 }
 
-function normalizeChoiceKey(value = '') {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '');
-}
-
 function actorHasTalent(actor, talentName) {
   const wanted = normalizeName(talentName);
   return Array.from(actor?.items ?? []).some(item => item?.type === 'talent' && normalizeName(item?.name) === wanted);
-}
-
-function actorHasSkillFocusForSkill(actor, skillKey) {
-  const wanted = normalizeChoiceKey(skillKey);
-  if (!wanted) return false;
-  for (const item of actor?.items ?? []) {
-    if (item?.type !== 'feat') continue;
-    if (normalizeName(item?.name) !== 'skill focus') continue;
-    const choices = [
-      item?.system?.selectedChoice,
-      item?.flags?.swse?.selectedChoice,
-      item?.flags?.['foundryvtt-swse']?.selectedChoice,
-      item?.system?.choice,
-      item?.system?.focusedSkill,
-      item?.system?.skill
-    ];
-    for (const choice of choices) {
-      if (!choice) continue;
-      if (typeof choice === 'string') {
-        if (normalizeChoiceKey(choice) === wanted) return true;
-        continue;
-      }
-      const choiceValues = [choice.id, choice.key, choice.value, choice.slug, choice.label, choice.name, choice.skill, choice.target];
-      if (choiceValues.some(value => normalizeChoiceKey(value) === wanted)) return true;
-    }
-  }
-  return false;
 }
 
 function encounterId() {
@@ -230,58 +207,6 @@ function installForcePowerErrorRollback() {
   ForceExecutor[FORCE_EXECUTOR_ROLLBACK_PATCH_FLAG] = true;
 }
 
-function suppressDuplicateSkillFocusInUpdates(updates, actor) {
-  const skills = updates?.['system.derived.skills'];
-  if (!skills || typeof skills !== 'object') return;
-
-  for (const [skillKey, skill] of Object.entries(skills)) {
-    if (!skill || skill.focused !== true) continue;
-    if (!actorHasSkillFocusForSkill(actor, skillKey)) continue;
-
-    const featBonus = Number(skill.featBonus) || 0;
-    const focusBonus = Number(skill.focusBonus) || 0;
-    const parts = Array.isArray(skill.math?.parts) ? skill.math.parts : (Array.isArray(skill.breakdown) ? skill.breakdown : []);
-    const modifierPart = parts.find(part => part?.key === 'modifiers')
-      ?? parts.find(part => /feat|equipment|effect|modifier/i.test(String(part?.label || part?.source || '')));
-    const modifierValue = Number(modifierPart?.value) || 0;
-    const duplicateAmount = focusBonus > 0 && Math.max(featBonus, modifierValue) >= 5 ? 5 : 0;
-    if (!duplicateAmount) continue;
-
-    skill.total = (Number(skill.total) || 0) - duplicateAmount;
-    skill.featBonus = featBonus - duplicateAmount;
-    skill.skillFocusNonStacking = true;
-    skill.duplicateSkillFocusSuppressed = duplicateAmount;
-
-    if (modifierPart) modifierPart.value = modifierValue - duplicateAmount;
-    if (skill.math) {
-      skill.math.total = skill.total;
-      const recomputed = parts.reduce((sum, part) => sum + (Number(part?.value) || 0), 0);
-      skill.math.verified = Math.abs(recomputed - skill.total) <= 0.001;
-      skill.math.skillFocusNonStacking = true;
-      skill.math.duplicateSkillFocusSuppressed = duplicateAmount;
-    }
-  }
-}
-
-function installSkillFocusNonStackingGuard() {
-  if (DerivedCalculator[SKILL_FOCUS_NON_STACK_PATCH_FLAG]) return;
-  const originalComputeAll = DerivedCalculator.computeAll;
-  if (typeof originalComputeAll !== 'function') return;
-
-  DerivedCalculator.computeAll = async function patchedComputeAll(actor, ...args) {
-    const updates = await originalComputeAll.call(this, actor, ...args);
-    try {
-      suppressDuplicateSkillFocusInUpdates(updates, actor);
-    } catch (err) {
-      console.warn('SWSE | Skill Focus non-stacking guard failed', err);
-    }
-    return updates;
-  };
-
-  DerivedCalculator.clearCaches?.();
-  DerivedCalculator[SKILL_FOCUS_NON_STACK_PATCH_FLAG] = true;
-}
-
 function rootFromHtml(html) {
   return html instanceof HTMLElement ? html : html?.[0] ?? html;
 }
@@ -391,7 +316,7 @@ async function executeRepairedForceButton(button) {
   }
 
   const isRecovery = power.system?.discarded ?? false;
-  const rollOptions = isRecovery ? null : await promptForcePowerRollOptions({ actor, power, sourceElement: button });
+  const rollOptions = isRecovery ? null : await ForceRollDialogPort.promptPower({ actor, power, sourceElement: button });
   if (!isRecovery && !rollOptions) return;
 
   button.disabled = true;
@@ -402,7 +327,7 @@ async function executeRepairedForceButton(button) {
 
   if (result?.success === false) ui?.notifications?.warn?.(result?.error || `${power.name} failed.`);
   else ui?.notifications?.info?.(`${power.name} ${isRecovery ? 'recovered' : 'used'}`);
-  actor.sheet?.render?.(false);
+  repaintForceSheet(actor);
 }
 
 function clearRecoveryModes(root) {
@@ -440,7 +365,7 @@ async function handleForceSuiteRecoverAll(button) {
     const result = await ForceExecutor.recoverForcePowers(actor, null, { proof: { kind: 'gm', reason: 'Recover all from the Force suite panel' } });
     if (result?.success) {
       ui?.notifications?.info?.('All spent Force powers recovered.');
-      actor.sheet?.render?.(false);
+      repaintForceSheet(actor);
     } else {
       ui?.notifications?.warn?.(result?.error || 'No spent Force powers to recover.');
     }
@@ -494,7 +419,7 @@ async function handleForceSuiteRecoverOne(button) {
     if (result?.success) {
       ui?.notifications?.info?.('Force power recovered.');
       clearRecoveryModes(root);
-      actor.sheet?.render?.(false);
+      repaintForceSheet(actor);
     } else {
       ui?.notifications?.warn?.(result?.error || 'Could not recover that Force power.');
     }
@@ -516,15 +441,15 @@ async function handleUseForceRegimen(button) {
   }
   button.disabled = true;
   try {
-    const rollOptions = await promptForceRegimenRollOptions({ actor, regimen, sourceElement: button });
+    const rollOptions = await ForceRollDialogPort.promptRegimen({ actor, regimen, sourceElement: button });
     if (!rollOptions) return;
     const result = await ForceRegimenExecutor.executeRegimen(actor, itemId, rollOptions);
     if (result?.success) {
       ui?.notifications?.info?.(`${result.regimenName || regimen.name} is active until long rest.`);
-      actor.sheet?.render?.(false);
+      repaintForceSheet(actor);
     } else {
       ui?.notifications?.warn?.(result?.error || 'Force Regimen could not be used.');
-      if (result?.executed) actor.sheet?.render?.(false);
+      if (result?.executed) repaintForceSheet(actor);
     }
   } catch (err) {
     console.error('SWSE | Force Regimen use failed', err);
@@ -546,7 +471,7 @@ async function handleEndForceRegimen(button) {
     const result = await ForceRegimenExecutor.endRegimen(actor, itemId);
     if (result?.success) {
       ui?.notifications?.info?.('Force Regimen effect ended.');
-      actor.sheet?.render?.(false);
+      repaintForceSheet(actor);
     } else {
       ui?.notifications?.warn?.(result?.error || 'Force Regimen effect could not be ended.');
     }
@@ -608,7 +533,6 @@ export function registerForceSuiteRuntimeRepairs() {
   installTelepathicIntruderBonus();
   installTelekineticRepeatActionRepair();
   installForcePowerErrorRollback();
-  installSkillFocusNonStackingGuard();
   installForceSuiteActionDelegate();
   if (registered) return;
   registered = true;

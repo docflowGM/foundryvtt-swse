@@ -1,3 +1,4 @@
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 /**
  * Help Mode Manager
  *
@@ -72,7 +73,7 @@ export class HelpModeManager {
       return Promise.resolve();
     }
 
-    return actor.setFlag('foundryvtt-swse', FLAG_KEY, helpLevel);
+    return ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', FLAG_KEY, helpLevel, { recalc: false });
   }
 
   /**

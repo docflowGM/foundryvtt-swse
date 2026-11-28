@@ -223,9 +223,13 @@ export class GamesSurfaceController {
     surface.querySelectorAll('form[data-games-action="lock-pazaak-side-deck"]').forEach(form => {
       const checkboxes = Array.from(form.querySelectorAll('[data-pazaak-side-card]'));
       const countNode = form.querySelector('[data-pazaak-selected-count]');
-      const submit = form.querySelector('button[type="submit"]');
-      const updateSelection = () => this._syncSideDeckBuilder(checkboxes, countNode, submit);
-      checkboxes.forEach(box => box.addEventListener('change', updateSelection, { signal }));
+      const submit = Array.from(form.querySelectorAll('button[type="submit"]'));
+      const tray = form.querySelector('[data-pazaak-deck-tray]');
+      const updateSelection = () => {
+        this._syncSideDeckBuilder(checkboxes, countNode, submit);
+        this._paintSideDeckTray(tray, checkboxes);
+      };
+      checkboxes.forEach(box => box.addEventListener('change', () => { this._noteSideDeckOrder(box); updateSelection(); }, { signal }));
       updateSelection();
 
       form.addEventListener('submit', async ev => {
@@ -257,7 +261,8 @@ export class GamesSurfaceController {
           cardInstanceId: String(data.get('cardInstanceId') || '').trim(),
           reason: String(data.get('reason') || '').trim(),
           choice: {
-            sign: String(data.get('sign') || '').trim(),
+            // new FormData(form) omits the clicked submit button, so read the choice from the submitter itself
+            sign: String(submitter?.name === 'sign' ? submitter.value : (data.get('sign') || '')).trim(),
             value: choiceValue
           }
         };
@@ -548,6 +553,31 @@ export class GamesSurfaceController {
     }
   }
 
+  // Selection order (click order) for the ten-slot tray; presentation only, the engine validates the locked ids.
+  _noteSideDeckOrder(box) {
+    this._sideDeckOrder = (this._sideDeckOrder || []).filter(id => id !== box.value);
+    if (box.checked) this._sideDeckOrder.push(box.value);
+  }
+
+  _paintSideDeckTray(tray, checkboxes) {
+    if (!tray) return;
+    const byId = new Map(checkboxes.filter(b => b.checked).map(b => [b.value, b]));
+    const order = [...(this._sideDeckOrder || []).filter(id => byId.has(id)), ...[...byId.keys()].filter(id => !(this._sideDeckOrder || []).includes(id))];
+    const slots = Array.from(tray.querySelectorAll('[data-pazaak-deck-slot]'));
+    slots.forEach((slot, i) => {
+      const box = byId.get(order[i]);
+      slot.classList.toggle('is-filled', Boolean(box));
+      slot.querySelectorAll('.swse-pazaak-card-face').forEach(n => n.remove());
+      if (!box) return;
+      const face = document.createElement('span');
+      face.className = `swse-pazaak-card-face swse-pazaak-template-card tone-${box.dataset.cardTone || 'neutral'}`;
+      const b = document.createElement('b');
+      b.textContent = box.dataset.cardVisual || box.dataset.cardLabel || '';
+      face.append(b);
+      slot.append(face);
+    });
+  }
+
   _syncSideDeckBuilder(checkboxes, countNode, submit) {
     const selected = checkboxes.filter(box => box.checked);
     const selectedIds = selected.map(box => box.value).filter(Boolean);
@@ -556,7 +586,7 @@ export class GamesSurfaceController {
       box.disabled = !box.checked && selected.length >= limit;
     });
     if (countNode) countNode.textContent = String(selected.length);
-    if (submit) submit.disabled = selected.length !== limit;
+    for (const button of (Array.isArray(submit) ? submit : [submit])) if (button) button.disabled = selected.length !== limit;
     if (typeof this._host?.patchSurfaceOptions === 'function') {
       this._host.patchSurfaceOptions({ sideDeckIds: selectedIds }, { render: false });
     }

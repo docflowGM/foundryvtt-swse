@@ -4,6 +4,7 @@ import { FollowerManager } from "/systems/foundryvtt-swse/scripts/apps/follower-
 import { MinionManager } from "/systems/foundryvtt-swse/scripts/apps/minion-manager.js";
 import { runFollowerMutationTransaction } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-mutation-transaction.js";
 import { RECRUITING_TALENTS, followerCapLimit, canAddRecruitingSlot, evaluateFollowerCap, FOLLOWER_MAX_SETTING } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-house-rules.js";
+import { withFollowerSlotLock } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-lock.js";
 import { isFollowerSlotOccupied, resolveFollowerSlotActorId } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js";
 import { computeGrantedItemIdsForTalent, buildOwnerRegistryDetachPatch, buildSlotRemovalPatch } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-talent-detach-plan.js";
 
@@ -210,6 +211,11 @@ export async function reconcileFollowerEnhancementsForActor(actor) {
 
 export async function reconcileFollowerSlotsForActor(actor) {
   if (!_isFollowerOwnerActor(actor)) return [];
+  // F-NPC-001: one read-modify-write of followerSlots at a time per owner (createItem/deleteItem/progression reactions are unordered).
+  return withFollowerSlotLock(actor.id, () => _reconcileFollowerSlotsLocked(actor));
+}
+
+async function _reconcileFollowerSlotsLocked(actor) {
 
   const talents = Array.from(actor.items || []).filter(item => item.type === 'talent' && getFollowerTalentConfig(item.name, item));
   const slots = _getSlots(actor).map(slot => ({ ...slot }));
@@ -325,22 +331,24 @@ export function initializeFollowerHooks() {
     const cfg = getFollowerTalentConfig(item.name, item);
     if (!cfg) return;
 
-    const slots = _getSlots(actor);
-    const current = _slotsForTalent(slots, item.name).length;
-    const max = Number(cfg.maxCount ?? 0);
+    await withFollowerSlotLock(actor.id, async () => {
+      const slots = _getSlots(actor);
+      const current = _slotsForTalent(slots, item.name).length;
+      const max = Number(cfg.maxCount ?? 0);
 
-    if (max > 0 && current >= max) {
-      // Slot cap reached; do nothing (UI shows locked create buttons).
-      return;
-    }
-    // GM house rule: combined cap across the recruiting talents. The talent stays legal; no slot is created.
-    if (!canAddRecruitingSlot(slots, item.name, _followerCapLimit())) {
-      ui.notifications?.info?.(`${actor.name}: follower cap reached; ${item.name} was kept but created no follower slot.`);
-      return;
-    }
+      if (max > 0 && current >= max) {
+        // Slot cap reached; do nothing (UI shows locked create buttons).
+        return;
+      }
+      // GM house rule: combined cap across the recruiting talents. The talent stays legal; no slot is created.
+      if (!canAddRecruitingSlot(slots, item.name, _followerCapLimit())) {
+        ui.notifications?.info?.(`${actor.name}: follower cap reached; ${item.name} was kept but created no follower slot.`);
+        return;
+      }
 
-    slots.push(_buildSlot(item, cfg));
-    await _setSlots(actor, slots);
+      slots.push(_buildSlot(item, cfg));
+      await _setSlots(actor, slots);
+    });
   });
 
   Hooks.on('deleteItem', async (item, options, userId) => {
@@ -366,6 +374,17 @@ export function initializeFollowerHooks() {
     const cfg = getFollowerTalentConfig(item.name, item);
     if (!cfg) return;
 
+    // F-NPC-001: the empty-slot removal is a read-modify-write of followerSlots, so it runs under the per-owner lock.
+    const emptySlotRemoved = await withFollowerSlotLock(actor.id, async () => {
+      const lockedSlots = _getSlots(actor);
+      const lockedIdx = lockedSlots.findIndex(s => s.talentItemId === item.id);
+      if (lockedIdx === -1 || isFollowerSlotOccupied(lockedSlots[lockedIdx])) return false;
+      lockedSlots.splice(lockedIdx, 1);
+      await _setSlots(actor, lockedSlots);
+      return true;
+    });
+    if (emptySlotRemoved) return;
+
     const slots = _getSlots(actor);
 
     // Prefer removing the slot that came from this exact talent item.
@@ -373,13 +392,6 @@ export function initializeFollowerHooks() {
     if (idx === -1) return;
 
     const slot = slots[idx];
-
-    // If the slot is empty, remove it immediately.
-    if (!isFollowerSlotOccupied(slot)) {
-      slots.splice(idx, 1);
-      await _setSlots(actor, slots);
-      return;
-    }
 
     // If exactly one filled follower exists for this talent, detach automatically.
     const filled = _filledSlotsForTalent(slots, item.name).map(resolveFollowerSlotActorId).filter(Boolean);

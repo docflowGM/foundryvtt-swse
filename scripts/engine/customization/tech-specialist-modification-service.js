@@ -5,6 +5,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { rollSkill } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const FLAG_SCOPE = 'swse';
@@ -424,10 +425,7 @@ function makeTraitRecord({ trait, cost, dc, rollTotal, sourceFeat, signatureSeco
 
 async function chatTake10(actor, total, dc, trait) {
   try {
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<div class="swse-chat-card"><h3>Tech Specialist Modification</h3><p><strong>${trait.name}</strong></p><p>Mechanics Take 10 total: <strong>${total}</strong> vs DC ${dc}</p></div>`
-    });
+    await SWSEChat.postHTML({ actor, content: `<div class="swse-chat-card"><h3>Tech Specialist Modification</h3><p><strong>${trait.name}</strong></p><p>Mechanics Take 10 total: <strong>${total}</strong> vs DC ${dc}</p></div>` });
   } catch (_err) {}
 }
 

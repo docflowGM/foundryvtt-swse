@@ -10,7 +10,11 @@ const css = fs.readFileSync(path.join(root, 'styles/progression-framework/steps/
 const shellCSS = fs.readFileSync(path.join(root, 'styles/progression-framework/progression-shell.css'), 'utf8');
 const template = fs.readFileSync(path.join(root, 'templates/apps/progression-framework/progression-shell.hbs'), 'utf8');
 const hostCSS = fs.readFileSync(path.join(root, 'styles/system/shell-host.css'), 'utf8');
-const scoped = css.slice(css.indexOf('PROGRESSION INTRO — DATAPAD VIEWPORT CONTAINMENT'));
+// The intro containment section ends where the separate, step-scoped Galactic Profiles UX block begins
+// (that block intentionally hides progression rails on its own steps and is not splash CSS).
+const containmentStart = css.indexOf('PROGRESSION INTRO — DATAPAD VIEWPORT CONTAINMENT');
+const galacticUxStart = css.indexOf('Galactic Profiles UX: unified illustrated gallery');
+const scoped = css.slice(containmentStart, galacticUxStart > containmentStart ? galacticUxStart : undefined);
 
 assert.ok(scoped.startsWith('PROGRESSION INTRO — DATAPAD VIEWPORT CONTAINMENT'));
 assert.match(template, /<div class="prog-intro-stage" data-region="work-surface">/);

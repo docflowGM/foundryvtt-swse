@@ -413,9 +413,10 @@ export class AttributeStep extends ProgressionStepPlugin {
       const gmIds = (game?.users?.contents || game?.users || [])
         .filter(user => user?.isGM)
         .map(user => user.id);
-      if (gmIds.length && globalThis.ChatMessage?.create) {
-        await ChatMessage.create({
-          speaker: ChatMessage.getSpeaker?.({ actor }) || {},
+      if (gmIds.length) {
+        const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
+        await SWSEChat.postHTML({
+          actor,
           whisper: gmIds,
           content: `<strong>GM approval requested:</strong> ${game?.user?.name || 'A player'} overrode the ${override.label || 'species fixed attribute array'} for ${actor?.name || 'a new character'}. Review it in the GM Datapad approvals page.`,
         });

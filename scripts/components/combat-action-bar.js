@@ -3,8 +3,8 @@ import { SWSEActiveEffectsManager } from "/systems/foundryvtt-swse/scripts/comba
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSECombat } from "/systems/foundryvtt-swse/scripts/combat/systems/enhanced-combat-system.js";
 import { escapeHTML } from "/systems/foundryvtt-swse/scripts/utils/security-utils.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 /**
  * Modernized Combat Action Bar
@@ -321,10 +321,7 @@ export class CombatActionBar {
         chatContent += `<br><em style="color: #ff9500;">✦ Condition improved: Step ${result.newCondition}</em>`;
       }
 
-      createChatMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: chatContent
-      });
+      SWSEChat.postHTML({ actor, content: chatContent });
 
       this._useAction(actor, 'swift');
     } else {
@@ -362,10 +359,7 @@ export class CombatActionBar {
         <em style="color: #ff0000;">⚠ Trades <strong>-1 condition step</strong> (Step ${result.condition} → ${result.newCondition})</em><br>
         <em style="color: #0099ff;">✦ Regains <strong>1 Second Wind use</strong></em>`;
 
-      createChatMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: chatContent
-      });
+      SWSEChat.postHTML({ actor, content: chatContent });
 
       this._useAction(actor, 'swift');
     } else {

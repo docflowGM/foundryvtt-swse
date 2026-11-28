@@ -4,6 +4,7 @@ import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/fea
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 let registered = false;
 
@@ -113,7 +114,7 @@ function canUseDaily(actor, ruleId) {
 async function markDailyUsed(actor, ruleId) {
   if (!actor?.setFlag || !ruleId) return false;
   const uses = { ...getDailyUses(actor), [ruleId]: todayKey() };
-  await actor.setFlag('foundryvtt-swse', 'skillFeatDailyUses', uses);
+  await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'skillFeatDailyUses', uses, { recalc: false });
   return true;
 }
 

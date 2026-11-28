@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+// F-TAL-004 (3F): the Crippling Strike end-at-full-HP cleanup no longer awaits writes inside preUpdateActor; it runs after the update on the originating client.
+globalThis.window = globalThis.window || {}; registerFoundryPathLoader(); installFoundryShimGlobals();
+globalThis.foundry = globalThis.foundry ?? {}; globalThis.foundry.utils = globalThis.foundry.utils ?? {};
+globalThis.foundry.utils.randomID ??= () => 'x'; globalThis.foundry.utils.deepClone ??= (v) => JSON.parse(JSON.stringify(v));
+globalThis.foundry.applications = globalThis.foundry.applications ?? { api: { ApplicationV2: class {}, HandlebarsApplicationV2: class {}, HandlebarsApplicationMixin: (B) => B } };
+globalThis.localStorage ??= { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+globalThis.ui = { notifications: { warn() {}, info() {}, error() {} } };
+const hooks = []; globalThis.Hooks = { on: (ev, fn) => hooks.push({ ev, fn }), once() {}, callAll() {}, call() {} };
+globalThis.SWSE = {}; globalThis.game = { ...(globalThis.game ?? {}), user: { id: 'me', isGM: true }, actors: { get: () => null } };
+const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+const calls = []; ActorEngine.unsetActorFlag = async (a, ns, k) => { calls.push(k); };
+const { SithTalentActions } = await import('/systems/foundryvtt-swse/scripts/engine/talent/sith-talent-actions.js');
+SithTalentActions.registerHooks();
+assert.ok(!hooks.some((h) => h.ev === 'preUpdateActor'), 'no preUpdateActor listener');
+const h = hooks.filter((x) => x.ev === 'updateActor').at(-1)?.fn; assert.ok(h);
+const actor = { id: 'a', name: 'A', system: { hp: { value: 20, max: 20 } }, getFlag: (_n, k) => (k === 'cripplingStrike' ? { active: true } : null) };
+await h(actor, { system: { hp: { value: 20 } } }, {}, 'someone-else'); assert.deepEqual(calls, [], 'foreign user ignored');
+await h(actor, { system: { hp: { value: 19 } } }, {}, 'me'); assert.deepEqual(calls, [], 'below max: still crippled');
+await h(actor, { system: { hp: { value: 20 } } }, {}, 'me'); assert.deepEqual(calls, ['cripplingStrike'], 'at max HP the flag is cleared');
+console.log('sith-crippling-strike-post-update: ok');

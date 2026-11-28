@@ -1,0 +1,4062 @@
+{
+ "schema": "swse.architecture-census.mechanics/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "method": "Runtime (non-tool, non-test) function/method/arrow names matched against a responsibility vocabulary. reachableNonTrivialSites counts definitions >= 4 lines in index.js-reachable files. A multi-domain responsibility is a duplicate-authority CANDIDATE to be verified in Phase 2, not a finding.",
+ "responsibilities": [
+  {
+   "responsibility": "defense-totals",
+   "pattern": "/^(calc|calculate|compute|derive|build|recompute|get)\\w*(defen[cs]es?|reflex|fortitude|willdefense)(totals?|scores?|values?|breakdown)?$/i",
+   "sites": 24,
+   "reachableNonTrivialSites": 14,
+   "reachableFiles": 12,
+   "domains": [
+    "actor-core",
+    "combat",
+    "force",
+    "infrastructure",
+    "npc-followers",
+    "progression",
+    "talents",
+    "ui-shell"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/actors/v2/vehicle-derived-builder.js",
+     "line": 26,
+     "name": "buildDefenseValue",
+     "lines": 12,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/rolls/attacks.js",
+     "line": 675,
+     "name": "getTargetDefenseValue",
+     "lines": 8,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/rolls/attacks.js",
+     "line": 684,
+     "name": "getTargetReflex",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/rolls/attacks.js",
+     "line": 688,
+     "name": "getTargetDefense",
+     "lines": 13,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/rolls/enhanced-rolls.js",
+     "line": 104,
+     "name": "getDefenseValue",
+     "lines": 11,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/vehicles/utils/vehicle-calculations.js",
+     "line": 70,
+     "name": "computeVehicleReflexDefense",
+     "lines": 31,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/area-explosives-runtime-patches.js",
+     "line": 121,
+     "name": "getTargetDefense",
+     "lines": 13,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/mobility-positioning-runtime-patches.js",
+     "line": 138,
+     "name": "getTargetDefense",
+     "lines": 13,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/force/phase6-force-direct-damage.js",
+     "line": 40,
+     "name": "getActorFortitude",
+     "lines": 13,
+     "domain": "force",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/utils/class-resolution.js",
+     "line": 454,
+     "name": "getClassDefenses",
+     "lines": 10,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/species/species-activated-ability-engine.js",
+     "line": 625,
+     "name": "getDefense",
+     "lines": 3,
+     "domain": "species",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/character-data-analysis.js",
+     "line": 43,
+     "name": "calculateDefense",
+     "lines": 3,
+     "domain": "mentor-suggestion",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/talent/consular-talent-actions.js",
+     "line": 45,
+     "name": "getDefense",
+     "lines": 4,
+     "domain": "talents",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/sentinel-talent-actions.js",
+     "line": 86,
+     "name": "getDefense",
+     "lines": 4,
+     "domain": "talents",
+     "reachable": true
+    },
+    {
+     "path": "scripts/export/swse-export-model.js",
+     "line": 68,
+     "name": "buildDefenses",
+     "lines": 16,
+     "domain": "infrastructure",
+     "reachable": false
+    },
+    {
+     "path": "scripts/export/swse-export-model.js",
+     "line": 70,
+     "name": "buildDefense",
+     "lines": 7,
+     "domain": "infrastructure",
+     "reachable": false
+    },
+    {
+     "path": "scripts/rolls/defenses.js",
+     "line": 18,
+     "name": "calculateDefense",
+     "lines": 5,
+     "domain": "rolls",
+     "reachable": false
+    },
+    {
+     "path": "scripts/rolls/defenses.js",
+     "line": 87,
+     "name": "calculateAllDefenses",
+     "lines": 7,
+     "domain": "rolls",
+     "reachable": false
+    },
+    {
+     "path": "scripts/sheets/v2/npc/npc-sheet-helpers.js",
+     "line": 212,
+     "name": "buildFollowerDefenseValues",
+     "lines": 33,
+     "domain": "npc-followers",
+     "reachable": true
+    },
+    {
+     "path": "scripts/sheets/v2/npc/npc-sheet-helpers.js",
+     "line": 791,
+     "name": "derivedDefense",
+     "lines": 9,
+     "domain": "npc-followers",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/defense-tooltip.js",
+     "line": 226,
+     "name": "getDefenseBreakdown",
+     "lines": 54,
+     "domain": "ui-shell",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/math-utils.js",
+     "line": 37,
+     "name": "calculateDefense",
+     "lines": 4,
+     "domain": "infrastructure",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/schema-adapters.js",
+     "line": 445,
+     "name": "getDefenseTotal",
+     "lines": 3,
+     "domain": "infrastructure",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/schema-adapters.js",
+     "line": 453,
+     "name": "getDefense",
+     "lines": 6,
+     "domain": "infrastructure",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "base-attack-bonus",
+   "pattern": "/^(calc|calculate|compute|derive|get)\\w*(bab|baseattack(bonus)?)$/i",
+   "sites": 12,
+   "reachableNonTrivialSites": 9,
+   "reachableFiles": 9,
+   "domains": [
+    "data-registries",
+    "infrastructure",
+    "progression",
+    "talents"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/apps/levelup/levelup-shared.js",
+     "line": 256,
+     "name": "calculateTotalBAB",
+     "lines": 38,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/adapters/follower-deriver.js",
+     "line": 89,
+     "name": "getProfileBab",
+     "lines": 9,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/prerequisite-checker.js",
+     "line": 3072,
+     "name": "getBaseAttackBonus",
+     "lines": 25,
+     "domain": "data-registries",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/defense-avoidance-runtime-patches.js",
+     "line": 67,
+     "name": "getBaseAttackBonus",
+     "lines": 8,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/progression/data/progression-data.js",
+     "line": 255,
+     "name": "calculateBAB",
+     "lines": 25,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/engine/tools/prestige-readiness.js",
+     "line": 138,
+     "name": "calculateActorBAB",
+     "lines": 23,
+     "domain": "progression",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/progression/prerequisites/actor-prerequisite-snapshot.js",
+     "line": 293,
+     "name": "calculateBab",
+     "lines": 23,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/utils/class-suggestion-utilities.js",
+     "line": 162,
+     "name": "calculateTotalBAB",
+     "lines": 45,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/character-data-analysis.js",
+     "line": 31,
+     "name": "calculateBAB",
+     "lines": 8,
+     "domain": "mentor-suggestion",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/talent/sentinel-talent-actions.js",
+     "line": 71,
+     "name": "getBab",
+     "lines": 14,
+     "domain": "talents",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/math-utils.js",
+     "line": 20,
+     "name": "calculateBAB",
+     "lines": 8,
+     "domain": "infrastructure",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/schema-adapters.js",
+     "line": 467,
+     "name": "getBAB",
+     "lines": 19,
+     "domain": "infrastructure",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "hit-points-max",
+   "pattern": "/^(calc|calculate|compute|derive|recompute|get)\\w*(max(imum)?hp|hp(max|total)|hitpoints)$/i",
+   "sites": 1,
+   "reachableNonTrivialSites": 1,
+   "reachableFiles": 1,
+   "domains": [
+    "infrastructure"
+   ],
+   "multiDomain": false,
+   "siteList": [
+    {
+     "path": "scripts/utils/schema-adapters.js",
+     "line": 194,
+     "name": "getMaxHP",
+     "lines": 4,
+     "domain": "infrastructure",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "damage-threshold",
+   "pattern": "/damagethreshold/i",
+   "sites": 16,
+   "reachableNonTrivialSites": 9,
+   "reachableFiles": 6,
+   "domains": [
+    "combat",
+    "feats",
+    "infrastructure"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/apps/progression-framework/steps/summary-step.js",
+     "line": 812,
+     "name": "_getCurrentDamageThreshold",
+     "lines": 3,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/combat-automation.js",
+     "line": 79,
+     "name": "checkDamageThreshold",
+     "lines": 6,
+     "domain": "combat",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/combat/combat-stat-rules.js",
+     "line": 98,
+     "name": "getDamageThresholdSizeBonus",
+     "lines": 4,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/CombatRules.js",
+     "line": 136,
+     "name": "modifyDamageThresholdFormulaEnabled",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/CombatRules.js",
+     "line": 140,
+     "name": "getDamageThresholdFormulaType",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/damage-engine.js",
+     "line": 108,
+     "name": "getDamageThreshold",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/threshold-engine.js",
+     "line": 122,
+     "name": "getDamageThreshold",
+     "lines": 70,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/threshold-engine.js",
+     "line": 221,
+     "name": "calculateDamageThreshold",
+     "lines": 35,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js",
+     "line": 17,
+     "name": "hasDamageThresholdRule",
+     "lines": 4,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js",
+     "line": 133,
+     "name": "normalizeDamageThresholdFeat",
+     "lines": 31,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js",
+     "line": 165,
+     "name": "registerDamageThresholdFeatNormalizationHooks",
+     "lines": 5,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/meta-resource-feat-resolver.js",
+     "line": 189,
+     "name": "getDamageThresholdRules",
+     "lines": 40,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/implants/ImplantEffectRules.js",
+     "line": 156,
+     "name": "getStunDamageThresholdBonus",
+     "lines": 3,
+     "domain": "customization",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/defenses.js",
+     "line": 124,
+     "name": "calculateDamageThreshold",
+     "lines": 3,
+     "domain": "rolls",
+     "reachable": false
+    },
+    {
+     "path": "scripts/utils/math-utils.js",
+     "line": 48,
+     "name": "calculateDamageThreshold",
+     "lines": 19,
+     "domain": "infrastructure",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/schema-adapters.js",
+     "line": 226,
+     "name": "getDamageThreshold",
+     "lines": 17,
+     "domain": "infrastructure",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "condition-track-penalty",
+   "pattern": "/^(calc|calculate|compute|get|apply|resolve)\\w*condition(track)?(penalty|step|modifier)s?$/i",
+   "sites": 13,
+   "reachableNonTrivialSites": 11,
+   "reachableFiles": 9,
+   "domains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "force",
+    "infrastructure",
+    "species"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/actors/derived/defense-calculator.js",
+     "line": 760,
+     "name": "getConditionPenalty",
+     "lines": 7,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/actors/v2/base-actor.js",
+     "line": 331,
+     "name": "getConditionPenalty",
+     "lines": 7,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/utils/combat-utils.js",
+     "line": 29,
+     "name": "getConditionPenalty",
+     "lines": 4,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/ConditionEngine.js",
+     "line": 39,
+     "name": "calculateConditionStep",
+     "lines": 101,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/ConditionEngine.js",
+     "line": 150,
+     "name": "applyConditionStep",
+     "lines": 89,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/ConditionEngine.js",
+     "line": 392,
+     "name": "getConditionPenalty",
+     "lines": 12,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/effects/adapters/effect-card-utils.js",
+     "line": 58,
+     "name": "getConditionStep",
+     "lines": 12,
+     "domain": "abilities-effects",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierEngineExtensions.js",
+     "line": 470,
+     "name": "getConditionPenalty",
+     "lines": 12,
+     "domain": "abilities-effects",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/force/force-power-final-integration.js",
+     "line": 139,
+     "name": "getForceStunConditionSteps",
+     "lines": 5,
+     "domain": "force",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/species/rage-engine.js",
+     "line": 98,
+     "name": "getConditionStep",
+     "lines": 11,
+     "domain": "species",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/species/species-activated-ability-engine.js",
+     "line": 469,
+     "name": "applyConditionSteps",
+     "lines": 4,
+     "domain": "species",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/calc-conditions.js",
+     "line": 5,
+     "name": "applyConditionPenalty",
+     "lines": 9,
+     "domain": "combat",
+     "reachable": false
+    },
+    {
+     "path": "scripts/utils/schema-adapters.js",
+     "line": 526,
+     "name": "getConditionPenalty",
+     "lines": 8,
+     "domain": "infrastructure",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "skill-total",
+   "pattern": "/^(calc|calculate|compute|derive|get)\\w*skill(totals?|modifiers?|bonus(es)?|mods?)$/i",
+   "sites": 15,
+   "reachableNonTrivialSites": 12,
+   "reachableFiles": 12,
+   "domains": [
+    "combat",
+    "infrastructure",
+    "mentor-suggestion",
+    "progression",
+    "rolls",
+    "skills"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/combat/swse-combat.js",
+     "line": 12,
+     "name": "getInitiativeSkillTotal",
+     "lines": 35,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/swse-combatant.js",
+     "line": 19,
+     "name": "getInitiativeSkillTotal",
+     "lines": 28,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combined-feat-action-resolver.js",
+     "line": 205,
+     "name": "getSkillBonus",
+     "lines": 15,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/starship/enhanced-commander.js",
+     "line": 126,
+     "name": "getSkillBonus",
+     "lines": 8,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/SWSEInitiative.js",
+     "line": 25,
+     "name": "getActorInitiativeSkillTotal",
+     "lines": 38,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/skills/skill-validator.js",
+     "line": 83,
+     "name": "calculateSkillModifier",
+     "lines": 21,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/skills/skill-feat-resolver.js",
+     "line": 210,
+     "name": "getActorSkillTotal",
+     "lines": 8,
+     "domain": "skills",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/species/species-activated-ability-engine.js",
+     "line": 621,
+     "name": "getSkillTotal",
+     "lines": 3,
+     "domain": "species",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/shared-suggestion-utilities.js",
+     "line": 128,
+     "name": "getSkillModifier",
+     "lines": 12,
+     "domain": "mentor-suggestion",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/custom-skill-roller.js",
+     "line": 27,
+     "name": "calculateCustomSkillBonus",
+     "lines": 26,
+     "domain": "rolls",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/roll-config.js",
+     "line": 746,
+     "name": "getSkillTotal",
+     "lines": 19,
+     "domain": "rolls",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/skills-reference.js",
+     "line": 225,
+     "name": "getSkillModifier",
+     "lines": 13,
+     "domain": "rolls",
+     "reachable": false
+    },
+    {
+     "path": "scripts/rolls/skills-reference.js",
+     "line": 371,
+     "name": "getSkillModifier",
+     "lines": 13,
+     "domain": "rolls",
+     "reachable": false
+    },
+    {
+     "path": "scripts/rolls/skills.js",
+     "line": 423,
+     "name": "calculateSkillModifier",
+     "lines": 20,
+     "domain": "rolls",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/schema-adapters.js",
+     "line": 495,
+     "name": "getSkillTotal",
+     "lines": 4,
+     "domain": "infrastructure",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "ability-modifier",
+   "pattern": "/^(calc|calculate|compute|get|derive)?\\w*abilitymod(ifier)?s?$/i",
+   "sites": 71,
+   "reachableNonTrivialSites": 40,
+   "reachableFiles": 34,
+   "domains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "feats",
+    "force",
+    "infrastructure",
+    "mentor-suggestion",
+    "npc-followers",
+    "progression",
+    "rolls",
+    "species",
+    "talents",
+    "vehicles"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/actors/derived/defense-calculator.js",
+     "line": 743,
+     "name": "getAbilityMod",
+     "lines": 4,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/follower-creator.js",
+     "line": 705,
+     "name": "_resolveProfileAbilityModifier",
+     "lines": 12,
+     "domain": "npc-followers",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/adapters/follower-deriver.js",
+     "line": 33,
+     "name": "abilityMod",
+     "lines": 4,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/adapters/follower-deriver.js",
+     "line": 38,
+     "name": "recalcAbilityMods",
+     "lines": 6,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/adapters/follower-deriver.js",
+     "line": 127,
+     "name": "extractSpeciesAbilityMods",
+     "lines": 45,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/active-step-computer.js",
+     "line": 349,
+     "name": "_abilityModifier",
+     "lines": 4,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/active-step-computer.js",
+     "line": 354,
+     "name": "_getActorAbilityModifier",
+     "lines": 6,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js",
+     "line": 18,
+     "name": "abilityMod",
+     "lines": 3,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+     "line": 2594,
+     "name": "_abilityMod",
+     "lines": 3,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/feat-step.js",
+     "line": 2384,
+     "name": "_getPendingAbilityModifier",
+     "lines": 32,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/follower-steps/follower-step-base.js",
+     "line": 313,
+     "name": "_extractSpeciesAbilityMods",
+     "lines": 32,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/galactic-profile-step.js",
+     "line": 52,
+     "name": "abilityModifier",
+     "lines": 3,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/language-step.js",
+     "line": 713,
+     "name": "_abilityModifier",
+     "lines": 4,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/language-step.js",
+     "line": 718,
+     "name": "_getActorAbilityModifier",
+     "lines": 6,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/skills-step.js",
+     "line": 966,
+     "name": "_abilityModifier",
+     "lines": 4,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/skills-step.js",
+     "line": 971,
+     "name": "_getAbilityModifier",
+     "lines": 6,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/summary-step.js",
+     "line": 849,
+     "name": "_abilityMod",
+     "lines": 3,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/droids/stock-droid-normalizer.js",
+     "line": 55,
+     "name": "abilityMod",
+     "lines": 3,
+     "domain": "droids",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/vehicles/custom-vehicle-construction.js",
+     "line": 34,
+     "name": "abilityModifier",
+     "lines": 1,
+     "domain": "vehicles",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-modification-effects.js",
+     "line": 24,
+     "name": "abilityMod",
+     "lines": 1,
+     "domain": "vehicles",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-operating-context.js",
+     "line": 47,
+     "name": "abilityMod",
+     "lines": 1,
+     "domain": "vehicles",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-stock-weapon-groups.js",
+     "line": 32,
+     "name": "abilityMod",
+     "lines": 1,
+     "domain": "vehicles",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/abilities/passive/derived-override-engine.js",
+     "line": 149,
+     "name": "_getAbilityMod",
+     "lines": 20,
+     "domain": "abilities-effects",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-option-resolver.js",
+     "line": 107,
+     "name": "actorAbilityMod",
+     "lines": 1,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/reactions/reaction-registry.js",
+     "line": 614,
+     "name": "swseAbilityMod",
+     "lines": 9,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/core-combat-reaction-runtime-patches.js",
+     "line": 32,
+     "name": "abilityMod",
+     "lines": 25,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/droid-combat-runtime-patches.js",
+     "line": 120,
+     "name": "getAbilityModifier",
+     "lines": 12,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/force-training-entitlement-runtime-patches.js",
+     "line": 76,
+     "name": "getAbilityModifier",
+     "lines": 14,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/galaxy-intrigue-combat-runtime-patches.js",
+     "line": 35,
+     "name": "abilityModifier",
+     "lines": 9,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js",
+     "line": 85,
+     "name": "abilityMod",
+     "lines": 11,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/return-fire-runtime-patches.js",
+     "line": 33,
+     "name": "abilityModifier",
+     "lines": 9,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+     "line": 37,
+     "name": "abilityMod",
+     "lines": 10,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/skill-feat-runtime-patches.js",
+     "line": 180,
+     "name": "actorAbilityMod",
+     "lines": 9,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/unknown-regions-combat-runtime-patches.js",
+     "line": 12,
+     "name": "abilityModifier",
+     "lines": 1,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/force/ForceTrainingEngine.js",
+     "line": 26,
+     "name": "getForceAbilityModifier",
+     "lines": 11,
+     "domain": "force",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/import/npc-template-importer-engine.js",
+     "line": 29,
+     "name": "abilityMod",
+     "lines": 3,
+     "domain": "npc-followers",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/droids/droid-trait-rules.js",
+     "line": 230,
+     "name": "getDroidDegreeAbilityMods",
+     "lines": 3,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/droids/droid-trait-rules.js",
+     "line": 369,
+     "name": "getDroidSizeAbilityMods",
+     "lines": 3,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/droids/droid-trait-rules.js",
+     "line": 398,
+     "name": "combineDroidAbilityMods",
+     "lines": 13,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/engine/force-power-engine.js",
+     "line": 112,
+     "name": "_countFromAbilityMod",
+     "lines": 15,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/engine/force-provenance-engine.js",
+     "line": 73,
+     "name": "getConfiguredAbilityMod",
+     "lines": 15,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/feats/feat-grant-entitlement-resolver.js",
+     "line": 26,
+     "name": "getAbilityModifier",
+     "lines": 57,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/feats/feat-grant-entitlement-resolver.js",
+     "line": 88,
+     "name": "getForceTrainingAbilityModifier",
+     "lines": 14,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/feats/feat-grant-entitlement-resolver.js",
+     "line": 310,
+     "name": "getAbilityModifier",
+     "lines": 3,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/profile/galactic-profile-resolvers.js",
+     "line": 91,
+     "name": "speciesAbilityMods",
+     "lines": 4,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/skills/skill-validator.js",
+     "line": 71,
+     "name": "getOptimalAbilityMod",
+     "lines": 7,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/utils/force-suite-resolution.js",
+     "line": 215,
+     "name": "getAbilityModifier",
+     "lines": 32,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/species/species-activated-ability-engine.js",
+     "line": 615,
+     "name": "getAbilityMod",
+     "lines": 5,
+     "domain": "species",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/equipment/armor-scoring-engine.js",
+     "line": 280,
+     "name": "abilityMod",
+     "lines": 9,
+     "domain": "mentor-suggestion",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/equipment/equipment-use-evaluator.js",
+     "line": 123,
+     "name": "readAbilityMod",
+     "lines": 10,
+     "domain": "mentor-suggestion",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/force-rule-adapter.js",
+     "line": 40,
+     "name": "getAbilityMod",
+     "lines": 8,
+     "domain": "mentor-suggestion",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/shared-suggestion-utilities.js",
+     "line": 56,
+     "name": "calculateAbilityModifier",
+     "lines": 3,
+     "domain": "mentor-suggestion",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/shared-suggestion-utilities.js",
+     "line": 67,
+     "name": "extractAbilityModifiers",
+     "lines": 11,
+     "domain": "mentor-suggestion",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionReasonEngine.js",
+     "line": 43,
+     "name": "getAbilityMod",
+     "lines": 1,
+     "domain": "mentor-suggestion",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/tag-signal-engine.js",
+     "line": 125,
+     "name": "abilityMod",
+     "lines": 3,
+     "domain": "mentor-suggestion",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/lightsaber-form-engine.js",
+     "line": 37,
+     "name": "actorAbilityMod",
+     "lines": 8,
+     "domain": "talents",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/talent-ability-helpers.js",
+     "line": 31,
+     "name": "getTalentAbilityMod",
+     "lines": 3,
+     "domain": "talents",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/actor-engine/actor-engine.js",
+     "line": 4623,
+     "name": "_getCanonicalAbilityMod",
+     "lines": 10,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/houserules/houserule-mechanics.js",
+     "line": 165,
+     "name": "calculateAbilityMod",
+     "lines": 3,
+     "domain": "houserules",
+     "reachable": false
+    },
+    {
+     "path": "scripts/patches/follower-npc-sheet-parity-hotfix.js",
+     "line": 130,
+     "name": "abilityMod",
+     "lines": 3,
+     "domain": "compat-patches",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-species-materialization-hotfix.js",
+     "line": 30,
+     "name": "normalizeAbilityMods",
+     "lines": 3,
+     "domain": "compat-patches",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/roll-config.js",
+     "line": 672,
+     "name": "getAbilityModifier",
+     "lines": 27,
+     "domain": "rolls",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/skills-reference.js",
+     "line": 218,
+     "name": "calculateAbilityModifier",
+     "lines": 3,
+     "domain": "rolls",
+     "reachable": false
+    },
+    {
+     "path": "scripts/sheets/v2/context/LocalizationFormatters.js",
+     "line": 192,
+     "name": "formatAbilityMod",
+     "lines": 5,
+     "domain": "ui-shell",
+     "reachable": false
+    },
+    {
+     "path": "scripts/sheets/v2/npc/npc-sheet-helpers.js",
+     "line": 121,
+     "name": "abilityMod",
+     "lines": 3,
+     "domain": "npc-followers",
+     "reachable": true
+    },
+    {
+     "path": "scripts/species/species-variant-profile.js",
+     "line": 52,
+     "name": "normalizeAbilityMods",
+     "lines": 8,
+     "domain": "species",
+     "reachable": true
+    },
+    {
+     "path": "scripts/species/species-variant-profile.js",
+     "line": 64,
+     "name": "hasCompleteAbilityMods",
+     "lines": 3,
+     "domain": "species",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/force-power-manager.js",
+     "line": 20,
+     "name": "getForceAbilityModifier",
+     "lines": 3,
+     "domain": "force",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/math-utils.js",
+     "line": 10,
+     "name": "calculateAbilityModifier",
+     "lines": 3,
+     "domain": "infrastructure",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/schema-adapters.js",
+     "line": 337,
+     "name": "getAbilityMod",
+     "lines": 29,
+     "domain": "infrastructure",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/starship-maneuver-manager.js",
+     "line": 241,
+     "name": "getManeuverAbilityModifier",
+     "lines": 4,
+     "domain": "vehicles",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "half-heroic-level",
+   "pattern": "/halflevel|halfheroic/i",
+   "sites": 7,
+   "reachableNonTrivialSites": 5,
+   "reachableFiles": 3,
+   "domains": [
+    "abilities-effects",
+    "actor-core",
+    "combat"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/actors/derived/level-split.js",
+     "line": 68,
+     "name": "getHeroicHalfLevel",
+     "lines": 4,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/actors/derived/level-split.js",
+     "line": 79,
+     "name": "getEffectiveHalfLevel",
+     "lines": 14,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/abilities/passive/derived-override-engine.js",
+     "line": 177,
+     "name": "_getHalfLevel",
+     "lines": 4,
+     "domain": "abilities-effects",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-stat-rules.js",
+     "line": 849,
+     "name": "forcePowerDamageAddsHalfLevel",
+     "lines": 7,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-stat-rules.js",
+     "line": 880,
+     "name": "getHalfLevelDamageBonus",
+     "lines": 19,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/skills/SkillRules.js",
+     "line": 194,
+     "name": "isHalfLevelSkillBonusEnabled",
+     "lines": 3,
+     "domain": "skills",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/math-utils.js",
+     "line": 73,
+     "name": "halfLevel",
+     "lines": 3,
+     "domain": "infrastructure",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "heroic-level",
+   "pattern": "/^(calc|calculate|compute|get|derive)\\w*(heroic|character|total)level$/i",
+   "sites": 9,
+   "reachableNonTrivialSites": 5,
+   "reachableFiles": 4,
+   "domains": [
+    "actor-core",
+    "data-registries",
+    "force",
+    "progression"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/actors/derived/level-split.js",
+     "line": 29,
+     "name": "getHeroicLevel",
+     "lines": 3,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/actors/derived/level-split.js",
+     "line": 33,
+     "name": "getNonheroicLevel",
+     "lines": 3,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/actors/derived/level-split.js",
+     "line": 37,
+     "name": "getTotalLevel",
+     "lines": 3,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/actors/derived/level-split.js",
+     "line": 99,
+     "name": "getPlannedHeroicLevel",
+     "lines": 5,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/force-points.js",
+     "line": 94,
+     "name": "getBuildPlanTotalLevel",
+     "lines": 11,
+     "domain": "force",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/force-points.js",
+     "line": 166,
+     "name": "getTotalCharacterLevel",
+     "lines": 25,
+     "domain": "force",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/prerequisite-checker.js",
+     "line": 3060,
+     "name": "getTotalLevel",
+     "lines": 7,
+     "domain": "data-registries",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/engine/progression-state-normalizer.js",
+     "line": 151,
+     "name": "getTotalLevel",
+     "lines": 7,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/species/species-activated-ability-engine.js",
+     "line": 606,
+     "name": "getCharacterLevel",
+     "lines": 3,
+     "domain": "species",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "damage-formula",
+   "pattern": "/^(calc|calculate|compute|build|resolve|get)\\w*damage(formula|roll|total|bonus|parts)?$/i",
+   "sites": 27,
+   "reachableNonTrivialSites": 20,
+   "reachableFiles": 17,
+   "domains": [
+    "actor-core",
+    "combat",
+    "droids",
+    "equipment",
+    "species",
+    "vehicles"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/actors/droid/droid-mode-adapter.js",
+     "line": 272,
+     "name": "getStockDamageFormula",
+     "lines": 8,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/rolls/enhanced-rolls.js",
+     "line": 55,
+     "name": "getWeaponDamageFormula",
+     "lines": 23,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/utils/combat-utils.js",
+     "line": 73,
+     "name": "getCriticalDamageBonus",
+     "lines": 11,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/utils/combat-utils.js",
+     "line": 183,
+     "name": "computePassiveStateDamageBonus",
+     "lines": 37,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/utils/combat-utils.js",
+     "line": 227,
+     "name": "computeDamageBonus",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/droid-part-schema.js",
+     "line": 843,
+     "name": "getSelfDestructDamage",
+     "lines": 7,
+     "domain": "droids",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/droids/droid-part-schema.js",
+     "line": 795,
+     "name": "getSelfDestructDamage",
+     "lines": 10,
+     "domain": "droids",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/droids/stock-droid-damage-formula.js",
+     "line": 96,
+     "name": "buildStockDroidDamageFormula",
+     "lines": 19,
+     "domain": "droids",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-weapon-damage.js",
+     "line": 179,
+     "name": "resolveVehicleWeaponDamage",
+     "lines": 31,
+     "domain": "vehicles",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-roll-math.js",
+     "line": 769,
+     "name": "resolveDamageBonus",
+     "lines": 55,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-roll-math.js",
+     "line": 1228,
+     "name": "buildDamageFormula",
+     "lines": 50,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-stat-rules.js",
+     "line": 442,
+     "name": "getWeaponFlatDamageBonus",
+     "lines": 4,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-stat-rules.js",
+     "line": 880,
+     "name": "getHalfLevelDamageBonus",
+     "lines": 19,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/ConditionTrackRules.js",
+     "line": 27,
+     "name": "getConditionTrackStartDamage",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/damage-resolution-engine.js",
+     "line": 132,
+     "name": "resolveDamage",
+     "lines": 343,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/damage-timing-rider-adapter.js",
+     "line": 249,
+     "name": "resolveDamageBonus",
+     "lines": 16,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/subsystems/vehicle/vehicle-collisions.js",
+     "line": 114,
+     "name": "computeCollisionDamage",
+     "lines": 4,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/unarmed-attack-helper.js",
+     "line": 235,
+     "name": "getBaseUnarmedDamage",
+     "lines": 16,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/unarmed-attack-helper.js",
+     "line": 252,
+     "name": "getUnarmedDamage",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/vehicles/utils/vehicle-calculations.js",
+     "line": 106,
+     "name": "computeVehicleDamage",
+     "lines": 18,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/weapons-engine.js",
+     "line": 270,
+     "name": "getBaseDamage",
+     "lines": 25,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/import/npc-statblock-bespoke-fallback.js",
+     "line": 56,
+     "name": "getDamageFormula",
+     "lines": 3,
+     "domain": "npc-followers",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/import/npc-statblock-item-fallback.js",
+     "line": 90,
+     "name": "getDamageFormula",
+     "lines": 3,
+     "domain": "npc-followers",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/species/rage-engine.js",
+     "line": 189,
+     "name": "getRageAttackDamageBonus",
+     "lines": 14,
+     "domain": "species",
+     "reachable": true
+    },
+    {
+     "path": "scripts/items/weapon-runtime/attack-consumer.js",
+     "line": 238,
+     "name": "resolveCanonicalDamage",
+     "lines": 73,
+     "domain": "equipment",
+     "reachable": true
+    },
+    {
+     "path": "scripts/skills/skill-uses.js",
+     "line": 721,
+     "name": "getPlacementDamageBonus",
+     "lines": 6,
+     "domain": "skills",
+     "reachable": false
+    },
+    {
+     "path": "scripts/utils/droid-appendage-utils.js",
+     "line": 132,
+     "name": "getUnarmedDamage",
+     "lines": 7,
+     "domain": "droids",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "responsibility": "damage-reduction",
+   "pattern": "/^(apply|compute|resolve|calc|get)\\w*(damagereduction|shieldrating)$/i",
+   "sites": 3,
+   "reachableNonTrivialSites": 2,
+   "reachableFiles": 2,
+   "domains": [
+    "abilities-effects",
+    "store-economy"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/apps/store/store-shared.js",
+     "line": 764,
+     "name": "getVehicleShieldRating",
+     "lines": 24,
+     "domain": "store-economy",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/effects/adapters/immunity-resistance-adapter.js",
+     "line": 91,
+     "name": "getActorDamageReduction",
+     "lines": 3,
+     "domain": "abilities-effects",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/effects/adapters/immunity-resistance-adapter.js",
+     "line": 100,
+     "name": "getActorShieldRating",
+     "lines": 24,
+     "domain": "abilities-effects",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "damage-application",
+   "pattern": "/^(apply|deal|resolve|process)\\w*damage(packet|toactor|totarget)?$/i",
+   "sites": 14,
+   "reachableNonTrivialSites": 12,
+   "reachableFiles": 11,
+   "domains": [
+    "actor-core",
+    "combat",
+    "equipment",
+    "vehicles"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/actors/base/swse-actor-base.js",
+     "line": 64,
+     "name": "applyDamage",
+     "lines": 22,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/rolls/damage.js",
+     "line": 285,
+     "name": "applyDamage",
+     "lines": 23,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/systems/enhanced-combat-system.js",
+     "line": 170,
+     "name": "applyDamage",
+     "lines": 11,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-weapon-damage.js",
+     "line": 179,
+     "name": "resolveVehicleWeaponDamage",
+     "lines": 31,
+     "domain": "vehicles",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/CombatEngine.js",
+     "line": 754,
+     "name": "applyDamage",
+     "lines": 58,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/damage-engine.js",
+     "line": 24,
+     "name": "applyDamage",
+     "lines": 80,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/damage-resolution-engine.js",
+     "line": 132,
+     "name": "resolveDamage",
+     "lines": 343,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/damage-timing-rider-adapter.js",
+     "line": 358,
+     "name": "applyToDamagePacket",
+     "lines": 8,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/damage-timing-rider-adapter.js",
+     "line": 367,
+     "name": "applyDamage",
+     "lines": 9,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/weapon-control-effects.js",
+     "line": 121,
+     "name": "dealDamage",
+     "lines": 4,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/weapon-armor-rider-runtime-patches.js",
+     "line": 84,
+     "name": "applyCollateralDamage",
+     "lines": 8,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/actor-engine/actor-engine.js",
+     "line": 1421,
+     "name": "applyDamage",
+     "lines": 131,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/houserules/houserule-mechanics.js",
+     "line": 227,
+     "name": "applyCriticalDamage",
+     "lines": 35,
+     "domain": "houserules",
+     "reachable": false
+    },
+    {
+     "path": "scripts/items/weapon-runtime/attack-consumer.js",
+     "line": 238,
+     "name": "resolveCanonicalDamage",
+     "lines": 73,
+     "domain": "equipment",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "attack-bonus",
+   "pattern": "/^(calc|calculate|compute|build|get|resolve)\\w*attack(bonus|modifier|total)s?$/i",
+   "sites": 17,
+   "reachableNonTrivialSites": 13,
+   "reachableFiles": 12,
+   "domains": [
+    "combat",
+    "data-registries",
+    "equipment",
+    "rolls",
+    "vehicles"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/combat/utils/combat-utils.js",
+     "line": 49,
+     "name": "computeAttackBonus",
+     "lines": 4,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/prerequisite-checker.js",
+     "line": 3072,
+     "name": "getBaseAttackBonus",
+     "lines": 25,
+     "domain": "data-registries",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-weapon-battery.js",
+     "line": 100,
+     "name": "resolveBatteryAttackTotal",
+     "lines": 16,
+     "domain": "vehicles",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-roll-math.js",
+     "line": 403,
+     "name": "resolveAttackBonus",
+     "lines": 303,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-stat-rules.js",
+     "line": 437,
+     "name": "getWeaponFlatAttackBonus",
+     "lines": 4,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/scale-engine.js",
+     "line": 253,
+     "name": "getScaleAttackModifier",
+     "lines": 18,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/starship/enhanced-commander.js",
+     "line": 105,
+     "name": "getAttackBonus",
+     "lines": 14,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/vehicle-attack-math.js",
+     "line": 189,
+     "name": "resolveVehicleAttackBonus",
+     "lines": 94,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/vehicle-attack-math.js",
+     "line": 315,
+     "name": "resolveAbstractCrewAttackBonus",
+     "lines": 120,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/vehicles/utils/vehicle-calculations.js",
+     "line": 27,
+     "name": "computeVehicleAttackBonus",
+     "lines": 31,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierDomainResolver.js",
+     "line": 37,
+     "name": "resolveAttackModifiers",
+     "lines": 72,
+     "domain": "abilities-effects",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/area-explosives-runtime-patches.js",
+     "line": 117,
+     "name": "getAttackTotal",
+     "lines": 3,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/defense-avoidance-runtime-patches.js",
+     "line": 67,
+     "name": "getBaseAttackBonus",
+     "lines": 8,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/mobility-positioning-runtime-patches.js",
+     "line": 134,
+     "name": "getAttackTotal",
+     "lines": 3,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/items/weapon-runtime/attack-consumer.js",
+     "line": 115,
+     "name": "resolveCanonicalAbilityAttackBonus",
+     "lines": 4,
+     "domain": "equipment",
+     "reachable": true
+    },
+    {
+     "path": "scripts/items/weapon-runtime/proficiency-resolver.js",
+     "line": 205,
+     "name": "resolveAbilityAttackBonus",
+     "lines": 15,
+     "domain": "equipment",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/roll-config.js",
+     "line": 778,
+     "name": "getWeaponAttackBonus",
+     "lines": 4,
+     "domain": "rolls",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "critical-hit",
+   "pattern": "/^(calc|compute|resolve|apply|get|is)\\w*crit(ical)?(hit|range|multiplier|damage)?$/i",
+   "sites": 5,
+   "reachableNonTrivialSites": 4,
+   "reachableFiles": 3,
+   "domains": [
+    "combat"
+   ],
+   "multiDomain": false,
+   "siteList": [
+    {
+     "path": "scripts/combat/utils/combat-utils.js",
+     "line": 57,
+     "name": "getEffectiveCritRange",
+     "lines": 12,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/utils/combat-utils.js",
+     "line": 88,
+     "name": "getCriticalMultiplier",
+     "lines": 12,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-roll-math.js",
+     "line": 898,
+     "name": "resolveCriticalMultiplier",
+     "lines": 43,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-stat-rules.js",
+     "line": 781,
+     "name": "getCriticalMultiplier",
+     "lines": 11,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/houserules/houserule-mechanics.js",
+     "line": 227,
+     "name": "applyCriticalDamage",
+     "lines": 35,
+     "domain": "houserules",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "responsibility": "initiative",
+   "pattern": "/^(calc|compute|get|roll)\\w*initiative\\w*$/i",
+   "sites": 14,
+   "reachableNonTrivialSites": 11,
+   "reachableFiles": 7,
+   "domains": [
+    "combat",
+    "infrastructure",
+    "vehicles"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/combat/rolls/enhanced-rolls.js",
+     "line": 1657,
+     "name": "rollInitiative",
+     "lines": 81,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/swse-combat.js",
+     "line": 12,
+     "name": "getInitiativeSkillTotal",
+     "lines": 35,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/swse-combat.js",
+     "line": 112,
+     "name": "rollInitiative",
+     "lines": 54,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/swse-combatant.js",
+     "line": 19,
+     "name": "getInitiativeSkillTotal",
+     "lines": 28,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-published-derived.js",
+     "line": 39,
+     "name": "getPublishedVehicleInitiative",
+     "lines": 8,
+     "domain": "vehicles",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-published-derived.js",
+     "line": 147,
+     "name": "getEffectiveVehicleInitiative",
+     "lines": 7,
+     "domain": "vehicles",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/CombatEngine.js",
+     "line": 85,
+     "name": "rollInitiative",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/CombatRules.js",
+     "line": 148,
+     "name": "getSpaceInitiativeSystem",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/SWSEInitiative.js",
+     "line": 25,
+     "name": "getActorInitiativeSkillTotal",
+     "lines": 38,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/SWSEInitiative.js",
+     "line": 64,
+     "name": "getInitiativeFormulaBonus",
+     "lines": 6,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/SWSEInitiative.js",
+     "line": 204,
+     "name": "rollInitiative",
+     "lines": 100,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/combat-stats-tooltip.js",
+     "line": 197,
+     "name": "getInitiativeBreakdown",
+     "lines": 60,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/dice-utils.js",
+     "line": 59,
+     "name": "rollInitiative",
+     "lines": 7,
+     "domain": "rolls",
+     "reachable": false
+    },
+    {
+     "path": "scripts/utils/schema-adapters.js",
+     "line": 507,
+     "name": "getInitiativeTotal",
+     "lines": 4,
+     "domain": "infrastructure",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "grapple",
+   "pattern": "/^(calc|compute|resolve|roll|get)\\w*grapple\\w*$/i",
+   "sites": 15,
+   "reachableNonTrivialSites": 10,
+   "reachableFiles": 6,
+   "domains": [
+    "combat",
+    "feats"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/combat/systems/grappling-system.js",
+     "line": 214,
+     "name": "resolveOpposedGrappleOutcome",
+     "lines": 5,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-stat-rules.js",
+     "line": 103,
+     "name": "getGrappleSizeModifier",
+     "lines": 4,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-stat-rules.js",
+     "line": 132,
+     "name": "computeGrappleBonus",
+     "lines": 8,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-stat-rules.js",
+     "line": 164,
+     "name": "resolveGrappleBonus",
+     "lines": 10,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/CombatRules.js",
+     "line": 58,
+     "name": "getGrappleVariant",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/CombatRules.js",
+     "line": 62,
+     "name": "getGrappleDCBonus",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/grapple-state-engine.js",
+     "line": 326,
+     "name": "getGrappleEffects",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/grapple-state-query.js",
+     "line": 29,
+     "name": "getGrappleFlag",
+     "lines": 4,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/grapple-state-query.js",
+     "line": 48,
+     "name": "getGrappleEffects",
+     "lines": 9,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/grapple-state-query.js",
+     "line": 62,
+     "name": "getGrappleStateInfo",
+     "lines": 21,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/grapple-feat-actions.js",
+     "line": 154,
+     "name": "getGrappleRiders",
+     "lines": 8,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/meta-resource-feat-resolver.js",
+     "line": 1020,
+     "name": "getGrappleResistanceBonus",
+     "lines": 25,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/unknown-regions-combat-runtime-patches.js",
+     "line": 35,
+     "name": "getGrabGrappleReactionRiders",
+     "lines": 6,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/houserules/houserule-grapple.js",
+     "line": 24,
+     "name": "getGrappleDC",
+     "lines": 16,
+     "domain": "houserules",
+     "reachable": false
+    },
+    {
+     "path": "scripts/ui/combat-stats-tooltip.js",
+     "line": 113,
+     "name": "getGrappleBreakdown",
+     "lines": 77,
+     "domain": "combat",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "force-point-spend",
+   "pattern": "/^(spend|use|deduct|consume|regain|restore|adjust)\\w*forcepoints?$/i",
+   "sites": 6,
+   "reachableNonTrivialSites": 6,
+   "reachableFiles": 4,
+   "domains": [
+    "actor-core",
+    "force",
+    "talents"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/actors/base/swse-actor-base.js",
+     "line": 276,
+     "name": "spendForcePoint",
+     "lines": 44,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/actors/base/swse-actor-base.js",
+     "line": 337,
+     "name": "regainForcePoints",
+     "lines": 26,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/force/force-engine.js",
+     "line": 22,
+     "name": "spendForcePoint",
+     "lines": 15,
+     "domain": "force",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/guardian-spirit-actions.js",
+     "line": 110,
+     "name": "adjustBonusForcePoints",
+     "lines": 16,
+     "domain": "talents",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/guardian-spirit-actions.js",
+     "line": 127,
+     "name": "spendBonusForcePoints",
+     "lines": 20,
+     "domain": "talents",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/actor-engine/actor-engine.js",
+     "line": 2116,
+     "name": "spendForcePoints",
+     "lines": 76,
+     "domain": "actor-core",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "dark-side-score",
+   "pattern": "/^(add|increase|decrease|set|get|calc|compute|adjust)\\w*darkside(score|points)?$/i",
+   "sites": 4,
+   "reachableNonTrivialSites": 3,
+   "reachableFiles": 3,
+   "domains": [
+    "force",
+    "talents"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/engine/force/ForceTrainingEngine.js",
+     "line": 53,
+     "name": "getMaxDarkSideScore",
+     "lines": 5,
+     "domain": "force",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/force-adept-talent-actions.js",
+     "line": 265,
+     "name": "increaseDarkSideScore",
+     "lines": 13,
+     "domain": "talents",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/sentinel-talent-actions.js",
+     "line": 91,
+     "name": "getDarkSideScore",
+     "lines": 3,
+     "domain": "talents",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/sith-talent-actions.js",
+     "line": 198,
+     "name": "increaseDarkSideScore",
+     "lines": 11,
+     "domain": "talents",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "destiny-points",
+   "pattern": "/^(spend|use|add|get|set|adjust)\\w*destinypoints?$/i",
+   "sites": 2,
+   "reachableNonTrivialSites": 2,
+   "reachableFiles": 2,
+   "domains": [
+    "actor-core"
+   ],
+   "multiDomain": false,
+   "siteList": [
+    {
+     "path": "scripts/actors/base/swse-actor-base.js",
+     "line": 384,
+     "name": "spendDestinyPoint",
+     "lines": 50,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/actor-engine/actor-engine.js",
+     "line": 2466,
+     "name": "spendDestinyPoints",
+     "lines": 55,
+     "domain": "actor-core",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "credit-mutation",
+   "pattern": "/^(add|spend|deduct|transfer|adjust|set|grant|charge|debit|credit|refund)\\w*credits?$/i",
+   "sites": 2,
+   "reachableNonTrivialSites": 2,
+   "reachableFiles": 1,
+   "domains": [
+    "progression"
+   ],
+   "multiDomain": false,
+   "siteList": [
+    {
+     "path": "scripts/engine/progression/engine/equipment-engine.js",
+     "line": 66,
+     "name": "setCredits",
+     "lines": 9,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/engine/equipment-engine.js",
+     "line": 79,
+     "name": "addCredits",
+     "lines": 7,
+     "domain": "progression",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "price-computation",
+   "pattern": "/^(calc|calculate|compute|get|resolve|derive)\\w*(price|cost)s?$/i",
+   "sites": 30,
+   "reachableNonTrivialSites": 14,
+   "reachableFiles": 14,
+   "domains": [
+    "combat",
+    "customization",
+    "droids",
+    "equipment",
+    "feats",
+    "mentor-suggestion",
+    "skills",
+    "store-economy"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "docs/audits/transaction-integrity/repro/repro-tx05-tx06-equipment-coordinator.mjs",
+     "line": 24,
+     "name": "resolveActionCost",
+     "lines": 1,
+     "domain": "store-economy",
+     "reachable": false
+    },
+    {
+     "path": "scripts/apps/gear-templates-engine.js",
+     "line": 42,
+     "name": "getTemplateCost",
+     "lines": 6,
+     "domain": "equipment",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/store/store-checkout.js",
+     "line": 37,
+     "name": "getVehicleConditionCost",
+     "lines": 5,
+     "domain": "store-economy",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/store/store-shared.js",
+     "line": 1179,
+     "name": "resolveVehicleStoreCosts",
+     "lines": 3,
+     "domain": "store-economy",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/droid-part-schema.js",
+     "line": 775,
+     "name": "computeDroidLocomotionCost",
+     "lines": 4,
+     "domain": "droids",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/droid-part-schema.js",
+     "line": 784,
+     "name": "computeDroidPartCost",
+     "lines": 3,
+     "domain": "droids",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/gear-templates.js",
+     "line": 169,
+     "name": "calculateTemplateCost",
+     "lines": 12,
+     "domain": "equipment",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-store-eligibility.js",
+     "line": 21,
+     "name": "getPublishedVehiclePrices",
+     "lines": 3,
+     "domain": "vehicles",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/SecondWindRules.js",
+     "line": 25,
+     "name": "getActionCost",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/threshold-engine.js",
+     "line": 640,
+     "name": "calculateRepairCost",
+     "lines": 7,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/customization/customization-cost-engine.js",
+     "line": 6,
+     "name": "getBaseCost",
+     "lines": 3,
+     "domain": "customization",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/customization/customization-cost-engine.js",
+     "line": 10,
+     "name": "getSizeIncreaseOperationCost",
+     "lines": 3,
+     "domain": "customization",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/customization/customization-cost-engine.js",
+     "line": 14,
+     "name": "getStripOperationCost",
+     "lines": 3,
+     "domain": "customization",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/customization/customization-cost-engine.js",
+     "line": 18,
+     "name": "getRetryOperationCost",
+     "lines": 3,
+     "domain": "customization",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/customization/customization-cost-engine.js",
+     "line": 22,
+     "name": "getRemovalCost",
+     "lines": 4,
+     "domain": "customization",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/customization/droid-customization-engine.js",
+     "line": 920,
+     "name": "computeSystemCost",
+     "lines": 3,
+     "domain": "customization",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/customization/modification-v2/modification-price.js",
+     "line": 6,
+     "name": "resolvePrice",
+     "lines": 7,
+     "domain": "customization",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/action-speed-feat-resolver.js",
+     "line": 82,
+     "name": "resolveActionCost",
+     "lines": 23,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/action-speed-runtime-patches.js",
+     "line": 61,
+     "name": "resolveActionCost",
+     "lines": 22,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/inventory/ammo-system.js",
+     "line": 90,
+     "name": "resolveAmmoCost",
+     "lines": 25,
+     "domain": "equipment",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/skills/ranked-skills-engine.js",
+     "line": 77,
+     "name": "getSkillRankCost",
+     "lines": 12,
+     "domain": "skills",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/store/cost-registry.js",
+     "line": 46,
+     "name": "resolveStoreCost",
+     "lines": 17,
+     "domain": "store-economy",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/attribute-planner.js",
+     "line": 79,
+     "name": "getPointCost",
+     "lines": 3,
+     "domain": "mentor-suggestion",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/equipment/store-suggestion-context.js",
+     "line": 89,
+     "name": "getStoreItemCost",
+     "lines": 24,
+     "domain": "mentor-suggestion",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/OpportunityCostAnalyzer.js",
+     "line": 44,
+     "name": "computeCost",
+     "lines": 65,
+     "domain": "mentor-suggestion",
+     "reachable": true
+    },
+    {
+     "path": "scripts/items/weapon-runtime/attack-consumer.js",
+     "line": 212,
+     "name": "resolveAttackResourceCost",
+     "lines": 3,
+     "domain": "equipment",
+     "reachable": true
+    },
+    {
+     "path": "scripts/items/weapon-runtime/canonical-resource.js",
+     "line": 15,
+     "name": "resolveCanonicalResourceCost",
+     "lines": 26,
+     "domain": "equipment",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/character-utils.js",
+     "line": 56,
+     "name": "getAbilityScoreCost",
+     "lines": 7,
+     "domain": "infrastructure",
+     "reachable": false
+    },
+    {
+     "path": "scripts/utils/credit-normalization.js",
+     "line": 45,
+     "name": "calculateRawSellPrice",
+     "lines": 3,
+     "domain": "store-economy",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/droid-appendage-utils.js",
+     "line": 161,
+     "name": "calculateAppendageCost",
+     "lines": 6,
+     "domain": "droids",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "responsibility": "encumbrance",
+   "pattern": "/encumbrance|carry(ing)?capacity/i",
+   "sites": 7,
+   "reachableNonTrivialSites": 6,
+   "reachableFiles": 5,
+   "domains": [
+    "abilities-effects",
+    "actor-core",
+    "equipment",
+    "infrastructure",
+    "progression"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/actors/v2/character-actor.js",
+     "line": 967,
+     "name": "mirrorEncumbrance",
+     "lines": 15,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/debug/actor-contract-inspector.js",
+     "line": 224,
+     "name": "checkDerivedEncumbrance",
+     "lines": 7,
+     "domain": "dev-tooling",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+     "line": 1170,
+     "name": "_getEncumbranceModifiers",
+     "lines": 78,
+     "domain": "abilities-effects",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/encumbrance/EncumbranceEngine.js",
+     "line": 35,
+     "name": "calculateEncumbrance",
+     "lines": 86,
+     "domain": "equipment",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/encumbrance/EncumbranceEngine.js",
+     "line": 250,
+     "name": "_defaultEncumbranceState",
+     "lines": 22,
+     "domain": "equipment",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/engine/equipment-engine.js",
+     "line": 268,
+     "name": "getCarryingCapacity",
+     "lines": 4,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/math-utils.js",
+     "line": 83,
+     "name": "calculateCarryingCapacity",
+     "lines": 23,
+     "domain": "infrastructure",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "speed-movement",
+   "pattern": "/^(calc|calculate|compute|get|derive)\\w*(speed|movement)s?$/i",
+   "sites": 3,
+   "reachableNonTrivialSites": 1,
+   "reachableFiles": 1,
+   "domains": [
+    "progression"
+   ],
+   "multiDomain": false,
+   "siteList": [
+    {
+     "path": "scripts/apps/progression-framework/steps/droid-builder-view-model.js",
+     "line": 844,
+     "name": "calculateSpeed",
+     "lines": 6,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/CombatRules.js",
+     "line": 22,
+     "name": "getDiagonalMovement",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/droids/droid-trait-rules.js",
+     "line": 390,
+     "name": "getDroidSizeBaseSpeed",
+     "lines": 3,
+     "domain": "progression",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "xp-level",
+   "pattern": "/^(calc|calculate|compute|get)\\w*(xp|experience)(for|to)?(level|next)?\\w*$/i",
+   "sites": 13,
+   "reachableNonTrivialSites": 8,
+   "reachableFiles": 7,
+   "domains": [
+    "infrastructure",
+    "mentor-suggestion",
+    "progression"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/apps/progression-framework/steps/droid-builder-step.js",
+     "line": 1205,
+     "name": "getBlockerExplanation",
+     "lines": 5,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/feat-step.js",
+     "line": 2561,
+     "name": "getBlockerExplanation",
+     "lines": 13,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/language-step.js",
+     "line": 1248,
+     "name": "getBlockerExplanation",
+     "lines": 3,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/step-plugin-base.js",
+     "line": 244,
+     "name": "getBlockerExplanation",
+     "lines": 5,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/talent-step.js",
+     "line": 3383,
+     "name": "getBlockerExplanation",
+     "lines": 10,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/xp-constants.js",
+     "line": 42,
+     "name": "getXPFromCL",
+     "lines": 5,
+     "domain": "progression",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/progression/xp-engine.js",
+     "line": 36,
+     "name": "calculateEncounterXP",
+     "lines": 31,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/xp-engine.js",
+     "line": 103,
+     "name": "computeXpDerived",
+     "lines": 35,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/shared/xp-system.js",
+     "line": 68,
+     "name": "getXPFromCL",
+     "lines": 5,
+     "domain": "infrastructure",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/ArchetypeSuggestionIntegration.js",
+     "line": 117,
+     "name": "getArchetypeExplanation",
+     "lines": 16,
+     "domain": "mentor-suggestion",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/suggestion/ArchetypeSuggestionIntegration.js",
+     "line": 141,
+     "name": "getArchetypeExplanationBatch",
+     "lines": 30,
+     "domain": "mentor-suggestion",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/export/export-marking.js",
+     "line": 93,
+     "name": "getExportDisplayName",
+     "lines": 14,
+     "domain": "governance",
+     "reachable": false
+    },
+    {
+     "path": "scripts/mentor/mentor-suggestion-voice.js",
+     "line": 414,
+     "name": "getRandomExplanation",
+     "lines": 10,
+     "domain": "mentor-suggestion",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "prerequisite-evaluation",
+   "pattern": "/^(check|evaluate|meets|validate|assess|test)\\w*prereq(uisite)?s?\\w*$/i",
+   "sites": 20,
+   "reachableNonTrivialSites": 11,
+   "reachableFiles": 6,
+   "domains": [
+    "data-registries",
+    "droids",
+    "progression",
+    "talents",
+    "ui-shell"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/data/prerequisite-checker.js",
+     "line": 668,
+     "name": "checkPrerequisites",
+     "lines": 14,
+     "domain": "data-registries",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/prerequisite-checker.js",
+     "line": 692,
+     "name": "checkFeatPrerequisites",
+     "lines": 71,
+     "domain": "data-registries",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/prerequisite-checker.js",
+     "line": 773,
+     "name": "checkTalentPrerequisites",
+     "lines": 59,
+     "domain": "data-registries",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/prerequisite-checker.js",
+     "line": 841,
+     "name": "checkClassLevelPrerequisites",
+     "lines": 51,
+     "domain": "data-registries",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/prerequisite-checker.js",
+     "line": 906,
+     "name": "checkPrestigeClassPrerequisites",
+     "lines": 150,
+     "domain": "data-registries",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/prerequisite-checker.js",
+     "line": 1070,
+     "name": "checkClassDocumentPrerequisites",
+     "lines": 17,
+     "domain": "data-registries",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/prerequisite-checker.js",
+     "line": 3053,
+     "name": "checkPrerequisites",
+     "lines": 3,
+     "domain": "data-registries",
+     "reachable": true
+    },
+    {
+     "path": "scripts/data/talent-normalizer.js",
+     "line": 166,
+     "name": "checkTalentPrerequisites",
+     "lines": 20,
+     "domain": "talents",
+     "reachable": true
+    },
+    {
+     "path": "scripts/dialogs/entity-dialog/prereq-engine.js",
+     "line": 244,
+     "name": "evaluatePrerequisites",
+     "lines": 30,
+     "domain": "ui-shell",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/droids/droid-component-prerequisites.js",
+     "line": 70,
+     "name": "evaluateDroidComponentPrerequisites",
+     "lines": 87,
+     "domain": "droids",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/abilities/AbilityEngine.js",
+     "line": 546,
+     "name": "checkPrerequisites",
+     "lines": 3,
+     "domain": "abilities-effects",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/engine/tools/prestige-readiness.js",
+     "line": 61,
+     "name": "checkClassPrerequisites",
+     "lines": 71,
+     "domain": "progression",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/progression/prerequisites/prerequisite-evaluator.js",
+     "line": 949,
+     "name": "evaluatePrerequisite",
+     "lines": 32,
+     "domain": "progression",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/progression/prerequisites/prerequisite-evaluator.js",
+     "line": 994,
+     "name": "evaluatePrerequisites",
+     "lines": 47,
+     "domain": "progression",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/progression/utils/acquisition-authority.js",
+     "line": 60,
+     "name": "assessPrerequisites",
+     "lines": 13,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/validation/content-validator.js",
+     "line": 269,
+     "name": "validatePrerequisites",
+     "lines": 30,
+     "domain": "progression",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/progression/validation/finalization-prerequisite-validator.js",
+     "line": 244,
+     "name": "validateFinalProgressionPrerequisites",
+     "lines": 103,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/integrity/prerequisite-integrity-tests.js",
+     "line": 92,
+     "name": "testMissingPrereqsTracking",
+     "lines": 21,
+     "domain": "governance",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/enforcement/import-graph-validator.js",
+     "line": 38,
+     "name": "validatePrerequisiteCheckerImports",
+     "lines": 21,
+     "domain": "governance",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/enforcement/integrity-wiring-validator.js",
+     "line": 66,
+     "name": "validateMissingPrereqsTracker",
+     "lines": 36,
+     "domain": "governance",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "responsibility": "feat-talent-grant",
+   "pattern": "/^(grant|apply|add|award)\\w*(feat|talent)s?(toactor)?$/i",
+   "sites": 9,
+   "reachableNonTrivialSites": 8,
+   "reachableFiles": 6,
+   "domains": [
+    "npc-followers",
+    "progression",
+    "skills"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/apps/minion-manager.js",
+     "line": 79,
+     "name": "applyTalent",
+     "lines": 32,
+     "domain": "npc-followers",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/engine/feature-dispatcher.js",
+     "line": 48,
+     "name": "applyGrantedFeat",
+     "lines": 9,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/feats/feat-state.js",
+     "line": 38,
+     "name": "addFeat",
+     "lines": 20,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/talents/talent-cadence-engine.js",
+     "line": 85,
+     "name": "grantsHeroicTalent",
+     "lines": 7,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/talents/talent-cadence-engine.js",
+     "line": 105,
+     "name": "grantsClassTalent",
+     "lines": 5,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/talents/TalentTreeGraph.js",
+     "line": 15,
+     "name": "addTalent",
+     "lines": 5,
+     "domain": "progression",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/progression/utils/apply-handlers.js",
+     "line": 52,
+     "name": "applyFeat",
+     "lines": 8,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/utils/apply-handlers.js",
+     "line": 64,
+     "name": "applyTalent",
+     "lines": 13,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/skill-challenges/SkillChallengeEngine.js",
+     "line": 226,
+     "name": "applyRecoveryFeat",
+     "lines": 21,
+     "domain": "skills",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "modifier-aggregation",
+   "pattern": "/^(aggregate|collect|sum|compute|resolve|gather)\\w*modifiers?$/i",
+   "sites": 18,
+   "reachableNonTrivialSites": 11,
+   "reachableFiles": 10,
+   "domains": [
+    "abilities-effects",
+    "combat",
+    "equipment",
+    "feats",
+    "rolls",
+    "skills",
+    "species"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/combat/systems/grappling-system.js",
+     "line": 61,
+     "name": "collectContextualGrappleModifiers",
+     "lines": 65,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-option-resolver.js",
+     "line": 169,
+     "name": "collectWeaponRuleModifiers",
+     "lines": 74,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-option-resolver.js",
+     "line": 244,
+     "name": "collectCombinedFeatModifiers",
+     "lines": 1,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-option-resolver.js",
+     "line": 405,
+     "name": "collectAttackModifiers",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/vehicles/utils/vehicle-calculations.js",
+     "line": 167,
+     "name": "computeDogfightingModifier",
+     "lines": 22,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierDomainResolver.js",
+     "line": 37,
+     "name": "resolveAttackModifiers",
+     "lines": 72,
+     "domain": "abilities-effects",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierDomainResolver.js",
+     "line": 124,
+     "name": "resolveSkillModifiers",
+     "lines": 74,
+     "domain": "abilities-effects",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierDomainResolver.js",
+     "line": 214,
+     "name": "resolveDefenseModifiers",
+     "lines": 70,
+     "domain": "abilities-effects",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+     "line": 393,
+     "name": "collectModifiers",
+     "lines": 56,
+     "domain": "abilities-effects",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+     "line": 667,
+     "name": "resolveTargetFromModifiers",
+     "lines": 3,
+     "domain": "abilities-effects",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierUtils.js",
+     "line": 211,
+     "name": "sumModifiers",
+     "lines": 8,
+     "domain": "abilities-effects",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/defense-feat-runtime-patches.js",
+     "line": 23,
+     "name": "collectStaticDefenseFeatModifiers",
+     "lines": 29,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/rebellion-combat-runtime-patches.js",
+     "line": 122,
+     "name": "collectPointBlankRiderModifiers",
+     "lines": 37,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/skills/skill-feat-rule-resolver.js",
+     "line": 207,
+     "name": "collectSkillModifiers",
+     "lines": 4,
+     "domain": "skills",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/skills/skill-feat-rule-resolver.js",
+     "line": 212,
+     "name": "collectExtraSkillUseModifiers",
+     "lines": 4,
+     "domain": "skills",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/species/rage-engine.js",
+     "line": 204,
+     "name": "collectAttackModifiers",
+     "lines": 14,
+     "domain": "species",
+     "reachable": true
+    },
+    {
+     "path": "scripts/items/weapon-runtime/special-mechanics.js",
+     "line": 496,
+     "name": "resolveAttackStageModifiers",
+     "lines": 58,
+     "domain": "equipment",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/skills.js",
+     "line": 139,
+     "name": "resolveEquipmentSkillModifiers",
+     "lines": 24,
+     "domain": "rolls",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "upgrade-slots",
+   "pattern": "/^(calc|compute|get|count|resolve)\\w*(upgrade)?slots?$/i",
+   "sites": 15,
+   "reachableNonTrivialSites": 11,
+   "reachableFiles": 10,
+   "domains": [
+    "compat-patches",
+    "customization",
+    "droids",
+    "npc-followers",
+    "progression",
+    "store-economy",
+    "ui-shell",
+    "vehicles"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/apps/minion-creator.js",
+     "line": 125,
+     "name": "getAvailableMinionSlots",
+     "lines": 10,
+     "domain": "npc-followers",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/adapters/follower-session-seeder.js",
+     "line": 184,
+     "name": "getAvailableFollowerSlots",
+     "lines": 14,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/content/bridge-to-starting-equipment.js",
+     "line": 185,
+     "name": "getEquipmentBySlot",
+     "lines": 23,
+     "domain": "progression",
+     "reachable": false
+    },
+    {
+     "path": "scripts/apps/store/store-splash.js",
+     "line": 240,
+     "name": "getHotDeckForSlot",
+     "lines": 29,
+     "domain": "store-economy",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/droids/droid-part-schema.js",
+     "line": 500,
+     "name": "getDroidPartsBySlot",
+     "lines": 3,
+     "domain": "droids",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/droids/droid-part-schema.js",
+     "line": 837,
+     "name": "resolveProcessorSlots",
+     "lines": 16,
+     "domain": "droids",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/droids/droid-part-schema.js",
+     "line": 854,
+     "name": "resolveAppendageSlots",
+     "lines": 34,
+     "domain": "droids",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-slot-governance.js",
+     "line": 128,
+     "name": "getCompatibleSystemsForSlot",
+     "lines": 14,
+     "domain": "vehicles",
+     "reachable": true
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-system-definitions.js",
+     "line": 169,
+     "name": "getVehicleSystemsBySlot",
+     "lines": 5,
+     "domain": "vehicles",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/customization/upgrade-slot-engine.js",
+     "line": 27,
+     "name": "getStockBaseSlots",
+     "lines": 13,
+     "domain": "customization",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/talents/slot-calculator.js",
+     "line": 25,
+     "name": "calculateL1Slots",
+     "lines": 27,
+     "domain": "progression",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/progression/utils/force-suite-resolution.js",
+     "line": 127,
+     "name": "resolveTelekineticProdigyBonusSlots",
+     "lines": 24,
+     "domain": "progression",
+     "reachable": true
+    },
+    {
+     "path": "scripts/generation/jobs/job-bundle.js",
+     "line": 345,
+     "name": "resolveObjectiveSlots",
+     "lines": 41,
+     "domain": "galactic-profiles",
+     "reachable": false
+    },
+    {
+     "path": "scripts/patches/follower-orphan-transfer-hotfix.js",
+     "line": 193,
+     "name": "getEligibleFollowerTransferSlots",
+     "lines": 13,
+     "domain": "compat-patches",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/shell/AlliesSurfaceService.js",
+     "line": 383,
+     "name": "resolveFollowerTemplateSelectionForSlot",
+     "lines": 6,
+     "domain": "ui-shell",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "second-wind",
+   "pattern": "/secondwind/i",
+   "sites": 30,
+   "reachableNonTrivialSites": 12,
+   "reachableFiles": 8,
+   "domains": [
+    "actor-core",
+    "combat",
+    "feats",
+    "holonet",
+    "ui-shell"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/components/combat-action-bar.js",
+     "line": 308,
+     "name": "_secondWind",
+     "lines": 26,
+     "domain": "combat",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/combat/CombatRules.js",
+     "line": 38,
+     "name": "secondWindImprovedEnabled",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/CombatRules.js",
+     "line": 42,
+     "name": "getSecondWindRecovery",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/CombatRules.js",
+     "line": 46,
+     "name": "secondWindWebEnhancementEnabled",
+     "lines": 3,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/SecondWindEngine.js",
+     "line": 20,
+     "name": "shouldResetSecondWind",
+     "lines": 12,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/SecondWindEngine.js",
+     "line": 57,
+     "name": "resetAllSecondWind",
+     "lines": 41,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/SecondWindRules.js",
+     "line": 19,
+     "name": "getSecondWindHpThreshold",
+     "lines": 5,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/SecondWindRules.js",
+     "line": 58,
+     "name": "canUseSecondWind",
+     "lines": 39,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/meta-resource-feat-resolver.js",
+     "line": 230,
+     "name": "getSecondWindRules",
+     "lines": 83,
+     "domain": "feats",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-feat-normalization-hooks.js",
+     "line": 153,
+     "name": "rulesForSecondWindFeat",
+     "lines": 3,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-feat-normalization-hooks.js",
+     "line": 157,
+     "name": "normalizeSecondWindFeat",
+     "lines": 30,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-feat-normalization-hooks.js",
+     "line": 188,
+     "name": "registerSecondWindFeatNormalizationHooks",
+     "lines": 5,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+     "line": 48,
+     "name": "itemSecondWindRules",
+     "lines": 6,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+     "line": 55,
+     "name": "collectSecondWindRiders",
+     "lines": 12,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+     "line": 86,
+     "name": "applySecondWindConfig",
+     "lines": 65,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+     "line": 152,
+     "name": "applySecondWindRider",
+     "lines": 45,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+     "line": 198,
+     "name": "enrichSecondWindRules",
+     "lines": 28,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+     "line": 237,
+     "name": "applySecondWindSelections",
+     "lines": 14,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+     "line": 275,
+     "name": "patchSecondWindRulesResolver",
+     "lines": 13,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+     "line": 289,
+     "name": "patchSecondWindEncounterUsage",
+     "lines": 48,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+     "line": 345,
+     "name": "registerSecondWindRiderRuntimePatches",
+     "lines": 11,
+     "domain": "feats",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/actor-engine/actor-engine.js",
+     "line": 2622,
+     "name": "applySecondWind",
+     "lines": 122,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/actor-engine/actor-engine.js",
+     "line": 2754,
+     "name": "resetSecondWind",
+     "lines": 34,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/actor-engine/actor-engine.js",
+     "line": 2805,
+     "name": "applySecondWindEdgeOfExhaustion",
+     "lines": 42,
+     "domain": "actor-core",
+     "reachable": true
+    },
+    {
+     "path": "scripts/holonet/subsystems/gm-combat-recovery-service.js",
+     "line": 888,
+     "name": "resetSecondWindForActors",
+     "lines": 32,
+     "domain": "holonet",
+     "reachable": true
+    },
+    {
+     "path": "scripts/houserules/houserule-mechanics.js",
+     "line": 219,
+     "name": "isSecondWindImproved",
+     "lines": 3,
+     "domain": "houserules",
+     "reachable": false
+    },
+    {
+     "path": "scripts/houserules/houserule-mechanics.js",
+     "line": 223,
+     "name": "getSecondWindRecovery",
+     "lines": 3,
+     "domain": "houserules",
+     "reachable": false
+    },
+    {
+     "path": "scripts/sheets/v2/character-sheet/combat-feature-sheet-adapter.js",
+     "line": 78,
+     "name": "addSecondWindFallback",
+     "lines": 24,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/sheets/v2/context/PanelContextBuilder.js",
+     "line": 881,
+     "name": "buildSecondWindPanel",
+     "lines": 54,
+     "domain": "ui-shell",
+     "reachable": true
+    },
+    {
+     "path": "scripts/sheets/v2/context/PanelValidators.js",
+     "line": 291,
+     "name": "validateSecondWindPanel",
+     "lines": 26,
+     "domain": "ui-shell",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "responsibility": "size-modifier",
+   "pattern": "/^(get|calc|compute)\\w*size(mod|modifier|bonus)s?$/i",
+   "sites": 5,
+   "reachableNonTrivialSites": 4,
+   "reachableFiles": 2,
+   "domains": [
+    "combat"
+   ],
+   "multiDomain": false,
+   "siteList": [
+    {
+     "path": "scripts/combat/utils/combat-utils.js",
+     "line": 263,
+     "name": "getSizeModifier",
+     "lines": 15,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-stat-rules.js",
+     "line": 93,
+     "name": "getReflexSizeModifier",
+     "lines": 4,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-stat-rules.js",
+     "line": 98,
+     "name": "getDamageThresholdSizeBonus",
+     "lines": 4,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/combat-stat-rules.js",
+     "line": 103,
+     "name": "getGrappleSizeModifier",
+     "lines": 4,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/skills/skill-uses.js",
+     "line": 1524,
+     "name": "getVehicleSizeModifier",
+     "lines": 7,
+     "domain": "skills",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "responsibility": "force-power-dc-or-roll",
+   "pattern": "/^(roll|resolve|calc|compute|get)\\w*(usetheforce|forcepower)(check|roll|dc|result)?$/i",
+   "sites": 6,
+   "reachableNonTrivialSites": 5,
+   "reachableFiles": 5,
+   "domains": [
+    "combat",
+    "force",
+    "infrastructure",
+    "npc-followers",
+    "talents"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/combat/rolls/enhanced-rolls.js",
+     "line": 1978,
+     "name": "rollUseTheForce",
+     "lines": 130,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/core/data-preloader.js",
+     "line": 310,
+     "name": "getForcePower",
+     "lines": 12,
+     "domain": "infrastructure",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/force/force-power-maintenance.js",
+     "line": 75,
+     "name": "rollUseTheForce",
+     "lines": 9,
+     "domain": "force",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/import/npc-statblock-bespoke-fallback.js",
+     "line": 142,
+     "name": "resolveForcePower",
+     "lines": 12,
+     "domain": "npc-followers",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/force-adept-talent-actions.js",
+     "line": 295,
+     "name": "rollUseTheForce",
+     "lines": 17,
+     "domain": "talents",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/force-powers.js",
+     "line": 34,
+     "name": "rollForcePower",
+     "lines": 106,
+     "domain": "rolls",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "responsibility": "skill-roll",
+   "pattern": "/^roll\\w*skill(check)?$/i",
+   "sites": 6,
+   "reachableNonTrivialSites": 4,
+   "reachableFiles": 4,
+   "domains": [
+    "combat",
+    "rolls",
+    "vehicles"
+   ],
+   "multiDomain": true,
+   "siteList": [
+    {
+     "path": "scripts/combat/rolls/enhanced-rolls.js",
+     "line": 1302,
+     "name": "rollSkill",
+     "lines": 72,
+     "domain": "combat",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/custom-skill-roller.js",
+     "line": 61,
+     "name": "rollCustomSkill",
+     "lines": 62,
+     "domain": "rolls",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/skills-reference.js",
+     "line": 343,
+     "name": "rollSkill",
+     "lines": 24,
+     "domain": "rolls",
+     "reachable": false
+    },
+    {
+     "path": "scripts/rolls/skills.js",
+     "line": 191,
+     "name": "rollSkill",
+     "lines": 229,
+     "domain": "rolls",
+     "reachable": true
+    },
+    {
+     "path": "scripts/sheets/v2/vehicle-sheet/crew-skill-router.js",
+     "line": 138,
+     "name": "rollVehicleCrewSkill",
+     "lines": 77,
+     "domain": "vehicles",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/dice-utils.js",
+     "line": 68,
+     "name": "rollSkillCheck",
+     "lines": 7,
+     "domain": "rolls",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "responsibility": "defense-bonus-armor",
+   "pattern": "/^(calc|compute|get)\\w*armor(bonus|check(penalty)?|defense)s?$/i",
+   "sites": 2,
+   "reachableNonTrivialSites": 0,
+   "reachableFiles": 0,
+   "domains": [],
+   "multiDomain": false,
+   "siteList": [
+    {
+     "path": "scripts/skills/skill-uses.js",
+     "line": 1855,
+     "name": "getArmorCheckPenalty",
+     "lines": 4,
+     "domain": "skills",
+     "reachable": false
+    },
+    {
+     "path": "scripts/skills/skill-uses.js",
+     "line": 2277,
+     "name": "getArmorCheckPenalty",
+     "lines": 4,
+     "domain": "skills",
+     "reachable": false
+    }
+   ]
+  }
+ ]
+}

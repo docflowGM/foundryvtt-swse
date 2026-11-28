@@ -83,6 +83,7 @@ import {
   buildDroidWithBuilder,
   createCustomStarship
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 
 function storeI18n(key, data = {}) {
@@ -1037,7 +1038,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
   async _persistCart() {
     if (!this.actor) {return;}
-    await this.actor.setFlag(CART_FLAG_SCOPE, CART_FLAG_KEY, this.cart);
+    await ActorEngine.updateActorFlags(this.actor, CART_FLAG_SCOPE, CART_FLAG_KEY, this.cart, { recalc: false });
   }
 
   async _loadStoreInventory() {
@@ -1434,7 +1435,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
             cost: item.type === 'vehicle' ? (resolveVehicleStoreCosts(item).newCost ?? Number.MAX_SAFE_INTEGER) : (Number(item.finalCost ?? Number.MAX_SAFE_INTEGER) || Number.MAX_SAFE_INTEGER),
             savedAt: Date.now()
           });
-          await this.actor.setFlag('foundryvtt-swse', 'storeSavedForLater', current);
+          await ActorEngine.updateActorFlags(this.actor, 'foundryvtt-swse', 'storeSavedForLater', current, { recalc: false });
         }
         ui.notifications.info(storeI18n('SWSE.Store.Notifications.SavedForLater', { name: item.name }));
       }, { signal });

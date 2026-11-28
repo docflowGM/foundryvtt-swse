@@ -1,0 +1,503 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "games",
+ "name": "Holopad games and wagers",
+ "kind": "feature",
+ "files": 115,
+ "runtimeSloc": 8157,
+ "runtimeFiles": 32,
+ "counts": {
+  "files": 115,
+  "runtimeModules": 32,
+  "runtimeSloc": 8157,
+  "reachability": {
+   "reachable-static": 28,
+   "reachable-dynamic": 4
+  },
+  "nonRuntimeByRole": {
+   "asset": 65,
+   "data": 1,
+   "evidence-or-doc": 1,
+   "presentation-style": 3,
+   "presentation-template": 10,
+   "test": 1,
+   "tool": 2
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/games/game-session-store.js",
+   "consumers": 16,
+   "sloc": 150,
+   "role": "module-with-writes",
+   "exports": [
+    "GameSessionStore"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/games/game-settings.js",
+   "consumers": 10,
+   "sloc": 344,
+   "role": "module",
+   "exports": [
+    "registerGameSettings",
+    "getGameSettingsSnapshot"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/wagers/game-credit-escrow-service.js",
+   "consumers": 10,
+   "sloc": 1007,
+   "role": "engine-or-service",
+   "exports": [
+    "GameCreditEscrowService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/game-notification-service.js",
+   "consumers": 6,
+   "sloc": 79,
+   "role": "engine-or-service",
+   "exports": [
+    "GameNotificationService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/pazaak/pazaak-deck.js",
+   "consumers": 6,
+   "sloc": 189,
+   "role": "module",
+   "exports": [
+    "PAZAAK_TARGET",
+    "PAZAAK_SETS_TO_WIN",
+    "PAZAAK_SIDE_DECK_SIZE",
+    "PAZAAK_HAND_SIZE",
+    "PAZAAK_TABLE_LIMIT",
+    "getPazaakSideCardCatalog",
+    "getPazaakSideCard",
+    "normalizeSideDeckIds",
+    "validateSideDeck",
+    "buildDefaultPazaakSideDeckIds",
+    "shuffleCards",
+    "buildPazaakMainDeck"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/ai/game-ai-profile-service.js",
+   "consumers": 5,
+   "sloc": 170,
+   "role": "engine-or-service",
+   "exports": [
+    "GAME_AI_DIFFICULTIES",
+    "GAME_AI_FAIRNESS",
+    "GAME_AI_PERSONALITIES",
+    "normalizeGameAiDifficulty",
+    "normalizeGameAiFairness",
+    "normalizeGameAiPersonality",
+    "buildGameAiProfile",
+    "labelForGameAiDifficulty",
+    "labelForGameAiFairness",
+    "thinkingDelayMsForGameAi"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/game-opponent-profile-service.js",
+   "consumers": 5,
+   "sloc": 51,
+   "role": "engine-or-service",
+   "exports": [
+    "GameOpponentProfileService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/dejarik/dejarik-engine.js",
+   "consumers": 5,
+   "sloc": 295,
+   "role": "engine-or-service",
+   "exports": [
+    "DejarikEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/pazaak/pazaak-engine.js",
+   "consumers": 5,
+   "sloc": 651,
+   "role": "engine-or-service",
+   "exports": [
+    "PazaakEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/sabacc/sabacc-engine.js",
+   "consumers": 5,
+   "sloc": 942,
+   "role": "engine-or-service",
+   "exports": [
+    "normalizeSabaccHandLimit",
+    "normalizeSabaccMarketEnabled",
+    "SabaccEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/dejarik/dejarik-board.js",
+   "consumers": 4,
+   "sloc": 90,
+   "role": "module",
+   "exports": [
+    "DEJARIK_RINGS",
+    "DEJARIK_RAYS",
+    "spaceId",
+    "parseSpaceId",
+    "buildDejarikBoard",
+    "adjacentSpaces",
+    "boardDistance",
+    "shortestPath",
+    "reachableSpaces",
+    "defaultStartingSpaces"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/dejarik/dejarik-rules.js",
+   "consumers": 4,
+   "sloc": 221,
+   "role": "engine-or-service",
+   "exports": [
+    "DEJARIK_RULES_MODES",
+    "normalizeDejarikRulesMode",
+    "dejarikRulesModeLabel",
+    "alivePieces",
+    "occupiedSpaces",
+    "boardSpaceIds",
+    "isBoardSpace",
+    "legalMoveSpaceIds",
+    "legalAttackTargets",
+    "canMovePiece",
+    "attackPathSpaces",
+    "hasAttackLineOfSight"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/hintaro/hintaro-engine.js",
+   "consumers": 4,
+   "sloc": 637,
+   "role": "engine-or-service",
+   "exports": [
+    "HintaroEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/pazaak/pazaak-ai-personalities.js",
+   "consumers": 4,
+   "sloc": 196,
+   "role": "module",
+   "exports": [
+    "loadPazaakAiPersonalityData",
+    "getPazaakAiPersonalityData",
+    "pazaakPersonalityIds",
+    "randomPazaakPersonalityId",
+    "resolvePazaakAiPersonality",
+    "getPazaakPersonalityModifier",
+    "randomPazaakDialogue",
+    "randomPazaakProfession",
+    "randomPazaakTableFact",
+    "forceFeelingForNextCard",
+    "randomForceFeelingLine",
+    "defaultForceSensitiveNpcChance"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/pazaak/pazaak-rules.js",
+   "consumers": 4,
+   "sloc": 201,
+   "role": "engine-or-service",
+   "exports": [
+    "scorePazaakPlayer",
+    "isPazaakBust",
+    "isPazaakTwenty",
+    "hasFilledPazaakTable",
+    "resetPazaakPlayerForSet",
+    "comparePazaakInitiativeDraws",
+    "playableSideCardStatus",
+    "applyPazaakSideCard",
+    "comparePazaakSet"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/sabacc/sabacc-deck.js",
+   "consumers": 4,
+   "sloc": 108,
+   "role": "module",
+   "exports": [
+    "SABACC_TARGET",
+    "SABACC_STARTING_HAND_SIZE",
+    "SABACC_MAX_HAND_SIZE",
+    "SABACC_MIN_HAND_SIZE",
+    "SABACC_CARD_ASSET_ROOT",
+    "SABACC_SUITS",
+    "sabaccCardImagePath",
+    "buildSabaccNumberCard",
+    "buildSabaccSylopCard",
+    "buildSabaccDeck",
+    "shuffleSabaccDeck",
+    "drawSabaccCard"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/sabacc/sabacc-rules.js",
+   "consumers": 4,
+   "sloc": 204,
+   "role": "engine-or-service",
+   "exports": [
+    "SABACC_HAND_HIERARCHY_HELP",
+    "scoreSabaccHand",
+    "isSabaccBombOut",
+    "isIdiotsArray",
+    "isSabaccPotJackpotHand",
+    "evaluateSabaccHand",
+    "labelForSabaccEvaluation",
+    "compareSabaccEvaluations",
+    "compareSabaccHands"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/hintaro/hintaro-rules.js",
+   "consumers": 3,
+   "sloc": 118,
+   "role": "engine-or-service",
+   "exports": [
+    "HINTARO_SYMBOLS",
+    "HINTARO_RANKS",
+    "HINTARO_RANK_LABELS",
+    "HINTARO_CANCELLATION_RULES",
+    "HINTARO_LIFECYCLE_STEPS",
+    "HINTARO_MODE_LABELS",
+    "normalizeHintaronMode",
+    "getHintaroCancellationRules",
+    "getHintaroLifecycleSteps",
+    "rollHintaroRegularDie",
+    "rollHintaroRegularDice",
+    "rollHintaroRegularDieSymbols"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/ai/game-monte-carlo-service.js",
+   "consumers": 2,
+   "sloc": 58,
+   "role": "engine-or-service",
+   "exports": [
+    "GameMonteCarloService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/game-center-registry.js",
+   "consumers": 2,
+   "sloc": 218,
+   "role": "registry",
+   "exports": [
+    "GameCenterRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/games/game-holonet-bridge.js",
+   "consumers": 2,
+   "sloc": 33,
+   "role": "adapter",
+   "exports": [
+    "GameHolonetBridge"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/games/games/dejarik/dejarik-ai.js",
+   "consumers": 2,
+   "sloc": 282,
+   "role": "module",
+   "exports": [
+    "buildDejarikAiProfile",
+    "DejarikAi"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/dejarik/dejarik-pieces.js",
+   "consumers": 2,
+   "sloc": 63,
+   "role": "module",
+   "exports": [
+    "DEJARIK_PIECES",
+    "getDejarikPiece",
+    "defaultDejarikTeam"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/pazaak/pazaak-ai.js",
+   "consumers": 2,
+   "sloc": 141,
+   "role": "module",
+   "exports": [
+    "PAZAAK_AI_DIFFICULTIES",
+    "PAZAAK_AI_FAIRNESS",
+    "buildPazaakAiProfile",
+    "PazaakAi"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/games/games/sabacc/sabacc-ai.js",
+   "consumers": 2,
+   "sloc": 315,
+   "role": "module",
+   "exports": [
+    "buildSabaccAiProfile",
+    "SabaccAi"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/games/wagers/game-credit-escrow-service.js",
+   "sloc": 1007,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/games/games/sabacc/sabacc-engine.js",
+   "sloc": 942,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/games/games/pazaak/pazaak-engine.js",
+   "sloc": 651,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/games/games/hintaro/hintaro-engine.js",
+   "sloc": 637,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/games/game-settings.js",
+   "sloc": 344,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/games/games/sabacc/sabacc-ai.js",
+   "sloc": 315,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/games/games/hintaro/hintaro-view-model.js",
+   "sloc": 297,
+   "reach": "reachable-dynamic"
+  },
+  {
+   "path": "scripts/games/games/dejarik/dejarik-engine.js",
+   "sloc": 295,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/games/games/dejarik/dejarik-ai.js",
+   "sloc": 282,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/games/games/pazaak/pazaak-view-model.js",
+   "sloc": 263,
+   "reach": "reachable-dynamic"
+  }
+ ],
+ "unreachableModules": [],
+ "dependsOnDomains": {
+  "holonet": 8,
+  "store-economy": 4,
+  "progression": 1
+ },
+ "dependedOnByDomains": {
+  "ui-shell": 22,
+  "holonet": 12,
+  "infrastructure": 2
+ },
+ "probeHits": [],
+ "mechanicalResponsibilities": [],
+ "exactClones": [],
+ "duplicateSymbolNames": [],
+ "liveHooks": [],
+ "nonRuntimeEvidence": [
+  "docs/Holopad-Games-Phase-10-QA-Rules-Fidelity-Audit.md"
+ ],
+ "tests": [
+  "tests/ti4c0-g22-wager-refund-replay.test.mjs"
+ ]
+}

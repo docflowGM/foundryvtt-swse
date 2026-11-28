@@ -244,6 +244,17 @@ function formatProfileForCard(profile, state, dialogue = '') {
     featsPreview: names(profile.choices.feats, 3),
     powersPreview: names(profile.choices.forcePowers, 3),
     selected: profile.profileId === state.templateId,
+    // Derived display projection for the gallery search box only. It never drives legal
+    // eligibility, source identity or canonical entitlement routing.
+    searchText: [
+      profile.catalog.archetype,
+      profile.catalog.name,
+      profile.catalog.className,
+      profile.catalog.description,
+      speciesName(profile),
+      backgroundName(profile),
+      ...roleTags(profile),
+    ].filter(Boolean).join(' ').toLocaleLowerCase(),
   };
 }
 
@@ -341,19 +352,6 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
     return getStepMentorContext(shell?.actor ?? null, this.descriptor?.stepId || 'profile-review', '', shell ?? this._shell);
   }
 
-  /** Explicit class choice: changing class invalidates a stale archetype choice (no silent first pick). */
-  async _selectProfileClass(shell, classId, phase = this.descriptor?.stepId || 'profile-class') {
-    await this._ensureProfileData(shell);
-    const group = groupProfiles(this._profiles).find(g => g.id === String(classId || '').trim());
-    if (!group) return false;
-    const state = getProfileState(shell);
-    if (state.classId !== group.id) state.templateId = null;
-    state.classId = group.id;
-    await syncProfileMentor(shell, group.name, phase);
-    await shell?.requestRender?.({ preserveScroll: true, reason: 'galactic-profile-select-class', structural: true });
-    return true;
-  }
-
   async _selectProfile(shell, profileId, phase = this.descriptor?.stepId || 'profile-archetype') {
     await this._ensureProfileData(shell);
     const profile = this._profiles.find(p => p.profileId === String(profileId || '').trim());
@@ -367,10 +365,6 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
   }
 
   async handleAction(action, event, target, shell) {
-    if (action === 'profile-select-class') {
-      event?.preventDefault?.(); event?.stopPropagation?.();
-      return this._selectProfileClass(shell, target?.dataset?.profileClassId, this.descriptor?.stepId || 'profile-class');
-    }
     if (action === 'profile-select-template') {
       event?.preventDefault?.(); event?.stopPropagation?.();
       return this._selectProfile(shell, target?.dataset?.profileTemplateId, this.descriptor?.stepId || 'profile-archetype');
@@ -379,67 +373,124 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
   }
 }
 
-export class ProfileClassStep extends GalacticProfileBaseStep {
-  async getStepData(context = null) {
-    const shell = await this._ensureProfileData(context);
-    const state = getProfileState(shell);
-    const groups = groupProfiles(this._profiles);
-    const selectedGroup = groups.find(g => g.id === state.classId) || null;
-    return {
-      classes: groups.map((group, index) => formatClassGroup(group, state, index)),
-      selectedClassId: state.classId ?? null,
-      selectedClass: selectedGroup ? formatClassGroup(selectedGroup, state, groups.indexOf(selectedGroup)) : null,
-      route: { classDone: !!state.classId, archetypeDone: !!state.templateId, reviewDone: false },
-    };
-  }
-
-  renderWorkSurface(stepData) {
-    return { template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/galactic-profile-class-work-surface.hbs', data: stepData };
-  }
-
-  getSelection() {
-    const classId = this._shell?.progressionSession?.profileSelection?.classId;
-    return { selected: classId ? [classId] : [], count: classId ? 1 : 0, isComplete: !!classId };
-  }
-
-  _detailsData() {
-    const state = getProfileState(this._shell);
-    const group = groupProfiles(this._profiles).find(g => g.id === state.classId);
-    return {
-      mode: 'class',
-      title: group?.name || 'Profile Class',
-      image: group?.image,
-      description: group?.description || 'Choose the training channel for this Galactic Profile.',
-      tags: group ? [countLabel(group.count, 'profile'), ...group.profiles.map(p => p.catalog.archetype).slice(0, 5)].filter(Boolean) : [],
-    };
-  }
-}
-
 export class ProfileArchetypeStep extends GalacticProfileBaseStep {
+  constructor(descriptor) {
+    super(descriptor);
+    this._gallerySearch = '';
+  }
+
   async getStepData(context = null) {
     const shell = await this._ensureProfileData(context);
     const state = getProfileState(shell);
     const groups = groupProfiles(this._profiles);
-    const selectedGroup = groups.find(g => g.id === state.classId) || null;
-    const profiles = selectedGroup ? selectedGroup.profiles : [];
+    const requestedBrowseClass = String(state.browseClassId || 'all');
+    const browseClassId = requestedBrowseClass === 'all' || groups.some(g => g.id === requestedBrowseClass)
+      ? requestedBrowseClass : 'all';
+    const browseGroup = groups.find(g => g.id === browseClassId) || null;
+    const visibleProfiles = browseGroup ? browseGroup.profiles : this._profiles;
+    const selectedProfile = this._profiles.find(p => p.profileId === state.templateId) || null;
     const dialogueData = await loadProfileDialogues();
+    const toCard = p => formatProfileForCard(p, state, findProfileDialogue(dialogueData, p, 'greeting'));
+
     return {
-      classes: groups.map((group, index) => formatClassGroup(group, state, index)),
-      selectedClassId: state.classId ?? null,
-      selectedClass: selectedGroup ? formatClassGroup(selectedGroup, state, groups.indexOf(selectedGroup)) : null,
+      classes: groups.map((group, index) => ({
+        ...formatClassGroup(group, state, index),
+        browsing: group.id === browseClassId,
+      })),
+      browseClassId,
+      allClassesBrowsing: browseClassId === 'all',
+      browseLabel: browseGroup?.name || 'All Classes',
+      allProfileCount: this._profiles.length,
+      totalProfiles: visibleProfiles.length,
       selectedTemplateId: state.templateId ?? null,
-      archetypes: profiles.map(p => formatProfileForCard(p, state, findProfileDialogue(dialogueData, p, 'greeting'))),
-      route: { classDone: !!state.classId, archetypeDone: !!state.templateId, reviewDone: false },
+      selectedPreview: selectedProfile ? toCard(selectedProfile) : null,
+      archetypes: visibleProfiles.map(toCard),
+      gallerySearch: this._gallerySearch,
+      route: {
+        classDone: !!state.classId,
+        archetypeDone: !!state.templateId,
+        reviewDone: false,
+      },
     };
   }
 
   renderWorkSurface(stepData) {
-    return { template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/galactic-profile-archetype-work-surface.hbs', data: stepData };
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/galactic-profile-archetype-work-surface.hbs',
+      data: stepData,
+    };
   }
 
   getSelection() {
-    const templateId = this._shell?.progressionSession?.profileSelection?.templateId;
-    return { selected: templateId ? [templateId] : [], count: templateId ? 1 : 0, isComplete: !!templateId };
+    const id = this._shell?.progressionSession?.profileSelection?.templateId;
+    return { selected: id ? [id] : [], count: id ? 1 : 0, isComplete: !!id };
+  }
+
+  getBlockingIssues() {
+    return this.getSelection().isComplete ? [] : ['Choose a Galactic Profile before continuing.'];
+  }
+
+  /**
+   * Gallery filter only. Browsing a class never commits or clears a profile: the existing
+   * profile selection stays until a different profile is explicitly chosen.
+   */
+  async _setBrowseClass(shell, classId) {
+    await this._ensureProfileData(shell);
+    const id = String(classId || '').trim().toLowerCase();
+    const allowed = id === 'all' || groupProfiles(this._profiles).some(g => g.id === id);
+    if (!allowed) return false;
+    const state = getProfileState(shell);
+    if ((state.browseClassId || 'all') === id) return true;
+    state.browseClassId = id;
+    await shell?.requestRender?.({
+      preserveScroll: true,
+      reason: 'galactic-profile-browse-class',
+      structural: true,
+    });
+    return true;
+  }
+
+  async onDataReady(shell) {
+    const root = shell?.element?.querySelector?.('.prog-galactic-profile--archetype');
+    const input = root?.querySelector?.('[data-profile-gallery-search]');
+    if (!input) return;
+
+    // Filters existing DOM cards only: no compiler/registry request, no selection change.
+    const applySearch = () => {
+      const query = String(input.value || '').trim().toLocaleLowerCase();
+      const cards = [...root.querySelectorAll('[data-profile-template-id]')];
+      let visible = 0;
+      for (const card of cards) {
+        const searchable = String(card.dataset.profileSearchText || '').toLocaleLowerCase();
+        const show = !query || searchable.includes(query);
+        card.hidden = !show;
+        if (show) visible += 1;
+      }
+      const count = root.querySelector('[data-profile-gallery-results]');
+      if (count) count.textContent = `${visible} ${visible === 1 ? 'profile' : 'profiles'} found`;
+      const empty = root.querySelector('[data-profile-gallery-empty]');
+      // A genuinely empty catalogue has its own message; this one is for searches only.
+      if (empty) empty.hidden = visible > 0 || cards.length === 0;
+    };
+
+    input.value = this._gallerySearch || '';
+    if (input.dataset.profileSearchBound !== 'true') {
+      input.dataset.profileSearchBound = 'true';
+      input.addEventListener('input', () => {
+        this._gallerySearch = input.value;
+        applySearch();
+      });
+    }
+    applySearch();
+  }
+
+  async handleAction(action, event, target, shell) {
+    if (action === 'profile-filter-class') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      return this._setBrowseClass(shell, target?.dataset?.profileClassId);
+    }
+    return super.handleAction(action, event, target, shell);
   }
 
   _detailsData() {
@@ -447,9 +498,9 @@ export class ProfileArchetypeStep extends GalacticProfileBaseStep {
     const profile = this._profiles.find(p => p.profileId === state.templateId);
     return {
       mode: 'archetype',
-      title: profile?.catalog.name || 'Archetype',
+      title: profile?.catalog.name || 'Choose a Profile',
       image: profile ? profileImagePath(profile) : null,
-      description: profile?.catalog.description || 'Select an archetype package.',
+      description: profile?.catalog.description || 'Browse illustrated profiles, then select one.',
       quote: profile?.catalog.quote || '',
       abilities: profile ? formatAbilities(profile) : [],
       tags: profile ? [profile.catalog.className, speciesName(profile), ...roleTags(profile)].filter(Boolean) : [],
@@ -569,7 +620,7 @@ export class ProfileReviewStep extends GalacticProfileBaseStep {
   async _goToStep(shell, stepId) {
     const preferred = stepId || 'summary';
     const index = shell.steps?.findIndex?.(d => d.stepId === preferred) ?? -1;
-    const fallback = shell.steps?.findIndex?.(d => !['intro', 'profile-class', 'profile-archetype', 'profile-review'].includes(d.stepId)) ?? 0;
+    const fallback = shell.steps?.findIndex?.(d => !['intro', 'profile-archetype', 'profile-review'].includes(d.stepId)) ?? 0;
     const target = index >= 0 ? index : Math.max(0, fallback);
     await shell._activateStep?.(target, { source: 'galactic-profile-business', restoreIndex: shell.currentStepIndex });
     await shell._persistSessionSnapshot?.(shell.progressionSession.currentStepId || 'galactic-profile-business');

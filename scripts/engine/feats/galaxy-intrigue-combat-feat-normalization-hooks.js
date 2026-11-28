@@ -232,8 +232,8 @@ async function normalizeGalaxyIntrigueCombatFeat(item, options = {}) {
 }
 
 export function registerGalaxyIntrigueCombatFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeGalaxyIntrigueCombatFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeGalaxyIntrigueCombatFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeGalaxyIntrigueCombatFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeGalaxyIntrigueCombatFeat(item, options) : false);
   SWSELogger.log('[GalaxyIntrigueCombatFeatNormalization] Hooks registered');
 }
 

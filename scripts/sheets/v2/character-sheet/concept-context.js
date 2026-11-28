@@ -21,6 +21,7 @@ import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey, normalizeSkillMap } from "/
 import { isClassFeatureItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 import { ProgressionReconciler } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js";
 import { getForceAlchemyLaunchForTalentName, getForceAlchemyRite } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-data.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 function toSignedClass(value) {
   const n = Number(value) || 0;
   return n > 0 ? 'mod--positive' : n < 0 ? 'mod--negative' : 'mod--zero';
@@ -45,7 +46,7 @@ function normalizeSkillBreakdownParts(skill = {}, fallback = {}) {
   }
   return [
     { key: 'ability', label: `${String(fallback.selectedAbility || '').toUpperCase()} modifier`, value: Number(fallback.abilityMod) || 0, source: 'ability' },
-    { key: 'halfLevel', label: '1/2 heroic level', value: Number(fallback.halfLevel) || 0, source: 'level' },
+    { key: 'halfLevel', label: '1/2 character level', value: Number(fallback.halfLevel) || 0, source: 'level' },
     { key: 'trained', label: 'Trained', value: fallback.trained ? 5 : 0, source: 'training' },
     { key: 'focus', label: 'Skill Focus', value: fallback.focused ? 5 : 0, source: 'focus' },
     { key: 'misc', label: 'Misc', value: Number(fallback.miscMod) || 0, source: 'actor.system.skills' },
@@ -209,8 +210,7 @@ function getDerivedSkillMap(context) {
 const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
 
 function athleticsConsolidationActive() {
-  try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; }
-  catch (_err) { return false; }
+  return HouseRuleService.getBoolean('athleticsConsolidation', false);
 }
 
 function buildConsolidatedAthleticsSkill({ derivedSkills = {}, systemSkills = {}, context = {}, abilityMap = new Map() } = {}) {

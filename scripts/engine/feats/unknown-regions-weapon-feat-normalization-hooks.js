@@ -181,8 +181,8 @@ async function normalizeUnknownRegionsWeaponFeat(item, options = {}) {
 }
 
 export function registerUnknownRegionsWeaponFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeUnknownRegionsWeaponFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeUnknownRegionsWeaponFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeUnknownRegionsWeaponFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeUnknownRegionsWeaponFeat(item, options) : false);
   SWSELogger.log('[UnknownRegionsWeaponNormalization] Hooks registered');
 }
 

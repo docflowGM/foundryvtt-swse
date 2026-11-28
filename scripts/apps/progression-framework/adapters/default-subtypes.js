@@ -30,6 +30,7 @@ import { shouldSuppressTalentSteps, describeTalentCadence } from './talent-caden
 import { seedFollowerSession, validateFollowerEntitlement } from './follower-session-seeder.js';
 import { deriveFollowerStats, getFollowerDerivationContext, deriveFollowerStateForApply } from './follower-deriver.js';
 import { DroidBuilderAdapter } from '../steps/droid-builder-adapter.js';
+import { buildLiveFollowerProjection } from './follower-live-projection.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ChargenRules } from '../../../engine/chargen/ChargenRules.js';
 import {
@@ -454,6 +455,11 @@ export class FollowerSubtypeAdapter extends ProgressionSubtypeAdapter {
   }
 
   async contributeProjection(projectedData, session, actor) {
+    const projected = await this._contributeProjectionBase(projectedData, session, actor);
+    return buildLiveFollowerProjection(projected, session, actor);
+  }
+
+  async _contributeProjectionBase(projectedData, session, actor) {
     // Phase 3: Reflect follower advancement in projection.
     // Show the follower as it will exist after level advancement to parity.
     if (!session.dependencyContext) {

@@ -180,6 +180,29 @@ export const ActorEngine = {
     return removed;
   },
 
+  // Mirrors the real governed flag API (actor-engine.js updateActorFlags / unsetActorFlag): the write goes through the actor's setFlag/unsetFlag
+  // (which is where the 'swse' scope redirect lives). The real engine's follow-up recalcAll has no effect in this fake.
+  async updateActorFlags(actor, scope, key, value, options = {}) {
+    fakeActorEngineCallLog.push({ method: 'updateActorFlags', actorId: actor?.id, scope, key, options: { ...options } });
+    return actor.setFlag(scope, key, value);
+  },
+
+  // Mirrors the real governed effect APIs (actor-engine.js updateActiveEffects / updateOwnedItemEffects): the write goes to the embedded collection.
+  async updateActiveEffects(actor, updates, options = {}) {
+    fakeActorEngineCallLog.push({ method: 'updateActiveEffects', actorId: actor?.id, options: { ...options } });
+    return actor.updateEmbeddedDocuments('ActiveEffect', updates, options);
+  },
+
+  async updateOwnedItemEffects(actor, item, updates, options = {}) {
+    fakeActorEngineCallLog.push({ method: 'updateOwnedItemEffects', actorId: actor?.id, itemId: item?.id, options: { ...options } });
+    return item.updateEmbeddedDocuments('ActiveEffect', updates, options);
+  },
+
+  async unsetActorFlag(actor, scope, key, options = {}) {
+    fakeActorEngineCallLog.push({ method: 'unsetActorFlag', actorId: actor?.id, scope, key, options: { ...options } });
+    return actor.unsetFlag(scope, key);
+  },
+
   async restoreFromSnapshot(actor, snapshot = {}, options = {}) {
     fakeActorEngineCallLog.push({ method: 'restoreFromSnapshot', actorId: actor?.id, options: { ...options } });
     actor.system = deepCloneJSON(snapshot.system ?? {});

@@ -22,6 +22,8 @@
  */
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ROLL_HOOKS } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
+import { readBonusPool } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 /** Bonus Force Points normalized the way ActorEngine.spendForcePoints reads them, so the entries a spend consumed can be given back by id. */
 const bonusEntries = (pool) => {
@@ -36,7 +38,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
   let commitRun = null;
   let rollbackRun = null;
   let announceRun = null;
-  const poolNow = () => ({ normal: Number(actor.system?.forcePoints?.value ?? 0), bonus: bonusEntries(actor.getFlag?.('swse', 'bonusForcePoints')).reduce((n, e) => n + e.value, 0) });
+  const poolNow = () => ({ normal: Number(actor.system?.forcePoints?.value ?? 0), bonus: bonusEntries(readBonusPool(actor)).reduce((n, e) => n + e.value, 0) });
   const tx = {
     result,
     formula,
@@ -63,7 +65,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
     async _commit() {
       tx.state = 'committing';
       const pool = actor.system.forcePoints ?? {};
-      const beforeBonus = bonusEntries(actor.getFlag?.('swse', 'bonusForcePoints'));
+      const beforeBonus = bonusEntries(readBonusPool(actor));
       const before = poolNow();
       tx.shown = { remaining: Math.max(0, (pool.value ?? 0) - 1), max: pool.max ?? 0 };   // (use calculated value instead of stale reference)
       let spent;
@@ -164,17 +166,14 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
       }
       if (!tx.chatPosted) {
         try {
-          const message = await createChatMessage({
-            speaker: ChatMessage.getSpeaker({ actor }),
-            content: `
+          const message = await SWSEChat.postHTML({ actor, content: `
           <div class="swse-forcepoint-roll">
             <h3>Force Point Used</h3>
             <p>Rolled: ${formula}</p>
             <p>Result Applied: <strong>+${result}</strong></p>
             <p>FP Remaining: ${tx.shown.remaining}/${tx.shown.max}</p>
           </div>
-        `
-          });
+        ` });
           if (message) {tx.chatPosted = true;}   // createChatMessage resolves null (it does not throw) when the message was not created
           else {tx.announceError = new Error('chat message was not created');}
         } catch (err) { tx.announceError = err; }

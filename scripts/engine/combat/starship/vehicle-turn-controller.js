@@ -19,6 +19,7 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { VehicleRules } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle/VehicleRules.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 export class VehicleTurnController {
 
@@ -147,13 +148,10 @@ export class VehicleTurnController {
     const { EnhancedShields } = await import("/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-shields.js");
     await EnhancedShields.recharge(vehicle);
 
-    await ChatMessage.create({
-      content: `<div class="swse-turn-msg">
+    await SWSEChat.postHTML({ actor: vehicle, content: `<div class="swse-turn-msg">
         <strong>${vehicle.name}'s Turn Begins</strong><br>
         Phase: <strong>Commander</strong>
-      </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: vehicle })
-    });
+      </div>` });
   }
 
   /**
@@ -187,14 +185,11 @@ export class VehicleTurnController {
 
     const phaseInfo = this.PHASE_DATA[newPhase];
 
-    await ChatMessage.create({
-      content: `<div class="swse-turn-msg">
+    await SWSEChat.postHTML({ actor: vehicle, content: `<div class="swse-turn-msg">
         <strong>${vehicle.name}</strong><br>
         Phase: <strong>${phaseInfo.label}</strong><br>
         <em>${phaseInfo.description}</em>
-      </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: vehicle })
-    });
+      </div>` });
 
     return newPhase;
   }

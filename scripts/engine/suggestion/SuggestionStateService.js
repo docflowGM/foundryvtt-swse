@@ -53,7 +53,7 @@ export class SuggestionStateService {
 
       // @mutation-exception: metadata
       // Initialize suggestion engine internal state (system tracking only)
-      await actor.setFlag(NS, STORAGE_KEY, currentState);
+      await ActorEngine.updateActorFlags(actor, NS, STORAGE_KEY, currentState, { recalc: false });
       swseLogger.debug(`[SuggestionStateService] State initialized for ${actor.name}`);
     } catch (err) {
       swseLogger.error(`[SuggestionStateService] Failed to initialize state for ${actor.name}`, err);
@@ -87,7 +87,7 @@ export class SuggestionStateService {
 
       // @mutation-exception: metadata
       // Track pivot detector state for build analysis (system tracking)
-      await actor.setFlag(NS, STORAGE_KEY, currentState);
+      await ActorEngine.updateActorFlags(actor, NS, STORAGE_KEY, currentState, { recalc: false });
 
       swseLogger.log(`[SuggestionStateService] Pivot state updated`, {
         actor: actor.name,
@@ -127,7 +127,7 @@ export class SuggestionStateService {
 
       // @mutation-exception: metadata
       // Store suggestion engine metadata (system state tracking)
-      await actor.setFlag(NS, STORAGE_KEY, currentState);
+      await ActorEngine.updateActorFlags(actor, NS, STORAGE_KEY, currentState, { recalc: false });
 
       swseLogger.log(`[SuggestionStateService] Metadata updated`, {
         actor: actor.name,
@@ -195,7 +195,7 @@ export class SuggestionStateService {
       swseLogger.warn(`[SuggestionStateService] Clearing state for ${actor.name}`);
       // @mutation-exception: metadata
       // Clear suggestion engine state (test/reset only)
-      await actor.unsetFlag(NS, STORAGE_KEY);
+      await ActorEngine.unsetActorFlag(actor, NS, STORAGE_KEY, { recalc: false });
     } catch (err) {
       swseLogger.error(`[SuggestionStateService] Failed to clear state for ${actor.name}`, err);
       throw err;

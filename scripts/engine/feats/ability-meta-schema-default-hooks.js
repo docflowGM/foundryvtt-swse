@@ -113,8 +113,8 @@ async function applyDefaults(item, options = {}) {
 }
 
 export function registerAbilityMetaSchemaDefaultHooks() {
-  Hooks.on('createItem', async (item, options) => applyDefaults(item, options));
-  Hooks.on('updateItem', async (item, _data, options) => applyDefaults(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? applyDefaults(item, options) : false);
+  Hooks.on('updateItem', async (item, _data, options, userId) => (userId === undefined || userId === game.user?.id) ? applyDefaults(item, options) : false);
   SWSELogger.log('[AbilityMetaSchemaDefaults] Hooks registered');
 }
 

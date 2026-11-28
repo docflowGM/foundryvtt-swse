@@ -1,0 +1,416 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-ROL",
+  "domain": "rolls",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "rolls owns dice execution (RollCore/RollEngine), roll expression transforms, the roll configuration dialog and skill-roll entry points. Attack bases delegate to combat, but skill bases for Use the Force and custom skills are rebuilt locally, a dead D&D crit-confirmation path contradicts A-18, roll-config.js is 2,323 lines, and ten V1-era roll modules are unreachable.",
+  "responsibilities": [
+    {
+      "id": "R-ROL-01",
+      "responsibility": "Execute dice formulas",
+      "owner": {
+        "path": "scripts/engine/roll/roll-core.js",
+        "symbol": "RollCore.execute"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/roll/roll-core.js:10",
+        "scripts/engine/roll/roll-core.js:200"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ROL-02",
+      "responsibility": "Formula roll facade without rule math",
+      "owner": {
+        "path": "scripts/engine/roll-engine.js",
+        "symbol": "RollEngine.safeRoll"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/roll-engine.js:7",
+        "scripts/engine/roll-engine.js:22"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ROL-03",
+      "responsibility": "Roll expression contributions/transforms",
+      "owner": {
+        "path": "scripts/engine/roll/expression/roll-transform-resolver.js",
+        "symbol": "resolveRollTransforms"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/engine/roll/expression/roll-transform-resolver.js:1"
+      ],
+      "tests": [
+        "tests/roll-expression-transform-authority.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-ROL-04",
+      "responsibility": "Roll configuration dialog model and hooks",
+      "owner": {
+        "path": "scripts/rolls/roll-config.js",
+        "symbol": "showRollModifiersDialog/getSkillTotal"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/rolls/roll-config.js:746",
+        "scripts/rolls/roll-config.js:790"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ROL-05",
+      "responsibility": "Skill roll entry points",
+      "owner": {
+        "path": "scripts/rolls/skills.js",
+        "symbol": "rollSkill"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/rolls/skills.js:191"
+      ],
+      "tests": [
+        "tests/skill-roll-dialog-base-authority.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-ROL-06",
+      "responsibility": "Custom skill rolls",
+      "owner": {
+        "path": "scripts/rolls/custom-skill-roller.js",
+        "symbol": "rollCustomSkill"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/rolls/custom-skill-roller.js:27",
+        "scripts/rolls/custom-skill-roller.js:61"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ROL-07",
+      "responsibility": "Roll chat-card rendering",
+      "owner": {
+        "path": "scripts/engine/rolls/swse-roll-engine.js",
+        "symbol": "SWSERollEngine"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/chat/swse-chat.js:4"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ROL-08",
+      "responsibility": "Force-point add-on in rolls (delegates spend)",
+      "owner": {
+        "path": "scripts/engine/roll/roll-core.js",
+        "symbol": "RollCore.applyForcePointLogic"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/engine/roll/roll-core.js:4",
+        "scripts/engine/roll/roll-core.js:235"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "RollEngine.safeRoll",
+      "path": "scripts/engine/roll-engine.js",
+      "line": 22,
+      "consumers": 76,
+      "contract": ""
+    },
+    {
+      "symbol": "RollCore",
+      "path": "scripts/engine/roll/roll-core.js",
+      "line": 10,
+      "consumers": 22,
+      "contract": ""
+    },
+    {
+      "symbol": "getSkillTotal",
+      "path": "scripts/rolls/roll-config.js",
+      "line": 746,
+      "consumers": 27,
+      "contract": ""
+    },
+    {
+      "symbol": "ROLL_HOOKS",
+      "path": "scripts/rolls/roll-config.js",
+      "line": 67,
+      "consumers": 27,
+      "contract": ""
+    },
+    {
+      "symbol": "rollSkill",
+      "path": "scripts/rolls/skills.js",
+      "line": 191,
+      "consumers": 18,
+      "contract": ""
+    },
+    {
+      "symbol": "rollCustomSkill",
+      "path": "scripts/rolls/custom-skill-roller.js",
+      "line": 61,
+      "consumers": 1,
+      "contract": ""
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "abilities-effects",
+      "combat (resolveAttackBonus)",
+      "force (FP coordinator)",
+      "chat"
+    ],
+    "prohibited": [
+      "rule math in RollEngine",
+      "actor mutation"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/rolls/swse-roll-engine.js",
+        "to": "scripts/engine/combat/damage-packet-builder.js",
+        "evidence": "chat cycle P-A07 #3"
+      }
+    ]
+  },
+  "subsystemContracts": [],
+  "contradictions": [
+    {
+      "id": "CR-ROL-01",
+      "existingSource": "A-18 / OSI",
+      "claim": "No D&D critical confirmation",
+      "observed": "rollCriticalConfirmation and getCriticalConfirmBonus implement confirmation; no callers",
+      "evidence": [
+        "scripts/rolls/roll-config.js:2168",
+        "scripts/combat/utils/combat-utils.js:104"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [],
+  "deferredRules": [
+    {
+      "item": "Custom skill bonus uses half of system.level (custom-skill-roller.js:35) while derived skills use actor-core level-split helpers; aligning changes results for multiclass/nonheroic actors",
+      "registerRef": "none yet - to be registered by owner (DEFERRED_RULES_REVIEW)"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "Roll dialogs (skill/UTF/custom skill) after consolidation",
+      "source": "scripts/rolls/roll-config.js:746"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-ROL-001",
+      "category": "duplicate-authority",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Local skill-total formulas in the rolls domain",
+      "affectedFiles": [
+        "scripts/rolls/roll-config.js",
+        "scripts/rolls/custom-skill-roller.js",
+        "scripts/rolls/skills.js"
+      ],
+      "evidence": [
+        "scripts/rolls/roll-config.js:732",
+        "scripts/rolls/roll-config.js:749",
+        "scripts/rolls/roll-config.js:753",
+        "scripts/rolls/custom-skill-roller.js:27",
+        "scripts/rolls/custom-skill-roller.js:35",
+        "scripts/rolls/skills.js:423"
+      ],
+      "observed": "getSkillTotal returns a locally rebuilt component total (ability + half level + trained + focus + misc) for useTheForce, and otherwise prefers derived totals with a component fallback. calculateCustomSkillBonus computes ability + 5 trained + 5 focus + floor(system.level/2) + misc. skills.calculateSkillModifier (exported, no importer) omits half level entirely. The derived skill pipeline (actor-core/ABL) is the authority for normal skills.",
+      "intendedOwnership": "Skill totals from the derived skill pipeline; dialogs display the derived total and its breakdown.",
+      "contractRef": "A-01; R-ROL-04/06",
+      "proposedSolution": "Delete calculateSkillModifier (dead). Make the UTF dialog base read the derived UTF total plus an explicit breakdown (the comment says duplicate passive effects were the reason; fix duplication in the derived pipeline instead - see F-ACT-015). Custom skills: compute in the derived pipeline; the half-level source is a deferred rules question (deferredRules).",
+      "alternatives": "",
+      "dependencies": [
+        "B-ACT F-ACT-015"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": true,
+      "regressionTests": "Parity tests: dialog base == derived total for every skill incl. UTF; custom skill fixtures.",
+      "foundryAcceptance": "Roll dialogs in Foundry.",
+      "scope": "M",
+      "simplificationBenefit": "One skill-total authority.",
+      "risk": "Medium.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ROL-002",
+      "category": "dead-code",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Dead D&D critical-confirmation path contrary to A-18",
+      "affectedFiles": [
+        "scripts/rolls/roll-config.js",
+        "scripts/combat/utils/combat-utils.js"
+      ],
+      "evidence": [
+        "scripts/rolls/roll-config.js:2168",
+        "scripts/rolls/roll-config.js:2185",
+        "scripts/rolls/roll-config.js:2238",
+        "scripts/combat/utils/combat-utils.js:104"
+      ],
+      "observed": "rollCriticalConfirmation rolls a confirmation d20 with getCriticalConfirmBonus and posts a raw chat message; it is exported (named and default) but has no caller in scripts/templates/packs.",
+      "intendedOwnership": "No crit confirmation mechanics (A-18).",
+      "contractRef": "A-18; A-05",
+      "proposedSolution": "Delete rollCriticalConfirmation, PRE_CRIT_CONFIRM hook id and getCriticalConfirmBonus; coordinate with F-ABL-004 for the rule type.",
+      "alternatives": "",
+      "dependencies": [
+        "B-ABL F-ABL-004"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Grep test: no critConfirm symbols.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "Removes an A-18 contradiction.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ROL-003",
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Unreachable roll modules",
+      "affectedFiles": [
+        "scripts/rolls/skills-reference.js",
+        "scripts/rolls/force-powers.js",
+        "scripts/utils/dice-utils.js",
+        "scripts/rolls/defenses.js",
+        "scripts/rolls/saves.js",
+        "scripts/rolls/dice.js",
+        "scripts/rolls/roll-manager.js",
+        "scripts/engine/roll/expression/legacy-keyword-adapter.js",
+        "scripts/engine/roll/expression/compose-roll.js",
+        "scripts/core/rolls-init.js"
+      ],
+      "evidence": [
+        "scripts/rolls/dice.js:2",
+        "scripts/rolls/defenses.js:9",
+        "scripts/rolls/force-powers.js:8"
+      ],
+      "observed": "V1-era roll helpers (dice/saves/defenses/force-powers/roll-manager/dice-utils duplicate rollDice/rollAttack/rollSkillCheck names) unreachable; compose-roll and legacy-keyword-adapter are test-only.",
+      "intendedOwnership": "No duplicate roll APIs.",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete V1 helpers (legacy C). Keep test-only expression modules only if they are planned (UNIMPLEMENTED) - owner decides; otherwise delete with their tests.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Full CI.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "~860 SLOC.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ROL-004",
+      "category": "oversized-module",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "roll-config.js mixes dialog UI, rule fallbacks, history, hooks and dead mechanics",
+      "affectedFiles": [
+        "scripts/rolls/roll-config.js"
+      ],
+      "evidence": [
+        "scripts/rolls/roll-config.js:67",
+        "scripts/rolls/roll-config.js:672",
+        "scripts/rolls/roll-config.js:746",
+        "scripts/rolls/roll-config.js:2090",
+        "scripts/rolls/roll-config.js:2168"
+      ],
+      "observed": "2,323 lines: hook ids, RollHistory, TalentBonusCache, ability/skill/attack base resolution with fallbacks, dialog rendering, crit confirm, concealment.",
+      "intendedOwnership": "Dialog model (presentation) separate from base-total resolution (delegated to authorities).",
+      "contractRef": "A-04",
+      "proposedSolution": "Seams: roll-dialog-model (presentation), roll-history, roll-hooks; base totals delegate to actor-core/combat; delete dead mechanics.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Existing roll tests.",
+      "foundryAcceptance": "Roll dialog smoke.",
+      "scope": "M",
+      "simplificationBenefit": "",
+      "risk": "Medium.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ROL-005",
+      "category": "performance",
+      "severity": "low",
+      "status": "suspected",
+      "title": "Global hooks invalidate TalentBonusCache on every actor/item change",
+      "affectedFiles": [
+        "scripts/rolls/roll-config.js"
+      ],
+      "evidence": [
+        "scripts/rolls/roll-config.js:2090",
+        "scripts/rolls/roll-config.js:2099"
+      ],
+      "observed": "Registered at module evaluation; invalidation on any updateActor (including UI-only flag writes) on every client. Cheap per call; hypothesis that it defeats the cache for active actors.",
+      "intendedOwnership": "Cache keyed by derived-generation stamp (R-ACT-04) instead of hook invalidation.",
+      "contractRef": "A-16",
+      "proposedSolution": "Key TalentBonusCache by the derived generation/signature and drop the hooks; instrument hit rate first.",
+      "alternatives": "",
+      "dependencies": [
+        "B-ACT"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Cache hit-rate counter test.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "low"
+    }
+  ]
+}

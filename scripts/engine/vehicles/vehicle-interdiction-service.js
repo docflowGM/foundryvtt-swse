@@ -11,7 +11,7 @@
  *    is the query any hyperdrive activation must consult (the system has no activation action yet).
  */
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
+import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/effect-intent-engine.js";
 import { readSceneMap, putSceneRecord, deleteSceneRecord, withSceneLock, tokenOnScene, sceneGridSize } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-scene-state.js";
 import { INTERDICTION_FLAG, FIELD_REASONS, INTERDICTED_FLAG, isHyperdriveInterdicted, buildField, validateArea, areaBox, fieldCoversToken, isValidField } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-interdiction-field.js";
 

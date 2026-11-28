@@ -5,6 +5,7 @@ import { deriveFollowerStateForApply } from '/systems/foundryvtt-swse/scripts/ap
 import { getAvailableFollowerSlots } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-session-seeder.js';
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { withFollowerSlotLock } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-lock.js';
 import { resolveFollowerSlotActorId } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 
 const REGISTERED = Symbol.for('swse.followerOrphanTransfer.registered.v1');
@@ -82,8 +83,13 @@ function followerLink(follower, slot = null) {
   };
 }
 
-async function clearOwnerRegistries(owner, followerId, { clearSlot = true } = {}) {
+async function clearOwnerRegistries(owner, followerId, options = {}) {
   if (!owner) return;
+  // F-NPC-001: followerSlots read-modify-write is serialized per owner with the other slot writers.
+  return withFollowerSlotLock(owner.id, () => clearOwnerRegistriesLocked(owner, followerId, options));
+}
+
+async function clearOwnerRegistriesLocked(owner, followerId, { clearSlot = true } = {}) {
   const slots = (owner.getFlag('foundryvtt-swse', 'followerSlots') || []).map(slot => {
     if (!clearSlot || resolveFollowerSlotActorId(slot) !== followerId) return slot;
     return {
@@ -96,8 +102,8 @@ async function clearOwnerRegistries(owner, followerId, { clearSlot = true } = {}
   const followers = (owner.getFlag('foundryvtt-swse', 'followers') || []).filter(entry => entry?.id !== followerId);
   const ownedActors = (owner.system?.ownedActors || []).filter(entry => entry?.id !== followerId);
 
-  await owner.setFlag('foundryvtt-swse', 'followerSlots', slots);
-  await owner.setFlag('foundryvtt-swse', 'followers', followers);
+  await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'followerSlots', slots, { recalc: false });
+  await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'followers', followers, { recalc: false });
   await ActorEngine.updateActor(owner, { 'system.ownedActors': ownedActors }, {
     source: 'FollowerOrphanTransfer.clearOwnerRegistries',
   });
@@ -205,6 +211,10 @@ export function getEligibleFollowerTransferSlots(follower) {
 }
 
 async function setOwnerLink(owner, follower, slot) {
+  return withFollowerSlotLock(owner.id, () => setOwnerLinkLocked(owner, follower, slot));
+}
+
+async function setOwnerLinkLocked(owner, follower, slot) {
   const slots = (owner.getFlag('foundryvtt-swse', 'followerSlots') || []).map(entry => {
     if (entry.id !== slot.id) return entry;
     return {
@@ -222,8 +232,8 @@ async function setOwnerLink(owner, follower, slot) {
   const ownedActors = (owner.system?.ownedActors || []).filter(entry => entry?.id !== follower.id);
   ownedActors.push(link);
 
-  await owner.setFlag('foundryvtt-swse', 'followerSlots', slots);
-  await owner.setFlag('foundryvtt-swse', 'followers', followers);
+  await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'followerSlots', slots, { recalc: false });
+  await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'followers', followers, { recalc: false });
   await ActorEngine.updateActor(owner, { 'system.ownedActors': ownedActors }, {
     source: 'FollowerOrphanTransfer.setOwnerLink',
   });

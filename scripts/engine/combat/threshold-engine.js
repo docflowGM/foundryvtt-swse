@@ -45,12 +45,14 @@ import { wornArmorStunThresholdBonus } from "/systems/foundryvtt-swse/scripts/en
 /* -------------------------------------------------------------------------- */
 
 // Clear per-encounter feat flags when combat ends
-Hooks.on('deleteCombat', async (combat) => {
+Hooks.on('deleteCombat', async (combat, _options, userId) => {
+  // Runs on every client; only the originating user's client clears the flags (and only on actors it may modify).
+  if (userId !== undefined && userId !== game.user?.id) return;
   // Clear threshold exceeded flags for Galactic Alliance Military Training feat
   for (const combatant of combat?.combatants || []) {
     const actor = combatant.actor;
-    if (actor) {
-      await actor.unsetFlag?.('foundryvtt-swse', 'damageThresholdExceededThisEncounter');
+    if (actor && actor.isOwner !== false) {
+      await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'damageThresholdExceededThisEncounter', { recalc: false });
     }
   }
 });
@@ -243,15 +245,9 @@ export class ThresholdEngine {
       return fortDefense + vehicleLevel + sizeMod;
     }
 
-    // Character / Droid / NPC
-    const fortTotal = system.derived?.defenses?.fortitude?.total ?? 10;
-    const heroicLevel = system.heroicLevel ?? system.level ?? 1;
-    const sizeMod = getDamageThresholdSizeBonus(actor);
-
-    if (formulaType === 'halfLevel') {
-      return fortTotal + Math.floor(heroicLevel / 2) + sizeMod;
-    }
-    return fortTotal + heroicLevel + sizeMod;
+    // Character / Droid / NPC: DerivedCalculator's certified DT (published modifiers, substituted defense, size bonus and, when the optional house rule is
+    // enabled, the level modifier added once) is the single authority. ThresholdEngine no longer reconstructs the optional formula itself (F-CMB-003).
+    return this.computeBaseThreshold(actor);
   }
 
   /**
@@ -595,7 +591,7 @@ export class ThresholdEngine {
     // began, so exactly this receipt is returned; when it did land the attempt stands and the point is finalized (no double charge).
     let marked = false;
     try {
-      await vehicle.setFlag('foundryvtt-swse', 'emergencyPatchUsed', true);
+      await ActorEngine.updateActorFlags(vehicle, 'foundryvtt-swse', 'emergencyPatchUsed', true, { recalc: false });
       marked = true;
     } catch (err) {
       marked = vehicle.getFlag?.('foundryvtt-swse', 'emergencyPatchUsed') === true;
@@ -759,7 +755,7 @@ export class ThresholdEngine {
       if (!actor || actor.type !== 'vehicle') continue;
 
       try {
-        await actor.unsetFlag('foundryvtt-swse', 'emergencyPatchUsed');
+        await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'emergencyPatchUsed', { recalc: false });
       } catch {
         // Flag might not exist; ignore
       }

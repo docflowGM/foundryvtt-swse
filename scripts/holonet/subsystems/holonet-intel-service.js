@@ -1007,7 +1007,7 @@ export class HolonetIntelService {
       ...patch,
       updatedAt: nowIso()
     });
-    await actor.setFlag('foundryvtt-swse', 'intelLocker', current);
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'intelLocker', current, { recalc: false });
     globalThis.Hooks?.callAll('swseHolonetUpdated', { type: 'intel-locker-updated', actorId: actor.id, intelId: intel.id });
     return true;
   }

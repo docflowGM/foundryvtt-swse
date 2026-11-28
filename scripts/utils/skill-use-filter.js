@@ -3,12 +3,12 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { SkillFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-resolver.js";
 import { resolveSaboteurSkillUse, planQuickSabotage, executeQuickSabotage } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/saboteur-quick-sabotage.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
 
 function athleticsConsolidationActive() {
-  try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; }
-  catch (_err) { return false; }
+  return HouseRuleService.getBoolean('athleticsConsolidation', false);
 }
 
 function isAthleticsComponentKey(skillKey) {

@@ -15,8 +15,9 @@
 
 import { ForceEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { readBonusPool, bonusPoolUpdate, normalizeBonusEntries, buildBonusPool } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
@@ -84,13 +85,13 @@ async function shouldSuppressTaintDarkSideIncrease(actor, power, options = {}) {
   const encounterId = getEncounterId();
   const flag = actor.getFlag?.('swse', 'encounterUses.taintOfTheDarkSide') ?? {};
   if (flag?.encounterId === encounterId && flag?.used === true) return false;
-  await actor.setFlag('swse', 'encounterUses.taintOfTheDarkSide', {
+  await ActorEngine.updateActorFlags(actor, 'swse', 'encounterUses.taintOfTheDarkSide', {
     encounterId,
     used: true,
     powerId: power?.id ?? null,
     powerName: power?.name ?? 'selected Dark Side Force Power',
     usedAt: Date.now()
-  });
+  }, { recalc: false });
   return true;
 }
 
@@ -578,14 +579,14 @@ export class ForceExecutor {
         'flags.foundryvtt-swse.lastRecoverySource': sourceSlug
       }], { source: `${sourceSlug}-recover`, render: false });
 
-      await actor.setFlag?.('foundryvtt-swse', flagKey, {
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', flagKey, {
         encounterId: state.encounterId,
         used: state.used + 1,
         max: state.max,
         lastPowerId: power.id,
         lastPowerName: power.name,
         lastUsedAt: Date.now()
-      });
+      }, { recalc: false });
 
       // A maintained effect is an independent instance (ForcePowerMaintenance); recovering the Power copy never ends it.
 
@@ -645,7 +646,7 @@ export class ForceExecutor {
   }
 
   static _getBonusForcePointPool(actor) {
-    const pool = actor?.getFlag?.('swse', 'bonusForcePoints') ?? actor?.flags?.swse?.bonusForcePoints ?? {};
+    const pool = readBonusPool(actor);
     if (Array.isArray(pool.entries) && pool.entries.length) {
       const value = pool.entries.reduce((sum, entry) => sum + Math.max(0, Number(entry?.value ?? 0) || 0), 0);
       return { ...pool, value };
@@ -655,41 +656,6 @@ export class ForceExecutor {
 
   static _getAvailableForcePoints(actor) {
     return SchemaAdapters.getForcePoints(actor) + Math.max(0, Number(this._getBonusForcePointPool(actor).value ?? 0) || 0);
-  }
-
-  static _normalizeBonusForcePointEntries(pool = {}) {
-    const entries = Array.isArray(pool.entries) ? pool.entries.map((entry, index) => ({
-      id: String(entry?.id ?? `bonus-${index}`),
-      source: String(entry?.source ?? 'Bonus Force Point'),
-      value: Math.max(0, Number(entry?.value ?? 0) || 0),
-      max: Math.max(0, Number(entry?.max ?? entry?.value ?? 0) || 0),
-      restrictions: entry?.restrictions ?? entry?.restriction ?? '',
-      expires: entry?.expires ?? '',
-      encounterId: entry?.encounterId ?? null,
-      createdAt: entry?.createdAt ?? null
-    })).filter(entry => entry.value > 0) : [];
-    const legacyValue = Math.max(0, Number(pool.value ?? 0) || 0);
-    const entryTotal = entries.reduce((sum, entry) => sum + entry.value, 0);
-    if (!entries.length && legacyValue > 0) {
-      entries.push({ id: 'legacy-bonus-force-points', source: Array.isArray(pool.sources) && pool.sources.length ? pool.sources.join(', ') : 'Bonus Force Point', value: legacyValue, max: Math.max(legacyValue, Number(pool.max ?? legacyValue) || legacyValue), restrictions: pool.note ?? '', expires: '', encounterId: null, createdAt: null });
-    } else if (legacyValue > entryTotal) {
-      entries.push({ id: 'legacy-bonus-force-points', source: 'Bonus Force Point', value: legacyValue - entryTotal, max: legacyValue - entryTotal, restrictions: pool.note ?? '', expires: '', encounterId: null, createdAt: null });
-    }
-    return entries;
-  }
-
-  static _buildBonusForcePointPool(entries = [], existing = {}) {
-    const clean = entries.filter(entry => Math.max(0, Number(entry.value) || 0) > 0);
-    const value = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.value) || 0), 0);
-    const max = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.max ?? entry.value) || 0), 0);
-    return {
-      ...existing,
-      value,
-      max: Math.max(value, max),
-      sources: [...new Set(clean.map(entry => entry.source).filter(Boolean))],
-      entries: clean,
-      note: existing.note || 'Bonus Force Points are spent before normal Force Points and may have source-specific restrictions.'
-    };
   }
 
   // Certified per-talent contracts (Aversion: CWCG p.53 swift; Illusion: FUCG p.87 standard). The printed action is
@@ -716,7 +682,7 @@ export class ForceExecutor {
       if (!actor || !this._actorHasTalent(actor, 'Force Flow')) return { success: false, reason: 'missing-talent' };
       const state = this.getForceFlowState(actor);
       const pool = this._getBonusForcePointPool(actor);
-      const entries = this._normalizeBonusForcePointEntries(pool);
+      const entries = normalizeBonusEntries(pool);
       const id = `force-flow-${state.encounterId}-${Date.now()}`;
       entries.push({
         id,
@@ -728,17 +694,15 @@ export class ForceExecutor {
         encounterId: state.encounterId,
         createdAt: Date.now()
       });
-      await ActorEngine.updateActor(actor, {
-        'flags.swse.bonusForcePoints': this._buildBonusForcePointPool(entries, pool)
-      }, { source: 'force-flow-temporary-force-point' });
-      await actor.setFlag?.('foundryvtt-swse', 'forceFlowTemporaryForcePoints', {
+      await ActorEngine.updateActor(actor, bonusPoolUpdate(actor, buildBonusPool(entries, pool)), { source: 'force-flow-temporary-force-point' });
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'forceFlowTemporaryForcePoints', {
         encounterId: state.encounterId,
         total: state.total + 1,
         lastEntryId: id,
         lastSource: source,
         lastRollType: rollType,
         lastGainedAt: Date.now()
-      });
+      }, { recalc: false });
       await SWSEChat.postHTML({
         actor,
         content: `<div class="swse-force-talent-card swse-force-talent-card--force-flow">
@@ -757,18 +721,16 @@ export class ForceExecutor {
   static async resetForceFlowTemporaryForcePoints(actor, { encounterId = null } = {}) {
     const state = this.getForceFlowState(actor);
     const pool = this._getBonusForcePointPool(actor);
-    const entries = this._normalizeBonusForcePointEntries(pool);
+    const entries = normalizeBonusEntries(pool);
     const remainingEntries = entries.filter(entry => !(entry.source === 'Force Flow' && (!encounterId || entry.encounterId === encounterId)));
     const removed = entries.reduce((sum, entry) => {
       if (entry.source === 'Force Flow' && (!encounterId || entry.encounterId === encounterId)) return sum + (Number(entry.value) || 0);
       return sum;
     }, 0);
     if (removed > 0) {
-      await ActorEngine.updateActor(actor, {
-        'flags.swse.bonusForcePoints': this._buildBonusForcePointPool(remainingEntries, pool)
-      }, { source: 'force-flow-end-encounter-reset' });
+      await ActorEngine.updateActor(actor, bonusPoolUpdate(actor, buildBonusPool(remainingEntries, pool)), { source: 'force-flow-end-encounter-reset' });
     }
-    if (!encounterId || state.encounterId === encounterId) await actor.unsetFlag?.('foundryvtt-swse', 'forceFlowTemporaryForcePoints');
+    if (!encounterId || state.encounterId === encounterId) await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'forceFlowTemporaryForcePoints', { recalc: false });
     return { success: true, removed };
   }
 
@@ -814,7 +776,7 @@ export class ForceExecutor {
         description: 'Until the end of the encounter, all squares within 2 squares of you are difficult terrain for your enemies. Mind-Affecting effect.'
       };
       await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [effectData], { source: 'aversion-talent' });
-      await actor.setFlag?.('foundryvtt-swse', 'aversionActive', { encounterId: this._encounterId(), activatedAt: Date.now() });
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'aversionActive', { encounterId: this._encounterId(), activatedAt: Date.now() }, { recalc: false });
       await SWSEChat.postHTML({
         actor,
         content: `<div class="swse-force-talent-card swse-force-talent-card--aversion">
@@ -873,7 +835,7 @@ export class ForceExecutor {
       <p class="notes"><strong>Cost:</strong> 1 Force Point · <strong>Action:</strong> Standard Action · <strong>Duration:</strong> heroic level minutes · <strong>Descriptor:</strong> Mind-Affecting</p>
     </form>`;
 
-    const result = await SWSEDialogV2.prompt({
+    const result = await DialogPort.prompt({
       title: 'Illusion — Use the Force Check',
       content,
       label: 'Roll Illusion',
@@ -1012,7 +974,7 @@ export class ForceExecutor {
       <div class="form-group"><label>Ally Name</label><input name="allyName" type="text" placeholder="Willing trained ally" /></div>
       <p class="notes">Standard Action · one active Link at a time · lasts until encounter end or until ended as a Free Action.</p>
     </form>`;
-    const result = await SWSEDialogV2.prompt({
+    const result = await DialogPort.prompt({
       title: 'Link',
       content,
       label: 'Create Link',
@@ -1031,7 +993,7 @@ export class ForceExecutor {
     try {
       if (!actor) throw new Error('Actor not found');
       if (!this._actorHasTalent(actor, 'Link')) throw new Error('Link talent not found');
-      await actor.setFlag?.('foundryvtt-swse', 'forceLink', { encounterId: this._encounterId(), allyName, activatedAt: Date.now() });
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'forceLink', { encounterId: this._encounterId(), allyName, activatedAt: Date.now() }, { recalc: false });
       await SWSEChat.postHTML({ actor, content: `<div class="swse-force-talent-card swse-force-talent-card--link">
         <h3>${actor.name} creates a Link</h3>
         <p><strong>Standard Action:</strong> ${actor.name} links with <strong>${allyName}</strong>.</p>
@@ -1052,7 +1014,7 @@ export class ForceExecutor {
       <div class="form-group"><label>Ally Name</label><input name="allyName" type="text" placeholder="Force-sensitive willing ally" /></div>
       <p class="notes">Swift Action · maintained until ended · one kilometer communication range · once per encounter share a Force Power with consent.</p>
     </form>`;
-    const result = await SWSEDialogV2.prompt({
+    const result = await DialogPort.prompt({
       title: 'Telepathic Link', content, label: 'Establish Link',
       callback: (html) => {
         const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
@@ -1062,7 +1024,7 @@ export class ForceExecutor {
       }
     });
     if (!result) return null;
-    await actor.setFlag?.('foundryvtt-swse', 'telepathicLink', { allyName: result.allyName, encounterId: this._encounterId(), usedSharedPower: false, activatedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'telepathicLink', { allyName: result.allyName, encounterId: this._encounterId(), usedSharedPower: false, activatedAt: Date.now() }, { recalc: false });
     await SWSEChat.postHTML({ actor, content: `<div class="swse-force-talent-card swse-force-talent-card--telepathic-link">
       <h3>${actor.name} establishes a Telepathic Link</h3>
       <p><strong>Swift Action:</strong> linked with <strong>${result.allyName}</strong>. You can communicate telepathically within one kilometer.</p>
@@ -1080,7 +1042,7 @@ export class ForceExecutor {
       <div class="form-group"><label>Target UTF Result</label><input name="targetResult" type="number" value="10" /></div>
       <div class="form-group"><label>Situational Modifier</label><input name="modifier" type="number" value="0" /></div>
     </form>`;
-    const result = await SWSEDialogV2.prompt({ title: 'Suppress Force', content, label: 'Roll Suppression', callback: (html) => {
+    const result = await DialogPort.prompt({ title: 'Suppress Force', content, label: 'Roll Suppression', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       const fd = new FormData(form);
@@ -1680,21 +1642,25 @@ export function registerForceExecutorChatHooks() {
   if (forceExecutorChatHooksRegistered) return;
   forceExecutorChatHooksRegistered = true;
 
-  Hooks.on('deleteCombat', async (combat) => {
+  // F-FRC-006: deleteCombat fires on EVERY connected client; each ran up to 10 writes per combatant. Only the client whose user ended the
+  // combat performs the cleanup, and only for actors that user may modify.
+  Hooks.on('deleteCombat', async (combat, _options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return;
     try {
       const combatants = Array.from(combat?.combatants ?? []);
       const actors = [...new Map(combatants.map(c => [c?.actor?.id, c?.actor]).filter(([id, actor]) => id && actor)).values()];
       for (const actor of actors) {
+        if (actor.isOwner === false) continue;
         await ForceExecutor.resetForceFlowTemporaryForcePoints(actor, { encounterId: combat?.id ?? null });
-        await actor.unsetFlag?.('foundryvtt-swse', 'telekineticSavantUses');
-        await actor.unsetFlag?.('foundryvtt-swse', 'influenceSavantUses');
-        await actor.unsetFlag?.('foundryvtt-swse', 'lightsaberFormSavantUses');
-        await actor.unsetFlag?.('foundryvtt-swse', 'aversionActive');
-        await actor.unsetFlag?.('foundryvtt-swse', 'forceLink');
-        await actor.unsetFlag?.('foundryvtt-swse', 'telepathicLink');
-        await actor.unsetFlag?.('swse', 'encounterUses.guardianSpirit.vitalEncouragement');
-        await actor.unsetFlag?.('swse', 'encounterUses.guardianSpirit.crucialAdvice');
-        await actor.unsetFlag?.('swse', 'guardianSpirit');
+        await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'telekineticSavantUses', { recalc: false });
+        await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'influenceSavantUses', { recalc: false });
+        await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'lightsaberFormSavantUses', { recalc: false });
+        await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'aversionActive', { recalc: false });
+        await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'forceLink', { recalc: false });
+        await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'telepathicLink', { recalc: false });
+        await ActorEngine.unsetActorFlag(actor, 'swse', 'encounterUses.guardianSpirit.vitalEncouragement', { recalc: false });
+        await ActorEngine.unsetActorFlag(actor, 'swse', 'encounterUses.guardianSpirit.crucialAdvice', { recalc: false });
+        await ActorEngine.unsetActorFlag(actor, 'swse', 'guardianSpirit', { recalc: false });
       }
     } catch (err) {
       console.warn('SWSE | Force talent encounter cleanup failed', err);

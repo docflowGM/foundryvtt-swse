@@ -79,7 +79,7 @@ These are compatibility/headless-safe stubs that already point to v2 implementat
 
 Files observed:
 
-- `scripts/engine/mentor/aurebesh-translator.js`
+- `scripts/engine/mentor/aurebesh-translator.js` (retired 2026-11-27, 3O: its one consumer now imports `scripts/ui/dialogue/aurebesh-translator.js`)
 - `scripts/mentor/translation-presets.js`
 
 These are contract-restoration re-export shims that point to actual implementations under `scripts/ui/dialogue`. They were not changed.

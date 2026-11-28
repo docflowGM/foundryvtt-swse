@@ -1,0 +1,718 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-INF",
+  "domain": "infrastructure",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "infrastructure is the composition root (index.js), settings registration, hook wiring, v13 document facade and generic utilities. The root is bypassed by side-effect imports that compose the hotfix layer; settings are registered in four places (one under an unread swse namespace) with duplicate keys; a global Document.prototype flag patch is installed first in init; 55 modules are unreachable including a stale holonet copy of core bootstrap; live utilities still contain dead actor writers that keep hardening.js in the ActorEngine import cycle.",
+  "responsibilities": [
+    {
+      "id": "R-INF-01",
+      "responsibility": "Composition root",
+      "owner": {
+        "path": "index.js",
+        "symbol": "init/ready hooks"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "index.js:99",
+        "index.js:166",
+        "index.js:212",
+        "index.js:282"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-INF-02",
+      "responsibility": "System settings registration",
+      "owner": {
+        "path": "scripts/core/settings.js",
+        "symbol": "registerSystemSettings"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/core/settings.js:20",
+        "scripts/core/settings.js:673",
+        "scripts/core/settings.js:676"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-INF-03",
+      "responsibility": "Hook registry",
+      "owner": {
+        "path": "scripts/infrastructure/hooks/hooks-registry.js",
+        "symbol": "HooksRegistry"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/infrastructure/hooks/hooks-registry.js:48",
+        "scripts/infrastructure/hooks/hooks-registry.js:93"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-INF-04",
+      "responsibility": "Actor/combat/item hook wiring",
+      "owner": {
+        "path": "scripts/infrastructure/hooks/actor-hooks.js",
+        "symbol": "registerActorHooks"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/infrastructure/hooks/actor-hooks.js:61"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-INF-05",
+      "responsibility": "v13 document facade routing actor/owned-item writes to ActorEngine",
+      "owner": {
+        "path": "scripts/core/document-api-v13.js",
+        "symbol": "patchDocument/createActor/createChatMessage"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/core/document-api-v13.js:380",
+        "scripts/core/document-api-v13.js:392"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-INF-06",
+      "responsibility": "Logging",
+      "owner": {
+        "path": "scripts/utils/logger.js",
+        "symbol": "SWSELogger"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/core/logger.js:1"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-INF-07",
+      "responsibility": "Schema read adapters",
+      "owner": {
+        "path": "scripts/utils/schema-adapters.js",
+        "symbol": "SchemaAdapters"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/utils/schema-adapters.js:337",
+        "scripts/utils/schema-adapters.js:453"
+      ],
+      "tests": [
+        "tests/schema-adapters-ability-authority.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-INF-08",
+      "responsibility": "Flag scope compatibility bridge",
+      "owner": {
+        "path": "scripts/utils/flags/swse-flags.js",
+        "symbol": "installSwseFlagScopeCompatibility"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/utils/flags/swse-flags.js:28",
+        "index.js:101"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-INF-09",
+      "responsibility": "Template preload",
+      "owner": {
+        "path": "scripts/load-templates.js",
+        "symbol": "preloadHandlebarsTemplates"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "index.js:265"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-INF-10",
+      "responsibility": "World data autoload/clear",
+      "owner": {
+        "path": "scripts/core/world-data-loader.js",
+        "symbol": "WorldDataLoader"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/core/world-data-loader.js:473"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-INF-11",
+      "responsibility": "Data cache manager",
+      "owner": {
+        "path": "scripts/core/cache-manager.js",
+        "symbol": "CacheManager"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/core/cache-manager.js:1"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "SWSELogger",
+      "path": "scripts/utils/logger.js",
+      "line": 1,
+      "consumers": 699,
+      "contract": "logging"
+    },
+    {
+      "symbol": "SchemaAdapters",
+      "path": "scripts/utils/schema-adapters.js",
+      "line": 337,
+      "consumers": 51,
+      "contract": "read accessors with fallbacks"
+    },
+    {
+      "symbol": "SettingsHelper",
+      "path": "scripts/utils/settings-helper.js",
+      "line": 1,
+      "consumers": 42,
+      "contract": "safe settings read"
+    },
+    {
+      "symbol": "patchDocument",
+      "path": "scripts/core/document-api-v13.js",
+      "line": 380,
+      "consumers": 41,
+      "contract": "routes Actor/owned Item to ActorEngine"
+    },
+    {
+      "symbol": "createChatMessage",
+      "path": "scripts/core/document-api-v13.js",
+      "line": 252,
+      "consumers": 41,
+      "contract": "raw ChatMessage.create wrapper"
+    },
+    {
+      "symbol": "HooksRegistry.register",
+      "path": "scripts/infrastructure/hooks/hooks-registry.js",
+      "line": 48,
+      "consumers": 16,
+      "contract": ""
+    },
+    {
+      "symbol": "getSwseFlag",
+      "path": "scripts/utils/flags/swse-flags.js",
+      "line": 87,
+      "consumers": 8,
+      "contract": ""
+    },
+    {
+      "symbol": "registerSystemSettings",
+      "path": "scripts/core/settings.js",
+      "line": 20,
+      "consumers": 1,
+      "contract": ""
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "composition root may import all domains",
+      "utils/core: infrastructure + data-registries only (PROPOSED A-P1)"
+    ],
+    "prohibited": [
+      "utils -> ActorEngine / mutation",
+      "utils computing game rules"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/utils/hardening.js",
+        "to": "scripts/governance/actor-engine/actor-engine.js",
+        "evidence": "scripts/utils/hardening.js:16"
+      },
+      {
+        "from": "scripts/talents/squad-actions-init.js",
+        "to": "scripts/patches/runtime-bugfix-hotfixes-init.js",
+        "evidence": "scripts/talents/squad-actions-init.js:6"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-INF-1",
+      "boundary": "callers <-> document-api-v13",
+      "interface": "Actor -> ActorEngine.updateActor; owned Item -> ActorEngine.updateEmbeddedDocuments; else direct",
+      "status": [
+        "OBSERVED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-INF-01",
+      "existingSource": "index.js:216 comment / scripts/core/init.js",
+      "claim": "scripts/core/init.js is dead",
+      "observed": "Agreement on reachability; it and its orphan copy scripts/holonet/scripts/core/init.js still register maxTemplatesPerItem/enableEnhancedMassiveDamage; the copy imports a missing file",
+      "evidence": [
+        "scripts/core/init.js:32",
+        "scripts/holonet/scripts/core/init.js:30",
+        "scripts/holonet/scripts/core/init.js:10"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-INF-02",
+      "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md \u00a73",
+      "claim": "House-rule settings read through HouseRuleService (foundryvtt-swse)",
+      "observed": "index.js registers 5 settings in an unread swse namespace",
+      "evidence": [
+        "index.js:361"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-INF-03",
+      "existingSource": "scripts/utils/flags/swse-flags.js:10",
+      "claim": "Actors do not need the helper; SWSEV2BaseActor bridges the swse scope",
+      "observed": "Both bridges active for actors",
+      "evidence": [
+        "scripts/utils/flags/swse-flags.js:48",
+        "scripts/actors/base/swse-actor-base.js:463"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [],
+  "deferredRules": [],
+  "foundryAcceptance": [
+    {
+      "item": "Boot order after moving hotfix registration into index.js",
+      "source": "index.js:91"
+    },
+    {
+      "item": "Foundry v13 acceptance of settings namespace 'swse'",
+      "source": "index.js:361"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-INF-001",
+      "category": "dead-code",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "55 unreachable infrastructure modules plus the stale scripts/holonet/scripts/core duplicate",
+      "affectedFiles": [
+        "scripts/core/error-handler.js",
+        "scripts/core/tooltip-discovery.js",
+        "scripts/core/hardening-init.js",
+        "scripts/core/compendium-diagnostics.js",
+        "scripts/core/forensic-sheet-diagnostic.js",
+        "scripts/export/pdf-field-map.js",
+        "scripts/core/schema-validator.js",
+        "scripts/core/lazy-loader.js",
+        "scripts/core/compendium-pack-registration-repair.js",
+        "scripts/core/sidebar-icon-comparison.js",
+        "scripts/core/first-run-experience.js",
+        "scripts/core/feature-flags.js",
+        "scripts/core/css-auditor.js",
+        "scripts/core/runtime-safety.js",
+        "scripts/core/sidebar-sentinel-trace.js",
+        "scripts/utils/typing-animation.js",
+        "scripts/core/sidebar-icon-instrumentation.js",
+        "scripts/export/swse-export-model.js",
+        "scripts/utils/reason-inspector.js",
+        "scripts/utils/hook-performance.js",
+        "scripts/core/devmode-validation.js",
+        "scripts/core/v1-api-scanner.js",
+        "scripts/services/drop-service.js",
+        "scripts/core/migration-integrity-adapter.js",
+        "scripts/core/version-adapter.js",
+        "scripts/core/init.js",
+        "scripts/utils/movement-normalizer.js",
+        "scripts/core/correlation-id.js",
+        "scripts/core/phase5-init.js",
+        "scripts/core/swse-api.js",
+        "scripts/utils/data-utils.js",
+        "scripts/export/pdf-exporter.js",
+        "scripts/engine/_architecture-guard.js",
+        "scripts/core/hooks-emitter.js",
+        "scripts/helpers/swse-dialog-helper.js",
+        "scripts/core/keybindings.js",
+        "scripts/utils/wishlist-helpers.js",
+        "scripts/infrastructure/hooks/directory-hooks.js",
+        "scripts/utils/string-utils.js",
+        "scripts/theme-loader.js",
+        "scripts/utils/character-utils.js",
+        "scripts/infrastructure/hooks/destiny-hooks.js",
+        "scripts/core/sheet-stabilizer.js",
+        "scripts/core/utils-init.js",
+        "scripts/core/flag-registry.js",
+        "scripts/bootstrap/holo-init.js",
+        "scripts/core/pack-existence-check.js",
+        "scripts/utils/object-utils.js",
+        "scripts/utils/render-guard.js",
+        "scripts/automation/upkeep.js",
+        "scripts/utils/macro-functions.js",
+        "scripts/utils/warn-gm.js",
+        "scripts/infrastructure/hooks/gm-datapad-scene-control.js",
+        "scripts/infrastructure/hooks/index.js",
+        "scripts/rules/rules-engine.js",
+        "scripts/holonet/scripts/core/init.js",
+        "scripts/holonet/scripts/core/first-run-experience.js",
+        "scripts/holonet/scripts/core/sidebar-structure-diagnostics.js"
+      ],
+      "evidence": [
+        "scripts/core/error-handler.js:1",
+        "scripts/core/tooltip-discovery.js:1",
+        "scripts/core/hardening-init.js:1",
+        "scripts/core/compendium-diagnostics.js:1",
+        "scripts/core/forensic-sheet-diagnostic.js:1",
+        "scripts/export/pdf-field-map.js:1",
+        "scripts/core/schema-validator.js:1",
+        "scripts/core/lazy-loader.js:1",
+        "scripts/core/compendium-pack-registration-repair.js:1",
+        "scripts/core/sidebar-icon-comparison.js:1",
+        "scripts/core/first-run-experience.js:1",
+        "scripts/core/feature-flags.js:1",
+        "scripts/core/css-auditor.js:1",
+        "scripts/core/runtime-safety.js:1",
+        "scripts/core/sidebar-sentinel-trace.js:1",
+        "scripts/utils/typing-animation.js:1",
+        "scripts/core/sidebar-icon-instrumentation.js:1",
+        "scripts/export/swse-export-model.js:1",
+        "scripts/utils/reason-inspector.js:1",
+        "scripts/utils/hook-performance.js:1",
+        "scripts/core/devmode-validation.js:1",
+        "scripts/core/v1-api-scanner.js:1",
+        "scripts/services/drop-service.js:1",
+        "scripts/core/migration-integrity-adapter.js:1",
+        "scripts/core/version-adapter.js:1",
+        "scripts/core/init.js:1",
+        "scripts/utils/movement-normalizer.js:1",
+        "scripts/core/correlation-id.js:1",
+        "scripts/core/phase5-init.js:1",
+        "scripts/core/swse-api.js:1",
+        "scripts/utils/data-utils.js:1",
+        "scripts/export/pdf-exporter.js:1",
+        "scripts/engine/_architecture-guard.js:1",
+        "scripts/core/hooks-emitter.js:1",
+        "scripts/helpers/swse-dialog-helper.js:1",
+        "scripts/core/keybindings.js:1",
+        "scripts/utils/wishlist-helpers.js:1",
+        "scripts/infrastructure/hooks/directory-hooks.js:1",
+        "scripts/utils/string-utils.js:1",
+        "scripts/theme-loader.js:1"
+      ],
+      "observed": "Clusters: (a) diagnostics/instrumentation self-registering but never imported (error-handler, compendium-diagnostics, forensic-sheet-diagnostic, sidebar-icon-*, v1-api-scanner, devmode-validation, hooks-emitter, reason-inspector, hook-performance); (b) bootstrap variants (core/init.js, phase5-init, utils-init, hardening-init -> runtime-safety/first-run-experience, bootstrap/holo-init, theme-loader, infrastructure/hooks/index.js); (c) utilities with zero live importers (string-utils, object-utils, character-utils, data-utils, typing-animation, wishlist-helpers, warn-gm, macro-functions, render-guard); (d) PDF export (export/pdf-exporter, pdf-field-map, swse-export-model) - feature never wired; (e) services/drop-service (owns the only call to ActorEngine.moveEmbeddedDocuments). scripts/holonet/scripts/core/* duplicates scripts/core init/first-run/sidebar diagnostics, re-registers 2 settings and imports a missing module. No pack/macro references found for exported names (git grep packs).",
+      "intendedOwnership": "Composition root wires every runtime module; nothing dormant.",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete (legacy C): cluster (b), (c), scripts/holonet/scripts/core/*, scripts/rules/rules-engine.js, engine/_architecture-guard.js. Investigate as UNIMPLEMENTED before deleting: (d) PDF export, first-run-experience, keybindings, feature-flags, directory-hooks/destiny-hooks. Owner decides (a): keep a single opt-in diagnostics entry or delete.",
+      "alternatives": "",
+      "dependencies": [
+        "B-ACT F-ACT-002 (drop-service)"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Full CI after each batch.",
+      "foundryAcceptance": "None for (b)/(c).",
+      "scope": "M",
+      "simplificationBenefit": "~7k SLOC dead bootstrap/utility code removed; one init path.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-INF-002",
+      "category": "dead-code",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Dead actor writers in live utility modules; hardening.js imports ActorEngine only for them",
+      "affectedFiles": [
+        "scripts/utils/hardening.js",
+        "scripts/core/mutation-safety.js"
+      ],
+      "evidence": [
+        "scripts/utils/hardening.js:113",
+        "scripts/utils/hardening.js:131",
+        "scripts/utils/hardening.js:141",
+        "scripts/utils/hardening.js:147",
+        "scripts/core/mutation-safety.js:26",
+        "scripts/core/mutation-safety.js:93"
+      ],
+      "observed": "ensureNpcStatblockSnapshot/rollbackNpcToStatblockSnapshot (hardening.js) call actor.setFlag/unsetFlag directly and ActorEngine.restoreFromSnapshot, but have no callers. lockActorMutations/snapshotActorBeforeMutation (mutation-safety.js) write actor flags directly and are reachable only via orphan hardening-init.js; the live importer (document-api-v13) uses only the pure validators. Removing the hardening.js writers removes its ActorEngine import, which is one of the four loops of the 18-file cycle (F-ACT-001).",
+      "intendedOwnership": "Utilities are pure; actor writes via ActorEngine (A-02).",
+      "contractRef": "A-02; A-07",
+      "proposedSolution": "Delete the two hardening.js functions and the ActorEngine import; delete mutation-safety write helpers (keep assertEmbeddedDocOwnership/validateItemForCreation). If NPC statblock snapshot/rollback is a wanted feature, re-home it in npc-followers via ActorEngine.",
+      "alternatives": "",
+      "dependencies": [
+        "B-ACT F-ACT-001"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Census: hardening.js has no import of actor-engine.js; cycle shrinks.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "Breaks a cycle loop and removes A-02 bypass code.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-INF-003",
+      "category": "duplicate-schema-interpretation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Settings defined twice with divergent definitions",
+      "affectedFiles": [
+        "scripts/core/settings.js",
+        "scripts/houserules/houserule-settings.js",
+        "scripts/ui/ui-manager.js"
+      ],
+      "evidence": [
+        "scripts/core/settings.js:77",
+        "scripts/houserules/houserule-settings.js:764",
+        "scripts/core/settings.js:541",
+        "scripts/houserules/houserule-settings.js:819",
+        "scripts/core/settings.js:465",
+        "scripts/houserules/houserule-settings.js:166",
+        "scripts/core/settings.js:475",
+        "scripts/houserules/houserule-settings.js:281",
+        "scripts/core/settings.js:663",
+        "scripts/ui/ui-manager.js:21"
+      ],
+      "observed": "darkSideMaxMultiplier, allowSuiteReselection, store.requireGMApproval, pendingCustomPurchases are registered in settings.js and again in houserule-settings.js (skipped at runtime by its has() guard, so the houserule-settings definitions are dead and differ, e.g. darkSideMaxMultiplier range). themePromptShown is registered in settings.js and ui-manager.js with different name/hint.",
+      "intendedOwnership": "One definition per setting key; house-rule keys defined in the HRL manifest.",
+      "contractRef": "A-01; A-06",
+      "proposedSolution": "Delete the duplicates in settings.js for house-rule keys (keep HRL as owner) or vice versa per owner; keep one themePromptShown. Add a test that every key is registered exactly once.",
+      "alternatives": "",
+      "dependencies": [
+        "B-HRL",
+        "B-SET"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Unit test registering all settings into a fake registry asserting no duplicate keys.",
+      "foundryAcceptance": "Settings menu shows same options.",
+      "scope": "S",
+      "simplificationBenefit": "One definition per key.",
+      "risk": "Low; definitions must be merged carefully (range/choices).",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-INF-004",
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "index.js registers 5 settings under the unread \"swse\" namespace",
+      "affectedFiles": [
+        "index.js"
+      ],
+      "evidence": [
+        "index.js:358",
+        "index.js:361",
+        "index.js:364",
+        "index.js:208"
+      ],
+      "observed": "forcePointBonus, storeSettings, storeMarkup, storeDiscount, dataLoaded are registered with namespace \"swse\"; no code reads game.settings.get(\"swse\", ...) (git grep: 0). storeMarkup/storeDiscount/dataLoaded are read from foundryvtt-swse via HouseRuleService/SettingsHelper, where they are registered separately.",
+      "intendedOwnership": "Settings only in the system namespace.",
+      "contractRef": "A-06",
+      "proposedSolution": "Delete index.js registerSettings(). Whether Foundry v13 even accepts the \"swse\" namespace is FOUNDRY_ACCEPTANCE_REQUIRED (not needed if deleted).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Grep test: no settings.register(\"swse\".",
+      "foundryAcceptance": "Boot without errors.",
+      "scope": "S",
+      "simplificationBenefit": "Removes 5 phantom settings.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-INF-005",
+      "category": "legacy-compat",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Global Document.prototype flag-scope patch",
+      "affectedFiles": [
+        "scripts/utils/flags/swse-flags.js"
+      ],
+      "evidence": [
+        "scripts/utils/flags/swse-flags.js:28",
+        "scripts/utils/flags/swse-flags.js:48",
+        "index.js:101"
+      ],
+      "observed": "See F-PAT-005; owned here.",
+      "intendedOwnership": "Migration instead of a global shim.",
+      "contractRef": "A-09",
+      "proposedSolution": "See F-PAT-005 / F-ACT-009.",
+      "alternatives": "",
+      "dependencies": [
+        "B-PAT F-PAT-005"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "M",
+      "simplificationBenefit": "",
+      "risk": "Medium.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-INF-006",
+      "category": "duplicate-authority",
+      "severity": "medium",
+      "status": "suspected",
+      "title": "Generic utilities compute game rules",
+      "affectedFiles": [
+        "scripts/utils/math-utils.js",
+        "scripts/utils/schema-adapters.js"
+      ],
+      "evidence": [
+        "scripts/utils/math-utils.js:20",
+        "scripts/utils/math-utils.js:37",
+        "scripts/utils/math-utils.js:48",
+        "scripts/utils/schema-adapters.js:337",
+        "scripts/utils/schema-adapters.js:453",
+        "scripts/utils/schema-adapters.js:526"
+      ],
+      "observed": "math-utils defines calculateBAB/calculateDefense/calculateDamageThreshold/calculateCarryingCapacity; SchemaAdapters.getAbilityMod/getDefense/getBAB/getConditionPenalty read derived values and fall back to their own formulas. Consumers of math-utils were not traced per call site.",
+      "intendedOwnership": "Rule formulas in actor-core/combat; utils only read derived.",
+      "contractRef": "A-01; CR-03",
+      "proposedSolution": "Trace math-utils consumers; delete unused functions; make SchemaAdapters fall back to null/unknown (A-12 \"unknown is not false\") instead of recomputing, or to the actor-core helper.",
+      "alternatives": "",
+      "dependencies": [
+        "B-ACT"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "schema-adapters-ability-authority test extended to fallbacks.",
+      "foundryAcceptance": "None.",
+      "scope": "M",
+      "simplificationBenefit": "Removes shadow rule formulas.",
+      "risk": "Low-medium.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-INF-007",
+      "category": "ownership-violation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "A-02/A-05 probe hits in infrastructure: legitimate exceptions",
+      "affectedFiles": [
+        "scripts/core/document-api-v13.js",
+        "scripts/core/world-data-loader.js",
+        "scripts/utils/flags/swse-flags.js"
+      ],
+      "evidence": [
+        "scripts/core/document-api-v13.js:34",
+        "scripts/core/document-api-v13.js:181",
+        "scripts/core/document-api-v13.js:252",
+        "scripts/core/document-api-v13.js:392",
+        "scripts/core/document-api-v13.js:422",
+        "scripts/core/world-data-loader.js:473",
+        "scripts/utils/flags/swse-flags.js:103",
+        "scripts/utils/flags/swse-flags.js:114"
+      ],
+      "observed": "document-api-v13 creates/deletes world Actors and Items and updates unowned docs directly after routing actors/owned items to ActorEngine; createChatMessage is the primitive SWSEChat uses (but is also called directly by ~10 combat modules - counted in B-CHT). world-data-loader deletes world Items (GM data reset). swse-flags setSwseFlag/unsetSwseFlag are generic helpers documented for non-actor documents.",
+      "intendedOwnership": "World-document writes are A-02 exceptions; should carry a code comment.",
+      "contractRef": "A-02; A-05",
+      "proposedSolution": "Add @mutation-exception comments at scripts/core/document-api-v13.js:391 and scripts/core/world-data-loader.js:472; allow-list in probe.",
+      "alternatives": "",
+      "dependencies": [
+        "B-CHT"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-INF-008",
+      "category": "dependency",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Composition outside the root and two hook-registration mechanisms",
+      "affectedFiles": [
+        "index.js",
+        "scripts/talents/squad-actions-init.js",
+        "scripts/infrastructure/hooks/hooks-registry.js"
+      ],
+      "evidence": [
+        "index.js:91",
+        "scripts/talents/squad-actions-init.js:6",
+        "scripts/infrastructure/hooks/hooks-registry.js:48",
+        "scripts/infrastructure/hooks/actor-hooks.js:70"
+      ],
+      "observed": "Side-effect imports compose the hotfix layer and progression patches; HooksRegistry (ids, priorities, 35 registrations) coexists with 501 raw Hooks.on/once sites, so hook order and ownership are not inspectable in one place.",
+      "intendedOwnership": "index.js explicitly calls each installer; one hook-registration API.",
+      "contractRef": "A-P1",
+      "proposedSolution": "Replace side-effect imports with explicit calls in index.js; adopt HooksRegistry for new hooks and add a census listing of raw Hooks.on sites per domain (no mass rewrite).",
+      "alternatives": "",
+      "dependencies": [
+        "B-PAT F-PAT-003"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Static test: no side-effect-only imports outside index.js.",
+      "foundryAcceptance": "Boot smoke test.",
+      "scope": "M",
+      "simplificationBenefit": "Visible, ordered composition.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    }
+  ]
+}

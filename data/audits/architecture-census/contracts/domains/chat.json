@@ -1,0 +1,328 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-CHT",
+  "domain": "chat",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "SWSEChat is the approved single gameplay-chat authority, but 74 live sites bypass it (43 ChatMessage.create plus 31 direct createChatMessage wrapper calls the probe misses), its postRoll is wrapped by a hotfix, and it sits in a 6-file cycle with roll and damage-packet code.",
+  "responsibilities": [
+    {
+      "id": "R-CHT-01",
+      "responsibility": "Gameplay chat posting API",
+      "owner": {
+        "path": "scripts/chat/swse-chat.js",
+        "symbol": "SWSEChat"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/chat/swse-chat.js:291",
+        "scripts/chat/swse-chat.js:353",
+        "scripts/chat/swse-chat.js:341"
+      ],
+      "tests": [
+        "tests/swse-chat-no-phantom-postmessage.test.mjs"
+      ],
+      "notes": "A-05"
+    },
+    {
+      "id": "R-CHT-02",
+      "responsibility": "Store/credit receipt cards",
+      "owner": {
+        "path": "scripts/chat/store-receipt-chat.js",
+        "symbol": "registerStoreReceiptChatCards"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/chat/store-receipt-chat.js:410"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-CHT-03",
+      "responsibility": "Holonet record cards",
+      "owner": {
+        "path": "scripts/chat/holonet-chat-card.js",
+        "symbol": "registerHolonetChatCards"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/chat/holonet-chat-card.js:71"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-CHT-04",
+      "responsibility": "Roll card model (delegated)",
+      "owner": {
+        "path": "scripts/engine/rolls/swse-roll-engine.js",
+        "symbol": "SWSERollEngine"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/chat/swse-chat.js:4"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-CHT-05",
+      "responsibility": "Persistence primitive",
+      "owner": {
+        "path": "scripts/core/document-api-v13.js",
+        "symbol": "createChatMessage"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/core/document-api-v13.js:252",
+        "scripts/chat/swse-chat.js:3"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "SWSEChat.postRoll",
+      "path": "scripts/chat/swse-chat.js",
+      "line": 291,
+      "consumers": 97,
+      "contract": ""
+    },
+    {
+      "symbol": "SWSEChat.postHTML",
+      "path": "scripts/chat/swse-chat.js",
+      "line": 353,
+      "consumers": 97,
+      "contract": ""
+    },
+    {
+      "symbol": "SWSEChat.postStoreReceipt",
+      "path": "scripts/chat/swse-chat.js",
+      "line": 588,
+      "consumers": 97,
+      "contract": ""
+    },
+    {
+      "symbol": "SWSEChat.postCombatStatusCard",
+      "path": "scripts/chat/swse-chat.js",
+      "line": 644,
+      "consumers": 97,
+      "contract": ""
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "infrastructure document facade",
+      "rolls card model",
+      "ui-shell roll companion"
+    ],
+    "prohibited": [
+      "chat -> combat/feat mechanics"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/rolls/swse-roll-engine.js",
+        "to": "scripts/engine/combat/damage-packet-builder.js",
+        "evidence": "scripts/engine/combat/damage-packet-builder.js:11"
+      },
+      {
+        "from": "scripts/engine/skills/skill-feat-resolver.js",
+        "to": "scripts/chat/swse-chat.js",
+        "evidence": "scripts/engine/skills/skill-feat-resolver.js:10"
+      }
+    ]
+  },
+  "subsystemContracts": [],
+  "contradictions": [
+    {
+      "id": "CR-CHT-01",
+      "existingSource": "docs/architecture/ARCHITECTURE.md \u00a7II",
+      "claim": "Sheets and engines may not create ChatMessage directly",
+      "observed": "74 live bypass sites (43 ChatMessage.create, 31 createChatMessage)",
+      "evidence": [
+        "scripts/engine/species/species-activated-ability-engine.js:93",
+        "scripts/combat/systems/grappling-system.js:940"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-CHT-01",
+      "item": "Chat commands parser never loaded",
+      "source": "scripts/chat/chat-commands.js:10",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [],
+  "foundryAcceptance": [
+    {
+      "item": "Card rendering, whisper/blind roll modes",
+      "source": "scripts/chat/swse-chat.js:291"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-CHT-001",
+      "category": "bypass-engine",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "A-05 bypassed at 74 live sites; probe misses the createChatMessage wrapper route",
+      "affectedFiles": [
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+        "scripts/combat/rolls/enhanced-rolls.js",
+        "scripts/combat/systems/grappling-system.js",
+        "scripts/engine/combat/CombatEngine.js",
+        "scripts/engine/combat/reactions/reaction-registry.js",
+        "scripts/engine/combat/starship/subsystem-engine.js",
+        "scripts/engine/combat/ui/CombatUIAdapter.js",
+        "scripts/engine/feats/meta-resource-feat-resolver.js",
+        "scripts/engine/poison/poison-engine.js",
+        "scripts/engine/species/species-activated-ability-engine.js",
+        "scripts/sheets/v2/character-like-sheet.js",
+        "scripts/species/species-reroll-handler.js"
+      ],
+      "evidence": [
+        "scripts/engine/species/species-activated-ability-engine.js:93",
+        "scripts/sheets/v2/character-like-sheet.js:7055",
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:1201",
+        "scripts/engine/combat/reactions/reaction-registry.js:1024",
+        "scripts/engine/combat/starship/subsystem-engine.js:208",
+        "scripts/engine/poison/poison-engine.js:783",
+        "scripts/engine/combat/CombatEngine.js:358",
+        "scripts/combat/rolls/enhanced-rolls.js:503",
+        "scripts/combat/systems/grappling-system.js:940",
+        "scripts/engine/combat/ui/CombatUIAdapter.js:94",
+        "scripts/engine/feats/meta-resource-feat-resolver.js:614",
+        "scripts/species/species-reroll-handler.js:262"
+      ],
+      "observed": "P-A05 counts 43 ChatMessage.create sites in 23 live modules (largest species-activated-ability-engine 12). In addition 17 live modules call document-api-v13 createChatMessage directly (31 sites: combat 8 files, feats 5, skills, rolls, ui-shell, species), bypassing SWSEChat card building, speaker and roll-mode handling.",
+      "intendedOwnership": "All gameplay chat through SWSEChat (A-05).",
+      "contractRef": "A-05; CR-CHT-01",
+      "proposedSolution": "Extend P-A05 to count createChatMessage outside swse-chat. Reroute per owner domain to SWSEChat.postHTML/postRoll/cards, starting with the 12-site species engine and combat. Add a lint/census ratchet.",
+      "alternatives": "",
+      "dependencies": [
+        "species/combat/feats/ui-shell contracts"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Census ratchet; per-module tests with a fake SWSEChat.",
+      "foundryAcceptance": "Card appearance and whisper behaviour per rerouted flow.",
+      "scope": "M",
+      "simplificationBenefit": "One chat path.",
+      "risk": "Low-medium.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-CHT-002",
+      "category": "dependency",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "6-file chat <-> roll <-> damage-packet cycle through a feat patch module",
+      "affectedFiles": [
+        "scripts/chat/swse-chat.js",
+        "scripts/engine/rolls/swse-roll-engine.js",
+        "scripts/engine/combat/damage-packet-builder.js",
+        "scripts/engine/feats/skill-feat-runtime-patches.js",
+        "scripts/engine/skills/skill-feat-resolver.js",
+        "scripts/engine/roll-engine.js"
+      ],
+      "evidence": [
+        "scripts/chat/swse-chat.js:4",
+        "scripts/engine/combat/damage-packet-builder.js:11",
+        "scripts/engine/skills/skill-feat-resolver.js:10",
+        "scripts/engine/skills/skill-feat-resolver.js:11"
+      ],
+      "observed": "SWSEChat imports the roll card model, which imports damage-packet-builder (for \"offer damage roll\"), which imports SkillFeatRuntime from a runtime-patches module, whose resolver posts chat via SWSEChat/RollEngine.",
+      "intendedOwnership": "Chat is a leaf: renders card models passed to it.",
+      "contractRef": "A-07",
+      "proposedSolution": "Have callers build the card model (or pass shouldOfferDamageRoll as data) so swse-chat does not import combat; move SkillFeatRuntime out of the patch module.",
+      "alternatives": "",
+      "dependencies": [
+        "B-ROL",
+        "B-PAT"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Census: no cycle containing swse-chat.js.",
+      "foundryAcceptance": "Roll cards with damage buttons.",
+      "scope": "M",
+      "simplificationBenefit": "Chat becomes testable alone.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-CHT-003",
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "chat-commands.js orphan",
+      "affectedFiles": [
+        "scripts/chat/chat-commands.js"
+      ],
+      "evidence": [
+        "scripts/chat/chat-commands.js:10"
+      ],
+      "observed": "Self-registering chatMessage hook; nothing imports it.",
+      "intendedOwnership": "Wired or removed.",
+      "contractRef": "A-09",
+      "proposedSolution": "Owner decides (U-CHT-01); delete if not wanted.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-CHT-004",
+      "category": "legacy-compat",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "SWSEChat.postRoll wrapped by combat-ui-behavior-hotfix",
+      "affectedFiles": [
+        "scripts/patches/combat-ui-behavior-hotfix.js"
+      ],
+      "evidence": [
+        "scripts/patches/combat-ui-behavior-hotfix.js:282"
+      ],
+      "observed": "The A-05 authority entry point is reassigned at load to rewrite attack payloads (patchAttackChatPayload).",
+      "intendedOwnership": "Payload shaping in the caller or SWSEChat itself.",
+      "contractRef": "A-09",
+      "proposedSolution": "Fold patchAttackChatPayload into the attack card builder; delete the wrapper.",
+      "alternatives": "",
+      "dependencies": [
+        "B-PAT F-PAT-001"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Attack chat payload snapshot test.",
+      "foundryAcceptance": "Attack roll cards.",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Medium.",
+      "perfImpact": "none"
+    }
+  ]
+}

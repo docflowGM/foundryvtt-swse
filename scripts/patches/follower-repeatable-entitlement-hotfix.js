@@ -1,6 +1,7 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { withFollowerSlotLock } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-lock.js';
 import { resolveFollowerSlotActorId } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 
 const REGISTERED = Symbol.for('swse.followerRepeatableEntitlement.registered.v1');
@@ -108,8 +109,14 @@ function sameSlotState(a = [], b = []) {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-export async function repairRepeatableFollowerEntitlements(actor, { reason = 'manual' } = {}) {
+export async function repairRepeatableFollowerEntitlements(actor, options = {}) {
   if (!isOwnerActor(actor) || REPAIRING.has(actor.id)) return [];
+  // F-NPC-001: the repair reads, recomputes and rewrites followerSlots; serialize it with the other followerSlots writers for this owner.
+  return withFollowerSlotLock(actor.id, () => repairRepeatableFollowerEntitlementsLocked(actor, options));
+}
+
+async function repairRepeatableFollowerEntitlementsLocked(actor, { reason = 'manual' } = {}) {
+  if (REPAIRING.has(actor.id)) return [];
   REPAIRING.add(actor.id);
   try {
     const groups = groupFollowerTalents(actor);
@@ -167,7 +174,7 @@ export async function repairRepeatableFollowerEntitlements(actor, { reason = 'ma
 
     nextSlots.sort((a, b) => String(a.talentName || '').localeCompare(String(b.talentName || '')) || Number(a.talentRank || 0) - Number(b.talentRank || 0));
     if (!sameSlotState(currentSlots, nextSlots)) {
-      await actor.setFlag('foundryvtt-swse', 'followerSlots', nextSlots);
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'followerSlots', nextSlots, { recalc: false });
       swseLogger.log('[FollowerRepeatableEntitlement] Repaired canonical follower slots', {
         actor: actor.name,
         reason,
@@ -236,19 +243,23 @@ function appendTalentRankBadges(application) {
 export function registerFollowerRepeatableEntitlementHotfix() {
   if (globalThis[REGISTERED]) return;
 
-  Hooks.on('createItem', item => {
+  Hooks.on('createItem', (item, _options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return; // originating client only
     const actor = item?.parent || item?.actor;
     if (item?.type === 'talent' && getFollowerTalentConfig(item.name, item)) queueRepair(actor, 'talent-created');
   });
-  Hooks.on('updateItem', item => {
+  Hooks.on('updateItem', (item, _changes, _options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return; // originating client only
     const actor = item?.parent || item?.actor;
     if (item?.type === 'talent' && getFollowerTalentConfig(item.name, item)) queueRepair(actor, 'talent-updated');
   });
-  Hooks.on('deleteItem', item => {
+  Hooks.on('deleteItem', (item, _options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return; // originating client only
     const actor = item?.parent || item?.actor;
     if (item?.type === 'talent') queueRepair(actor, 'talent-deleted');
   });
-  Hooks.on('createActor', actor => {
+  Hooks.on('createActor', (actor, _options, userId) => {
+    if (userId !== undefined && userId !== game.user?.id) return; // originating client only
     const ownerId = followerOwnerId(actor);
     if (ownerId) queueRepair(game.actors?.get(ownerId), 'follower-created');
   });

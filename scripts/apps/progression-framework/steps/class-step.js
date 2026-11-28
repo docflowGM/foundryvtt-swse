@@ -10,7 +10,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
-import { normalizeClass } from './step-normalizers.js';
+import { normalizeClass } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker, setSessionMentorContext } from './mentor-step-integration.js';
 import { getMentorGuidance, getMentorForClass, getMentorKey, getMentorIntroText, resolveMentorData, resolveMentorPortraitPath } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';

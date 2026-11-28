@@ -26,6 +26,7 @@ import {
   resolveAllowedFollowerTemplates,
   buildFollowerConversionPreflight
 } from '/systems/foundryvtt-swse/scripts/engine/crew/ally-assignment-service.js';
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const TAB_IDS = new Set(['companions', 'factions', 'contacts', 'intel', 'bases', 'organizations']);
@@ -2093,11 +2094,7 @@ export class AlliesSurfaceService {
     const beast = game.actors?.get?.(beastId);
     if (!ownerActor || !beast) return false;
     await updateActorFlag(beast, SYSTEM_ID, 'beastLevelUpRequested', true, { meta: { guardKey: 'allies-beast-level-up' } });
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor: ownerActor }),
-      content: `<div class="swse-chat-card"><h3>Beast Advancement Request</h3><p>${ownerActor.name} requests GM approval to level up ${beast.name}.</p></div>`,
-      flags: { [SYSTEM_ID]: { type: 'beast-level-up-request', ownerId: ownerActor.id, beastId } }
-    });
+    await SWSEChat.postHTML({ actor: ownerActor, content: `<div class="swse-chat-card"><h3>Beast Advancement Request</h3><p>${ownerActor.name} requests GM approval to level up ${beast.name}.</p></div>`, flags: { [SYSTEM_ID]: { type: 'beast-level-up-request', ownerId: ownerActor.id, beastId } } });
     return true;
   }
 

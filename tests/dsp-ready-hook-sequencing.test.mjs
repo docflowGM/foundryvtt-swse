@@ -13,7 +13,7 @@ import { readFile } from 'node:fs/promises';
 
 const src = await readFile(new URL('../index.js', import.meta.url), 'utf8');
 
-const readyHookMatch = src.match(/if \(game\.user\.isGM\) \{[\s\S]*?\n {2}\}\n\}\);/);
+const readyHookMatch = src.match(/if \(isResponsibleGM\(\)\) \{[\s\S]*?\n {2}\}\n\}\);/);
 assert.ok(readyHookMatch, 'GM-gated ready hook block found');
 const block = readyHookMatch[0];
 

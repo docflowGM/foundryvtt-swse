@@ -99,6 +99,20 @@ jobs:
       - name: Guard — talent/tree membership
         run: node tools/audit-talent-tree-membership.mjs
 
+      # Architecture ratchet (V2 realignment Phase 3A.4). Censuses the CURRENT code and compares per-file
+      # violation counts (direct document writes, chat bypasses, engine settings reads, engine->UI imports,
+      # render-time writes, runtime monkey-patches, credit writes, import cycles, unreachable modules) with
+      # the committed limits in data/audits/architecture-census/implementation/ratchet-baseline.json.
+      # Existing violations are baseline debt and do not fail; NEW ones do. Limits only go down
+      # (check-architecture.mjs --lower). acorn is installed into a temp prefix for this step only (the repo
+      # has no root package.json). Also validates the implementation tracker.
+      - name: Guard — architecture ratchet (no new violations above baseline debt)
+        run: |
+          set -e
+          npm install --prefix "$RUNNER_TEMP/census-deps" --no-save --no-audit --no-fund acorn@8.18.0 acorn-walk@8.3.5
+          NODE_TOOLS="$RUNNER_TEMP/census-deps" node tools/architecture-census/check-architecture.mjs
+          node tools/architecture-census/tracker.mjs check
+
       - name: Guard — system manifest and declared packs
         run: node tools/check-system-manifest.mjs
 

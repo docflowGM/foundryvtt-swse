@@ -20,7 +20,7 @@ import { createStepDescriptor, StepCategory, StepType } from './steps/step-descr
 import { ActiveStepComputer } from './shell/active-step-computer.js';
 import { mapNodesToDescriptors } from './registries/node-descriptor-mapper.js';
 import { DroidBuilderAdapter } from './steps/droid-builder-adapter.js';
-import { RolloutSettings } from './rollout/rollout-settings.js';
+import { RolloutSettings } from '/systems/foundryvtt-swse/scripts/engine/progression/rollout-settings.js';
 import { filterActiveStepsForProfile } from '/systems/foundryvtt-swse/scripts/engine/progression/profile/galactic-profile-apply.js';
 import { NullStepPlugin } from './steps/null-step-plugin.js';
 import { getNpcProfileState } from '/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js';
@@ -45,7 +45,7 @@ import { LanguageStep } from './steps/language-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
 import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
 import { SummaryStep } from './steps/summary-step.js';
-import { ProfileClassStep, ProfileArchetypeStep, ProfileReviewStep } from './steps/galactic-profile-step.js';
+import { ProfileArchetypeStep, ProfileReviewStep } from './steps/galactic-profile-step.js';
 
 export class ChargenShell extends ProgressionShell {
   /**
@@ -221,9 +221,20 @@ export class ChargenShell extends ProgressionShell {
 
   _injectGalacticProfileDescriptors(descriptors) {
     const profileDescriptors = [
-      createStepDescriptor({ stepId: 'profile-class', label: 'Profile Class', icon: 'fa-id-card', type: StepType.IDENTITY, pluginClass: ProfileClassStep }),
-      createStepDescriptor({ stepId: 'profile-archetype', label: 'Archetype', icon: 'fa-user-astronaut', type: StepType.SELECTION, pluginClass: ProfileArchetypeStep }),
-      createStepDescriptor({ stepId: 'profile-review', label: 'Profile Review', icon: 'fa-clipboard-check', type: StepType.CONFIRM, pluginClass: ProfileReviewStep }),
+      createStepDescriptor({
+        stepId: 'profile-archetype',
+        label: 'Browse Profiles',
+        icon: 'fa-images',
+        type: StepType.SELECTION,
+        pluginClass: ProfileArchetypeStep,
+      }),
+      createStepDescriptor({
+        stepId: 'profile-review',
+        label: 'Review Profile',
+        icon: 'fa-clipboard-check',
+        type: StepType.CONFIRM,
+        pluginClass: ProfileReviewStep,
+      }),
     ];
 
     const filtered = (descriptors || []).filter(d => !['species', 'attribute', 'class', 'l1-survey', 'background', 'general-feat', 'class-feat', 'general-talent', 'class-talent'].includes(d.stepId));

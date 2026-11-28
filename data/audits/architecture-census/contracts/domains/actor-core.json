@@ -1,0 +1,1132 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-ACT",
+  "domain": "actor-core",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "actor-core owns the SWSEV2BaseActor document class, the two-phase derived pipeline (sync per-type compute in prepareDerivedData plus async DerivedCalculator.computeAll, coalesced by signature and stamped by derived-generation), and the ActorEngine mutation gate. ActorEngine is the de-facto single write path but exposes five plan grammars, orchestrates combat/force resource rules, and sits inside an 18-file static import cycle with the derived calculators. No live critical defects found; the non-atomic cross-actor move has no live caller.",
+  "responsibilities": [
+    {
+      "id": "R-ACT-01",
+      "responsibility": "Actor document class for all actor types",
+      "owner": {
+        "path": "scripts/actors/v2/base-actor.js",
+        "symbol": "SWSEV2BaseActor"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "index.js:166",
+        "scripts/actors/v2/base-actor.js:32"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ACT-02",
+      "responsibility": "Synchronous derived pass in prepareDerivedData (per-type mirrors, condition track, XP)",
+      "owner": {
+        "path": "scripts/actors/v2/base-actor.js",
+        "symbol": "SWSEV2BaseActor._performDerivedCalculation"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/actors/v2/base-actor.js:69",
+        "scripts/actors/v2/base-actor.js:87",
+        "scripts/actors/v2/base-actor.js:111"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ACT-03",
+      "responsibility": "Asynchronous derived pass (HP, BAB, defenses, skills, modifiers)",
+      "owner": {
+        "path": "scripts/actors/derived/derived-calculator.js",
+        "symbol": "DerivedCalculator.computeAll"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/actors/derived/derived-calculator.js:206",
+        "scripts/actors/v2/base-actor.js:159"
+      ],
+      "tests": [
+        "tests/derived-calculator-signature-reuse.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-ACT-04",
+      "responsibility": "Derived-generation stamp used as invalidation key for derived/view caches",
+      "owner": {
+        "path": "scripts/actors/derived/derived-generation.js",
+        "symbol": "stampDerivedGeneration"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/actors/derived/derived-generation.js:33",
+        "scripts/actors/derived/derived-generation.js:69"
+      ],
+      "tests": [
+        "tests/v2-derived-async-applied-signature-coherency.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-ACT-05",
+      "responsibility": "Actor and owned-document mutation gate (A-02)",
+      "owner": {
+        "path": "scripts/governance/actor-engine/actor-engine.js",
+        "symbol": "ActorEngine.updateActor/updateEmbeddedDocuments/createEmbeddedDocuments/deleteEmbeddedDocuments"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:570",
+        "scripts/governance/actor-engine/actor-engine.js:859",
+        "scripts/governance/actor-engine/actor-engine.js:940",
+        "scripts/governance/actor-engine/actor-engine.js:986"
+      ],
+      "tests": [],
+      "notes": "APPROVED by OSI and A-02"
+    },
+    {
+      "id": "R-ACT-06",
+      "responsibility": "Multi-bucket mutation plans with optional verified rollback",
+      "owner": {
+        "path": "scripts/governance/actor-engine/actor-engine.js",
+        "symbol": "ActorEngine.applyMutationPlan"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:3259",
+        "scripts/governance/actor-engine/actor-engine.js:3520"
+      ],
+      "tests": [
+        "tests/ti4c0-g06-rollback-verification.test.mjs",
+        "tests/ti4c0-g06s1-exact-snapshot.test.mjs"
+      ],
+      "notes": "A-15 names applyMutationPlan as the finalization commit"
+    },
+    {
+      "id": "R-ACT-07",
+      "responsibility": "Post-mutation recompute and in-memory fold of derived snapshot",
+      "owner": {
+        "path": "scripts/governance/actor-engine/actor-engine.js",
+        "symbol": "ActorEngine.recalcAll/_applyDerivedUpdates"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:251",
+        "scripts/governance/actor-engine/actor-engine.js:150"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ACT-08",
+      "responsibility": "Orchestrated resource mutations (damage, healing, condition step, Force/Destiny ledgers, Second Wind); rules delegated to combat/force engines",
+      "owner": {
+        "path": "scripts/governance/actor-engine/actor-engine.js",
+        "symbol": "ActorEngine.applyDamage/setConditionStep/spendForcePoints/spendDestinyPoints/applySecondWind"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:1421",
+        "scripts/governance/actor-engine/actor-engine.js:1681",
+        "scripts/governance/actor-engine/actor-engine.js:2116",
+        "scripts/governance/actor-engine/actor-engine.js:2466",
+        "scripts/governance/actor-engine/actor-engine.js:2622"
+      ],
+      "tests": [],
+      "notes": "CONFLICT with ENGINE-ARCHITECTURE \u00a71 (global CR-04)"
+    },
+    {
+      "id": "R-ACT-09",
+      "responsibility": "Level split and heroic half-level helpers",
+      "owner": {
+        "path": "scripts/actors/derived/level-split.js",
+        "symbol": "getHeroicHalfLevel/getEffectiveHalfLevel"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/actors/derived/level-split.js:68",
+        "scripts/actors/derived/level-split.js:79"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-ACT-10",
+      "responsibility": "Defense totals for character-like actors",
+      "owner": {
+        "path": "scripts/actors/derived/defense-calculator.js",
+        "symbol": "DefenseCalculator"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/actors/derived/defense-calculator.js:760"
+      ],
+      "tests": [
+        "tests/v2-golden-defense-lifecycle.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-ACT-11",
+      "responsibility": "Vehicle derived values",
+      "owner": {
+        "path": "scripts/actors/v2/vehicle-derived-builder.js",
+        "symbol": "buildVehicleDerived"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/actors/v2/vehicle-derived-builder.js:26"
+      ],
+      "tests": [
+        "tests/vehicle-hp-hull-dt-authority.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-ACT-12",
+      "responsibility": "NPC/droid calculation-mode adapters",
+      "owner": {
+        "path": "scripts/actors/npc/npc-mode-adapter.js",
+        "symbol": "getNpcMode / resolveDroidCalculationMode"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/actors/droid/droid-mode-adapter.js:272"
+      ],
+      "tests": [
+        "tests/npc-mode-adapter.test.mjs",
+        "tests/droid-mode-adapter.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-ACT-13",
+      "responsibility": "HP ledger accounting and recompute",
+      "owner": {
+        "path": "scripts/engine/HP/hp-accounting.js",
+        "symbol": "planHpRecompute; ActorEngine.recomputeHP"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:4247"
+      ],
+      "tests": [
+        "tests/hp-preservation-authority.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-ACT-14",
+      "responsibility": "XP derived block system.derived.xp",
+      "owner": {
+        "path": "scripts/engine/progression/xp-engine.js",
+        "symbol": "computeXpDerived"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/progression/xp-engine.js:103",
+        "scripts/actors/v2/base-actor.js:111"
+      ],
+      "tests": [],
+      "notes": "Called only from R-ACT-02; path conflict with A-03 wording (global CR-11)"
+    },
+    {
+      "id": "R-ACT-15",
+      "responsibility": "Vehicle pre-create / pre-update guards",
+      "owner": {
+        "path": "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+        "symbol": "registerVehiclePreCreateHooks"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/actors/vehicle/vehicle-precreate-hooks.js:184"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "ActorEngine.updateActor",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 570,
+      "consumers": 162,
+      "contract": "Validate, block derived-path writes, loop-guard, applyActorUpdateAtomic, recalcAll"
+    },
+    {
+      "symbol": "ActorEngine.updateEmbeddedDocuments",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 859,
+      "consumers": 83,
+      "contract": "Owned document update under mutation context"
+    },
+    {
+      "symbol": "ActorEngine.updateOwnedItems",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 932,
+      "consumers": 18,
+      "contract": "Alias of updateEmbeddedDocuments(actor,\"Item\",...)"
+    },
+    {
+      "symbol": "ActorEngine.createEmbeddedDocuments",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 940,
+      "consumers": 53,
+      "contract": "Owned document create"
+    },
+    {
+      "symbol": "ActorEngine.deleteEmbeddedDocuments",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 986,
+      "consumers": 31,
+      "contract": "Owned document delete"
+    },
+    {
+      "symbol": "ActorEngine.applyMutationPlan",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 3259,
+      "consumers": 20,
+      "contract": "{create,set,update,add,delete}; non-atomic unless transactional"
+    },
+    {
+      "symbol": "ActorEngine.apply",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 1277,
+      "consumers": 11,
+      "contract": "Adoption/legacy plan shape (createEmbedded/updateEmbedded/replaceSystem)"
+    },
+    {
+      "symbol": "ActorEngine.applyDelta",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 1103,
+      "consumers": 0,
+      "contract": "ProgressionCompiler delta; no runtime caller"
+    },
+    {
+      "symbol": "ActorEngine.applyProgression",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 2871,
+      "consumers": 2,
+      "contract": "Progression packet"
+    },
+    {
+      "symbol": "ActorEngine.applyDamage",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 1421,
+      "consumers": 12,
+      "contract": "Delegates to DamageResolutionEngine"
+    },
+    {
+      "symbol": "ActorEngine.applyHealing",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 1608,
+      "consumers": 4,
+      "contract": ""
+    },
+    {
+      "symbol": "ActorEngine.setConditionStep",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 1681,
+      "consumers": 9,
+      "contract": "ConditionTrackRules"
+    },
+    {
+      "symbol": "ActorEngine.applyConditionShift",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 1781,
+      "consumers": 12,
+      "contract": ""
+    },
+    {
+      "symbol": "ActorEngine.spendForcePoints",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 2116,
+      "consumers": 19,
+      "contract": "Per-actor queued ledger + receipts"
+    },
+    {
+      "symbol": "ActorEngine.spendDestinyPoints",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 2466,
+      "consumers": 2,
+      "contract": "Separate ledger"
+    },
+    {
+      "symbol": "ActorEngine.applySecondWind",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 2622,
+      "consumers": 4,
+      "contract": "SecondWindRules"
+    },
+    {
+      "symbol": "ActorEngine.updateActorFlags",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 4114,
+      "consumers": 7,
+      "contract": "setFlag + recalcAll"
+    },
+    {
+      "symbol": "ActorEngine.unsetActorFlag",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 4160,
+      "consumers": 4,
+      "contract": ""
+    },
+    {
+      "symbol": "ActorEngine.createActiveEffects",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 4284,
+      "consumers": 14,
+      "contract": ""
+    },
+    {
+      "symbol": "ActorEngine.deleteActiveEffects",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 4332,
+      "consumers": 8,
+      "contract": ""
+    },
+    {
+      "symbol": "ActorEngine.recomputeHP",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 4247,
+      "consumers": 7,
+      "contract": ""
+    },
+    {
+      "symbol": "ActorEngine.recalcAll",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 251,
+      "consumers": 5,
+      "contract": ""
+    },
+    {
+      "symbol": "ActorEngine.moveEmbeddedDocuments",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 1032,
+      "consumers": 1,
+      "contract": "Cross-actor move; non-atomic (F-ACT-002)"
+    },
+    {
+      "symbol": "DerivedCalculator.computeAll",
+      "path": "scripts/actors/derived/derived-calculator.js",
+      "line": 206,
+      "consumers": 22,
+      "contract": "Signature-keyed cached derived compute"
+    },
+    {
+      "symbol": "getHeroicHalfLevel",
+      "path": "scripts/actors/derived/level-split.js",
+      "line": 68,
+      "consumers": 37,
+      "contract": "Pure level arithmetic (module importers)"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "infrastructure (logger/utils)",
+      "data-registries",
+      "abilities-effects ModifierEngine (read)",
+      "combat/force rule modules invoked by ActorEngine orchestration"
+    ],
+    "prohibited": [
+      "actor-core -> UI imports (A-07)",
+      "derived calculators -> mutation modules (A-08)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/actors/derived/level-split.js",
+        "to": "scripts/governance/actor-engine/actor-engine.js",
+        "evidence": "scripts/actors/derived/level-split.js:1 -> scripts/utils/hardening.js:16"
+      },
+      {
+        "from": "scripts/engine/effects/modifiers/ModifierEngine.js",
+        "to": "scripts/engine/combat/weapons-engine.js",
+        "evidence": "scripts/engine/effects/modifiers/ModifierEngine.js:19"
+      },
+      {
+        "from": "scripts/actors/v2/base-actor.js",
+        "to": "scripts/ui/shell/request-shell-render.js",
+        "evidence": "scripts/actors/v2/base-actor.js:228 (dynamic, render request only)"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-ACT-1",
+      "boundary": "SWSEV2BaseActor <-> DerivedCalculator",
+      "interface": "computeAll(actor,{signature}) -> flat system.derived.* map; cached by signature; stamped via derived-generation.js",
+      "status": [
+        "OBSERVED"
+      ]
+    },
+    {
+      "id": "C-ACT-2",
+      "boundary": "ActorEngine <-> applyActorUpdateAtomic (scripts/utils/actor-utils.js:159)",
+      "interface": "only ActorEngine calls the raw actor.update primitive",
+      "status": [
+        "OBSERVED",
+        "PROPOSED"
+      ]
+    },
+    {
+      "id": "C-ACT-3",
+      "boundary": "callers <-> applyMutationPlan",
+      "interface": "plan schema validated by _validateMutationPlan (actor-engine.js:3600)",
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-ACT-01",
+      "existingSource": "docs/architecture/ARCHITECTURE.md \u00a7II",
+      "claim": "Mutation gatekeeper is scripts/actors/engine/actor-engine.js",
+      "observed": "Path does not exist; gate is scripts/governance/actor-engine/actor-engine.js (global CR-01)",
+      "evidence": [
+        "docs/architecture/ARCHITECTURE.md:113",
+        "scripts/governance/actor-engine/actor-engine.js:83"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-ACT-02",
+      "existingSource": "docs/architecture/ARCHITECTURE.md \u00a7II",
+      "claim": "Only v2 Actor classes may write system.derived",
+      "observed": "ActorEngine._applyDerivedUpdates and xp-engine computeXpDerived write it (global CR-11)",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:165",
+        "scripts/engine/progression/xp-engine.js:123"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-ACT-03",
+      "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md \u00a71",
+      "claim": "ActorEngine delegates to none and owns no calculation",
+      "observed": "ActorEngine orchestrates damage/condition/FP/Second Wind and holds an ability-mod helper (global CR-04)",
+      "evidence": [
+        "docs/architecture/ENGINE-ARCHITECTURE.md:21",
+        "scripts/governance/actor-engine/actor-engine.js:4623"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-ACT-04",
+      "existingSource": "docs/architecture/ARCHITECTURE.md \u00a7IV",
+      "claim": "Ability and modifier systems re-register after derived recalculation",
+      "observed": "Passive abilities register before derived, and again in three hooks",
+      "evidence": [
+        "scripts/actors/v2/base-actor.js:79",
+        "scripts/infrastructure/hooks/actor-hooks.js:70"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-ACT-05",
+      "existingSource": "scripts/governance/actor-engine/actor-engine.js:1092 (JSDoc)",
+      "claim": "applyDelta is the ONLY legal way to apply ProgressionCompiler output",
+      "observed": "applyDelta has no runtime caller",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:1092"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-ACT-01",
+      "item": "Automatic HP recompute hooks (hp-recompute-hooks.js) wired only from orphan governance-integration.js",
+      "source": "scripts/governance/actor-engine/hp-recompute-hooks.js:3",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [],
+  "foundryAcceptance": [
+    {
+      "item": "Async derived re-render after prepareDerivedData",
+      "source": "scripts/actors/v2/base-actor.js:217"
+    },
+    {
+      "item": "Multi-client Force/Destiny point ledger serialisation (single-client queue only)",
+      "source": "scripts/governance/actor-engine/actor-engine.js:41"
+    },
+    {
+      "item": "applyMutationPlan transactional rollback including CREATE-bucket world actors",
+      "source": "scripts/governance/actor-engine/actor-engine.js:3389"
+    },
+    {
+      "item": "setFlag('swse',...) remap behaviour under Foundry v13 flag-scope validation",
+      "source": "scripts/actors/base/swse-actor-base.js:463"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-ACT-001",
+      "category": "dependency",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "18-file static import cycle between derived calculators, combat-roll-math/combat-stat-rules, ModifierEngine and ActorEngine",
+      "affectedFiles": [
+        "scripts/actors/derived/level-split.js",
+        "scripts/utils/hardening.js",
+        "scripts/engine/effects/modifiers/ModifierEngine.js",
+        "scripts/engine/combat/weapons-engine.js",
+        "scripts/engine/combat/combat-roll-math.js",
+        "scripts/engine/species/rage-engine.js",
+        "scripts/engine/progression/skills/skill-state.js",
+        "scripts/governance/integrity/missing-prereqs-tracker.js",
+        "scripts/governance/actor-engine/actor-engine.js"
+      ],
+      "evidence": [
+        "scripts/actors/derived/level-split.js:1",
+        "scripts/utils/hardening.js:16",
+        "scripts/governance/actor-engine/actor-engine.js:9",
+        "scripts/engine/effects/modifiers/ModifierEngine.js:19",
+        "scripts/engine/combat/weapons-engine.js:16",
+        "scripts/engine/combat/combat-roll-math.js:36",
+        "scripts/engine/combat/combat-roll-math.js:37",
+        "scripts/engine/species/rage-engine.js:12",
+        "scripts/engine/progression/skills/skill-state.js:9",
+        "scripts/governance/integrity/missing-prereqs-tracker.js:26",
+        "scripts/governance/actor-engine/actor-engine.js:14"
+      ],
+      "observed": "Four loops close the SCC: (1) level-split -> utils/hardening (for warnIfMixedTracks) -> ActorEngine -> DerivedCalculator -> level-split; (2) ModifierEngine -> WeaponsEngine -> combat-roll-math -> ModifierEngine; (3) combat-roll-math -> RageEngine -> ActorEngine -> DerivedCalculator -> ModifierEngine -> WeaponsEngine -> combat-roll-math; (4) DerivedCalculator -> ranked-skills-engine -> skill-resolution-layer -> SkillState -> ActorEngine, and ActorEngine <-> missing-prereqs-tracker. The pivots are read-side modules (hardening, RageEngine, SkillState, missing-prereqs-tracker) that also contain write helpers importing ActorEngine statically. Runtime works because all bindings are used at call time, not module evaluation.",
+      "intendedOwnership": "Prepare-phase calculators depend only downward (infrastructure, data, ModifierEngine); the mutation gate depends on calculators, never the reverse.",
+      "contractRef": "A-07; R-ACT-03",
+      "proposedSolution": "Split read helpers from writers at the four pivots: move warnIfMixedTracks out of utils/hardening.js (or make hardening import ActorEngine lazily only in its restore helper); split RageEngine predicates (read) from rage start/end (write); split SkillState reads from its ActorEngine writes; have missing-prereqs-tracker receive ActorEngine by injection. Separately break ModifierEngine -> WeaponsEngine by having WeaponsEngine register weapon modifiers as a ModifierEngine source (inversion) rather than ModifierEngine importing it (global CR-05).",
+      "alternatives": "Accept cycles and add a census ratchet (A-P3) so no new edges join the SCC.",
+      "dependencies": [
+        "B-ABL F-ABL-002",
+        "combat domain contract"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Add a census check asserting the derived-calculator subgraph has no path to actor-engine.js; existing derived golden tests must stay green.",
+      "foundryAcceptance": "None (static structure).",
+      "scope": "M",
+      "simplificationBenefit": "Derived calculators become testable without the mutation gate; one SCC shrinks.",
+      "risk": "Import-order regressions (TDZ) if a split module is evaluated before its dependency; verify with full CI.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ACT-002",
+      "category": "unauthorized-persistence",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "moveEmbeddedDocuments deletes from source before creating on target with no compensation",
+      "affectedFiles": [
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/services/drop-service.js"
+      ],
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:1064",
+        "scripts/governance/actor-engine/actor-engine.js:1067",
+        "scripts/services/drop-service.js:146"
+      ],
+      "observed": "Source documents are deleted, then target create is attempted; a target failure (permission, validation) loses the item. The only caller, DropService, is orphan-unreferenced (registry), so the path is latent, not live.",
+      "intendedOwnership": "Cross-actor moves are create-then-delete or transactional (OSI atomicity for transfers).",
+      "contractRef": "A-02; R-ACT-05",
+      "proposedSolution": "Reorder to create on target, verify, then delete on source; or route through applyMutationPlan transactional on both actors. If DropService is confirmed dead, delete it (legacy C) and keep the fixed primitive.",
+      "alternatives": "Remove moveEmbeddedDocuments until a live caller needs it.",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Unit test: target create rejects -> source item still present.",
+      "foundryAcceptance": "Cross-actor drag between two owned actors with a non-GM user.",
+      "scope": "S",
+      "simplificationBenefit": "Removes a data-loss trap from the gate API.",
+      "risk": "Low; no live caller today.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ACT-003",
+      "category": "conflicting-interface",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Five parallel plan-application entry points with different plan shapes",
+      "affectedFiles": [
+        "scripts/governance/actor-engine/actor-engine.js"
+      ],
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:1103",
+        "scripts/governance/actor-engine/actor-engine.js:1277",
+        "scripts/governance/actor-engine/actor-engine.js:2871",
+        "scripts/governance/actor-engine/actor-engine.js:3123",
+        "scripts/governance/actor-engine/actor-engine.js:3259"
+      ],
+      "observed": "apply (createEmbedded/updateEmbedded/replaceSystem), applyDelta ({set,add,delete} features, 0 runtime callers), applyProgression (packet), executeEmbeddedPlan (plan-builders), applyMutationPlan ({create,set,update,add,delete}, transactional). A-15 names applyMutationPlan as the finalization commit, yet finalize-integration.js:56 uses applyProgression.",
+      "intendedOwnership": "One plan schema (applyMutationPlan) with adapters at the edges; A-15.",
+      "contractRef": "A-15; C-ACT-3",
+      "proposedSolution": "Declare applyMutationPlan canonical (C-ACT-3). Delete applyDelta (legacy C, no caller) after owner confirmation; express apply() adoption plans and applyProgression packets as builders that emit applyMutationPlan plans, keeping their validation.",
+      "alternatives": "Keep all five but document them in this contract as sanctioned.",
+      "dependencies": [
+        "progression domain contract (finalize-integration.js)"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Parity tests for adoption (character-like-sheet.js:3282) and progression packet before/after rerouting.",
+      "foundryAcceptance": "Chargen, level-up and template adoption in Foundry.",
+      "scope": "M",
+      "simplificationBenefit": "One mutation-plan grammar; fewer execution paths.",
+      "risk": "Medium: progression finalization is a runtime-risk area.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ACT-004",
+      "category": "contract-contradiction",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "A-03 probe hits are sanctioned in-memory derived writers (path conflict only)",
+      "affectedFiles": [
+        "scripts/engine/progression/xp-engine.js",
+        "scripts/governance/actor-engine/actor-engine.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/xp-engine.js:106",
+        "scripts/engine/progression/xp-engine.js:123",
+        "scripts/governance/actor-engine/actor-engine.js:157",
+        "scripts/governance/actor-engine/actor-engine.js:165",
+        "scripts/actors/v2/base-actor.js:111"
+      ],
+      "observed": "xp-engine.computeXpDerived writes system.derived.xp in memory and is called only from SWSEV2BaseActor._performDerivedCalculation (prepare phase). ActorEngine._applyDerivedUpdates folds DerivedCalculator output in memory and shares the derived-generation stamp. Neither persists derived data. xp-engine.js also contains applyXP (a writer via ActorEngine), so the module mixes calculator and mutation roles.",
+      "intendedOwnership": "Derived writers live under scripts/actors/** or are explicitly listed in A-03.",
+      "contractRef": "A-03; CR-ACT-02; global CR-11",
+      "proposedSolution": "Move computeXpDerived to scripts/actors/derived/xp-derived.js (pure) and keep applyXP in progression; amend A-03 to name ActorEngine._applyDerivedUpdates as the sanctioned fold. Owner decides the A-03 wording.",
+      "alternatives": "Amend A-03 only.",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Existing XP display tests; add a test that computeXpDerived has no ActorEngine import.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "Removes a progression->actor-core->progression import edge.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ACT-005",
+      "category": "ownership-violation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "A-02/A-10 probe hits in actor-core: legitimate, false positive, or owner exception (character reset credits)",
+      "affectedFiles": [
+        "scripts/utils/actor-utils.js",
+        "scripts/actors/base/swse-actor-base.js",
+        "scripts/infrastructure/hooks/actor-sidebar-controls.js",
+        "scripts/sheets/v2/actor-sheet-base.js"
+      ],
+      "evidence": [
+        "scripts/utils/actor-utils.js:281",
+        "scripts/utils/actor-utils.js:319",
+        "scripts/utils/actor-utils.js:397",
+        "scripts/actors/base/swse-actor-base.js:145",
+        "scripts/infrastructure/hooks/actor-sidebar-controls.js:125",
+        "scripts/sheets/v2/actor-sheet-base.js:1958"
+      ],
+      "observed": "actor-utils.js:281/319 are the ActorEngine write primitive and its stale-reference retry (ActorEngine internals). actor-utils.js:397 is a JSDoc example (false positive). swse-actor-base.js:145 updates an unowned directory item and carries @mutation-exception. actor-sidebar-controls.js:125 is NPCTemplateImporter.create() (app factory, false positive). actor-sheet-base.js:1958 sets system.credits 0 inside _resetCharacterToBlank (user-confirmed destructive reset) via ActorEngine.updateActor, not via TransactionEngine; the sheet composes the reset payload itself (A-04). Exception candidate: a reset is not a transaction, but A-10 has no reset exception, so the owner must rule.",
+      "intendedOwnership": "A-02 exceptions documented in code.",
+      "contractRef": "A-02; A-10",
+      "proposedSolution": "No code change for actor-utils/swse-actor-base/sidebar sites; add probe allow-list entries. Character reset: owner decides whether a blank-slate reset is an A-10 exception; if yes, move the reset payload into an ActorEngine/progression reset service and comment it.",
+      "alternatives": "",
+      "dependencies": [
+        "B-store-economy"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "Reduces probe noise.",
+      "risk": "None.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ACT-006",
+      "category": "duplicate-authority",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Condition-track penalty table duplicated in four modules",
+      "affectedFiles": [
+        "scripts/actors/v2/base-actor.js",
+        "scripts/actors/derived/defense-calculator.js",
+        "scripts/combat/utils/combat-utils.js",
+        "scripts/patches/follower-npc-sheet-parity-hotfix.js"
+      ],
+      "evidence": [
+        "scripts/actors/v2/base-actor.js:335",
+        "scripts/actors/derived/defense-calculator.js:764",
+        "scripts/combat/utils/combat-utils.js:30",
+        "scripts/patches/follower-npc-sheet-parity-hotfix.js:139"
+      ],
+      "observed": "Identical literal [0,-1,-2,-5,-10,0] in four places; defense-calculator prefers derived.damage.conditionPenalty and falls back to its own copy. Values agree today.",
+      "intendedOwnership": "One condition-track rule owner (combat ConditionTrackRules) consumed by actor-core.",
+      "contractRef": "A-01",
+      "proposedSolution": "Expose the table from ConditionTrackRules (or a pure constants module) and import it at the four sites. No value changes.",
+      "alternatives": "",
+      "dependencies": [
+        "combat domain contract"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Golden defense lifecycle test plus a unit test asserting all consumers read one table.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "Single rule home.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ACT-007",
+      "category": "legacy-compat",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "ActorEngine monkey-patches actor.items (filter/some/map/find) on every update, unconditionally",
+      "affectedFiles": [
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/governance/sentinel/sentinel-core.js"
+      ],
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:94",
+        "scripts/governance/actor-engine/actor-engine.js:602",
+        "scripts/governance/actor-engine/actor-engine.js:866",
+        "scripts/governance/sentinel/sentinel-core.js:661"
+      ],
+      "observed": "Labelled DEV MODE but not gated: the first updateActor/updateEmbeddedDocuments on an actor replaces four collection methods with wrappers that call SentinelEngine.reportSSOTViolation. With sentinelMode OFF (default) each call returns early; with DEV/STRICT every items.filter (including DerivedCalculator internals) captures a stack trace. This is a runtime monkey-patch (A-09) owned by actor-core.",
+      "intendedOwnership": "Diagnostics opt-in and non-invasive (A-09).",
+      "contractRef": "A-09; A-16",
+      "proposedSolution": "Gate instrumentation on SentinelEngine.isEnabled() (or remove it; the census now measures SSOT statically).",
+      "alternatives": "Keep but gate behind devMode.",
+      "dependencies": [
+        "B-GOV"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Test: with Sentinel OFF, actor.items.filter is the native method after updateActor.",
+      "foundryAcceptance": "Profile a large actor sheet with Sentinel DEV.",
+      "scope": "S",
+      "simplificationBenefit": "Removes an always-on instance patch.",
+      "risk": "Low.",
+      "perfImpact": "low"
+    },
+    {
+      "id": "F-ACT-008",
+      "category": "wrapper-indirection",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Deprecated write wrappers in actor-utils.js and a second safeActorUpdate",
+      "affectedFiles": [
+        "scripts/utils/actor-utils.js",
+        "scripts/core/runtime-safety.js"
+      ],
+      "evidence": [
+        "scripts/utils/actor-utils.js:401",
+        "scripts/utils/actor-utils.js:439",
+        "scripts/core/runtime-safety.js:192"
+      ],
+      "observed": "batchActorUpdates and safeActorUpdate (actor-utils) are marked DEPRECATED and have no importers; they call the raw primitive applyActorUpdateAtomic directly, bypassing ActorEngine validation. runtime-safety.js has a different safeActorUpdate routed via ActorEngine but the module is unreachable (importer hardening-init.js only).",
+      "intendedOwnership": "Only ActorEngine reaches applyActorUpdateAtomic (C-ACT-2).",
+      "contractRef": "A-02; A-09; C-ACT-2",
+      "proposedSolution": "Delete batchActorUpdates/safeActorUpdate from actor-utils (legacy C) and move applyActorUpdateAtomic into scripts/governance/actor-engine/ (non-exported outside the gate).",
+      "alternatives": "",
+      "dependencies": [
+        "B-INF"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Static test: applyActorUpdateAtomic imported only by actor-engine.js.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "Closes an A-02 bypass surface.",
+      "risk": "Low (no callers).",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ACT-009",
+      "category": "duplicate-schema-interpretation",
+      "severity": "medium",
+      "status": "suspected",
+      "title": "Dual flag scope: setFlag(\"swse\") is remapped to \"foundryvtt-swse\" while most reads use flags.swse",
+      "affectedFiles": [
+        "scripts/actors/base/swse-actor-base.js",
+        "scripts/governance/actor-engine/actor-engine.js"
+      ],
+      "evidence": [
+        "scripts/actors/base/swse-actor-base.js:446",
+        "scripts/actors/base/swse-actor-base.js:463",
+        "scripts/governance/actor-engine/actor-engine.js:4133",
+        "scripts/governance/actor-engine/actor-engine.js:77"
+      ],
+      "observed": "SWSEActorBase.setFlag/unsetFlag rewrite scope \"swse\" to the system id; getFlag(\"swse\") reads foundryvtt-swse then falls back to flags.swse. Code that writes via actor.update({\"flags.swse.x\"}) persists to flags.swse, while ActorEngine.updateActorFlags(actor,\"swse\",...) persists to flags[\"foundryvtt-swse\"]. git grep counts ~1,535 flags.swse references vs ~182 flags[\"foundryvtt-swse\"]. Direct property reads of flags.swse.x miss values written through setFlag(\"swse\"). Not traced per key.",
+      "intendedOwnership": "One canonical flag namespace with one accessor.",
+      "contractRef": "A-01",
+      "proposedSolution": "Inventory keys written through each path (census of setFlag scope + flags.swse writes) and pick one namespace; until then, require ActorEngine flag helpers and getFlag for reads. Owner decision on the canonical scope.",
+      "alternatives": "",
+      "dependencies": [
+        "B-MIG (data migration of flags)"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Per-key round-trip tests write via each path and read via each accessor.",
+      "foundryAcceptance": "Verify setFlag(\"swse\") persistence location in Foundry v13.",
+      "scope": "M",
+      "simplificationBenefit": "Removes a silent split-brain risk.",
+      "risk": "Migration of persisted flags is a runtime-risk area.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ACT-010",
+      "category": "bypass-engine",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "regainForcePoints writes untyped system.forcePoints.value, bypassing the typed Force Point ledger",
+      "affectedFiles": [
+        "scripts/actors/base/swse-actor-base.js"
+      ],
+      "evidence": [
+        "scripts/actors/base/swse-actor-base.js:337",
+        "scripts/actors/base/swse-actor-base.js:354",
+        "scripts/actors/base/swse-actor-base.js:297",
+        "scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js:394"
+      ],
+      "observed": "spendForcePoint routes through ActorEngine.spendForcePoints receipts (\"Force V2: no untyped balance write\"), but regainForcePoints writes the balance directly through updateActor. Its only caller is the GM workspace refresh action. ActorEngine.gainForcePoints exists (actor-engine.js:2077).",
+      "intendedOwnership": "Force Point gains go through ForcePointsService / ActorEngine.gainForcePoints.",
+      "contractRef": "R-ACT-08",
+      "proposedSolution": "Reroute regainForcePoints to ActorEngine.gainForcePoints (or a ForcePointsService refresh). Whether a full refresh should be ledgered is not a rules question; the restore-to-max semantics stay unchanged.",
+      "alternatives": "",
+      "dependencies": [
+        "force domain contract"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Test GM refresh produces a ledger entry and same final value.",
+      "foundryAcceptance": "GM refresh on a live actor.",
+      "scope": "S",
+      "simplificationBenefit": "One FP write path.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ACT-011",
+      "category": "performance",
+      "severity": "medium",
+      "status": "suspected",
+      "title": "Passive ability re-registration runs 2-3 times per mutation",
+      "affectedFiles": [
+        "scripts/actors/v2/base-actor.js",
+        "scripts/infrastructure/hooks/actor-hooks.js"
+      ],
+      "evidence": [
+        "scripts/actors/v2/base-actor.js:79",
+        "scripts/infrastructure/hooks/actor-hooks.js:70",
+        "scripts/infrastructure/hooks/actor-hooks.js:122",
+        "scripts/infrastructure/hooks/actor-hooks.js:146"
+      ],
+      "observed": "AbilityExecutionCoordinator.registerActorAbilities runs in every prepareDerivedData, and again in updateActor (every client, every update), createItem and deleteItem hooks. Foundry re-prepares after each of these events, so the hook calls appear redundant. Hypothesis: not measured.",
+      "intendedOwnership": "Registration once per prepare cycle.",
+      "contractRef": "A-16 (perf)",
+      "proposedSolution": "Instrument with ActorPerfDiagnostics counters; if confirmed, remove the three hook registrations (keep prepare-phase registration).",
+      "alternatives": "",
+      "dependencies": [
+        "B-ABL"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Counter-based test: one registration per update.",
+      "foundryAcceptance": "Measure with performanceDiagnostics on a large actor.",
+      "scope": "S",
+      "simplificationBenefit": "Fewer hot-path calls.",
+      "risk": "Medium: ordering assumptions about passive modifiers before derived.",
+      "perfImpact": "medium"
+    },
+    {
+      "id": "F-ACT-012",
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Unreachable actor-core modules",
+      "affectedFiles": [
+        "scripts/actors/vehicle/swse-vehicle-handler.js",
+        "scripts/engine/core/HydrationGuarantee.js",
+        "scripts/apps/actor-creation-entry-dialog.js",
+        "scripts/utils/hp-utils.js",
+        "scripts/governance/actor-engine/hp-recompute-hooks.js"
+      ],
+      "evidence": [
+        "scripts/actors/vehicle/swse-vehicle-handler.js:1",
+        "scripts/engine/core/HydrationGuarantee.js:1",
+        "scripts/apps/actor-creation-entry-dialog.js:1",
+        "scripts/utils/hp-utils.js:1",
+        "scripts/governance/actor-engine/hp-recompute-hooks.js:3"
+      ],
+      "observed": "Four orphans with no static, dynamic, template or pack references to their symbols (git grep); hp-recompute-hooks.js is imported only by orphan governance-integration.js and a test.",
+      "intendedOwnership": "No dead modules in runtime tree.",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete the four orphans (legacy C). hp-recompute-hooks: owner decides wire vs delete (U-ACT-01).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Full CI after removal.",
+      "foundryAcceptance": "None.",
+      "scope": "S",
+      "simplificationBenefit": "-314 SLOC dead code.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ACT-013",
+      "category": "oversized-module",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "actor-engine.js (4,890 lines) mixes the mutation gate, resource ledgers, canonical-shape normalizers and plan engines",
+      "affectedFiles": [
+        "scripts/governance/actor-engine/actor-engine.js"
+      ],
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:41",
+        "scripts/governance/actor-engine/actor-engine.js:2116",
+        "scripts/governance/actor-engine/actor-engine.js:2466",
+        "scripts/governance/actor-engine/actor-engine.js:3259",
+        "scripts/governance/actor-engine/actor-engine.js:4374",
+        "scripts/governance/actor-engine/actor-engine.js:4623"
+      ],
+      "observed": "One object literal holds: gate methods, Force/Destiny ledgers with queues and outboxes, damage/condition/second-wind orchestration, five plan grammars, recovery snapshots, and ~500 lines of canonical-shape normalization. docs/audits/actor-engine-extraction-plan.md already proposes a thin-facade extraction.",
+      "intendedOwnership": "ActorEngine as a facade over internal modules in scripts/governance/actor-engine/.",
+      "contractRef": "R-ACT-05..08",
+      "proposedSolution": "Extract internal seams (not new authorities): ledger module (FP/Destiny), plan executor (applyMutationPlan + rollback), shape normalizer (moves to governance/mutation/mutation-normalization-service.js which already exists). Keep the ActorEngine public API unchanged.",
+      "alternatives": "",
+      "dependencies": [
+        "docs/audits/actor-engine-extraction-plan.md"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Existing 353 CI tests that import ActorEngine.",
+      "foundryAcceptance": "None if API unchanged.",
+      "scope": "L",
+      "simplificationBenefit": "Smaller review surface for the most-imported module.",
+      "risk": "Medium: hot path.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-ACT-015",
+      "category": "legacy-compat",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "DerivedCalculator.computeAll is monkey-patched at init by the force domain (Skill Focus non-stacking post-filter)",
+      "affectedFiles": [
+        "scripts/engine/force/force-suite-runtime-repairs.js",
+        "scripts/actors/derived/derived-calculator.js",
+        "index.js"
+      ],
+      "evidence": [
+        "scripts/engine/force/force-suite-runtime-repairs.js:268",
+        "scripts/engine/force/force-suite-runtime-repairs.js:271",
+        "index.js:102",
+        "scripts/actors/derived/derived-calculator.js:206"
+      ],
+      "observed": "registerForceSuiteRuntimeRepairs (called first in init, index.js:102) replaces DerivedCalculator.computeAll with a wrapper that calls the original and then rewrites the returned updates via suppressDuplicateSkillFocusInUpdates. The canonical derived calculator therefore does not produce the final skill totals by itself; a stacking rule lives in a force-domain patch module, and the wrapper mutates the object returned from the signature cache.",
+      "intendedOwnership": "Skill/stacking behaviour inside DerivedCalculator/ModifierEngine (A-09 clean cutover; A-01).",
+      "contractRef": "A-09; A-01; R-ACT-03",
+      "proposedSolution": "Fold the Skill Focus non-stacking logic into the skill-total computation that DerivedCalculator already calls (or into ModifierEngine stacking for the Skill Focus source), with its existing tests, then delete the wrapper. No change to the stacking result itself; if the intended stacking behaviour is not documented, record it before moving (CLAUDE.md \u00a73).",
+      "alternatives": "",
+      "dependencies": [
+        "B-PAT F-PAT-001",
+        "force domain contract"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Golden skill totals with duplicate Skill Focus sources before/after folding; assert DerivedCalculator.computeAll is not reassigned after init.",
+      "foundryAcceptance": "Character with Skill Focus from two sources, sheet totals.",
+      "scope": "S",
+      "simplificationBenefit": "Removes a live patch over the core derived pipeline.",
+      "risk": "Medium: skill totals are visible everywhere.",
+      "perfImpact": "low"
+    },
+    {
+      "id": "F-ACT-014",
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Documentation consolidation candidates for actor-core",
+      "affectedFiles": [
+        "docs/audits/actor-engine-extraction-plan.md",
+        "docs/audits/actor-engine-responsibility-audit.md",
+        "docs/audits/v2-phase-3-derived-performance.md",
+        "docs/audits/v2-derived-panel-cache-coherency.md"
+      ],
+      "evidence": [
+        "docs/architecture/ARCHITECTURE.md:113",
+        "docs/architecture/ENGINE-ARCHITECTURE.md:21"
+      ],
+      "observed": "ARCHITECTURE \u00a7II and ENGINE-ARCHITECTURE \u00a71-2 restate the gate with stale details; actor-engine audits hold open extraction tasks.",
+      "intendedOwnership": "This contract becomes the single description of the ActorEngine API; audits stay as historical evidence.",
+      "contractRef": "A-P2",
+      "proposedSolution": "Link the audits from this contract; correct ARCHITECTURE.md path (CR-ACT-01). Do not delete; extraction-plan contains unfinished tasks.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None.",
+      "perfImpact": "none"
+    }
+  ]
+}

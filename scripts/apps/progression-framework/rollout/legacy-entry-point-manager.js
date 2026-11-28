@@ -14,7 +14,7 @@
  * - Support fallback for compatibility
  */
 
-import { RolloutSettings } from './rollout-settings.js';
+import { RolloutSettings } from '/systems/foundryvtt-swse/scripts/engine/progression/rollout-settings.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { launchProgression } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js';
 

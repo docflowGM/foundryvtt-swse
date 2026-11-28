@@ -1,0 +1,924 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-CMB",
+  "domain": "combat",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "Live combat converges on one attack pipeline (attacks.js rollAttack, SWSERoll.rollAttack delegates) and one damage-application boundary (ActorEngine.applyDamage -> DamageResolutionEngine). Of the multi-domain leads only the house-rule damage threshold is a confirmed live duplicate (DerivedCalculator vs ThresholdEngine, different formulas — rules/owner question). Other competing calculators (defense, crit multiplier/range, damage formula, CT penalty, CombatEngine.applyDamage) sit on unreferenced entry points, uncalled locals or wrappers. Confirmed live defects: Combat Action Browser calls a non-existent SWSECombat.runCombatAction; combat bookkeeping flags are written directly (A-02) including mid-resolution in DamageResolutionEngine; combat-ui-behavior-hotfix remains a parallel execution path with a chat monkey-patch (A-09).",
+  "responsibilities": [
+    {
+      "id": "R-CMB-01",
+      "responsibility": "Single attack pipeline",
+      "owner": {
+        "path": "scripts/combat/rolls/attacks.js",
+        "symbol": "rollAttack"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/combat/rolls/attacks.js:823",
+        "scripts/combat/rolls/enhanced-rolls.js:423"
+      ],
+      "tests": [
+        "tests/architecture-combat-authority.test.mjs"
+      ],
+      "notes": "CONFLICT: F-CMB-004/005"
+    },
+    {
+      "id": "R-CMB-02",
+      "responsibility": "Attack bonus math",
+      "owner": {
+        "path": "scripts/engine/combat/combat-roll-math.js",
+        "symbol": "resolveAttackBonus"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/combat/utils/combat-utils.js:49"
+      ],
+      "tests": [],
+      "notes": "computeAttackBonus is a deprecated wrapper (legacy D)"
+    },
+    {
+      "id": "R-CMB-03",
+      "responsibility": "Damage bonus, formula and critical multiplier",
+      "owner": {
+        "path": "scripts/engine/combat/combat-roll-math.js",
+        "symbol": "resolveDamageBonus/resolveCriticalMultiplier"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/combat/rolls/attacks.js:1160",
+        "scripts/combat/utils/combat-utils.js:227"
+      ],
+      "tests": [],
+      "notes": "CONFLICT: F-CMB-005"
+    },
+    {
+      "id": "R-CMB-04",
+      "responsibility": "Damage application boundary",
+      "owner": {
+        "path": "scripts/governance/actor-engine/actor-engine.js",
+        "symbol": "ActorEngine.applyDamage"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:1421",
+        "scripts/governance/actor-engine/actor-engine.js:1447",
+        "scripts/actors/base/swse-actor-base.js:70",
+        "scripts/engine/combat/damage-engine.js:79",
+        "scripts/engine/combat/weapon-control-effects.js:122"
+      ],
+      "tests": [],
+      "notes": "APPROVED by combat-authority-map; CONFLICT: dormant twin F-CMB-002, mid-resolution writes F-CMB-001"
+    },
+    {
+      "id": "R-CMB-05",
+      "responsibility": "Damage threshold evaluation",
+      "owner": {
+        "path": "scripts/engine/combat/threshold-engine.js",
+        "symbol": "ThresholdEngine"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/engine/combat/threshold-engine.js:221",
+        "scripts/engine/combat/threshold-engine.js:228",
+        "scripts/engine/combat/threshold-engine.js:318"
+      ],
+      "tests": [
+        "tests/damage-threshold-authority.test.mjs"
+      ],
+      "notes": "CONFLICT under house rule: F-CMB-003"
+    },
+    {
+      "id": "R-CMB-06",
+      "responsibility": "Condition-track rules and shift",
+      "owner": {
+        "path": "scripts/engine/combat/ConditionTrackRules.js",
+        "symbol": "ConditionTrackRules"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/combat/ConditionTrackRules.js:43",
+        "scripts/engine/combat/ConditionEngine.js:392"
+      ],
+      "tests": [],
+      "notes": "Canonical penalty value: base-actor getConditionPenalty -> system.derived.damage.conditionPenalty (actor-core)"
+    },
+    {
+      "id": "R-CMB-07",
+      "responsibility": "Action economy",
+      "owner": {
+        "path": "scripts/engine/combat/action/action-economy-consumption.js",
+        "symbol": "ActionEconomyConsumption"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/combat/action/action-economy-persistence.js:152"
+      ],
+      "tests": [
+        "tests/attack-transaction-rollback.test.mjs"
+      ],
+      "notes": "APPROVED by combat-authority-map; persistence via raw setFlag"
+    },
+    {
+      "id": "R-CMB-08",
+      "responsibility": "Combat options and combat features",
+      "owner": {
+        "path": "scripts/engine/combat/combat-option-resolver.js",
+        "symbol": "CombatOptionResolver"
+      },
+      "status": [
+        "APPROVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/combat/features/combat-feature-handlers.js:182",
+        "scripts/patches/combat-ui-behavior-hotfix.js:493"
+      ],
+      "tests": [],
+      "notes": "hotfix bridge duplicates handlers"
+    },
+    {
+      "id": "R-CMB-09",
+      "responsibility": "Grapple and control state",
+      "owner": {
+        "path": "scripts/engine/combat/grapple-state-engine.js",
+        "symbol": "GrappleStateEngine"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/combat/weapon-control-effects.js:121"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-CMB-10",
+      "responsibility": "Initiative",
+      "owner": {
+        "path": "scripts/engine/combat/SWSEInitiative.js",
+        "symbol": "SWSEInitiative"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/combat/SWSEInitiative.js:142",
+        "scripts/engine/combat/SWSEInitiative.js:325"
+      ],
+      "tests": [],
+      "notes": "Combatant writes are Foundry world documents (legitimate exception; lacks @mutation-exception comment)"
+    },
+    {
+      "id": "R-CMB-11",
+      "responsibility": "Action authority (definitions/availability)",
+      "owner": {
+        "path": "scripts/engine/actions/action-registry.js",
+        "symbol": "ActionRegistry"
+      },
+      "status": [
+        "APPROVED",
+        "UNIMPLEMENTED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "docs/architecture/action-authority-v1.md:3"
+      ],
+      "tests": [
+        "tests/action-authority-groundwork.test.mjs"
+      ],
+      "notes": "groundwork, test-only"
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "rollAttack",
+      "path": "scripts/combat/rolls/attacks.js",
+      "line": 823,
+      "consumers": 67,
+      "contract": "canonical attack pipeline"
+    },
+    {
+      "symbol": "CombatOptionResolver",
+      "path": "scripts/engine/combat/combat-option-resolver.js",
+      "line": 1,
+      "consumers": 59,
+      "contract": "attack-option rules"
+    },
+    {
+      "symbol": "ActionEconomyConsumption",
+      "path": "scripts/engine/combat/action/action-economy-consumption.js",
+      "line": 1,
+      "consumers": 58,
+      "contract": "spend with rollback receipt"
+    },
+    {
+      "symbol": "resolveAttackBonus/resolveDamageComposition",
+      "path": "scripts/engine/combat/combat-roll-math.js",
+      "line": 1,
+      "consumers": 48,
+      "contract": "pure attack/damage math"
+    },
+    {
+      "symbol": "DamageResolutionEngine.resolveDamage",
+      "path": "scripts/engine/combat/damage-resolution-engine.js",
+      "line": 132,
+      "consumers": 2,
+      "contract": "resolution result for ActorEngine.applyDamage"
+    },
+    {
+      "symbol": "ThresholdEngine.evaluateThreshold",
+      "path": "scripts/engine/combat/threshold-engine.js",
+      "line": 311,
+      "consumers": 5,
+      "contract": "CT shift result"
+    },
+    {
+      "symbol": "buildDamagePacket",
+      "path": "scripts/engine/combat/damage-packet-builder.js",
+      "line": 1,
+      "consumers": 29,
+      "contract": "damage packet shape"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "actor-core derived values",
+      "equipment item readers",
+      "effects/ModifierEngine",
+      "HouseRuleService",
+      "ActorEngine"
+    ],
+    "prohibited": [
+      "engine -> UI imports (A-07)",
+      "game.settings.get in engines (A-06)",
+      "ChatMessage.create outside swse-chat (A-05)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/combat/features/combat-feature-panel-renderer.js",
+        "to": "scripts/sheets/v2/character-sheet/combat-feature-sheet-adapter.js",
+        "evidence": "invariant-probes P-A07 (static)"
+      },
+      {
+        "from": "scripts/engine/combat/sith-lord-temptation-service.js",
+        "to": "scripts/apps/dialogs/swse-dialog-v2.js",
+        "evidence": "invariant-probes P-A07 (static)"
+      },
+      {
+        "from": "scripts/engine/combat/ui/CombatUIAdapter.js",
+        "to": "scripts/ui/chat/chat-interaction-bridge.js",
+        "evidence": "invariant-probes P-A07 (static)"
+      },
+      {
+        "from": "scripts/engine/combat/combat-stat-rules.js",
+        "to": "game.settings",
+        "evidence": "scripts/engine/combat/combat-stat-rules.js:851"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-CMB-1",
+      "boundary": "DamageResolutionEngine <-> ActorEngine.applyDamage",
+      "interface": "resolveDamage pure; bookkeeping deltas persisted by applyDamage in the same update",
+      "status": [
+        "PROPOSED",
+        "CONFLICT"
+      ]
+    },
+    {
+      "id": "C-CMB-2",
+      "boundary": "Attack entry points <-> combat-roll-math",
+      "interface": "no entry point computes defense/crit independently",
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-CMB-01",
+      "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md engine table / tiers",
+      "claim": "CombatMechanicsEngine is a Tier-1 rule-variant authority",
+      "observed": "module is orphan-unreferenced",
+      "evidence": [
+        "docs/architecture/ENGINE-ARCHITECTURE.md:15",
+        "docs/architecture/ENGINE-ARCHITECTURE.md:74",
+        "scripts/engine/combat/CombatMechanicsEngine.js:1"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-CMB-02",
+      "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md engine table",
+      "claim": "ThresholdEngine/DamageResolutionEngine do not own condition mutations; mutations via ActorEngine",
+      "observed": "both write actor flags directly; ThresholdEngine also prices repairs",
+      "evidence": [
+        "docs/architecture/ENGINE-ARCHITECTURE.md:17",
+        "scripts/engine/combat/threshold-engine.js:53",
+        "scripts/engine/combat/threshold-engine.js:598",
+        "scripts/engine/combat/threshold-engine.js:640",
+        "scripts/engine/combat/damage-resolution-engine.js:137",
+        "scripts/engine/combat/damage-resolution-engine.js:346"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-CMB-03",
+      "existingSource": "scripts/engine/combat/ARCHITECTURE.md",
+      "claim": "CombatEngine.resolveAttack() is the ONLY attack entry point",
+      "observed": "live pipeline is attacks.js rollAttack; resolveAttack reachable only via SWSECombat.rollAttack from orphan combat-action-bar",
+      "evidence": [
+        "scripts/engine/combat/ARCHITECTURE.md:104",
+        "scripts/combat/systems/enhanced-combat-system.js:79",
+        "scripts/components/combat-action-bar.js:251"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-CMB-04",
+      "existingSource": "docs/architecture/combat-authority-map.md §Verified",
+      "claim": "combat-action-bar.js is a production entry point",
+      "observed": "orphan-unreferenced",
+      "evidence": [
+        "docs/architecture/combat-authority-map.md:35"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-CMB-05",
+      "existingSource": "scripts/engine/combat/reactions/reaction-registry.js header",
+      "claim": "No direct ChatMessage.create()",
+      "observed": "direct ChatMessage.create",
+      "evidence": [
+        "scripts/engine/combat/reactions/reaction-registry.js:8",
+        "scripts/engine/combat/reactions/reaction-registry.js:1024"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-CMB-01",
+      "item": "Action authority v1 integration (registry/availability/resolver are test-only)",
+      "source": "docs/architecture/action-authority-v1.md",
+      "status": "UNIMPLEMENTED"
+    },
+    {
+      "id": "U-CMB-02",
+      "item": "Aid Another / Galaxy of Intrigue / Unknown Regions combat-action adapters never registered",
+      "source": "scripts/engine/combat/aid-another-action-adapter.js",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [
+    {
+      "item": "House-rule (enhanced massive damage) damage-threshold formula: DerivedCalculator adds size twice and keeps feat/Will-base/flat adjustments; ThresholdEngine uses fort+level+size only. Which is intended?",
+      "registerRef": "none found — new entry required (DEFERRED_RULES_REVIEW)"
+    },
+    {
+      "item": "Whether poison damage must be excluded from the half-heroic-level bonus (not in ELEMENTAL_HALF_LEVEL_EXCLUSION_KEYS); not traced",
+      "registerRef": "none (UNVERIFIED, report only)"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "Turn economy and reactions",
+      "source": "OSI runtime-risk"
+    },
+    {
+      "item": "Damage packet application incl. bookkeeping flags",
+      "source": "R-CMB-04"
+    },
+    {
+      "item": "Combat Action Browser execution",
+      "source": "F-CMB-004"
+    }
+  ],
+  "findings": [
+    {
+      "category": "ownership-violation",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Combat bookkeeping flags written with raw setFlag/unsetFlag, incl. mid-resolution in DamageResolutionEngine",
+      "affectedFiles": [
+        "scripts/engine/combat/damage-resolution-engine.js",
+        "scripts/engine/combat/threshold-engine.js",
+        "scripts/engine/combat/action/action-economy-persistence.js",
+        "scripts/combat/rolls/damage.js",
+        "scripts/combat/combat-status.js",
+        "scripts/infrastructure/hooks/combat-hooks.js",
+        "scripts/apps/combat-action-browser.js"
+      ],
+      "evidence": [
+        "scripts/engine/combat/damage-resolution-engine.js:83",
+        "scripts/engine/combat/damage-resolution-engine.js:94",
+        "scripts/engine/combat/damage-resolution-engine.js:100",
+        "scripts/engine/combat/damage-resolution-engine.js:112",
+        "scripts/engine/combat/damage-resolution-engine.js:137",
+        "scripts/engine/combat/damage-resolution-engine.js:346",
+        "scripts/engine/combat/threshold-engine.js:53",
+        "scripts/engine/combat/threshold-engine.js:598",
+        "scripts/engine/combat/threshold-engine.js:762",
+        "scripts/engine/combat/action/action-economy-persistence.js:152",
+        "scripts/engine/combat/action/action-economy-persistence.js:180",
+        "scripts/combat/rolls/damage.js:20",
+        "scripts/combat/rolls/damage.js:248",
+        "scripts/combat/rolls/damage.js:253",
+        "scripts/combat/combat-status.js:115",
+        "scripts/infrastructure/hooks/combat-hooks.js:344",
+        "scripts/apps/combat-action-browser.js:274",
+        "scripts/governance/actor-engine/actor-engine.js:4114"
+      ],
+      "observed": "Actor-owned flags (encounter-use counters, stay-up, quick-comeback, threshold-exceeded, emergency patch, action-economy turn state, combat status, pinned actions) are written with actor.setFlag/unsetFlag although ActorEngine.updateActorFlags/unsetActorFlag exist. DamageResolutionEngine.resolveDamage writes them during resolution, before ActorEngine.applyDamage persists HP/CT, so a later failure leaves bookkeeping without damage. Other P-A02 sites in the domain are legitimate: SWSEInitiative Combatant writes (Foundry world docs), poison-engine:126/273 and fire-state-store:292 (world-item fallbacks; fire-state lacks the @mutation-exception comment), attacks.js:1402 (false positive, service call), active-effects-manager.js:61 (token document; legacy token effects array, F-CMB-010 follow-up).",
+      "intendedOwnership": "ActorEngine (A-02); resolution pure (C-CMB-1).",
+      "contractRef": "A-02 | C-CMB-1 | R-CMB-04",
+      "proposedSolution": "Return bookkeeping deltas from resolveDamage and persist them in ActorEngine.applyDamage's single update; route other flag writes through ActorEngine.updateActorFlags. Add @mutation-exception comments on the Combatant and world-item writes.",
+      "alternatives": "Keep flags but move writes after applyDamage commits.",
+      "dependencies": [
+        "ActorEngine.applyDamage"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Failure injection after resolveDamage: no flag changed. Probe P-A02 ratchet for combat.",
+      "foundryAcceptance": "Stay-up / quick-comeback / threshold-first-exceedance in live combat.",
+      "scope": "M",
+      "simplificationBenefit": "One write per damage event; fewer re-renders.",
+      "risk": "Medium — damage path.",
+      "perfImpact": "low",
+      "id": "F-CMB-001"
+    },
+    {
+      "category": "duplicate-authority",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "CombatEngine.applyDamage is a second, incomplete damage writer with no caller",
+      "affectedFiles": [
+        "scripts/engine/combat/CombatEngine.js"
+      ],
+      "evidence": [
+        "scripts/engine/combat/CombatEngine.js:754",
+        "scripts/engine/combat/CombatEngine.js:767",
+        "scripts/governance/actor-engine/actor-engine.js:1447"
+      ],
+      "observed": "Calls DamageResolutionEngine.resolveDamage then writes only system.hp.value and conditionTrack.current via ActorEngine.updateActor (no bonus/temp HP, shields, persistent CT, droid states, FP-rescue receipt that ActorEngine.applyDamage handles). No static caller, not in packs, CombatEngine not global.",
+      "intendedOwnership": "ActorEngine.applyDamage sole damage boundary.",
+      "contractRef": "A-01 | R-CMB-04",
+      "proposedSolution": "Delete the method or make it delegate to ActorEngine.applyDamage (legacy C/D).",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "architecture-combat-authority guard: no second resolveDamage caller.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "One damage writer.",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-CMB-002"
+    },
+    {
+      "category": "duplicate-authority",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "House-rule damage threshold computed independently by DerivedCalculator and ThresholdEngine with different formulas",
+      "affectedFiles": [
+        "scripts/engine/combat/threshold-engine.js",
+        "scripts/actors/derived/derived-calculator.js"
+      ],
+      "evidence": [
+        "scripts/engine/combat/threshold-engine.js:228",
+        "scripts/engine/combat/threshold-engine.js:247",
+        "scripts/engine/combat/threshold-engine.js:254",
+        "scripts/engine/combat/threshold-engine.js:318",
+        "scripts/actors/derived/derived-calculator.js:913",
+        "scripts/actors/derived/derived-calculator.js:914",
+        "scripts/actors/derived/derived-calculator.js:922",
+        "scripts/actors/derived/derived-calculator.js:938"
+      ],
+      "observed": "RAW mode: ThresholdEngine reads system.derived.damageThreshold (single authority). With enableEnhancedMassiveDamage+modifyDamageThresholdFormula, DerivedCalculator stores base(incl. size, feat Will-base, flat/modifier adjustments)+level+size again, while ThresholdEngine.calculateDamageThreshold (used by evaluateThreshold on the live ActorEngine.applyDamage path) returns fort+level+size, ignoring the adjustments. Displayed DT and the DT used for the CT check differ under the house rule.",
+      "intendedOwnership": "DerivedCalculator owns DT (A-03); ThresholdEngine reads it.",
+      "contractRef": "A-01 | A-03 | R-CMB-05",
+      "proposedSolution": "After the owner rules on the house-rule formula, compute it once in DerivedCalculator and have calculateDamageThreshold always read system.derived.damageThreshold.",
+      "alternatives": "ThresholdEngine owns the house-rule formula and DerivedCalculator calls it.",
+      "dependencies": [
+        "owner ruling on house-rule formula"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": true,
+      "regressionTests": "With the house rule on, derived DT === ThresholdEngine DT for character/droid/vehicle fixtures.",
+      "foundryAcceptance": "House rule enabled live; sheet DT equals applied threshold.",
+      "scope": "S",
+      "simplificationBenefit": "Removes one formula.",
+      "risk": "Changes house-rule outcomes — needs ruling first.",
+      "perfImpact": "none",
+      "id": "F-CMB-003"
+    },
+    {
+      "category": "conflicting-interface",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Live Combat Action Browser executes SWSECombat.runCombatAction, which does not exist",
+      "affectedFiles": [
+        "scripts/apps/combat-action-browser.js",
+        "scripts/combat/systems/enhanced-combat-system.js",
+        "scripts/engine/combat/aid-another-action-adapter.js"
+      ],
+      "evidence": [
+        "scripts/apps/combat-action-browser.js:298",
+        "scripts/infrastructure/hooks/init-hooks.js:116",
+        "scripts/combat/systems/enhanced-combat-system.js:25",
+        "scripts/engine/combat/aid-another-action-adapter.js:271"
+      ],
+      "observed": "SWSECombatActionBrowser is initialized at init and opened from sidebar/Token HUD; _executeAction calls SWSECombat.runCombatAction. SWSECombat defines no such method; the only assignment is in the never-registered aid-another adapter. Clicking an action throws a TypeError. OSI lists the old combat action browser as a retirement candidate.",
+      "intendedOwnership": "Holopad / V2 sheet combat features (OSI).",
+      "contractRef": "A-14 | R-CMB-01",
+      "proposedSolution": "Owner decision: retire the browser (remove init + Token HUD button; legacy B) or route execution to the combat-feature action router.",
+      "alternatives": "Temporary guard that disables execution with a notice.",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Test that every init-registered UI action resolves to a defined handler.",
+      "foundryAcceptance": "Click an action in the browser live.",
+      "scope": "S",
+      "simplificationBenefit": "Removes an old floating UI.",
+      "risk": "Low.",
+      "perfImpact": "low",
+      "id": "F-CMB-004"
+    },
+    {
+      "category": "duplicate-authority",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "SWSERoll.rollAutofire / rollFullAttack keep independent defense, crit-range and crit-multiplier math; no in-repo caller",
+      "affectedFiles": [
+        "scripts/combat/rolls/enhanced-rolls.js",
+        "scripts/combat/utils/combat-utils.js",
+        "scripts/patches/attack-dialog-combat-corrections-hotfix.js"
+      ],
+      "evidence": [
+        "scripts/combat/rolls/enhanced-rolls.js:742",
+        "scripts/combat/rolls/enhanced-rolls.js:743",
+        "scripts/combat/rolls/enhanced-rolls.js:753",
+        "scripts/combat/rolls/enhanced-rolls.js:1029",
+        "scripts/combat/rolls/enhanced-rolls.js:1093",
+        "scripts/combat/rolls/enhanced-rolls.js:1094",
+        "scripts/combat/rolls/enhanced-rolls.js:104",
+        "scripts/combat/rolls/enhanced-rolls.js:116",
+        "scripts/combat/rolls/enhanced-rolls.js:55",
+        "scripts/combat/utils/combat-utils.js:88",
+        "scripts/combat/rolls/attacks.js:688",
+        "scripts/combat/rolls/attacks.js:1160",
+        "scripts/patches/attack-dialog-combat-corrections-hotfix.js:349"
+      ],
+      "observed": "These entry points read target.system.defenses.reflex.total ?? 10 (no derived defense, Command Cover or observation bonus), use getEffectiveCritRange (EXTEND_CRITICAL_RANGE) instead of CombatOptionResolver criticalThreatNaturalMin, and combat-utils.getCriticalMultiplier (no criticalMultiplierMin). Canonical rollAttack uses getTargetDefense + resolveCriticalMultiplier. No static caller of rollAutofire/rollFullAttack except a hotfix that wraps rollAutofire; SWSERoll is not a global (macro use unverified). getDefenseValue/resolveTargetContext (:104/:116) and getWeaponDamageFormula (:55) are uncalled locals.",
+      "intendedOwnership": "combat-roll-math + attacks.js (C-CMB-2).",
+      "contractRef": "A-01 | C-CMB-2",
+      "proposedSolution": "Delete the two methods and uncalled locals, or make them delegate to rollAttack / FullAttackExecutor (legacy B pending macro check).",
+      "alternatives": "",
+      "dependencies": [
+        "owner confirmation on macro use"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Guard: no second getCriticalMultiplier/defense reader in roll entry points.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "~600 lines of parallel attack logic.",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-CMB-005"
+    },
+    {
+      "category": "duplicate-normalization",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Condition penalty table duplicated 6x; ConditionEngine diverges at step 5",
+      "affectedFiles": [
+        "scripts/combat/utils/combat-utils.js",
+        "scripts/engine/combat/ConditionEngine.js",
+        "scripts/actors/v2/base-actor.js",
+        "scripts/actors/derived/defense-calculator.js",
+        "scripts/engine/effects/modifiers/ModifierEngineExtensions.js",
+        "scripts/utils/schema-adapters.js",
+        "scripts/houserules/houserule-condition-track.js"
+      ],
+      "evidence": [
+        "scripts/combat/utils/combat-utils.js:29",
+        "scripts/engine/combat/ConditionEngine.js:399",
+        "scripts/actors/v2/base-actor.js:331",
+        "scripts/actors/derived/defense-calculator.js:760",
+        "scripts/utils/schema-adapters.js:526",
+        "scripts/houserules/houserule-condition-track.js:43"
+      ],
+      "observed": "Five tables give helpless (step 5) = 0; ConditionEngine#getConditionPenalty gives -999. Its penalty is consumed only by houserule-condition-track.getTrackPenalties (unreachable-importers-only); live callers use only currentStep/maxStep.",
+      "intendedOwnership": "base-actor.getConditionPenalty -> system.derived.damage.conditionPenalty (actor-core).",
+      "contractRef": "A-01 | R-CMB-06",
+      "proposedSolution": "Export one table from ConditionTrackRules; make readers use derived penalty; drop ConditionEngine table.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Unit test: all readers agree for steps 0-5.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "5 copies removed.",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-CMB-006"
+    },
+    {
+      "category": "legacy-compat",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "combat-ui-behavior-hotfix is a parallel action-execution path (legacy D/F)",
+      "affectedFiles": [
+        "scripts/patches/combat-ui-behavior-hotfix.js",
+        "scripts/engine/combat/features/combat-feature-handlers.js",
+        "scripts/engine/combat/full-attack-executor.js"
+      ],
+      "evidence": [
+        "scripts/patches/combat-ui-behavior-hotfix.js:282",
+        "scripts/patches/combat-ui-behavior-hotfix.js:493",
+        "scripts/patches/combat-ui-behavior-hotfix.js:566",
+        "scripts/patches/combat-ui-behavior-hotfix.js:646",
+        "scripts/patches/combat-ui-behavior-hotfix.js:673",
+        "scripts/patches/combat-ui-behavior-hotfix.js:676",
+        "scripts/engine/combat/features/combat-feature-handlers.js:182",
+        "scripts/engine/combat/full-attack-executor.js:236",
+        "docs/combat-features-reform-phase-0.md:12"
+      ],
+      "observed": "Monkey-patches SWSEChat.postRoll; installs a document capture-phase click handler that stopImmediatePropagation()s combat rows to run its own Double/Triple Attack sequence (own full-round spend and rollback) and attack options; applyForcedAttackOption is cloned from combat-feature-handlers; DOM repair/dedupe on every render. FullAttackExecutor already owns double/triple sequencing. Phase-0 doc approves it only as a shrinking bridge.",
+      "intendedOwnership": "combat features + FullAttackExecutor (A-09).",
+      "contractRef": "A-09 | R-CMB-08",
+      "proposedSolution": "Migrate remaining behaviours (multi-attack trigger, option specs, gating) into combat-feature-action-router/FullAttackExecutor, then delete the hotfix and its chat patch.",
+      "alternatives": "",
+      "dependencies": [
+        "combat features reform phases"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Double/Triple Attack and Power Attack from sheet produce one spend and same rolls after removal.",
+      "foundryAcceptance": "Live sheet combat tab actions.",
+      "scope": "M",
+      "simplificationBenefit": "681-line hotfix and a monkey-patch removed.",
+      "risk": "Medium — live combat UI.",
+      "perfImpact": "low",
+      "id": "F-CMB-007"
+    },
+    {
+      "category": "dependency",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Six engine->UI imports in combat engines",
+      "affectedFiles": [
+        "scripts/engine/combat/canonical-special-effects.js",
+        "scripts/engine/combat/class-target-observation.js",
+        "scripts/engine/combat/features/combat-feature-panel-renderer.js",
+        "scripts/engine/combat/sith-lord-temptation-service.js",
+        "scripts/engine/combat/ui/CombatUIAdapter.js",
+        "scripts/engine/combat/weapon-control-effects.js"
+      ],
+      "evidence": [
+        "scripts/engine/combat/features/combat-feature-panel-renderer.js:1",
+        "scripts/engine/combat/sith-lord-temptation-service.js:1",
+        "scripts/engine/combat/ui/CombatUIAdapter.js:1"
+      ],
+      "observed": "3 static (panel renderer -> sheet adapter, temptation service -> dialog, CombatUIAdapter -> chat bridge), 3 dynamic dialog imports. panel-renderer and ui/CombatUIAdapter are presentation modules located under engine/.",
+      "intendedOwnership": "A-07",
+      "contractRef": "A-07",
+      "proposedSolution": "Move presentation modules out of engine/combat; inject dialog callbacks for the services.",
+      "alternatives": "Reclassify paths only.",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "P-A07 ratchet.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "Cleaner layering.",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-CMB-008"
+    },
+    {
+      "category": "presentation-rules",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Direct ChatMessage.create in 7 combat engines (11 sites)",
+      "affectedFiles": [
+        "scripts/engine/combat/reactions/reaction-registry.js",
+        "scripts/engine/combat/starship/subsystem-engine.js",
+        "scripts/engine/combat/starship/vehicle-turn-controller.js",
+        "scripts/engine/poison/poison-engine.js",
+        "scripts/engine/combat/CombatEngine.js",
+        "scripts/engine/combat/full-attack-executor.js",
+        "scripts/engine/combat/recurring-damage-engine.js"
+      ],
+      "evidence": [
+        "scripts/engine/combat/reactions/reaction-registry.js:1024",
+        "scripts/engine/combat/starship/subsystem-engine.js:208",
+        "scripts/engine/combat/starship/vehicle-turn-controller.js:150",
+        "scripts/engine/poison/poison-engine.js:783",
+        "scripts/engine/combat/CombatEngine.js:358",
+        "scripts/engine/combat/full-attack-executor.js:197",
+        "scripts/engine/combat/recurring-damage-engine.js:307"
+      ],
+      "observed": "reaction-registry.js:8 is a comment (false positive); the other sites post gameplay chat directly.",
+      "intendedOwnership": "swse-chat.js (A-05)",
+      "contractRef": "A-05",
+      "proposedSolution": "Route through SWSEChat helpers.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "P-A05 ratchet.",
+      "foundryAcceptance": "Chat card rendering.",
+      "scope": "S",
+      "simplificationBenefit": "Uniform chat.",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-CMB-009"
+    },
+    {
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "21 unreachable combat modules",
+      "affectedFiles": [
+        "scripts/engine/combat/CombatMechanicsEngine.js",
+        "scripts/components/combat-action-bar.js",
+        "scripts/combat/combat-integration.js",
+        "scripts/engine/combat/damage-log-formatter.js",
+        "scripts/ui/combat-panel-manager.js",
+        "scripts/engine/combat/massive-damage-engine.js",
+        "scripts/engine/combat/damage-engine-test.js",
+        "scripts/engine/combat/aid-another-action-adapter.js",
+        "scripts/engine/combat/galaxy-intrigue-combat-action-adapter.js",
+        "scripts/engine/combat/unknown-regions-combat-action-adapter.js",
+        "scripts/engine/actions/action-registry.js",
+        "scripts/components/condition-track.js",
+        "scripts/sheets/v2/character-sheet/combat-ui.js",
+        "scripts/apps/damage-app.js",
+        "scripts/combat/combat-automation.js",
+        "scripts/utils/calc-conditions.js"
+      ],
+      "evidence": [
+        "scripts/engine/combat/CombatMechanicsEngine.js:1",
+        "scripts/components/combat-action-bar.js:251",
+        "scripts/engine/combat/aid-another-action-adapter.js:271",
+        "scripts/engine/combat/damage-engine-test.js:1",
+        "scripts/combat/combat-integration.js:1"
+      ],
+      "observed": "Static-proof dead (class C): CombatMechanicsEngine, combat-action-bar, combat-integration, damage-log-formatter, combat-panel-manager, massive-damage-engine and the vehicle subsystem barrel (scripts/engine/combat/subsystems/vehicle/index.js). Dev harness: damage-engine-test (move to tests/ or delete). Unwired-but-intended (UNIMPLEMENTED): aid-another / galaxy-intrigue / unknown-regions adapters (register* never called). Test-only groundwork: engine/actions/* and attack-of-opportunity-feat-rules (U-CMB-01). Name-mentioned, unverified: condition-track component, combat-ui.js (clone of character-like-sheet.js:4101), damage-app, combat-automation, calc-conditions — check templates/macros before deletion.",
+      "intendedOwnership": "n/a",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete class-C set; owner decides wire-or-retire for the three adapters; investigate name-mentioned set.",
+      "alternatives": "",
+      "dependencies": [
+        "CR-CMB-01 doc update"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "architecture-combat-authority reachability.",
+      "foundryAcceptance": "none",
+      "scope": "M",
+      "simplificationBenefit": "~2.7k SLOC.",
+      "risk": "Low.",
+      "perfImpact": "none",
+      "id": "F-CMB-010"
+    },
+    {
+      "category": "performance",
+      "severity": "low",
+      "status": "suspected",
+      "title": "Hotfix DOM repair runs on every renderApplicationV2",
+      "affectedFiles": [
+        "scripts/patches/combat-ui-behavior-hotfix.js"
+      ],
+      "evidence": [
+        "scripts/patches/combat-ui-behavior-hotfix.js:674",
+        "scripts/patches/combat-ui-behavior-hotfix.js:675",
+        "scripts/patches/combat-ui-behavior-hotfix.js:400"
+      ],
+      "observed": "repairCombatTabWeaponDisplay and scrubHiddenDefensesInRollDialog listen to all ApplicationV2 renders; early-exit cost unmeasured.",
+      "intendedOwnership": "n/a",
+      "contractRef": "A-16",
+      "proposedSolution": "Instrument count/time; scope to sheet class or delete with F-CMB-007.",
+      "alternatives": "",
+      "dependencies": [
+        "F-CMB-007"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "n/a",
+      "foundryAcceptance": "Measure live.",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low.",
+      "perfImpact": "low",
+      "id": "F-CMB-011"
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Combat architecture docs partly superseded",
+      "affectedFiles": [
+        "docs/architecture/ENGINE-ARCHITECTURE.md",
+        "scripts/engine/combat/ARCHITECTURE.md",
+        "docs/architecture/combat-authority-map.md"
+      ],
+      "evidence": [
+        "docs/architecture/ENGINE-ARCHITECTURE.md:15",
+        "scripts/engine/combat/ARCHITECTURE.md:104",
+        "docs/architecture/combat-authority-map.md:35"
+      ],
+      "observed": "CR-CMB-01..04. combat-authority-map is test-guarded and must be kept (update entry-point list).",
+      "intendedOwnership": "B-CMB",
+      "contractRef": "CR-CMB-01..04",
+      "proposedSolution": "Mark scripts/engine/combat/ARCHITECTURE.md historical; fix the engine table and map entry list. Do not delete.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "architecture-combat-authority",
+      "foundryAcceptance": "n/a",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "none",
+      "perfImpact": "none",
+      "id": "F-CMB-012"
+    }
+  ],
+  "multiDomainLeadVerdicts": [
+    {
+      "lead": "defense-totals",
+      "verdict": "no live duplicate",
+      "note": "live: getTargetDefense (derived via SchemaAdapters); enhanced-rolls copies uncalled or on unreferenced entry points (F-CMB-005)"
+    },
+    {
+      "lead": "damage-formula",
+      "verdict": "no live duplicate",
+      "note": "sites compute different things; getWeaponDamageFormula uncalled; computeDamageBonus wrapper"
+    },
+    {
+      "lead": "condition-track-penalty",
+      "verdict": "duplicate tables, live values agree",
+      "note": "F-CMB-006"
+    },
+    {
+      "lead": "attack-bonus",
+      "verdict": "no duplicate",
+      "note": "computeAttackBonus wraps resolveAttackBonus; vehicle math distinct"
+    },
+    {
+      "lead": "damage-application",
+      "verdict": "single live boundary + dormant twin",
+      "note": "F-CMB-002"
+    },
+    {
+      "lead": "damage-threshold",
+      "verdict": "confirmed duplicate under house rule",
+      "note": "F-CMB-003"
+    },
+    {
+      "lead": "critical-hit",
+      "verdict": "divergent only on unreferenced paths",
+      "note": "F-CMB-005"
+    }
+  ]
+}

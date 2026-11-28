@@ -145,7 +145,8 @@ const quote = (a) => A.quoteItemResale({ percent: 50, basis: 'published', acquis
     // without a shared set (the old per-plan behaviour) the second plan would re-claim t:0 — the engine must pass one set
     const solo = { add: { items: [it('L', 400)] } }; R.stampAcquisitions(solo, { transactionId: 't', context: 'c', at: 1, lines: L2, claimed });
     assert.equal(solo.add.items[0].flags['foundryvtt-swse'].acquisition.lotId, null, 'once every matching line is claimed, a further doc gets no lot');
-    const te = read('scripts/engine/store/transaction-engine.js');
+    // 3N-TE.4: the purchase settlement lives in mutation-settlement.js (the engine keeps a thin delegate); inspect the whole engine family.
+    const te = ['transaction-engine.js', 'mutation-settlement.js', 'asset-settlements.js', 'credit-settlements.js', 'rollback-settlement.js'].map((f) => read('scripts/engine/store/' + f)).join('\n');
     assert.match(te, /const claimedLots = new Set\(\)/); assert.equal((te.match(/stampAcquisitions\(/g) ?? []).length, 1, 'a single call site'); assert.match(te, /claimed: claimedLots/);
   }
   const orphan = { add: { items: [{ name: 'z', ...mk('NOLINE', 1) }] } }; R.stampAcquisitions(orphan, { transactionId: 't', context: 'c', at: 1, lines });
@@ -505,7 +506,7 @@ const setUser = (isGM, id = isGM ? 'gm' : 'p1') => { globalThis.game.user = { id
   assert.deepEqual([marker.unitPaid, marker.publishedUnitCost, marker.listingId, marker.sourceUuid], [410, 500, listing.id, SRC], 'paid 410 (GM discount) vs published 500, both recorded separately');
   const se = read('scripts/engine/store/store-engine.js');
   assert.match(se, /\.\.\.ledgerLineFields\(item\)/, 'the ledger line carries listingId / sourceUuid / unitCost / publishedUnitCost');
-  assert.match(read('scripts/engine/store/transaction-engine.js'), /stampAcquisitions\(plan, \{ transactionId, context: transactionContext/, 'delivered assets are stamped with the committed transaction id');
+  assert.match(read('scripts/engine/store/mutation-settlement.js'), /stampAcquisitions\(plan, \{ transactionId, context: transactionContext/, 'delivered assets are stamped with the committed transaction id');
   const co = read('scripts/apps/store/store-checkout.js');
   assert.match(co, /spec\.data\.__acquisition = buildAcquisitionMarker\(\{ listing: droid\.actor/); assert.match(co, /listing: merchantItem, listingId: vehicle\.id, unitPaid: vehicle\.cost, condition: vehicle\.condition/);
   assert.match(read('scripts/ui/shell/gm/GMApprovalOperationsService.js'), /kind: 'custom-droid-construction'[\s\S]{0,200}unitPaid: total/, 'custom droids record the quoted amount paid');
@@ -514,8 +515,8 @@ const setUser = (isGM, id = isGM ? 'gm' : 'p1') => { globalThis.game.user = { id
 }
 // 8d. the purchase transaction wires lot ids (static: executeMutationTransaction needs a real recovery-snapshot store to run offline)
 {
-  const te = read('scripts/engine/store/transaction-engine.js');
-  const fn = te.slice(te.indexOf('static async executeMutationTransaction('), te.indexOf('static async executeCreditAdjustment(') > 0 ? te.indexOf('static async executeCreditAdjustment(') : undefined);
+  const te = read('scripts/engine/store/mutation-settlement.js');
+  const fn = te.slice(te.indexOf('export async function executeMutationTransactionImpl('), te.indexOf('export function prepareStoreAcquisitionPlans(') > 0 ? te.indexOf('export function prepareStoreAcquisitionPlans(') : undefined);
   assert.match(fn, /lotId: lotIdFor\(transactionId, index\)/, 'each purchase line gets a lot id');
   assert.match(fn, /stampAcquisitions\(plan, \{[^}]*lines: Array\.isArray\(auditLines\)/, 'delivered assets are allocated to those same lines');
   assert.match(fn, /\.\.\.\(Array\.isArray\(auditLines\) \? \{ items: auditLines \} : \{\}\)/, 'the ledger record stores the lines with their lot ids');
@@ -537,8 +538,9 @@ const setUser = (isGM, id = isGM ? 'gm' : 'p1') => { globalThis.game.user = { id
   assert.ok(!fs.existsSync('scripts/apps/item-selling-system.js'), 'legacy item seller deleted');
   const resaleSrc = ['scripts/engine/store/resale-authority.js', 'scripts/engine/store/resale-service.js', 'scripts/engine/store/acquisition-record.js', 'scripts/apps/store/resale-ui.js'].map(read).join('\n').replace(/\/\*[\s\S]*?\*\/|(^|[^:])\/\/.*$/gm, '$1');
   assert.doesNotMatch(resaleSrc, /system\??\.price|calculateRawSellPrice/, 'no obsolete price field in the resale code');
-  const te = read('scripts/engine/store/transaction-engine.js');
-  const sale = te.slice(te.indexOf('static async executeSaleTransaction('), te.indexOf('static async executeAssetSaleTransaction('));
+  // 3N-TE.4: the sale settlements live in asset-settlements.js (the engine keeps thin delegates).
+  const te = read('scripts/engine/store/asset-settlements.js');
+  const sale = te.slice(te.indexOf('export async function executeSaleTransactionImpl('), te.indexOf('export async function executeAssetSaleTransactionImpl('));
   assert.doesNotMatch(sale, /salePrice = 0|normalizeCredits\(salePrice\)/, 'the sale transaction does not take a caller payout');
   assert.match(sale, /ResaleService\.verifyForCommit/);
   const gmsvc = read('scripts/ui/shell/gm/GMStoreOperationsService.js');

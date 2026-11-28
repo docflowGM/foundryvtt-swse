@@ -12,9 +12,10 @@
  * - Optionally persist minimal SuggestionState in actor flags
  */
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ShellMutationGuard } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js";
+import { withShellDocumentMutationPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
-import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
+// Lazy: the Coordinator imports this module, so a static import here would be a cycle (F-SUG cycle break).
+const getSuggestionEngineCoordinator = async () => (await import("/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js")).SuggestionEngineCoordinator;
 import { CompendiumResolver } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CompendiumResolver.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SuggestionExplainer } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionExplainer.js";
@@ -411,31 +412,31 @@ export class SuggestionService {
 
     if (options.domain === 'feats') {
       const availableFeats = options.available ?? FeatEngine.getAvailableFeats(actor, options.className ?? null);
-      suggestions = await SuggestionEngineCoordinator.suggestFeats(availableFeats, actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+      suggestions = await (await getSuggestionEngineCoordinator()).suggestFeats(availableFeats, actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'talents') {
-      suggestions = await SuggestionEngineCoordinator.suggestTalents(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+      suggestions = await (await getSuggestionEngineCoordinator()).suggestTalents(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'classes') {
-      suggestions = await SuggestionEngineCoordinator.suggestClasses(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+      suggestions = await (await getSuggestionEngineCoordinator()).suggestClasses(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'forcepowers') {
       const available = options.available ?? await ForcePowerEngine.collectAvailablePowers();
-      suggestions = await SuggestionEngineCoordinator.suggestForceOptions(available, actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+      suggestions = await (await getSuggestionEngineCoordinator()).suggestForceOptions(available, actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'backgrounds') {
-      suggestions = await SuggestionEngineCoordinator.suggestBackgrounds(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+      suggestions = await (await getSuggestionEngineCoordinator()).suggestBackgrounds(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'species') {
-      suggestions = await SuggestionEngineCoordinator.suggestSpecies(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+      suggestions = await (await getSuggestionEngineCoordinator()).suggestSpecies(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'languages') {
-      suggestions = await SuggestionEngineCoordinator.suggestLanguages(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+      suggestions = await (await getSuggestionEngineCoordinator()).suggestLanguages(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'force-secrets') {
-      suggestions = await SuggestionEngineCoordinator.suggestForceSecrets(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+      suggestions = await (await getSuggestionEngineCoordinator()).suggestForceSecrets(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'force-techniques') {
-      suggestions = await SuggestionEngineCoordinator.suggestForceTechniques(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+      suggestions = await (await getSuggestionEngineCoordinator()).suggestForceTechniques(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'skills_l1') {
-      suggestions = await SuggestionEngineCoordinator.suggestLevel1Skills(options.available ?? [], actor, options.pendingData ?? {});
+      suggestions = await (await getSuggestionEngineCoordinator()).suggestLevel1Skills(options.available ?? [], actor, options.pendingData ?? {});
     } else if (options.domain === 'attributes') {
-      suggestions = await SuggestionEngineCoordinator.suggestAttributeIncreases(actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+      suggestions = await (await getSuggestionEngineCoordinator()).suggestAttributeIncreases(actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'droid-systems') {
       // PHASE D: Droid systems recommendations
-      suggestions = await SuggestionEngineCoordinator.suggestDroidSystems(options.available ?? {}, actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+      suggestions = await (await getSuggestionEngineCoordinator()).suggestDroidSystems(options.available ?? {}, actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else {
       // Aggregated default for sheet/mentor: feats + force powers (safe and helpful)
       const featSugs = await this.getSuggestions(actor, context, { ...options, domain: 'feats' });
@@ -618,7 +619,7 @@ export class SuggestionService {
       snapshot = state;
     }
 
-    const write = () => ShellMutationGuard.withDocumentMutation(null, () => actor.setFlag('foundryvtt-swse', 'suggestionState', snapshot), {
+    const write = () => withShellDocumentMutationPort(null, () => actor.setFlag('foundryvtt-swse', 'suggestionState', snapshot), {
       reason,
       surfaceId: 'progression'
     });
@@ -673,9 +674,12 @@ export class SuggestionService {
             reasonCode: suggestion?.suggestion?.reasonCode || suggestion?.reasonCode || null,
             tier: suggestion?.suggestion?.tier ?? suggestion?.tier ?? 0,
             domain: options.domain || null,
-          }
+          },
+          { persist: false }
         );
       }
+      // F-MEN-006: one flag write for the whole batch instead of one per suggestion.
+      if (top.length) await PlayerHistoryTracker.persistHistory(actor);
     } catch (err) {
       SWSELogger.log('[SuggestionService] recordSuggestionShown skipped (non-fatal):', err?.message ?? err);
     }

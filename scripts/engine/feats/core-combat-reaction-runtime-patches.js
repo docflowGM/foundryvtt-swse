@@ -1,4 +1,4 @@
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 let registered = false;
 let aooMapperPatched = false;
@@ -212,10 +212,7 @@ async function postCleaveAvailableMessage({ attacker, target, context = {} }) {
   const limitText = CoreCombatReactionFeatActions.hasGreatCleave(attacker)
     ? 'Great Cleave removes the normal once-per-round Cleave limit.'
     : 'Cleave can normally be used once per round.';
-  return createChatMessage({
-    speaker: ChatMessage.getSpeaker?.({ actor: attacker }) ?? { alias: actorName },
-    content: `<div class="swse-chat-card swse-cleave-prompt"><h3>Cleave Available</h3><p><strong>${actorName}</strong> reduced <strong>${targetName}</strong> to 0 HP. You may make one immediate extra melee attack against a different opponent within reach using the same weapon and attack bonus.</p><p><em>${limitText} GM/player activation: choose a valid target and roll the extra attack manually if applicable.</em></p></div>`,
-    flags: {
+  return SWSEChat.postHTML({ speaker: ChatMessage.getSpeaker?.({ actor: attacker }) ?? { alias: actorName }, content: `<div class="swse-chat-card swse-cleave-prompt"><h3>Cleave Available</h3><p><strong>${actorName}</strong> reduced <strong>${targetName}</strong> to 0 HP. You may make one immediate extra melee attack against a different opponent within reach using the same weapon and attack bonus.</p><p><em>${limitText} GM/player activation: choose a valid target and roll the extra attack manually if applicable.</em></p></div>`, flags: {
       'foundryvtt-swse': {
         cleavePrompt: true,
         greatCleave: CoreCombatReactionFeatActions.hasGreatCleave(attacker),
@@ -223,24 +220,19 @@ async function postCleaveAvailableMessage({ attacker, target, context = {} }) {
         targetId: target.id ?? target._id ?? null,
         context
       }
-    }
-  });
+    } });
 }
 
 async function postFrighteningCleaveMessage({ actor, context = {} }) {
   if (!actor || !CoreCombatReactionFeatActions.hasFrighteningCleave(actor)) return null;
   const actorName = actor.name ?? 'Actor';
-  return createChatMessage({
-    speaker: ChatMessage.getSpeaker?.({ actor }) ?? { alias: actorName },
-    content: `<div class="swse-chat-card swse-frightening-cleave-prompt"><h3>Frightening Cleave</h3><p><strong>${actorName}</strong> used Cleave. Each enemy within 6 squares and line of sight takes a stacking -1 mind-affecting penalty to Reflex Defense, attack rolls, and skill checks against ${actorName} until the end of the encounter, to a maximum penalty of -5.</p><p><em>Apply to visible eligible enemies, or use the emitted <code>swse.frighteningCleaveAvailable</code> event for automation.</em></p></div>`,
-    flags: {
+  return SWSEChat.postHTML({ speaker: ChatMessage.getSpeaker?.({ actor }) ?? { alias: actorName }, content: `<div class="swse-chat-card swse-frightening-cleave-prompt"><h3>Frightening Cleave</h3><p><strong>${actorName}</strong> used Cleave. Each enemy within 6 squares and line of sight takes a stacking -1 mind-affecting penalty to Reflex Defense, attack rolls, and skill checks against ${actorName} until the end of the encounter, to a maximum penalty of -5.</p><p><em>Apply to visible eligible enemies, or use the emitted <code>swse.frighteningCleaveAvailable</code> event for automation.</em></p></div>`, flags: {
       'foundryvtt-swse': {
         frighteningCleavePrompt: true,
         actorId: actor.id ?? actor._id ?? null,
         context
       }
-    }
-  });
+    } });
 }
 
 function findEligibleCleaveAttackers(target, context = {}) {
@@ -393,7 +385,9 @@ export class CoreCombatReactionFeatActions {
 }
 
 function registerCleaveHpHooks() {
-  Hooks.on('updateActor', (actor, changes = {}, options = {}) => {
+  Hooks.on('updateActor', (actor, changes = {}, options = {}, userId) => {
+    // F-FEA-006: updateActor fires on every client and this watcher posts chat cards; only the originating client reports the drop.
+    if (userId !== undefined && userId !== game.user?.id) return;
     if (options?.swseSkipCleaveHpWatcher === true) return;
     if (!updateHasHpChange(changes)) return;
     const previousHp = Number(options?.swsePreviousHp ?? options?.previousHp ?? options?.oldHp);

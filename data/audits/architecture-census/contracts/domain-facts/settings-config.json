@@ -1,0 +1,139 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "settings-config",
+ "name": "Settings, configuration, constants, feature flags",
+ "kind": "infrastructure",
+ "files": 11,
+ "runtimeSloc": 288,
+ "runtimeFiles": 4,
+ "counts": {
+  "files": 11,
+  "runtimeModules": 4,
+  "runtimeSloc": 288,
+  "reachability": {
+   "reachable-static": 4
+  },
+  "nonRuntimeByRole": {
+   "data": 2,
+   "asset": 1,
+   "presentation-style": 1,
+   "presentation-template": 3
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/settings/custom-content-approval.js",
+   "consumers": 5,
+   "sloc": 101,
+   "role": "module",
+   "exports": [
+    "CUSTOM_CONTENT_APPROVAL_POLICY_SETTING",
+    "CUSTOM_CONTENT_APPROVAL_POLICIES",
+    "registerCustomContentApprovalSettings",
+    "getCustomContentApprovalPolicy",
+    "getCustomContentApprovalState",
+    "customContentApprovalNotice"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 5
+  },
+  {
+   "path": "scripts/constants/capability-slugs.js",
+   "consumers": 4,
+   "sloc": 64,
+   "role": "module",
+   "exports": [
+    "CAPABILITY_SLUGS",
+    "PROFICIENCY_CATEGORIES",
+    "SYSTEM_ACCESS",
+    "VEHICLE_ACCESS"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/settings/epic-override.js",
+   "consumers": 3,
+   "sloc": 14,
+   "role": "module",
+   "exports": [
+    "registerEpicOverrideSetting",
+    "isEpicOverrideEnabled"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/constants/beam-styles.js",
+   "consumers": 2,
+   "sloc": 109,
+   "role": "module",
+   "exports": [
+    "BEAM_STYLES",
+    "BOLT_COLORS",
+    "getBeamStyle",
+    "getBoltColor",
+    "BEAM_STYLE_IDS",
+    "BOLT_COLOR_IDS"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/constants/beam-styles.js",
+   "sloc": 109,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/settings/custom-content-approval.js",
+   "sloc": 101,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/constants/capability-slugs.js",
+   "sloc": 64,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/settings/epic-override.js",
+   "sloc": 14,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [],
+ "dependsOnDomains": {
+  "houserules": 1
+ },
+ "dependedOnByDomains": {
+  "progression": 3,
+  "infrastructure": 2,
+  "talents": 2,
+  "equipment": 2,
+  "vehicles": 2,
+  "force": 1,
+  "combat": 1,
+  "ui-shell": 1
+ },
+ "probeHits": [],
+ "mechanicalResponsibilities": [],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "isEpicOverrideEnabled",
+   "files": [
+    "scripts/actors/derived/level-split.js",
+    "scripts/settings/epic-override.js"
+   ]
+  }
+ ],
+ "liveHooks": [],
+ "nonRuntimeEvidence": [],
+ "tests": []
+}

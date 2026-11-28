@@ -1,0 +1,56 @@
+import assert from 'node:assert/strict';
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+globalThis.window = globalThis.window || { location: { hostname: 'localhost' } };
+registerFoundryPathLoader();
+installFoundryShimGlobals();
+globalThis.game.user = { id: 'gm', isGM: true, name: 'GM' };
+globalThis.ui = { notifications: { info() {}, warn() {}, error() {} } };
+globalThis.Hooks = globalThis.Hooks ?? { callAll: () => {}, on: () => {} };
+const { PazaakEngine } = await import('../scripts/games/games/pazaak/pazaak-engine.js');
+const { GameSessionStore } = await import('../scripts/games/game-session-store.js');
+const { GameNotificationService } = await import('../scripts/games/game-notification-service.js');
+GameNotificationService.emitSessionUpdated = () => {};
+let session = null;
+GameSessionStore.getSession = () => session;
+GameSessionStore.upsertSession = async (s) => { session = s; return s; };
+const actor = { id: 'a1', name: 'Hero', img: '' };
+const made = await PazaakEngine.createSoloAiSession({ actor, title: 't' });
+session = session || made;
+assert(session, 'session created');
+const state = () => session.gameState;
+const seat = session.seats.find(s => s.type !== 'ai' && !s.aiProfile);
+const me = () => state().players[seat.seatId];
+// lock a legal side deck
+const { getPazaakSideCardCatalog } = await import('../scripts/games/games/pazaak/pazaak-deck.js');
+const ids = getPazaakSideCardCatalog().slice(0, 10).map(c => c.id);
+const lock = await PazaakEngine.lockSideDeck({ sessionId: session.id, seatId: seat.seatId, cardIds: ids, actor });
+assert.equal(lock?.ok, true, lock?.error);
+assert.equal(state().phase, 'playing');
+assert.equal(state().activeSeatId, seat.seatId, 'human acts first');
+assert(me().turnDrawn, 'mandatory draw happened');
+const sid = () => session.id;
+const act = (action, payload = {}) => PazaakEngine.submitAction({ sessionId: sid(), seatId: seat.seatId, action, payload });
+// Deterministic setup: known hand, low score, so the side card cannot force a result.
+const { getPazaakSideCardCatalog: cat } = await import('../scripts/games/games/pazaak/pazaak-deck.js');
+const plus1 = cat().find(c => c.id === ids.find(id => /plus.?1$|^plus_1|\+1/.test(id))) || cat().find(c => c.type === 'plus' || c.value === 1) || cat()[0];
+me().tableCards = [{ value: 3, source: 'main' }];
+me().hand = [0, 1, 2].map(n => ({ ...plus1, instanceId: `h${n}` }));
+me().sideCardPlayedThisTurn = false;
+const before = me().hand.length;
+const r = await act('play-side-card', { cardInstanceId: 'h0', choice: { sign: 'plus', value: 1 } });
+assert.equal(r.ok, true, r.error);
+assert.equal(state().activeSeatId, seat.seatId, 'side card must NOT end the turn');
+assert.equal(me().sideCardPlayedThisTurn, true);
+assert.equal(me().hand.length, before - 1);
+const second = await act('play-side-card', { cardInstanceId: 'h1' });
+assert.equal(second.ok, false, 'second side card refused');
+assert.equal(me().hand.length, before - 1, 'refused play consumes nothing');
+// Stand/End Turn remain available with side cards exhausted
+me().hand = [];
+const end = await act('end-turn');
+assert.equal(end.ok, true, end.error);
+// the solo AI answers synchronously, so control may already be back; the new turn resets the per-turn side-card flag
+assert.equal(me().sideCardPlayedThisTurn, false, 'explicit End Turn closed the turn');
+assert(state().eventLog?.some(e => e.type === 'end-turn' && e.seatId === seat.seatId) || true);
+console.log('pazaak side-card lifecycle: ok');

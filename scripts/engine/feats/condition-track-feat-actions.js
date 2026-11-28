@@ -54,7 +54,7 @@ function readRecoverProgress(actor) {
 }
 
 async function clearRecoverProgress(actor) {
-  try { await actor?.unsetFlag?.('foundryvtt-swse', 'conditionRecoverProgress'); }
+  try { await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'conditionRecoverProgress', { recalc: false }); }
   catch (_err) { /* flag cleanup must not block the recovery action */ }
 }
 
@@ -190,7 +190,7 @@ export class ConditionTrackFeatActions {
       };
     }
 
-    await actor.setFlag?.('foundryvtt-swse', 'conditionRecoverProgress', { combatId, round, spent });
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'conditionRecoverProgress', { combatId, round, spent }, { recalc: false });
     return {
       success: true,
       complete: false,
@@ -307,7 +307,7 @@ export class ConditionTrackFeatActions {
     }
 
     const result = await ActorEngine.applyConditionShift(actor, -1, 'Quick Comeback');
-    await actor.unsetFlag?.('foundryvtt-swse', 'quickComebackAvailable');
+    await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'quickComebackAvailable', { recalc: false });
     return {
       success: true,
       conditionBefore: currentCondition,

@@ -29,22 +29,9 @@
 import { weightedPick } from '../lib/weighted-random.js';
 import { NPC_ROLE_TIER } from '../data/npc-roles.js';
 import { COMMAND_TIER } from '../rank-metadata.js';
-import { updateNpcConceptDraft } from '../npc-concept.js';
+import { updateNpcConceptDraft, NPC_COMPETENCE_LEVEL, isNpcCompetenceLevel } from '../npc-concept.js';
 
-export const NPC_COMPETENCE_LEVEL = Object.freeze({
-  UNTRAINED: 'untrained',
-  CAPABLE: 'capable',
-  SKILLED: 'skilled',
-  EXPERT: 'expert',
-  ELITE: 'elite'
-});
-
-const COMPETENCE_LEVELS = Object.freeze(Object.values(NPC_COMPETENCE_LEVEL));
-
-export function isNpcCompetenceLevel(value) {
-  return COMPETENCE_LEVELS.includes(value);
-}
-
+export { NPC_COMPETENCE_LEVEL, isNpcCompetenceLevel };
 /**
  * Documented semantic bridge to SWSE's existing generic-vehicle-crew
  * Crew Quality progression -- exact, 1:1, never approximate. A future

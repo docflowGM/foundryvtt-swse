@@ -1,8 +1,9 @@
 // scripts/actors/v2/base-actor.js
+import { conditionTrackPenaltyForStep } from '/systems/foundryvtt-swse/scripts/utils/condition-track-penalty.js';
 import { SWSEActorBase } from "/systems/foundryvtt-swse/scripts/actors/base/swse-actor-base.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
-import { stampDerivedGeneration, getDerivedAppliedSignature, announceDerivedApplied } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
+import { stampDerivedGeneration, applyDerivedSnapshot, getDerivedAppliedSignature, announceDerivedApplied } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
 import { AbilityExecutionCoordinator } from "/systems/foundryvtt-swse/scripts/engine/abilities/ability-execution-coordinator.js";
 import { computeCharacterDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/character-actor.js";
 import { computeNpcDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/npc-actor.js";
@@ -157,25 +158,16 @@ export class SWSEV2BaseActor extends SWSEActorBase {
       // Pass the signature already computed above so computeAll() doesn't
       // repeat the same items/effects scan-sort-join for identical actor state.
       const updates = await DerivedCalculator.computeAll(this, { signature });
-      let changed = false;
-
-      // Merge computed values into system.derived, but only mark the actor for a
-      // follow-up repaint when the authoritative derived snapshot actually
-      // differs. This preserves the point-edit pattern: actor updates still
-      // recalc once, but no extra async repaint is requested for identical totals.
-      if (updates) {
-        for (const [path, value] of Object.entries(updates)) {
-          const parts = path.split('.');
-          if (parts.length === 3 && parts[0] === 'system' && parts[1] === 'derived') {
-            // system.derived.field → system.derived[field]
-            const field = parts[2];
-            if (!this._swseDerivedValuesEqual(system.derived?.[field], value)) {
-              system.derived[field] = value;
-              changed = true;
-            }
-          }
-        }
+      // 3N-DC: stale-async protection. The source may have changed while computeAll() was pending; a result for an older signature must neither be
+      // merged over the newer destination nor be stamped as applied. The next prepareDerivedData() recomputes against the current source.
+      if (signature) {
+        const currentSignature = DerivedCalculator.getActorComputeSignature?.(this) ?? null;
+        if (currentSignature && currentSignature !== signature) return;
       }
+      // One shared application routine (DC-A07): the same result leaves the same state on every derived-write path. A repaint is requested only
+      // when the authoritative derived snapshot actually differs.
+      system.derived ??= {};
+      const changed = updates ? applyDerivedSnapshot(system.derived, updates) : false;
 
       // Record which signature the CURRENT destination now reflects,
       // regardless of whether this pass changed anything -- this is what lets
@@ -248,14 +240,6 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     }
   }
 
-  _swseDerivedValuesEqual(left, right) {
-    if (left === right) return true;
-    try {
-      return JSON.stringify(left) === JSON.stringify(right);
-    } catch (_err) {
-      return false;
-    }
-  }
 
   /* ------------------------------------------------------------------------ */
   /* Action Execution v2 Contract                                              */
@@ -332,8 +316,7 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     const s = step === undefined ? this.getConditionTrackState().step : Number(step);
     const stepNum = Number.isFinite(s) ? s : 0;
     // Official SWSE: Normal(0), -1(1), -2(2), -5(3), -10(4), Helpless(5)
-    const penalties = [0, -1, -2, -5, -10, 0]; // helpless = no numeric penalty
-    return penalties[stepNum] ?? 0;
+    return conditionTrackPenaltyForStep(stepNum); // helpless = no numeric penalty
   }
 
   async setConditionTrackStep(step, { force = false } = {}) {

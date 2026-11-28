@@ -1,0 +1,942 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "abilities-effects",
+ "name": "AbilityEngine, ModifierEngine, active effects and rule collectors",
+ "kind": "mechanical",
+ "files": 129,
+ "runtimeSloc": 12801,
+ "runtimeFiles": 91,
+ "counts": {
+  "files": 129,
+  "runtimeModules": 91,
+  "runtimeSloc": 12801,
+  "reachability": {
+   "orphan-unreferenced": 17,
+   "reachable-static": 60,
+   "string-referenced-only": 1,
+   "unreachable-importers-only": 13
+  },
+  "nonRuntimeByRole": {
+   "data": 1,
+   "evidence-or-doc": 8,
+   "presentation-style": 3,
+   "presentation-template": 14,
+   "test": 11,
+   "tool": 1
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/engine/abilities/AbilityEngine.js",
+   "consumers": 45,
+   "sloc": 344,
+   "role": "engine-or-service",
+   "exports": [
+    "AbilityEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 358
+  },
+  {
+   "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+   "consumers": 31,
+   "sloc": 1355,
+   "role": "engine-or-service",
+   "exports": [
+    "ModifierEngine",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/effects/modifiers/ModifierTypes.js",
+   "consumers": 18,
+   "sloc": 136,
+   "role": "module",
+   "exports": [
+    "ModifierType",
+    "STACKING_RULES",
+    "VALID_TARGET_PATTERNS",
+    "ModifierSource",
+    "isValidModifier",
+    "createModifier",
+    "getStackingRule",
+    "isValidTarget",
+    "compareModifierPriority",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/engine/execution/rules/rule-enum.js",
+   "consumers": 11,
+   "sloc": 62,
+   "role": "engine-or-service",
+   "exports": [
+    "RULES",
+    "getValidRules",
+    "isValidRule",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+   "consumers": 11,
+   "sloc": 1549,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "SWSE_EFFECT_FLAG_SCOPE",
+    "SWSE_EFFECT_INTENT_KEY",
+    "SWSE_EFFECT_LIFECYCLE_KEY",
+    "EFFECT_APPLICATIONS",
+    "EFFECT_SCOPES",
+    "EFFECT_OPERATIONS",
+    "EFFECT_CATEGORIES",
+    "DEFENSE_TARGETS",
+    "ABILITY_TARGETS",
+    "BONUS_TYPES",
+    "SKILL_TARGETS",
+    "DAMAGE_TYPE_TERMS"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/effects/adapters/effect-card-utils.js",
+   "consumers": 8,
+   "sloc": 90,
+   "role": "module",
+   "exports": [
+    "normalizeName",
+    "actorItems",
+    "actorEffects",
+    "systemActiveEffects",
+    "getConditionStep",
+    "isPersistentCondition",
+    "conditionPenaltyForStep",
+    "severityForStep",
+    "effectDurationText",
+    "summarizeEffectChanges",
+    "buildRuleNote"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 23
+  },
+  {
+   "path": "scripts/engine/effects/armor-usage-resolver.js",
+   "consumers": 7,
+   "sloc": 118,
+   "role": "normalizer",
+   "exports": [
+    "ACP_AFFECTED_SKILLS",
+    "resolveArmorUsageEffects",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/effects/modifiers/ModifierUtils.js",
+   "consumers": 7,
+   "sloc": 191,
+   "role": "module",
+   "exports": [
+    "ModifierUtils",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/utils/active-effect-change-utils.js",
+   "consumers": 7,
+   "sloc": 116,
+   "role": "module",
+   "exports": [
+    "activeEffectUsesStringTypes",
+    "activeEffectChangeType",
+    "normalizeActiveEffectChangeForRuntime",
+    "normalizeActiveEffectDataForRuntime"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/abilities/passive/passive-state.js",
+   "consumers": 6,
+   "sloc": 307,
+   "role": "module",
+   "exports": [
+    "PASSIVE_STATE_PREDICATES",
+    "evaluateStatePredicates",
+    "evaluateStatePredicatesNumeric",
+    "getAvailablePredicates",
+    "isValidPredicate",
+    "getPredicatesInCategory"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/capabilities/capability-registry.js",
+   "consumers": 6,
+   "sloc": 61,
+   "role": "registry",
+   "exports": [
+    "CapabilityRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/abilities/ActivationLimitEngine.js",
+   "consumers": 5,
+   "sloc": 99,
+   "role": "engine-or-service",
+   "exports": [
+    "LimitType",
+    "ActivationLimitEngine",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/effects/modifiers/modifier-breakdown-builder.js",
+   "consumers": 5,
+   "sloc": 76,
+   "role": "module",
+   "exports": [
+    "buildSourceBreakdown",
+    "buildModifierLedger",
+    "buildLedgerFromComponents",
+    "buildInvocationLedgerEntry",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/engine/abilities/ability-execution-coordinator.js",
+   "consumers": 4,
+   "sloc": 82,
+   "role": "module",
+   "exports": [
+    "AbilityExecutionCoordinator"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 29
+  },
+  {
+   "path": "scripts/engine/abilities/passive/passive-adapter.js",
+   "consumers": 4,
+   "sloc": 385,
+   "role": "adapter",
+   "exports": [
+    "PassiveAdapter"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 29
+  },
+  {
+   "path": "scripts/utils/canonical-ability-identity.js",
+   "consumers": 4,
+   "sloc": 18,
+   "role": "module",
+   "exports": [
+    "canonicalFeatSlug",
+    "ownedAbilityInstance"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/engine/abilities/active/active-types.js",
+   "consumers": 3,
+   "sloc": 23,
+   "role": "module",
+   "exports": [
+    "ACTIVE_SUBTYPES",
+    "normalizeActiveSubtype"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 30
+  },
+  {
+   "path": "scripts/engine/abilities/force-power/force-power-types.js",
+   "consumers": 3,
+   "sloc": 25,
+   "role": "module",
+   "exports": [
+    "FORCE_POWER_MODEL",
+    "ForcePowerFrequencyType",
+    "ForcePowerActionType",
+    "ForcePowerCostType",
+    "ForcePowerDescriptor"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 29
+  },
+  {
+   "path": "scripts/engine/abilities/passive/condition-evaluator.js",
+   "consumers": 3,
+   "sloc": 135,
+   "role": "module",
+   "exports": [
+    "ConditionEvaluator",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/abilities/passive/passive-types.js",
+   "consumers": 3,
+   "sloc": 9,
+   "role": "module",
+   "exports": [
+    "PASSIVE_SUBTYPES"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 29
+  },
+  {
+   "path": "scripts/engine/abilities/passive/species-trait-passive-adapter.js",
+   "consumers": 3,
+   "sloc": 238,
+   "role": "adapter",
+   "exports": [
+    "SpeciesTraitPassiveAdapter"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 29
+  },
+  {
+   "path": "scripts/engine/abilities/progression/progression-types.js",
+   "consumers": 3,
+   "sloc": 15,
+   "role": "module",
+   "exports": [
+    "PROGRESSION_TRIGGERS",
+    "PROGRESSION_EFFECTS",
+    "PROGRESSION_AMOUNT_TYPES",
+    "PROGRESSION_EXECUTION_MODEL"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 76
+  },
+  {
+   "path": "scripts/engine/abilities/active/active-adapter.js",
+   "consumers": 2,
+   "sloc": 241,
+   "role": "adapter",
+   "exports": [
+    "ActiveAdapter"
+   ],
+   "writes": 3,
+   "actorEngineCalls": 5,
+   "ciTests": 30
+  },
+  {
+   "path": "scripts/engine/abilities/active/active-contract.js",
+   "consumers": 2,
+   "sloc": 49,
+   "role": "module",
+   "exports": [
+    "ActiveContractValidator"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 30
+  },
+  {
+   "path": "scripts/engine/abilities/attack-option/attack-primitives.js",
+   "consumers": 2,
+   "sloc": 7,
+   "role": "module",
+   "exports": [
+    "ATTACK_PRIMITIVES"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 29
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+   "sloc": 1549,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+   "sloc": 1355,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/abilities/passive/passive-contract.js",
+   "sloc": 421,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/abilities/passive/passive-adapter.js",
+   "sloc": 385,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/abilities/AbilityEngine.js",
+   "sloc": 344,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/effects/modifiers/ModifierEngineExtensions.js",
+   "sloc": 341,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/engine/effects/adapters/immunity-resistance-adapter.js",
+   "sloc": 328,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/abilities/passive/passive-state.js",
+   "sloc": 307,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/abilities/active/species-ability-handlers.js",
+   "sloc": 293,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/engine/abilities/progression/progression-event-processor.js",
+   "sloc": 280,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/engine/effects/modifiers/ModifierEngineExtensions.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 341,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/abilities/active/species-ability-handlers.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 293,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/effects/modifiers/ModifierDomainResolver.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 229,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/abilities/active/active-migration-validator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 228,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/destiny-effects.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 162,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/abilities/AbilityExecutionRouter.js",
+   "reach": "string-referenced-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 156,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/abilities/passive/phase-1b-feat-definitions.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 136,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/effects/modifiers/modifier-unification-schema.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 118,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/modifier-inspector-app.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 105,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/rules/modules/core/reach-rule.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 90,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/abilities/passive/phase-3-feat-definitions.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 84,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/abilities/passive/phase-2-feat-definitions.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 80,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/rules/rules-registry.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 77,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/effect-sanitizer.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 75,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/effects/active-effects-engine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 72,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/character-sheet/abilities-ui.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 58,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/abilities/passive/phase-4-feat-definitions.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 57,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/rules/modules/core/critical-rule.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 48,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/dialogs/modifier-breakdown-dialog.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 47,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/rules/modules/talents/weapon-specialization-rule.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 41,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/rules/modules/core/critical-confirm-bonus-rule.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 34,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/abilities/passive/rule-types.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 33,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/rules/modules/core/damage-rule.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 26,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/rules/modules/core/index.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 26,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/rules/modules/core/condition-penalty-rule.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 24,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/rules/modules/core/ability-modifier-rule.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 23,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/rules/modules/core/base-attack-bonus-rule.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 23,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/rules/modules/core/proficiency-rule.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 22,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/rules/modules/core/strength-to-damage-rule.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 20,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/rules/modules/talents/index.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 16,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/abilities/ability-usage.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 9,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 33,
+  "actor-core": 12,
+  "combat": 10,
+  "equipment": 7,
+  "species": 5,
+  "force": 3,
+  "droids": 3,
+  "progression": 2,
+  "vehicles": 2,
+  "ui-shell": 1,
+  "data-registries": 1,
+  "classes": 1,
+  "chat": 1,
+  "feats": 1,
+  "houserules": 1,
+  "rolls": 1
+ },
+ "dependedOnByDomains": {
+  "combat": 35,
+  "progression": 26,
+  "actor-core": 9,
+  "ui-shell": 8,
+  "force": 5,
+  "rolls": 5,
+  "mentor-suggestion": 5,
+  "skills": 4,
+  "feats": 4,
+  "governance": 4,
+  "infrastructure": 2,
+  "vehicles": 2,
+  "equipment": 2,
+  "species": 1,
+  "talents": 1,
+  "compat-patches": 1,
+  "droids": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 3,
+   "sites": [
+    {
+     "path": "scripts/engine/abilities/active/duration-engine.js",
+     "domain": "abilities-effects",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      85,
+      102
+     ]
+    },
+    {
+     "path": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "domain": "abilities-effects",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      991
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A04-presentation-direct-writes",
+   "invariant": "A-04",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "domain": "abilities-effects",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      991
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A05-chat-outside-swse-chat",
+   "invariant": "A-05",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/abilities/progression/progression-event-processor.js",
+     "domain": "abilities-effects",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      422
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A07-engine-imports-ui",
+   "invariant": "A-07",
+   "count": 2,
+   "sites": [
+    {
+     "path": "scripts/engine/effects/adapters/active-effect-adapter.js",
+     "target": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+     "target": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "kind": "static"
+    }
+   ]
+  },
+  {
+   "probe": "P-A10-credit-writes-outside-transaction-engine",
+   "invariant": "A-10",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/abilities/progression/progression-event-processor.js",
+     "line": 409,
+     "text": "\"system.credits\": newCredits"
+    }
+   ]
+  },
+  {
+   "probe": "P-A16-module-caches",
+   "invariant": "A-16",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+     "maps": 4,
+     "cacheMentions": 5,
+     "hasInvalidate": true
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "condition-track-penalty",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "force",
+    "infrastructure",
+    "species"
+   ],
+   "sites": [
+    "scripts/engine/effects/adapters/effect-card-utils.js:58 getConditionStep"
+   ]
+  },
+  {
+   "responsibility": "ability-modifier",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "feats",
+    "force",
+    "infrastructure",
+    "mentor-suggestion",
+    "npc-followers",
+    "progression",
+    "rolls",
+    "species",
+    "talents",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/engine/abilities/passive/derived-override-engine.js:149 _getAbilityMod"
+   ]
+  },
+  {
+   "responsibility": "half-heroic-level",
+   "otherDomains": [
+    "actor-core",
+    "combat"
+   ],
+   "sites": [
+    "scripts/engine/abilities/passive/derived-override-engine.js:177 _getHalfLevel"
+   ]
+  },
+  {
+   "responsibility": "damage-reduction",
+   "otherDomains": [
+    "store-economy"
+   ],
+   "sites": [
+    "scripts/engine/effects/adapters/immunity-resistance-adapter.js:100 getActorShieldRating"
+   ]
+  },
+  {
+   "responsibility": "encumbrance",
+   "otherDomains": [
+    "actor-core",
+    "equipment",
+    "infrastructure",
+    "progression"
+   ],
+   "sites": [
+    "scripts/engine/effects/modifiers/ModifierEngine.js:1170 _getEncumbranceModifiers"
+   ]
+  },
+  {
+   "responsibility": "modifier-aggregation",
+   "otherDomains": [
+    "combat",
+    "equipment",
+    "feats",
+    "rolls",
+    "skills",
+    "species"
+   ],
+   "sites": [
+    "scripts/engine/effects/modifiers/ModifierEngine.js:393 collectModifiers",
+    "scripts/engine/effects/modifiers/ModifierUtils.js:211 sumModifiers"
+   ]
+  }
+ ],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "actorItems",
+   "files": [
+    "scripts/engine/combat/weapon-target-gate-classifiers.js",
+    "scripts/engine/effects/adapters/effect-card-utils.js"
+   ]
+  },
+  {
+   "name": "canonicalFeatSlug",
+   "files": [
+    "scripts/items/weapon-runtime/ability-selector.js",
+    "scripts/utils/canonical-ability-identity.js"
+   ]
+  },
+  {
+   "name": "EffectResolver",
+   "files": [
+    "scripts/engine/abilities/active/effect-resolver.js",
+    "scripts/engine/customization/effect-resolver.js"
+   ]
+  },
+  {
+   "name": "ModifierBreakdown",
+   "files": [
+    "scripts/engine/effects/modifiers/modifier-unification-schema.js",
+    "scripts/ui/components/ModifierBreakdown.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "ready",
+   "sites": [
+    "scripts/ui/ability-keyword-highlighter.js:148"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "docs/audits/ability-schema-authority-migration-phase3-ledger.md",
+  "docs/audits/effects-modifier-derived-audit.md",
+  "docs/audits/generated/phase10e-target-effect-adapter-report.json",
+  "docs/audits/generated/phase10e-target-effect-adapter-report.md",
+  "docs/systems/ABILITY_SCHEMA_AUTHORITY.md"
+ ],
+ "tests": [
+  "tests/ability-engine-acquisition-cache-derived-coherency.test.mjs",
+  "tests/ability-engine-acquisition.test.mjs",
+  "tests/ability-increase-verification.test.mjs",
+  "tests/armor-shield-acp-authority.test.mjs",
+  "tests/class-force-v2-active-adapter-cutover.test.mjs",
+  "tests/modifier-breakdown-builder.test.mjs",
+  "tests/modifier-engine-signature-reuse.test.mjs",
+  "tests/modifier-total-breakdown-parity.test.mjs",
+  "tests/species-core-defense-totals.test.mjs",
+  "tests/species-neimoidian-base-reconciliation.test.mjs",
+  "tests/species-snapshot-consumers.test.mjs"
+ ]
+}

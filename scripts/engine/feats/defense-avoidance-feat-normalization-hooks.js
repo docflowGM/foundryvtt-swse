@@ -311,8 +311,8 @@ async function normalizeDefenseAvoidanceFeat(item, options = {}) {
 }
 
 export function registerDefenseAvoidanceFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeDefenseAvoidanceFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeDefenseAvoidanceFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeDefenseAvoidanceFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeDefenseAvoidanceFeat(item, options) : false);
   SWSELogger.log('[DefenseAvoidanceFeatNormalization] Hooks registered');
 }
 

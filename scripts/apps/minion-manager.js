@@ -6,6 +6,7 @@
  */
 
 import { MinionCreator } from "/systems/foundryvtt-swse/scripts/apps/minion-creator.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class MinionManager {
   static MINION_TALENTS = {
@@ -83,7 +84,7 @@ export class MinionManager {
     const flags = owner.getFlag('foundryvtt-swse', 'minionTacticalAbilities') || [];
     if (!flags.includes(talent.name)) {
       flags.push(talent.name);
-      await owner.setFlag('foundryvtt-swse', 'minionTacticalAbilities', flags);
+      await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'minionTacticalAbilities', flags, { recalc: false });
     }
 
     const registry = owner.getFlag('foundryvtt-swse', 'minionTalentRegistry') || {};
@@ -93,15 +94,15 @@ export class MinionManager {
       talentItemId: talent.id,
       updatedAt: Date.now()
     };
-    await owner.setFlag('foundryvtt-swse', 'minionTalentRegistry', registry);
+    await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'minionTalentRegistry', registry, { recalc: false });
 
     const minions = options.targetMinion ? [options.targetMinion] : MinionCreator.getMinions(owner);
     for (const minion of minions) {
-      await minion.setFlag('swse', `minionTalentBenefits.${talent.name}`, {
+      await ActorEngine.updateActorFlags(minion, 'swse', `minionTalentBenefits.${talent.name}`, {
         ownerId: owner.id,
         talentItemId: talent.id,
         benefit: config.benefit
-      });
+      }, { recalc: false });
     }
 
     if (!options.silent) {
@@ -113,14 +114,14 @@ export class MinionManager {
     if (!owner || !this.isMinionTalent(talent?.name)) return;
 
     const abilities = owner.getFlag('foundryvtt-swse', 'minionTacticalAbilities') || [];
-    await owner.setFlag('foundryvtt-swse', 'minionTacticalAbilities', abilities.filter(name => name !== talent.name));
+    await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'minionTacticalAbilities', abilities.filter(name => name !== talent.name), { recalc: false });
 
     const registry = owner.getFlag('foundryvtt-swse', 'minionTalentRegistry') || {};
     delete registry[talent.name];
-    await owner.setFlag('foundryvtt-swse', 'minionTalentRegistry', registry);
+    await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'minionTalentRegistry', registry, { recalc: false });
 
     for (const minion of MinionCreator.getMinions(owner)) {
-      await minion.unsetFlag?.('swse', `minionTalentBenefits.${talent.name}`);
+      await ActorEngine.unsetActorFlag(minion, 'swse', `minionTalentBenefits.${talent.name}`, { recalc: false });
     }
   }
 
@@ -128,7 +129,7 @@ export class MinionManager {
     const abilities = owner.getFlag('foundryvtt-swse', 'minionTacticalAbilities') || [];
     const next = abilities.filter(name => !this.isMinionTalent(name) || ownedNames.has(name));
     if (next.length !== abilities.length) {
-      await owner.setFlag('foundryvtt-swse', 'minionTacticalAbilities', next);
+      await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'minionTacticalAbilities', next, { recalc: false });
     }
 
     const registry = owner.getFlag('foundryvtt-swse', 'minionTalentRegistry') || {};
@@ -139,6 +140,6 @@ export class MinionManager {
         changed = true;
       }
     }
-    if (changed) await owner.setFlag('foundryvtt-swse', 'minionTalentRegistry', registry);
+    if (changed) await ActorEngine.updateActorFlags(owner, 'foundryvtt-swse', 'minionTalentRegistry', registry, { recalc: false });
   }
 }

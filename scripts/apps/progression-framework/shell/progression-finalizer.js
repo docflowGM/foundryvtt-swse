@@ -82,7 +82,10 @@ import { compileProfileEquipmentItems, hasResolvedProfileWallet, profileKitProvi
 import { ProgressionEconomyPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js';
 import { ProgressionReconciler } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
 import { beginAbilityIncreaseTransaction, verifyAbilityIncreaseCommit, describeAbilityTransaction, ABILITY_HISTORY_KEY, strictCount } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-increase-guard.js';
+import { applyForceKnowledgePostApply, buildForceKnowledgePostApplyEntry } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/force-knowledge-post-apply.js';
+import { choiceCandidates, firstScalar } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/choice-candidates.js';
 import { ProgressionMetadataPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-metadata-plan-builder.js';
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 /* -------------------------------------------------------------------------- */
 /* PHASE 4 consolidation helpers                                              */
@@ -378,6 +381,16 @@ export class ProgressionFinalizer {
       // draft actor. The shell materializes the world actor first.
       if (isTransientProgressionActor(actor)) {
         throw new Error('Finalization requires a persisted world actor; the draft actor has not been created yet');
+      }
+
+      // IDEMPOTENCY GUARD: the plan stamps `system.progression.completedSessionId`. Re-finalizing the SAME session on an actor that already carries the
+      // stamp would re-grant credits/items/levels, so it is refused before anything is compiled or applied. `committed: true` keeps the draft lifecycle from
+      // ever discarding the actor on this refusal.
+      const thisSessionId = sessionState.sessionId || sessionState.progressionSession?.sessionId || null;
+      const completedSessionId = actor?.system?.progression?.completedSessionId ?? null;
+      if (thisSessionId && thisSessionId !== 'unknown' && completedSessionId && String(completedSessionId) === String(thisSessionId)) {
+        swseLogger.warn('[ProgressionFinalizer] Refusing to finalize a session that was already finalized', { actorId: actor.id, sessionId: thisSessionId });
+        return { success: false, alreadyFinalized: true, committed: true, error: 'This progression session has already been finalized for this actor; nothing was changed.' };
       }
 
       this._assertNpcProgressionAuthority(sessionState, actor);
@@ -1228,6 +1241,9 @@ export class ProgressionFinalizer {
     Object.assign(plan.set, fragment);
   }
 
+  static _applyForceKnowledgePostApply(set, actor, postApply) { return applyForceKnowledgePostApply(set, actor, postApply); }
+  static _buildForceKnowledgePostApplyEntry(baseItem, rawEntry, selectionIdentity, sessionId) { return buildForceKnowledgePostApplyEntry(baseItem, rawEntry, selectionIdentity, sessionId); }
+
   static async _compileMutationPlanBase(sessionState, actor, options = {}) {
     // PHASE 1: REQUIRE canonical progressionSession. Fail loudly if missing.
     if (!sessionState.progressionSession) {
@@ -1523,20 +1539,7 @@ export class ProgressionFinalizer {
         set['system.hp.max'] = startingHp;
       }
 
-      const baseStartingCredits = this._computeStartingCredits(clazz, background);
-      const explicitStartingCredits = Number(summary.startingCredits || 0) || 0;
-      const wealthBonus = this._computeWealthCreditGrant(selections, actor, sessionState);
-      const explicitSources = Array.isArray(summary.startingCreditsBreakdown) ? summary.startingCreditsBreakdown : [];
-      const explicitIncludesWealth = explicitSources.some(source => this._normalizeNameKey(source?.label || source?.source || '') === 'wealthtalent');
-      const startingCredits = explicitStartingCredits > 0
-        ? explicitStartingCredits + (wealthBonus > 0 && !explicitIncludesWealth ? wealthBonus : 0)
-        : baseStartingCredits + wealthBonus;
-      if (Number.isFinite(startingCredits) && startingCredits > 0) {
-        set['system.credits'] = this._resolveFinalStartingCredits(actor, startingCredits);
-      }
-      if (wealthBonus > 0) {
-        set['flags.swse.progressionHistory'] = this._withWealthProgressionHistory(actor, selections, sessionState);
-      }
+      // Starting credits (class/background/Wealth/profile wallet) are compiled by ProgressionEconomyPlanBuilder (_applyProgressionEconomyBuilder).
 
       const startingLevel = Number(summary.startingLevel || set['system.level'] || 1) || 1;
       const startingForcePointMax = calculateMaxForcePointsForBuildPlan({
@@ -1622,29 +1625,7 @@ export class ProgressionFinalizer {
         timestamp: new Date().toISOString(),
       };
 
-      const explicitCreditDelta = Number(summary.creditDelta || 0) || 0;
-      const canonicalWealthDelta = this._computeLevelupWealthCreditGrant(actor, selections, sessionState);
-      const includesWealth = this._levelupCreditDeltaIncludesWealth(summary, selections, actor) || canonicalWealthDelta > 0;
-      const inferredCreditDelta = includesWealth
-        ? Math.max(explicitCreditDelta, canonicalWealthDelta)
-        : (explicitCreditDelta || canonicalWealthDelta);
-      if (inferredCreditDelta !== 0) {
-        const currentCredits = Math.max(0, Number(actor?.system?.credits ?? 0) || 0);
-        set['system.credits'] = Math.max(0, currentCredits + inferredCreditDelta);
-        const rawCreditSources = Array.isArray(summary.creditDeltaSources) ? summary.creditDeltaSources : [];
-        const nonWealthSources = rawCreditSources.filter(source => this._normalizeNameKey(source?.label || source?.source || '') !== 'wealthtalent');
-        const creditSources = includesWealth
-          ? [...nonWealthSources, { label: 'Wealth Talent', amount: inferredCreditDelta, tone: 'wealth' }]
-          : (rawCreditSources.length ? rawCreditSources : [{ label: 'Progression Credits', amount: inferredCreditDelta, tone: 'credits' }]);
-        set['system.progression.lastCreditDelta'] = {
-          amount: inferredCreditDelta,
-          sources: creditSources,
-          timestamp: new Date().toISOString(),
-        };
-        if (includesWealth) {
-          set['flags.swse.progressionHistory'] = this._withLevelupWealthProgressionHistory(actor, selections, sessionState, inferredCreditDelta);
-        }
-      }
+      // Level-up credit delta and Wealth history are compiled by ProgressionEconomyPlanBuilder (_applyProgressionEconomyBuilder).
     }
     // Extract language IDs from normalized format for canonical storage.
     // Chargen must materialize automatic species/background languages as well
@@ -2018,13 +1999,6 @@ export class ProgressionFinalizer {
     }
   }
 
-  static _hasWealthTalentSelection(selections = {}) {
-    const talentSelections = [
-      ...(Array.isArray(selections.talents) ? selections.talents : []),
-      ...this._collectSelectionEntries(selections, ['talent']),
-    ];
-    return this._selectionListHasName(talentSelections, ['Wealth']);
-  }
 
   static _isLineageEligibleClass(classSelection = null) {
     const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
@@ -2053,150 +2027,17 @@ export class ProgressionFinalizer {
     return Math.max(1, Math.floor(rawLevel));
   }
 
-  static _computeWealthCreditGrant(selections = {}, actor = null, sessionState = {}) {
-    if (!this._hasWealthTalentSelection(selections)) return 0;
-    const lineageLevel = this._computePendingLineageEligibleLevel(selections, sessionState);
-    return Math.max(0, lineageLevel * 5000);
-  }
-
-  static _withWealthProgressionHistory(actor, selections = {}, sessionState = {}) {
-    const raw = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
-    const history = foundry?.utils?.deepClone ? foundry.utils.deepClone(raw) : JSON.parse(JSON.stringify(raw || {}));
-    const key = 'swse.talent.wealth';
-    const lineageLevel = this._computePendingLineageEligibleLevel(selections, sessionState);
-    const existing = history[key] || { levelsGranted: [] };
-    const levels = new Set((Array.isArray(existing.levelsGranted) ? existing.levelsGranted : []).map(Number).filter(Number.isFinite));
-    for (let level = 1; level <= lineageLevel; level += 1) levels.add(level);
-    history[key] = {
-      ...existing,
-      levelsGranted: Array.from(levels).sort((a, b) => a - b),
-      lastGrantedAt: existing.lastGrantedAt || new Date().toISOString(),
-      lastGrantedCredits: existing.lastGrantedCredits || lineageLevel * 5000,
-      source: existing.source || 'chargen-finalizer',
-    };
-    return history;
-  }
 
 
-  static _actorHasWealthTalent(actor) {
-    return actor?.items?.some?.(item => item?.type === 'talent' && this._selectionListHasName([item], ['Wealth'])) === true;
-  }
 
-  static _levelupCreditDeltaIncludesWealth(summary = {}, selections = {}, actor = null) {
-    if (this._hasWealthTalentSelection(selections) || this._actorHasWealthTalent(actor)) return true;
-    return (summary.creditDeltaSources || []).some(source => this._normalizeNameKey(source?.label || source?.source || '') === 'wealthtalent');
-  }
 
-  static _readClassLevelValue(classEntry = null) {
-    return Math.max(0, Number(
-      classEntry?.system?.level
-      ?? classEntry?.system?.levels
-      ?? classEntry?.system?.rank
-      ?? classEntry?.level
-      ?? classEntry?.classLevel
-      ?? 0
-    ) || 0);
-  }
 
-  static _classAggregationKey(classEntry = null) {
-    return this._normalizeNameKey(
-      classEntry?.system?.classId
-      || classEntry?.system?.sourceId
-      || classEntry?.system?.className
-      || classEntry?.classId
-      || classEntry?.sourceId
-      || classEntry?.id
-      || classEntry?.name
-      || classEntry?.className
-      || classEntry
-    );
-  }
 
-  static _resolveLevelupSelectedClass(selections = {}, sessionState = {}) {
-    return selections?.class
-      || sessionState?.progressionSession?.getSelection?.('class')
-      || sessionState?.progressionSession?.draftSelections?.class
-      || sessionState?.draftSelections?.class
-      || sessionState?.class
-      || null;
-  }
 
-  static _getLineageEligibleClassLevelCountAfterLevelup(actor, selections = {}, sessionState = {}) {
-    const lineageLevelsByClass = new Map();
-    const addClassLevel = (classEntry) => {
-      if (!classEntry || !this._isLineageEligibleClass(classEntry)) return;
-      const key = this._classAggregationKey(classEntry);
-      if (!key) return;
-      const level = this._readClassLevelValue(classEntry);
-      lineageLevelsByClass.set(key, Math.max(lineageLevelsByClass.get(key) || 0, level));
-    };
 
-    for (const classItem of actor?.items || []) {
-      if (classItem?.type === 'class') addClassLevel(classItem);
-    }
-    for (const classEntry of Array.isArray(actor?.system?.classes) ? actor.system.classes : []) {
-      addClassLevel(classEntry);
-    }
-    for (const classEntry of Array.isArray(actor?.system?.progression?.classLevels) ? actor.system.progression.classLevels : []) {
-      addClassLevel(classEntry);
-    }
 
-    let lineageLevelCount = Array.from(lineageLevelsByClass.values()).reduce((sum, level) => sum + level, 0);
-    const selectedClass = this._resolveLevelupSelectedClass(selections, sessionState);
-    if (this._isLineageEligibleClass(selectedClass)) {
-      // The actor still contains the pre-level-up class state at finalization time.
-      // Add this event's selected class level once so Noble 1 grants 5000, Noble 2
-      // grants 10000, and non-Lineage classes after Noble keep paying based on the
-      // existing Noble/Lineage levels.
-      lineageLevelCount += 1;
-    }
-    return lineageLevelCount;
-  }
 
-  static _getLevelupCharacterLevelKey(actor, selections = {}, sessionState = {}) {
-    try {
-      const levelContext = buildLevelUpEventContext(actor, sessionState.progressionSession, { selectedClass: selections.class });
-      const enteringLevel = Number(levelContext?.enteringLevel);
-      if (Number.isFinite(enteringLevel) && enteringLevel > 0) return Math.floor(enteringLevel);
-    } catch (_err) {}
-    const fallback = Number(sessionState?.targetLevel ?? actor?.system?.level ?? 1);
-    return Number.isFinite(fallback) ? Math.max(1, Math.floor(fallback)) : 1;
-  }
 
-  static _computeLevelupWealthCreditGrant(actor, selections = {}, sessionState = {}) {
-    if (!this._hasWealthTalentSelection(selections) && !this._actorHasWealthTalent(actor)) return 0;
-
-    const history = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
-    const characterLevel = this._getLevelupCharacterLevelKey(actor, selections, sessionState);
-    const grantedCharLevels = history?.['swse.talent.wealth']?.characterLevelsGranted || [];
-    if (grantedCharLevels.map(Number).includes(characterLevel)) return 0;
-
-    const lineageLevelCount = this._getLineageEligibleClassLevelCountAfterLevelup(actor, selections, sessionState);
-    return Math.max(0, lineageLevelCount * 5000);
-  }
-
-  static _withLevelupWealthProgressionHistory(actor, selections = {}, sessionState = {}, creditDelta = 0) {
-    const raw = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
-    const history = foundry?.utils?.deepClone ? foundry.utils.deepClone(raw) : JSON.parse(JSON.stringify(raw || {}));
-    const key = 'swse.talent.wealth';
-    const lineageLevelCount = this._getLineageEligibleClassLevelCountAfterLevelup(actor, selections, sessionState);
-    const characterLevel = this._getLevelupCharacterLevelKey(actor, selections, sessionState);
-    const existing = history[key] || { levelsGranted: [], characterLevelsGranted: [] };
-    const levels = new Set((Array.isArray(existing.levelsGranted) ? existing.levelsGranted : []).map(Number).filter(Number.isFinite));
-    for (let level = 1; level <= lineageLevelCount; level += 1) levels.add(level);
-    const characterLevels = new Set((Array.isArray(existing.characterLevelsGranted) ? existing.characterLevelsGranted : []).map(Number).filter(Number.isFinite));
-    characterLevels.add(characterLevel);
-    history[key] = {
-      ...existing,
-      levelsGranted: Array.from(levels).sort((a, b) => a - b),
-      characterLevelsGranted: Array.from(characterLevels).sort((a, b) => a - b),
-      lastLineageLevelCount: lineageLevelCount,
-      lastGrantedAt: new Date().toISOString(),
-      lastGrantedCredits: creditDelta,
-      source: 'levelup-finalizer',
-    };
-    return history;
-  }
 
   static _resolveLevelUpCurrentHp({ currentHpValue = 0, hpGain = 0, nextHpMax = 1, mode = 'none' } = {}) {
     const current = Number(currentHpValue);
@@ -2215,7 +2056,15 @@ export class ProgressionFinalizer {
     }
   }
 
+  /** Canonical skill key, also accepting object-shaped values (key/slug/name/...). */
   static _canonicalSkillKey(value) {
+    const direct = this._canonicalSkillKeyBase(value);
+    if (direct) return direct;
+    const scalar = firstScalar(value);
+    return scalar && scalar !== value ? (this._canonicalSkillKeyBase(scalar) || '') : '';
+  }
+
+  static _canonicalSkillKeyBase(value) {
     const firstScalar = (input) => {
       if (input === null || input === undefined) return '';
       if (typeof input === 'object') {
@@ -2311,7 +2160,7 @@ export class ProgressionFinalizer {
     // Athletics consolidation: redirect component keys → 'athletics' when house rule is on.
     const athleticsComponents = new Set(['acrobatics', 'climb', 'jump', 'swim']);
     if (athleticsComponents.has(resolved)) {
-      try { if (game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true) return 'athletics'; } catch { /* off */ }
+      if (HouseRuleService.getBoolean('athleticsConsolidation', false)) return 'athletics';
     }
     return resolved;
   }
@@ -2323,7 +2172,25 @@ export class ProgressionFinalizer {
    * @param {Object} selections - Draft selections from the progression session
    * @returns {string[]} Canonical skill keys to mark as focused
    */
+  /** Skill Focus keys from selections, including stored choices on Skill Focus feat entries. */
   static _extractSkillFocusKeysFromSelections(selections = {}) {
+    const keys = new Set(this._extractSkillFocusKeysFromSelectionsBase(selections) || []);
+    const feats = [
+      ...(Array.isArray(selections.feats) ? selections.feats : []),
+      ...(Array.isArray(selections.selectedFeats) ? selections.selectedFeats : []),
+    ];
+    for (const feat of feats) {
+      const name = String(feat?.name || feat?.label || feat || '').trim().toLowerCase();
+      if (!name.startsWith('skill focus')) continue;
+      for (const candidate of choiceCandidates(feat)) {
+        const key = this._canonicalSkillKey(candidate);
+        if (key) keys.add(key);
+      }
+    }
+    return Array.from(keys);
+  }
+
+  static _extractSkillFocusKeysFromSelectionsBase(selections = {}) {
     const feats = [
       ...(Array.isArray(selections.feats) ? selections.feats : []),
       ...(Array.isArray(selections.selectedFeats) ? selections.selectedFeats : []),
@@ -2644,24 +2511,6 @@ export class ProgressionFinalizer {
     return Number(match[1]) * Number(match[2]) * Number(match[3]);
   }
 
-  static _computeStartingCredits(classSelection = null, backgroundSelection = null) {
-    const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
-    const authority = Number(ProgressionContentAuthority.getStartingCredits({ classSelection, backgroundSelection }) || 0) || 0;
-    if (authority > 0) return authority;
-
-    const classCredits = this._parseMaxCredits(
-      classModel?.startingCredits
-        ?? classModel?.system?.startingCredits
-        ?? classModel?.system?.starting_credits
-        ?? classSelection?.startingCredits
-        ?? classSelection?.system?.starting_credits
-    );
-    const backgroundCredits = Number(backgroundSelection?.credits ?? backgroundSelection?.system?.credits ?? 0) || 0;
-    if (classCredits + backgroundCredits > 0) return classCredits + backgroundCredits;
-
-    const fallback = { soldier: 3000, scout: 3000, scoundrel: 3000, jedi: 1200, noble: 4800, force_adept: 1200 };
-    return fallback[this._classKey(classModel)] || 0;
-  }
 
   static _getUsableActorName(actor) {
     const name = String(actor?.name || '').trim();
@@ -2699,23 +2548,6 @@ export class ProgressionFinalizer {
     }
   }
 
-  static _resolveFinalStartingCredits(actor, computedStartingCredits) {
-    const computed = Math.max(0, Number(computedStartingCredits || 0));
-    const storeState = this._getChargenStoreState(actor);
-    if (!storeState?.initialized) return computed;
-
-    const previousBudget = Math.max(0, Number(storeState.startingCredits || 0));
-    const actorCredits = Math.max(0, Number(actor?.system?.credits ?? 0) || 0);
-
-    // The chargen store is allowed to spend from the draft starting-credit pool
-    // before finalization. Do not overwrite those purchases at confirm time.
-    // If late build choices raise the budget (for example Wealth), only add the
-    // budget delta instead of resetting the cart-spent balance.
-    if (previousBudget > 0 && computed > previousBudget) {
-      return actorCredits + (computed - previousBudget);
-    }
-    return actorCredits;
-  }
 
 
   /**
@@ -3903,21 +3735,12 @@ export class ProgressionFinalizer {
    * @param {Object} mutationPlan
    * @returns {Promise<{success: boolean, result?: Object, error?: string}>}
    */
-  static _resolveActorEngine() {
-    const candidates = [
-      globalThis.SWSE?.ActorEngine,
-      globalThis.game?.swse?.ActorEngine,
-      globalThis.ActorEngine,
-      CanonicalActorEngine,
-    ].filter(Boolean);
+  /** Test seam (F-PRG-011): an engine injected explicitly. Globals are never consulted. */
+  static _actorEngineOverride = null;
 
-    // Some boot paths expose an older global ActorEngine facade before the
-    // canonical module is loaded. Prefer an engine that can actually apply the
-    // mutation plan; otherwise fall back to the richest mutation surface.
-    return candidates.find(engine => typeof engine?.applyMutationPlan === 'function')
-      || candidates.find(engine => typeof engine?.applyProgression === 'function')
-      || candidates.find(engine => typeof engine?.updateActor === 'function')
-      || CanonicalActorEngine;
+  static _resolveActorEngine() {
+    // F-PRG-011: the canonical module import is the only engine. Tests inject through the explicit seam below, never through globals.
+    return this._actorEngineOverride ?? CanonicalActorEngine;
   }
 
   /**

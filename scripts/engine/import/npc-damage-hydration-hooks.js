@@ -1,3 +1,4 @@
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { hydrateImportedStatblockWeapon } from './nonheroic-damage-profile-hydrator.js';
 import { hydrateNpcWeaponFromStatblockFallback } from './npc-statblock-item-fallback.js';
 import { hydrateNpcWeaponFromForceOrBespokeFallback } from './npc-statblock-bespoke-fallback.js';
@@ -149,7 +150,8 @@ export async function hydrateWorldNpcDamage(actor, { reason = 'manual' } = {}) {
   }
 
   if (updates.length) {
-    await actor.updateEmbeddedDocuments('Item', updates, {
+    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', updates, {
+      source: 'npc-damage-hydration',
       diff: true,
       recursive: true,
       render: false,

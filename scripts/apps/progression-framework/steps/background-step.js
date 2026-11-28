@@ -12,7 +12,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { BackgroundRegistry } from '/systems/foundryvtt-swse/scripts/registries/background-registry.js';
-import { normalizeBackground } from './step-normalizers.js';
+import { normalizeBackground } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/step-normalizers.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -20,7 +20,7 @@ import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { resolveSelectedClassFromShell, getClassSkills } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 import { buildPendingBackgroundContext } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
 import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
-import { buildClassSkillKeySet, buildSkillDisplay, buildSkillDisplays, normalizeSkillKey } from '../utils/skill-display.js';
+import { buildClassSkillKeySet, buildSkillDisplay, buildSkillDisplays, normalizeSkillKey } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-display.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
 import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 import { CustomPlanetBackgroundDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-planet-background-dialog.js';

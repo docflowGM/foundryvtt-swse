@@ -649,9 +649,9 @@ export class LightsaberConstructionEngine {
         }
 
         try {
-          await actor.unsetFlag?.('foundryvtt-swse', 'lightsaberConstructionDeferred');
-          await actor.unsetFlag?.('foundryvtt-swse', 'lightsaberConstructionAvailable');
-          await actor.unsetFlag?.('foundryvtt-swse', 'lightsaberConstructionPrompted');
+          await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'lightsaberConstructionDeferred', { recalc: false });
+          await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'lightsaberConstructionAvailable', { recalc: false });
+          await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'lightsaberConstructionPrompted', { recalc: false });
         } catch (_err) {}
 
         return {

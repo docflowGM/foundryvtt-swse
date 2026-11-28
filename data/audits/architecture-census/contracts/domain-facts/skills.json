@@ -1,0 +1,608 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "skills",
+ "name": "Skills, skill uses and skill challenges",
+ "kind": "mechanical",
+ "files": 87,
+ "runtimeSloc": 7059,
+ "runtimeFiles": 34,
+ "counts": {
+  "files": 87,
+  "runtimeModules": 34,
+  "runtimeSloc": 7059,
+  "reachability": {
+   "orphan-unreferenced": 3,
+   "reachable-static": 30,
+   "reachable-dynamic": 1
+  },
+  "nonRuntimeByRole": {
+   "asset": 1,
+   "data": 6,
+   "evidence-or-doc": 20,
+   "tool": 4,
+   "presentation-style": 2,
+   "presentation-template": 16,
+   "test": 4
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/utils/skill-normalization.js",
+   "consumers": 10,
+   "sloc": 171,
+   "role": "normalizer",
+   "exports": [
+    "canonicalizeSkillKey",
+    "normalizeSkillMap",
+    "CANONICAL_SKILL_DEFS"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 364
+  },
+  {
+   "path": "scripts/engine/skill-challenges/SkillChallengeState.js",
+   "consumers": 8,
+   "sloc": 156,
+   "role": "module",
+   "exports": [
+    "SkillChallengeState",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skills/SkillRules.js",
+   "consumers": 7,
+   "sloc": 104,
+   "role": "engine-or-service",
+   "exports": [
+    "SkillRules"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skills/skill-feat-resolver.js",
+   "consumers": 7,
+   "sloc": 523,
+   "role": "normalizer",
+   "exports": [
+    "SkillFeatResolver",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skill-challenges/SkillChallengeConstants.js",
+   "consumers": 6,
+   "sloc": 42,
+   "role": "module",
+   "exports": [
+    "SKILL_CHALLENGE_STATUS",
+    "SKILL_CHALLENGE_ROLL_OUTCOME",
+    "SKILL_CHALLENGE_EFFECT_TYPES",
+    "SKILL_CHALLENGE_FEAT_RULE_TYPES",
+    "SKILL_CHALLENGE_STORAGE_SCOPE",
+    "SKILL_CHALLENGE_SOURCE",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skill-challenges/SkillChallengeStore.js",
+   "consumers": 6,
+   "sloc": 94,
+   "role": "module-with-writes",
+   "exports": [
+    "registerSkillChallengeSettings",
+    "SkillChallengeStore",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/utils/extra-skill-use-registry.js",
+   "consumers": 5,
+   "sloc": 640,
+   "role": "registry",
+   "exports": [
+    "ExtraSkillUseRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 53
+  },
+  {
+   "path": "scripts/utils/skill-use-filter.js",
+   "consumers": 5,
+   "sloc": 330,
+   "role": "module",
+   "exports": [
+    "SkillUseFilter"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 1,
+   "ciTests": 53
+  },
+  {
+   "path": "scripts/engine/skill-challenges/SkillChallengeFeatHooks.js",
+   "consumers": 3,
+   "sloc": 227,
+   "role": "composition-wiring",
+   "exports": [
+    "SkillChallengeFeatHooks",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skill-challenges/SkillChallengeRules.js",
+   "consumers": 3,
+   "sloc": 95,
+   "role": "engine-or-service",
+   "exports": [
+    "SkillChallengeRules",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skills/class-shaper-lore.js",
+   "consumers": 3,
+   "sloc": 22,
+   "role": "module",
+   "exports": [
+    "shaperClassLevel",
+    "isShaperLoreSkill",
+    "shaperLoreBonus",
+    "canApplyShaperLore"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/engine/skill-challenges/SkillChallengeEngine.js",
+   "consumers": 2,
+   "sloc": 252,
+   "role": "engine-or-service",
+   "exports": [
+    "SkillChallengeEngine",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/utils/skill-resolver.js",
+   "consumers": 2,
+   "sloc": 97,
+   "role": "normalizer",
+   "exports": [
+    "SKILL_NAME_TO_KEY",
+    "isSkillId",
+    "resolveSkillName",
+    "resolveSkillKey",
+    "resolveSkillId"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 57
+  },
+  {
+   "path": "scripts/engine/skill-challenges/SkillChallengeEffectResolver.js",
+   "consumers": 1,
+   "sloc": 160,
+   "role": "normalizer",
+   "exports": [
+    "SkillChallengeEffectResolver",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skill-challenges/SkillChallengeRollAdapter.js",
+   "consumers": 1,
+   "sloc": 212,
+   "role": "module-with-writes",
+   "exports": [
+    "SkillChallengeRollAdapter",
+    "default"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skills/extra-skill-use-registry.js",
+   "consumers": 1,
+   "sloc": 111,
+   "role": "registry",
+   "exports": [
+    "ExtraSkillUseRegistry",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skills/ranked-skills-engine.js",
+   "consumers": 1,
+   "sloc": 113,
+   "role": "engine-or-service",
+   "exports": [
+    "calculateSkillPointGrant",
+    "getSkillRankCost",
+    "getSkillRankCap",
+    "canTrainSkill",
+    "addRank",
+    "deriveTrainedFromRanks",
+    "isRankedModeEnabled"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skills/rules/armor-rule.js",
+   "consumers": 1,
+   "sloc": 18,
+   "role": "engine-or-service",
+   "exports": [
+    "armorRule"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skills/rules/condition-rule.js",
+   "consumers": 1,
+   "sloc": 27,
+   "role": "engine-or-service",
+   "exports": [
+    "conditionRule"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skills/rules/environment-rule.js",
+   "consumers": 1,
+   "sloc": 20,
+   "role": "engine-or-service",
+   "exports": [
+    "environmentRule"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skills/rules/feat-species-rule.js",
+   "consumers": 1,
+   "sloc": 4,
+   "role": "engine-or-service",
+   "exports": [
+    "featSpeciesRule"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skills/rules/index.js",
+   "consumers": 1,
+   "sloc": 26,
+   "role": "composition-wiring",
+   "exports": [
+    "runRulePipeline"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skills/rules/retry-rule.js",
+   "consumers": 1,
+   "sloc": 16,
+   "role": "engine-or-service",
+   "exports": [
+    "retryRule"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skills/rules/substitution-rule.js",
+   "consumers": 1,
+   "sloc": 4,
+   "role": "engine-or-service",
+   "exports": [
+    "substitutionRule"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/skills/rules/training-rule.js",
+   "consumers": 1,
+   "sloc": 21,
+   "role": "engine-or-service",
+   "exports": [
+    "trainingRule"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/skills/skill-uses.js",
+   "sloc": 2617,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/utils/extra-skill-use-registry.js",
+   "sloc": 640,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/skills/skill-feat-resolver.js",
+   "sloc": 523,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/utils/skill-use-filter.js",
+   "sloc": 330,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/skill-challenges/SkillChallengeEngine.js",
+   "sloc": 252,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/skills/skill-feat-rule-resolver.js",
+   "sloc": 244,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/skill-challenges/SkillChallengeFeatHooks.js",
+   "sloc": 227,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/skill-challenges/SkillChallengeRollAdapter.js",
+   "sloc": 212,
+   "reach": "reachable-dynamic"
+  },
+  {
+   "path": "scripts/sheets/v2/character-sheet/custom-skills-ui.js",
+   "sloc": 206,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/skill-modifier-breakdown-app.js",
+   "sloc": 195,
+   "reach": "orphan-unreferenced"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/skills/skill-uses.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 2617,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/skill-modifier-breakdown-app.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 195,
+   "tests": 0
+  },
+  {
+   "path": "scripts/config/skills.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 52,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 13,
+  "progression": 7,
+  "abilities-effects": 4,
+  "rolls": 4,
+  "actor-core": 3,
+  "classes": 3,
+  "chat": 3,
+  "combat": 3,
+  "ui-shell": 1,
+  "houserules": 1,
+  "feats": 1,
+  "force": 1,
+  "talents": 1,
+  "equipment": 1
+ },
+ "dependedOnByDomains": {
+  "ui-shell": 17,
+  "actor-core": 4,
+  "feats": 4,
+  "rolls": 4,
+  "progression": 3,
+  "houserules": 3,
+  "npc-followers": 2,
+  "mentor-suggestion": 2,
+  "vehicles": 2,
+  "dev-tooling": 1,
+  "infrastructure": 1,
+  "data-registries": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/skills/skill-attempt-registry.js",
+     "domain": "skills",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      95
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A06-settings-get-in-engines",
+   "invariant": "A-06",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/skill-challenges/SkillChallengeStore.js",
+     "domain": "skills",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      62
+     ]
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "skill-total",
+   "otherDomains": [
+    "combat",
+    "infrastructure",
+    "mentor-suggestion",
+    "progression",
+    "rolls"
+   ],
+   "sites": [
+    "scripts/engine/skills/skill-feat-resolver.js:210 getActorSkillTotal"
+   ]
+  },
+  {
+   "responsibility": "price-computation",
+   "otherDomains": [
+    "combat",
+    "customization",
+    "droids",
+    "equipment",
+    "feats",
+    "mentor-suggestion",
+    "store-economy"
+   ],
+   "sites": [
+    "scripts/engine/skills/ranked-skills-engine.js:77 getSkillRankCost"
+   ]
+  },
+  {
+   "responsibility": "feat-talent-grant",
+   "otherDomains": [
+    "npc-followers",
+    "progression"
+   ],
+   "sites": [
+    "scripts/engine/skill-challenges/SkillChallengeEngine.js:226 applyRecoveryFeat"
+   ]
+  },
+  {
+   "responsibility": "modifier-aggregation",
+   "otherDomains": [
+    "abilities-effects",
+    "combat",
+    "equipment",
+    "feats",
+    "rolls",
+    "species"
+   ],
+   "sites": [
+    "scripts/engine/skills/skill-feat-rule-resolver.js:207 collectSkillModifiers",
+    "scripts/engine/skills/skill-feat-rule-resolver.js:212 collectExtraSkillUseModifiers"
+   ]
+  }
+ ],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "ExtraSkillUseRegistry",
+   "files": [
+    "scripts/engine/skills/extra-skill-use-registry.js",
+    "scripts/utils/extra-skill-use-registry.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "ready",
+   "sites": [
+    "scripts/utils/skill-resolver.js:58"
+   ]
+  },
+  {
+   "name": "init",
+   "sites": [
+    "scripts/utils/skill-use-filter.js:557"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "docs/audits/generated/skill-challenge-complete-report.json",
+  "docs/audits/generated/skill-challenge-complete-report.md",
+  "docs/audits/generated/skill-challenge-effects-report.json",
+  "docs/audits/generated/skill-challenge-effects-report.md",
+  "docs/audits/generated/skill-challenge-manual-tracker-report.json",
+  "docs/audits/generated/skill-challenge-manual-tracker-report.md",
+  "docs/audits/generated/skill-challenge-readiness-report.json",
+  "docs/audits/generated/skill-challenge-readiness-report.md",
+  "docs/audits/generated/skill-challenge-roll-integration-report.json",
+  "docs/audits/generated/skill-challenge-roll-integration-report.md",
+  "docs/audits/skill-challenge-complete.md",
+  "docs/audits/skill-challenge-effects.md",
+  "docs/audits/skill-challenge-manual-tracker.md",
+  "docs/audits/skill-challenge-roll-integration.md",
+  "docs/audits/skill-roll-dialog-base-authority.md",
+  "docs/design/skill-challenge-complete-phase35f.md",
+  "docs/design/skill-challenge-effects-phase35d.md",
+  "docs/design/skill-challenge-manual-tracker-phase35b.md",
+  "docs/design/skill-challenge-roll-integration-phase35c.md",
+  "docs/design/skill-challenge-system-fit.md"
+ ],
+ "tests": [
+  "tests/class-phase-6f9-shaper-lore.test.mjs",
+  "tests/shield-recharge-skill-dispatch-authority.test.mjs",
+  "tests/skill-uses-ability-authority.test.mjs",
+  "tests/vehicle-crew-recharge-shields-routing.test.mjs"
+ ]
+}

@@ -78,8 +78,8 @@ async function normalizeDualWeaponMastery(item, options = {}) {
 }
 
 export function registerDualWeaponMasteryNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeDualWeaponMastery(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeDualWeaponMastery(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeDualWeaponMastery(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeDualWeaponMastery(item, options) : false);
   SWSELogger.log('[DualWeaponMasteryNormalization] Hooks registered');
 }
 

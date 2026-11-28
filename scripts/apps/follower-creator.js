@@ -52,6 +52,10 @@ import {
     buildFollowerCreationPreflight
 } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-mutation-planning.js";
 
+// Lazy: the materializer reaches ActorEngine/DerivedCalculator; keep FollowerCreator out of that static import cycle.
+const materializeFollowerSpeciesLazy = async (follower, mutation) =>
+    (await import("/systems/foundryvtt-swse/scripts/domain/followers/follower-species-materialization.js")).materializeFollowerSpecies(follower, mutation);
+
 export class FollowerCreator {
 
     // CORRECTION — runtime-only in-flight guard for concurrent duplicate
@@ -539,6 +543,14 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @returns {boolean} True if feat was added successfully
      */
     static async _addFeatByName(follower, featName, grantMetadata = null) {
+        // Folded from follower-npc-sheet-parity-hotfix: a follower never receives a feat it already owns (same normalized name).
+        const dedupeKey = (v) => String(v || '').trim().toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '');
+        const target = dedupeKey(featName);
+        if (Array.from(follower?.items || []).some(item => item?.type === 'feat' && dedupeKey(item.name) === target)) return false;
+        return this._addFeatByNameBase(follower, featName, grantMetadata);
+    }
+
+    static async _addFeatByNameBase(follower, featName, grantMetadata = null) {
         try {
             if (!follower || !featName) return false;
             const normalizedName = String(featName).trim();
@@ -1290,6 +1302,12 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @returns {Promise<Actor|null>} Created follower actor or null on error
      */
     static async createFollowerFromMutation(owner, followerMutation) {
+        const follower = await this._createFollowerFromMutationBase(owner, followerMutation);
+        if (follower) await materializeFollowerSpeciesLazy(follower, followerMutation);
+        return follower;
+    }
+
+    static async _createFollowerFromMutationBase(owner, followerMutation) {
         const finalizationToken = resolveFollowerFinalizationToken(followerMutation);
         const guardKey = buildFollowerFinalizationGuardKey(owner?.id, finalizationToken);
 
@@ -1497,7 +1515,13 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @param {{report?: object}} [options]
      * @returns {Promise<boolean>} True if successful, false otherwise
      */
-    static async updateFollowerFromMutation(follower, followerMutation, options = {}) {
+    static async updateFollowerFromMutation(follower, followerMutation, ...rest) {
+        const success = await this._updateFollowerFromMutationBase(follower, followerMutation, ...rest);
+        if (success) await materializeFollowerSpeciesLazy(follower, followerMutation);
+        return success;
+    }
+
+    static async _updateFollowerFromMutationBase(follower, followerMutation, options = {}) {
         const report = (options && typeof options.report === 'object' && options.report !== null) ? options.report : {};
 
         // Snapshot the follower before any mutation so a failure partway through (core state committed via ActorEngine.updateActor, then

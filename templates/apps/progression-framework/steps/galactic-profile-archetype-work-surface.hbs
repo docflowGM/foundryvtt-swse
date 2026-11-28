@@ -1,52 +1,100 @@
-<div class="prog-galactic-profile prog-galactic-profile--archetype">
-  <header class="prog-profile-header">
+<div class="prog-galactic-profile prog-galactic-profile--archetype gpux">
+  <header class="gpux-header">
     <div>
-      <div class="eyebrow">Galactic Profile</div>
-      <h2>Archetype Profile</h2>
-      <p>Choose the packaged build. Hover a holo-card to reveal the description, mentor line, and attribute spread.</p>
+      <div class="gpux-eyebrow">Galactic Profiles / Character Creation</div>
+      <h2>Choose your path</h2>
+      <p>Explore the profiles below. Select the character concept you want to play.</p>
     </div>
-    <div class="prog-profile-flow">CLASS → ARCHETYPE → REVIEW</div>
+    <span class="gpux-stage" aria-label="Profile selection, stage one of two">01 / 02</span>
   </header>
 
-  <nav class="prog-profile-substeps" aria-label="Galactic Profile route">
-    <div class="profile-substep is-done"><b>01</b><span>Class</span><em>{{#if selectedClass}}{{selectedClass.name}}{{else}}Selected{{/if}}</em></div>
-    <div class="profile-substep is-active {{#if route.archetypeDone}}is-done{{/if}}"><b>02</b><span>Archetype</span><em>{{#if route.archetypeDone}}Locked{{else}}Select{{/if}}</em></div>
-    <div class="profile-substep {{#if route.reviewDone}}is-done{{/if}}"><b>03</b><span>Review</span><em>Manifest</em></div>
-  </nav>
-
-  <section class="prog-profile-class-strip prog-profile-class-strip--compact" aria-label="Profile classes">
-    {{#each classes}}
-      <button type="button" class="prog-profile-class-card {{#if selected}}is-selected{{else}}is-dimmed{{/if}}" data-action="profile-select-class" data-profile-class-id="{{id}}">
-        <span class="profile-card-index">{{index}}</span>
-        <span class="holo-img holo-img--class"><img src="{{image}}" alt="{{name}}" /></span>
-        <span class="class-copy"><strong>{{name}}</strong><em>{{profileCountLabel}}</em></span>
+  <div class="gpux-toolbar">
+    <nav class="gpux-class-filters" aria-label="Browse profiles by starting class">
+      <button type="button" class="gpux-filter {{#if allClassesBrowsing}}is-active{{/if}}"
+        data-action="profile-filter-class" data-profile-class-id="all"
+        aria-pressed="{{#if allClassesBrowsing}}true{{else}}false{{/if}}">
+        All classes <small>{{allProfileCount}}</small>
       </button>
-    {{/each}}
-  </section>
+      {{#each classes}}
+        <button type="button" class="gpux-filter {{#if browsing}}is-active{{/if}}"
+          data-action="profile-filter-class" data-profile-class-id="{{id}}"
+          aria-pressed="{{#if browsing}}true{{else}}false{{/if}}">
+          {{name}} <small>{{count}}</small>
+        </button>
+      {{/each}}
+    </nav>
+    <label class="gpux-search">
+      <span class="sr-only">Search Galactic Profiles</span>
+      <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
+      <input type="search" data-profile-gallery-search value="{{gallerySearch}}"
+        placeholder="Search profiles, species or roles" autocomplete="off" />
+    </label>
+  </div>
 
-  <section class="prog-profile-archetype-grid" aria-label="Archetypes">
-    {{#each archetypes}}
-      <button type="button" class="prog-profile-archetype-card {{#if selected}}is-selected{{/if}}" data-action="profile-select-template" data-profile-template-id="{{id}}">
-        <span class="holo-img holo-img--archetype"><img src="{{image}}" alt="{{name}}" /></span>
-        <span class="archetype-name">
-          <strong>{{archetype}}</strong>
-          <em>{{species}}{{#if background}} · {{background}}{{/if}}</em>
-        </span>
-        <span class="archetype-overlay">
-          <span class="archetype-overlay__kicker">{{className}} Profile</span>
-          <strong>{{archetype}}</strong>
-          {{#if quote}}<em>“{{quote}}”</em>{{/if}}
-          <span class="archetype-description">{{description}}</span>
-          {{#if roles}}
-            <span class="profile-role-tags">{{#each roles}}<i>{{this}}</i>{{/each}}</span>
-          {{/if}}
-          <span class="profile-abilities">
-            {{#each abilities}}
-              <span class="profile-ability"><b class="swse-ability-label swse-ability-label--{{key}}">{{label}}</b> {{score}} <i class="mod-{{modClass}}">({{mod}})</i></span>
-            {{/each}}
-          </span>
-        </span>
-      </button>
-    {{/each}}
-  </section>
+  <div class="gpux-browser-layout">
+    <section class="gpux-gallery" aria-label="Available Galactic Profiles">
+      <header class="gpux-gallery-heading">
+        <div><strong>{{browseLabel}}</strong><span>Click an illustrated profile to preview it</span></div>
+        <span data-profile-gallery-results aria-live="polite">{{totalProfiles}} profiles found</span>
+      </header>
+      <div class="gpux-cards">
+        {{#each archetypes}}
+          <button type="button"
+            class="gpux-card prog-profile-archetype-card {{#if selected}}is-selected{{/if}}"
+            data-action="profile-select-template" data-profile-template-id="{{id}}"
+            data-profile-search-text="{{searchText}}"
+            aria-pressed="{{#if selected}}true{{else}}false{{/if}}"
+            aria-label="{{archetype}}. {{className}}. {{description}}">
+            <span class="gpux-card-art holo-img" aria-hidden="true">
+              <img src="{{image}}" alt="" loading="lazy" decoding="async" />
+            </span>
+            <span class="gpux-card-info">
+              <strong>{{archetype}}</strong>
+              <em>{{className}}{{#if species}} / {{species}}{{/if}}</em>
+            </span>
+            {{#if selected}}
+              <span class="gpux-card-selected" aria-hidden="true"><i class="fas fa-check"></i> Selected</span>
+            {{/if}}
+          </button>
+        {{/each}}
+      </div>
+      {{#unless allProfileCount}}
+        <p class="gpux-empty" role="status">No Galactic Profiles are available for this character type.</p>
+      {{/unless}}
+      <p class="gpux-empty" data-profile-gallery-empty hidden>No profiles match this search. Clear your search or choose another class.</p>
+    </section>
+
+    <aside class="gpux-preview" aria-label="Selected Galactic Profile preview">
+      {{#if selectedPreview}}
+        <div class="gpux-eyebrow">Your selected character concept</div>
+        <h3>{{selectedPreview.archetype}}</h3>
+        <p class="gpux-preview-class">{{selectedPreview.className}}{{#if selectedPreview.species}} / {{selectedPreview.species}}{{/if}}</p>
+        <p class="gpux-description">{{selectedPreview.description}}</p>
+        {{#if selectedPreview.roles}}
+          <div class="gpux-tags" aria-label="Character roles">
+            {{#each selectedPreview.roles}}<span>{{this}}</span>{{/each}}
+          </div>
+        {{/if}}
+        <h4>Starting attributes</h4>
+        <div class="gpux-abilities">
+          {{#each selectedPreview.abilities}}
+            <span class="gpux-ability"><b>{{label}}</b><strong>{{score}}</strong><small class="mod-{{modClass}}">{{mod}}</small></span>
+          {{/each}}
+        </div>
+        {{#if selectedPreview.quote}}
+          <div class="gpux-mentor-line">
+            <strong>Mentor's insight</strong>
+            <blockquote>{{selectedPreview.quote}}</blockquote>
+          </div>
+        {{/if}}
+        <p class="gpux-next-hint"><i class="fas fa-check-circle"></i> Profile selected. Choose <strong>Next</strong> below to review its starting package.</p>
+      {{else}}
+        <div class="gpux-preview-empty">
+          <i class="fas fa-id-card" aria-hidden="true"></i>
+          <h3>Select a profile</h3>
+          <p>Choose an illustrated card to see its abilities, playstyle and mentor guidance here.</p>
+        </div>
+      {{/if}}
+    </aside>
+  </div>
 </div>

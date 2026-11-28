@@ -24,7 +24,7 @@
 import {
   normalizeClass, normalizeSpecies, normalizeAttributes, normalizeSkills, normalizeFeats, normalizeTalents,
   normalizeLanguages, normalizeBackground
-} from '../../../apps/progression-framework/steps/step-normalizers.js';
+} from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/step-normalizers.js';
 import { buildDroidDraft } from '../../../domain/droids/droid-draft-builder.js';
 import { getPCDroidAllowedHeroicClasses } from '../droids/droid-trait-rules.js';
 

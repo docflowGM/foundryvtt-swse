@@ -8,6 +8,7 @@
  */
 
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 function canonicalSkillKey(value) {
   const firstScalar = (input) => {
@@ -98,7 +99,7 @@ function canonicalSkillKey(value) {
 
   const athleticsComponents = new Set(['acrobatics', 'climb', 'jump', 'swim']);
   if (athleticsComponents.has(resolved)) {
-    try { if (game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true) return 'athletics'; } catch { /* off */ }
+    if (HouseRuleService.getBoolean('athleticsConsolidation', false)) return 'athletics';
   }
   return resolved;
 }

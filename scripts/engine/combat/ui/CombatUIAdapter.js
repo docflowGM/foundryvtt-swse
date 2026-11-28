@@ -20,7 +20,6 @@
 import { isVehicleManagedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
-import { registerChatInteractionBridge } from "/systems/foundryvtt-swse/scripts/ui/chat/chat-interaction-bridge.js";
 
 export class CombatUIAdapter {
 
@@ -270,19 +269,5 @@ export class CombatUIAdapter {
     }
 
     await DamageSystem.applyToSelected(amount, { checkThreshold: true });
-  }
-
-  /* -------------------------------------------- */
-  /* CHAT EVENT INTEGRATION                       */
-  /* -------------------------------------------- */
-
-  /**
-   * Register chat message button listeners.
-   * Compatibility entry point; ChatInteractionBridge owns renderChatMessageHTML binding.
-   */
-  static registerChatListeners() {
-    // Chat button listeners are centralized in ChatInteractionBridge.
-    // This legacy method remains as a compatibility entry point.
-    return registerChatInteractionBridge();
   }
 }

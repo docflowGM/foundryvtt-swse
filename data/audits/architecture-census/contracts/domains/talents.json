@@ -1,0 +1,940 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-TAL",
+  "domain": "talents",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "Talents own talent/tree identity (TalentTreeDB, TalentRegistry, canonical UUID helpers), prerequisite data, eight active talent action modules and the custom talent tree workbench. Identity and membership are well tested; the action layer holds the largest A-02 concentration (72 direct writes in 11 files, none an exception), writes to other actors without a GM relay, reads the combatTurn hook arguments three different ways, mutates during render and in preUpdateActor, patches progression and GM-shell classes at runtime, and maintains a parallel bonus Force Point pool in a different flag scope from the one ActorEngine debits. No Foundry acceptance exists.",
+  "responsibilities": [
+    {
+      "id": "R-TAL-01",
+      "responsibility": "Canonical talent content",
+      "owner": {
+        "path": "data/canonical/talents.json",
+        "symbol": "(data)"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "docs/audits/phase-5c-post-cutover-handoff.md:15"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-TAL-02",
+      "responsibility": "Talent tree data access",
+      "owner": {
+        "path": "scripts/data/talent-tree-db.js",
+        "symbol": "TalentTreeDB"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/data/talent-tree-db.js:95"
+      ],
+      "tests": [
+        "tests/talent-phase-3f-tree-identity.test.mjs",
+        "tests/talent-phase-3g-runtime-identity.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-TAL-03",
+      "responsibility": "Talent tree membership (additive multi-source)",
+      "owner": {
+        "path": "scripts/engine/progression/talents/talent-tree-membership-authority.js",
+        "symbol": "getTalentMembership"
+      },
+      "status": [
+        "OBSERVED",
+        "PROPOSED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/engine/progression/talents/talent-tree-membership-authority.js:395",
+        "scripts/data/talent-tree-db.js:304"
+      ],
+      "tests": [
+        "tests/talent-tree-membership-authority-repair.test.mjs"
+      ],
+      "notes": "module lives under progression; PROPOSED to declare it talents-owned"
+    },
+    {
+      "id": "R-TAL-04",
+      "responsibility": "Talent lookup",
+      "owner": {
+        "path": "scripts/registries/talent-registry.js",
+        "symbol": "TalentRegistry"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/registries/talent-registry.js:45"
+      ],
+      "tests": [
+        "tests/talent-tree-registry-runtime.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-TAL-05",
+      "responsibility": "Talent source identity",
+      "owner": {
+        "path": "scripts/data/talent-source-identity.js",
+        "symbol": "canonicalTalentId"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/data/talent-source-identity.js:26"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-TAL-06",
+      "responsibility": "Talent prerequisite data",
+      "owner": {
+        "path": "scripts/data/authority/talent-prerequisite-authority.js",
+        "symbol": "(authority table)"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/data/authority/talent-prerequisite-authority.js:1"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-TAL-07",
+      "responsibility": "Active talent actions",
+      "owner": {
+        "path": "scripts/engine/talent/*-talent-actions.js",
+        "symbol": "SithTalentActions, ConsularTalentActions, ..."
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/talent/sith-talent-actions.js:296",
+        "scripts/engine/talent/consular-talent-actions.js:161",
+        "scripts/engine/talent/force-adept-talent-actions.js:313"
+      ],
+      "tests": [
+        "tests/force-v2-03b-talent-contracts.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-TAL-08",
+      "responsibility": "Lightsaber form state",
+      "owner": {
+        "path": "scripts/engine/talent/lightsaber-form-engine.js",
+        "symbol": "LightsaberFormEngine"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/talent/lightsaber-form-engine.js:138",
+        "scripts/engine/talent/lightsaber-form-engine.js:194"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-TAL-09",
+      "responsibility": "Bonus Force Point pool maintenance (parallel to FRC)",
+      "owner": {
+        "path": "scripts/engine/talent/guardian-spirit-actions.js",
+        "symbol": "GuardianSpiritActions"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/talent/guardian-spirit-actions.js:89",
+        "scripts/engine/talent/guardian-spirit-actions.js:127",
+        "scripts/sheets/v2/character-like-sheet.js:4666"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-TAL-10",
+      "responsibility": "Turn/encounter lifecycle for talent state",
+      "owner": {
+        "path": "scripts/engine/talent/sith-talent-actions.js",
+        "symbol": "SithTalentActions.registerHooks"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/talent/sith-talent-actions.js:795",
+        "scripts/engine/talent/jedi-prestige-talent-actions.js:459",
+        "scripts/engine/talent/lightsaber-talent-actions.js:736"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-TAL-11",
+      "responsibility": "Custom talent tree workbench and progression overlay",
+      "owner": {
+        "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js",
+        "symbol": "registerCustomTalentTreeProgressionOverlay"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:296",
+        "index.js:252"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-TAL-12",
+      "responsibility": "Custom content GM approval",
+      "owner": {
+        "path": "scripts/apps/talent-tree-workbench/custom-content-approval-service.js",
+        "symbol": "CustomContentApprovalService"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/apps/talent-tree-workbench/custom-content-approval-service.js:305"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-TAL-13",
+      "responsibility": "Minion/squad talent actions",
+      "owner": {
+        "path": "scripts/engine/talent/minion-actions-mechanics.js",
+        "symbol": "(module)"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/talent/minion-actions-mechanics.js:45",
+        "scripts/engine/talent/squad-actions-mechanics.js:67"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "TalentTreeDB",
+      "path": "scripts/data/talent-tree-db.js",
+      "line": 95,
+      "consumers": 29,
+      "contract": "build/byId/bySourceId, read-only"
+    },
+    {
+      "symbol": "TalentRegistry",
+      "path": "scripts/registries/talent-registry.js",
+      "line": 45,
+      "consumers": 22,
+      "contract": "read-only lookup"
+    },
+    {
+      "symbol": "canonicalTalentId",
+      "path": "scripts/data/talent-source-identity.js",
+      "line": 26,
+      "consumers": 13,
+      "contract": "pure identity helper"
+    },
+    {
+      "symbol": "getTalentMembership",
+      "path": "scripts/engine/progression/talents/talent-tree-membership-authority.js",
+      "line": 395,
+      "consumers": 1,
+      "contract": "additive membership merge, clearCache at 474"
+    },
+    {
+      "symbol": "LightsaberTalentActions",
+      "path": "scripts/engine/talent/lightsaber-talent-actions.js",
+      "line": 273,
+      "consumers": 7,
+      "contract": "Block/Deflect/Redirect/Riposte"
+    },
+    {
+      "symbol": "SithTalentActions",
+      "path": "scripts/engine/talent/sith-talent-actions.js",
+      "line": 296,
+      "consumers": 3,
+      "contract": "Sith talents + lifecycle hooks"
+    },
+    {
+      "symbol": "ConsularTalentActions",
+      "path": "scripts/engine/talent/consular-talent-actions.js",
+      "line": 161,
+      "consumers": 3,
+      "contract": "Consular talents"
+    },
+    {
+      "symbol": "ForceAdeptTalentActions",
+      "path": "scripts/engine/talent/force-adept-talent-actions.js",
+      "line": 313,
+      "consumers": 3,
+      "contract": "Force Adept talents"
+    },
+    {
+      "symbol": "GuardianSpiritActions",
+      "path": "scripts/engine/talent/guardian-spirit-actions.js",
+      "line": 22,
+      "consumers": 2,
+      "contract": "bonus FP pool read/write"
+    },
+    {
+      "symbol": "registerCustomTalentTreeProgressionOverlay",
+      "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js",
+      "line": 296,
+      "consumers": 1,
+      "contract": "patches TalentStep.prototype"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "data-registries",
+      "infrastructure",
+      "governance/ActorEngine",
+      "force services (ForcePointsService, DSPEngine, V2 spend)",
+      "rolls/RollEngine",
+      "chat/SWSEChat"
+    ],
+    "prohibited": [
+      "engine->UI (A-07)",
+      "patching progression/GM-shell classes (A-09)",
+      "writing other actors from a player client without GM relay"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/talent/sith-talent-actions.js",
+        "to": "scripts/apps/dialogs/swse-dialog-v2.js, scripts/apps/force-alchemy/force-alchemy-workbench-app.js",
+        "evidence": "domain-facts talents.json probeHits P-A07"
+      },
+      {
+        "from": "scripts/engine/talent/force-adept-talent-actions.js",
+        "to": "scripts/apps/force-alchemy/force-alchemy-workbench-app.js",
+        "evidence": "domain-facts talents.json probeHits P-A07"
+      },
+      {
+        "from": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js",
+        "to": "TalentStep.prototype (progression)",
+        "evidence": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:301"
+      },
+      {
+        "from": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js",
+        "to": "GMApprovalsSurfaceService/GMApprovalOperationsService/GMDatapad (ui-shell)",
+        "evidence": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:31"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-TAL-1",
+      "boundary": "TalentTreeDB identity -> membership",
+      "interface": "getTalentMembership(tree) -> members (additive)",
+      "status": [
+        "OBSERVED"
+      ]
+    },
+    {
+      "id": "C-TAL-2",
+      "boundary": "talent actions -> resource authorities (FP, DSS, HP)",
+      "interface": "ActorEngine.spendForcePoints / applyDamage / updateActor",
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ]
+    },
+    {
+      "id": "C-TAL-3",
+      "boundary": "workbench -> progression TalentStep",
+      "interface": "today prototype patch; PROPOSED tree-provider registry owned by progression",
+      "status": [
+        "OBSERVED",
+        "PROPOSED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-TAL-01",
+      "existingSource": "docs/audits/class-force-v2-integration-matrix-2026-11-22.md Decision A; tests/class-force-v2-direct-fp-writer-classification.test.mjs",
+      "claim": "every direct Force Point writer is pinned and classified",
+      "observed": "the guard scans only the normal balance system.forcePoints.value; six modules write the bonus pool bonusForcePoints outside it",
+      "evidence": [
+        "docs/audits/class-force-v2-integration-matrix-2026-11-22.md:9",
+        "tests/class-force-v2-direct-fp-writer-classification.test.mjs:12",
+        "scripts/engine/talent/guardian-spirit-actions.js:91",
+        "scripts/engine/force/force-executor.js:732"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-TAL-02",
+      "existingSource": "scripts/data/talent-tree-db.js header",
+      "claim": "ALL engines MUST use this DB instead of string matching on names",
+      "observed": "talent action modules gate on talent names (tree access itself is compliant)",
+      "evidence": [
+        "scripts/data/talent-tree-db.js:18",
+        "scripts/engine/talent/guardian-spirit-actions.js:149"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-TAL-01",
+      "item": "GM relay for cross-actor talent effects",
+      "source": "no socket/executeAsGM in scripts/engine/talent/*-talent-actions.js (grep)",
+      "status": "UNIMPLEMENTED"
+    },
+    {
+      "id": "U-TAL-02",
+      "item": "Progression tree-provider API replacing the TalentStep patch",
+      "source": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:296",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [
+    {
+      "item": "Which trees are Force talent trees for class-slot substitution",
+      "registerRef": "TALENT-RD-001"
+    },
+    {
+      "item": "Multiclass talent entitlement cadence",
+      "registerRef": "RECON-001 / RECON-005"
+    },
+    {
+      "item": "Name-keyed talent prerequisite collision",
+      "registerRef": "GP-RD-017"
+    },
+    {
+      "item": "Contracted Force Point talent uses",
+      "registerRef": "FP-RD-001..FP-RD-013"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "Affliction turn-start damage applied once, to the correct combatant",
+      "source": "F-TAL-003"
+    },
+    {
+      "item": "Master Advisor end-of-turn temporary Force Point granted",
+      "source": "F-TAL-003"
+    },
+    {
+      "item": "Player-client use of Sith/Consular/Force Adept talents that mark an enemy actor",
+      "source": "F-TAL-002"
+    },
+    {
+      "item": "Guardian Spirit claim then Force Point spend: bonus pool decrements and stays decremented after reload",
+      "source": "F-TAL-007"
+    },
+    {
+      "item": "Custom tree workbench trees appear in chargen TalentStep; effect wizard auto-open does not loop renders",
+      "source": "F-TAL-005, F-TAL-006"
+    },
+    {
+      "item": "Class/Force V2 matrix rows G1, H1, H2",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    }
+  ],
+  "findings": [
+    {
+      "category": "bypass-engine",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "72 direct actor/owned-item writes across 11 live talent files (all violations)",
+      "affectedFiles": [
+        "scripts/engine/talent/sith-talent-actions.js",
+        "scripts/engine/talent/consular-talent-actions.js",
+        "scripts/engine/talent/force-adept-talent-actions.js",
+        "scripts/engine/talent/lightsaber-talent-actions.js",
+        "scripts/engine/talent/sentinel-talent-actions.js",
+        "scripts/engine/talent/guardian-spirit-actions.js",
+        "scripts/engine/talent/lightsaber-form-engine.js",
+        "scripts/engine/talent/jedi-prestige-talent-actions.js",
+        "scripts/engine/talent/armor-talent-actions.js",
+        "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js",
+        "scripts/apps/talent-tree-workbench/custom-content-approval-service.js"
+      ],
+      "evidence": [
+        "scripts/engine/talent/sith-talent-actions.js:270",
+        "scripts/engine/talent/sith-talent-actions.js:520",
+        "scripts/engine/talent/sith-talent-actions.js:723",
+        "scripts/engine/talent/sith-talent-actions.js:855",
+        "scripts/engine/talent/consular-talent-actions.js:590",
+        "scripts/engine/talent/consular-talent-actions.js:1020",
+        "scripts/engine/talent/force-adept-talent-actions.js:284",
+        "scripts/engine/talent/force-adept-talent-actions.js:511",
+        "scripts/engine/talent/lightsaber-talent-actions.js:282",
+        "scripts/engine/talent/sentinel-talent-actions.js:505",
+        "scripts/engine/talent/guardian-spirit-actions.js:91",
+        "scripts/engine/talent/lightsaber-form-engine.js:194",
+        "scripts/engine/talent/jedi-prestige-talent-actions.js:371",
+        "scripts/engine/talent/armor-talent-actions.js:121",
+        "scripts/apps/talent-tree-workbench/custom-content-approval-service.js:305"
+      ],
+      "observed": "Per-file classification (all violations of A-02; no exception comment, no world document): sith 25 = 12 own usage/state flags (encounterUses, rapidAlchemy, channelAnger, stolenForm, wildSense), 7 flags on target actors, 6 unsets in lifecycle hooks; consular 12 = 9 own encounter/turn flags + 3 on ally/target actors; force-adept 8 = owned Force power item.update (284), 2 owned weapon flags (511, 529), 1 target flag, 4 own flags; lightsaber 7 = Block/Deflect/Redirect/Riposte own state; sentinel 5 = own state; guardian-spirit 4 = bonus FP pool (91, see F-TAL-007) + 3 usage flags; lightsaber-form-engine 4 = active form/reaction state; jedi-prestige 3 = own flags + prior actor in hook; armor 1 = Shield Expert state; effect wizard 2 = item flags during render (F-TAL-005); approval service 1 = owned talent item.update by GM. Most actions also make a separate ActorEngine call for the cost, so state and cost are two writes.",
+      "intendedOwnership": "ActorEngine (updateActor with flags paths; updateOwnedItems for owned items), one write per action.",
+      "contractRef": "A-02, R-TAL-07, INV-TAL-1",
+      "proposedSolution": "Introduce a talent-state helper over ActorEngine.updateActor (flags.foundryvtt-swse.talentState.<key>) and migrate file by file starting with sith/consular; fold the paired cost and state into one ActorEngine update; replace power.update/weapon.setFlag/item.update with ActorEngine.updateOwnedItems.",
+      "alternatives": "ActorEngine.setActorFlag/unsetActorFlag thin wrappers (keeps call shape, still single gate).",
+      "dependencies": [
+        "F-TAL-002 (cross-actor writes need a relay first)"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Static guard: no setFlag/unsetFlag/update on actor or owned items in scripts/engine/talent/** except via ActorEngine; extend force-v2-03b-talent-contracts to assert one ActorEngine call per action.",
+      "foundryAcceptance": "Representative talent from each module used by a player-owned character.",
+      "scope": "L",
+      "simplificationBenefit": "Single mutation gate; atomic cost+state",
+      "risk": "Large surface; flag path changes need a migration or dual-read",
+      "perfImpact": "low",
+      "id": "F-TAL-001"
+    },
+    {
+      "category": "ownership-violation",
+      "severity": "high",
+      "status": "suspected",
+      "title": "Cross-actor flag writes from the acting client without a GM relay",
+      "affectedFiles": [
+        "scripts/engine/talent/sith-talent-actions.js",
+        "scripts/engine/talent/consular-talent-actions.js",
+        "scripts/engine/talent/force-adept-talent-actions.js",
+        "scripts/engine/talent/jedi-prestige-talent-actions.js"
+      ],
+      "evidence": [
+        "scripts/engine/talent/sith-talent-actions.js:478",
+        "scripts/engine/talent/sith-talent-actions.js:575",
+        "scripts/engine/talent/sith-talent-actions.js:676",
+        "scripts/engine/talent/sith-talent-actions.js:747",
+        "scripts/engine/talent/sith-talent-actions.js:760",
+        "scripts/engine/talent/sith-talent-actions.js:783",
+        "scripts/engine/talent/consular-talent-actions.js:351",
+        "scripts/engine/talent/consular-talent-actions.js:449",
+        "scripts/engine/talent/consular-talent-actions.js:547",
+        "scripts/engine/talent/force-adept-talent-actions.js:630",
+        "scripts/engine/talent/jedi-prestige-talent-actions.js:468"
+      ],
+      "observed": "Flags are set on target/ally actors (pendingAfflictions, bondedMount, cripplingStrike, sithCommander.*, Adept Negotiator, pendingMasterAdvisorForcePoint, unsettlingPresence) directly from the client that runs the action. No socket, executeAsGM or GM relay exists in any talent action file. A player normally lacks update permission on enemy actors, so these writes are expected to fail for players; not run in Foundry.",
+      "intendedOwnership": "ActorEngine with a GM-authoritative relay for documents the user does not own.",
+      "contractRef": "A-02, U-TAL-01",
+      "proposedSolution": "Route cross-actor effects through a GM relay (existing project socket/GM-operation service if present, else a new ActorEngine.requestGmMutation) and store effects as ActiveEffects or target-owned records written by the GM.",
+      "alternatives": "Store the effect on the source actor and resolve it on the target at read time.",
+      "dependencies": [
+        "governance (relay)"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Shim test with a non-owner user asserting the relay is used.",
+      "foundryAcceptance": "Player uses Affliction / Crippling Strike on a GM-owned NPC.",
+      "scope": "M",
+      "simplificationBenefit": "Removes silent player-side failures",
+      "risk": "Requires a GM online",
+      "perfImpact": "none",
+      "id": "F-TAL-002"
+    },
+    {
+      "category": "conflicting-interface",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "combatTurn arguments read three different ways; Master Advisor reads a field the hook does not carry",
+      "affectedFiles": [
+        "scripts/engine/talent/sith-talent-actions.js",
+        "scripts/engine/talent/jedi-prestige-talent-actions.js",
+        "scripts/engine/talent/lightsaber-talent-actions.js"
+      ],
+      "evidence": [
+        "scripts/engine/talent/sith-talent-actions.js:795",
+        "scripts/engine/talent/sith-talent-actions.js:797",
+        "scripts/engine/talent/jedi-prestige-talent-actions.js:459",
+        "scripts/engine/talent/jedi-prestige-talent-actions.js:461",
+        "scripts/engine/talent/lightsaber-talent-actions.js:736",
+        "scripts/engine/talent/lightsaber-talent-actions.js:738",
+        "scripts/infrastructure/hooks/combat-hooks.js:267"
+      ],
+      "observed": "The project's own combat hooks treat combatTurn as (combat, updateData, updateOptions). Sith reads combat.combatant; jedi-prestige reads arg2.combatant / arg2.actor (updateData has only round/turn, so priorActor is always null and the Master Advisor pending Force Point is never delivered); lightsaber reads arg3.combatant then falls back to combat.combatant. Whether combat.combatant is the ending or starting combatant at hook time determines whether Affliction damage and Block/Deflect resets hit the right actor; that depends on Foundry v13 call timing and is not verified. The listeners are also not gated to one client.",
+      "intendedOwnership": "One combat-turn event service (combat domain) that emits {combat, previousCombatant, currentCombatant} once on the responsible GM.",
+      "contractRef": "A-08, R-TAL-10",
+      "proposedSolution": "Subscribe talent lifecycle to a normalized swse turn event (or the existing updateCombat + isResponsibleGm pattern used by scripts/infrastructure/hooks/force-power-hooks.js:135) and use combat.previous / combat.combatant explicitly.",
+      "alternatives": "",
+      "dependencies": [
+        "combat domain turn event"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Shim test driving a turn change asserting prior/current resolution for all three listeners.",
+      "foundryAcceptance": "Advance turns with Affliction pending and Master Advisor pending.",
+      "scope": "S",
+      "simplificationBenefit": "One turn-boundary contract",
+      "risk": "Behavior change for currently-firing paths",
+      "perfImpact": "low",
+      "id": "F-TAL-003"
+    },
+    {
+      "category": "multiple-writers",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Ungated deleteCombat cleanup and writes inside preUpdateActor",
+      "affectedFiles": [
+        "scripts/engine/talent/sith-talent-actions.js"
+      ],
+      "evidence": [
+        "scripts/engine/talent/sith-talent-actions.js:823",
+        "scripts/engine/talent/sith-talent-actions.js:830",
+        "scripts/engine/talent/sith-talent-actions.js:838",
+        "scripts/engine/talent/sith-talent-actions.js:850"
+      ],
+      "observed": "deleteCombat runs on every client; each loops combatants and issues unsetFlag/updateActor (non-owners error, caught for the whole loop). preUpdateActor awaits unsetFlag and a chat post while another update is in flight (Foundry does not await pre-hooks).",
+      "intendedOwnership": "Responsible-GM lifecycle service; no writes in pre-hooks.",
+      "contractRef": "A-08",
+      "proposedSolution": "Gate on isResponsibleGm(); move Crippling Strike cleanup to updateActor (post) with the same gate.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Shim test: two users, one cleanup write.",
+      "foundryAcceptance": "End combat with two clients connected.",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low",
+      "perfImpact": "low",
+      "id": "F-TAL-004"
+    },
+    {
+      "category": "ownership-violation",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Effect-wizard _onRender patch writes item flags during render",
+      "affectedFiles": [
+        "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js"
+      ],
+      "evidence": [
+        "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js:199",
+        "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js:125",
+        "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js:127"
+      ],
+      "observed": "SWSEItemSheet.prototype._onRender is replaced; the replacement calls maybeAutoOpenCustomTalentWizard, which marks the auto-open consumed with item.unsetFlag/setFlag; a flag write on an owned item triggers another sheet render.",
+      "intendedOwnership": "UI-only state (wizard presented) in session/client memory, not document flags (OSI performance rule).",
+      "contractRef": "A-08, A-04, A-09",
+      "proposedSolution": "Keep \"presented\" in a client-side WeakSet/session map; consume the request flag via ActorEngine outside render (on wizard close).",
+      "alternatives": "",
+      "dependencies": [
+        "F-TAL-006"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Static guard against document writes inside _onRender/_prepareContext.",
+      "foundryAcceptance": "Open a workbench-created talent sheet; one render, wizard opens once.",
+      "scope": "S",
+      "simplificationBenefit": "Removes a render-write loop risk",
+      "risk": "Low",
+      "perfImpact": "medium",
+      "id": "F-TAL-005"
+    },
+    {
+      "category": "legacy-compat",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Runtime monkey-patches of progression and GM-shell classes from the workbench",
+      "affectedFiles": [
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js",
+        "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js",
+        "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js"
+      ],
+      "evidence": [
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:301",
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:308",
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:317",
+        "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:325",
+        "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js:199",
+        "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:31",
+        "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:64",
+        "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js:100"
+      ],
+      "observed": "Four TalentStep.prototype methods, SWSEItemSheet.prototype._onRender, four GM approval service statics and GMDatapad.prototype._getHomeBadgeCounts are wrapped at index.js:252-254. Legacy class A (live, active) violating A-09 and the progression-architecture \"no runtime patching\" rule.",
+      "intendedOwnership": "Progression exposes a tree-provider registry; GM approvals expose a request-source registry; item sheet exposes a panel extension point.",
+      "contractRef": "A-09, C-TAL-3",
+      "proposedSolution": "Add the three extension points in their owning domains and convert each wrapper to a registration; delete the patches.",
+      "alternatives": "",
+      "dependencies": [
+        "progression contract (B-PRG)",
+        "ui-shell contract"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Workbench overlay test asserting custom trees appear via the provider API.",
+      "foundryAcceptance": "Chargen with a custom tree; GM approval of custom content.",
+      "scope": "M",
+      "simplificationBenefit": "Removes 10 patched methods",
+      "risk": "Medium; workbench has no behavioural tests",
+      "perfImpact": "low",
+      "id": "F-TAL-006"
+    },
+    {
+      "category": "duplicate-authority",
+      "severity": "critical",
+      "status": "confirmed",
+      "title": "Guardian Spirit bonus FP pool in a different flag scope than the pool ActorEngine debits",
+      "affectedFiles": [
+        "scripts/engine/talent/guardian-spirit-actions.js",
+        "scripts/actors/base/swse-actor-base.js",
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/sheets/v2/character-like-sheet.js"
+      ],
+      "evidence": [
+        "scripts/engine/talent/guardian-spirit-actions.js:5",
+        "scripts/engine/talent/guardian-spirit-actions.js:91",
+        "scripts/engine/talent/guardian-spirit-actions.js:127",
+        "scripts/actors/base/swse-actor-base.js:447",
+        "scripts/actors/base/swse-actor-base.js:464",
+        "scripts/governance/actor-engine/actor-engine.js:2127",
+        "scripts/governance/actor-engine/actor-engine.js:2175",
+        "scripts/sheets/v2/character-like-sheet.js:4666"
+      ],
+      "observed": "GuardianSpiritActions writes actor.setFlag('swse','bonusForcePoints'), which SWSEActorBase.setFlag redirects to flags['foundryvtt-swse']. Every other writer (ActorEngine.spendForcePoints debit, Force Flow, force-adept, jedi-prestige, feats) writes the literal path flags.swse.bonusForcePoints. getFlag('swse') returns the foundryvtt-swse value first. After any Guardian Spirit claim or manual sheet adjustment, reads return the foundryvtt-swse pool: ActorEngine debits are written to flags.swse and never seen again (bonus points re-spendable) and later grants from other sources are hidden. spendBonusForcePoints also debits without a V2 receipt, queue or round-limit check. No test covers guardian-spirit-actions.js.",
+      "intendedOwnership": "FRC: one bonus-pool API in ActorEngine/ForcePointsService (grant, expire, spend via spendForcePoints), one storage path.",
+      "contractRef": "A-01, A-02, C-TAL-2, F-FRC-003",
+      "proposedSolution": "Route GuardianSpirit grant/adjust through a single ActorEngine bonus-pool grant API writing the same path as spendForcePoints; route negative manual adjustment through an explicit MANUAL_ADJUSTMENT path; add a migration that merges any flags[foundryvtt-swse].bonusForcePoints into the canonical path. Extend the direct-FP-writer guard to the bonus pool.",
+      "alternatives": "Change all writers to setFlag('swse') consistently (still leaves the spend bypass).",
+      "dependencies": [
+        "F-FRC-003"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Shim test: claim Guardian Spirit, spend via ActorEngine.spendForcePoints, assert pool decremented and getFlag returns the decremented pool.",
+      "foundryAcceptance": "Guardian Spirit claim then FP spend, reload, check pool and ledger.",
+      "scope": "S",
+      "simplificationBenefit": "One bonus-pool store",
+      "risk": "Existing worlds may already hold two copies; needs migration",
+      "perfImpact": "none",
+      "id": "F-TAL-007"
+    },
+    {
+      "category": "dependency",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "11 engine->UI imports in talent action modules",
+      "affectedFiles": [
+        "scripts/engine/talent/sith-talent-actions.js",
+        "scripts/engine/talent/force-adept-talent-actions.js",
+        "scripts/engine/talent/consular-talent-actions.js",
+        "scripts/engine/talent/lightsaber-talent-actions.js",
+        "scripts/engine/talent/sentinel-talent-actions.js",
+        "scripts/engine/talent/guardian-spirit-actions.js",
+        "scripts/engine/talent/jedi-prestige-talent-actions.js",
+        "scripts/engine/talent/lightsaber-form-engine.js",
+        "scripts/engine/talent/armor-talent-actions.js"
+      ],
+      "evidence": [
+        "scripts/engine/talent/lightsaber-talent-actions.js:16"
+      ],
+      "observed": "Nine modules import SwseDialogV2 and two import the Force Alchemy workbench app; lightsaber exposes LIGHTSABER_TALENT_IO as a seam already.",
+      "intendedOwnership": "Engine receives choices through an injected prompt port (as LIGHTSABER_TALENT_IO does).",
+      "contractRef": "A-07",
+      "proposedSolution": "Generalize the LIGHTSABER_TALENT_IO pattern into a talent prompt port registered by the UI layer.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Census probe P-A07 count reduction.",
+      "foundryAcceptance": "",
+      "scope": "M",
+      "simplificationBenefit": "Engine testable without UI",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-TAL-008"
+    },
+    {
+      "category": "consolidation",
+      "severity": "low",
+      "status": "suspected",
+      "title": "Tree membership is an additive 3-source union owned by a progression-path module",
+      "affectedFiles": [
+        "scripts/engine/progression/talents/talent-tree-membership-authority.js",
+        "scripts/data/talent-tree-db.js",
+        "scripts/engine/progression/talents/tree-authority.js",
+        "scripts/engine/progression/talents/TalentTreeRegistry.js"
+      ],
+      "evidence": [
+        "scripts/engine/progression/talents/talent-tree-membership-authority.js:1",
+        "scripts/engine/progression/talents/talent-tree-membership-authority.js:395",
+        "scripts/data/talent-tree-db.js:304"
+      ],
+      "observed": "Membership merges talent-side fields, a generated registry and tree claims (documented additive hydration). Correct for robustness but there is no declared single source, and disagreements are merged rather than reported. Three tree-related modules (membership authority, tree-authority, TalentTreeRegistry) live under progression.",
+      "intendedOwnership": "Talents domain declares membership derived from canonical talents.json treeId; others are hints with a drift report.",
+      "contractRef": "A-01, R-TAL-03",
+      "proposedSolution": "Declare owner in this contract, add a drift report test listing members contributed by only one source.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Drift report test.",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "Clear authority",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-TAL-009"
+    },
+    {
+      "category": "presentation-rules",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "3 direct ChatMessage.create in talent modules",
+      "affectedFiles": [
+        "scripts/engine/talent/guardian-spirit-actions.js",
+        "scripts/engine/talent/minion-actions-mechanics.js",
+        "scripts/engine/talent/squad-actions-mechanics.js"
+      ],
+      "evidence": [
+        "scripts/engine/talent/guardian-spirit-actions.js:283",
+        "scripts/engine/talent/minion-actions-mechanics.js:45",
+        "scripts/engine/talent/squad-actions-mechanics.js:67"
+      ],
+      "observed": "Direct creates; sith uses SWSEChat.postHTML (sith-talent-actions.js:91).",
+      "intendedOwnership": "scripts/chat/swse-chat.js",
+      "contractRef": "A-05",
+      "proposedSolution": "Use SWSEChat.postHTML.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-TAL-010"
+    },
+    {
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Unreachable legacy talent-effects cluster",
+      "affectedFiles": [
+        "scripts/engine/talent/talents.js",
+        "scripts/engine/talent/TalentNormalizerEngine.js",
+        "scripts/infrastructure/hooks/talent-effects-hooks.js",
+        "scripts/data/talent-relationship-registry.js"
+      ],
+      "evidence": [
+        "scripts/infrastructure/hooks/talent-effects-hooks.js:12",
+        "scripts/validate-mutation-sovereignty.js:18"
+      ],
+      "observed": "talents.js (TALENT_EFFECTS, 1,499 SLOC) and TalentNormalizerEngine are imported only by talent-effects-hooks.js, which has no importer; no pack/template reference found; listed in validate-mutation-sovereignty.js as a known file. Legacy class C candidate (talent-relationship-registry: static proof no runtime path).",
+      "intendedOwnership": "Feat/talent effect generation via FeatEffectApplier-style lifecycle if ever needed.",
+      "contractRef": "A-09",
+      "proposedSolution": "Owner confirms; delete the cluster and the sovereignty list entry.",
+      "alternatives": "Wire talent-effects-hooks if TALENT_EFFECTS is still intended (UNIMPLEMENTED integration).",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "~1.8k SLOC",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-TAL-011"
+    },
+    {
+      "category": "duplicate-authority",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Local Dark Side Score increment helpers in force-adept and sith actions",
+      "affectedFiles": [
+        "scripts/engine/talent/force-adept-talent-actions.js",
+        "scripts/engine/talent/sith-talent-actions.js"
+      ],
+      "evidence": [
+        "scripts/engine/talent/force-adept-talent-actions.js:265",
+        "scripts/engine/talent/sith-talent-actions.js:198"
+      ],
+      "observed": "Each computes DSPEngine.getNextValue and writes system.darkSide.value plus a differently shaped dspLog entry via ActorEngine.updateActor. DSPEngine has no mutation API. See F-FRC-004 for the full writer set.",
+      "intendedOwnership": "FRC Dark Side Score mutation API.",
+      "contractRef": "A-01, F-FRC-004",
+      "proposedSolution": "Use the FRC DSS API proposed in F-FRC-004.",
+      "alternatives": "",
+      "dependencies": [
+        "F-FRC-004"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "dsp-engine-behavior extended.",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-TAL-012"
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Talent documentation consolidation candidates",
+      "affectedFiles": [
+        "docs/audits/talent-phase-3f-identity-contract.md",
+        "docs/custom-talent-tree-workbench-phase-0.md"
+      ],
+      "evidence": [
+        "docs/audits/talent-phase-3f-identity-contract.md:22"
+      ],
+      "observed": "Phase-3 identity docs are accurate evidence; workbench phase-0 doc predates the patches. Candidates only; preserve owner adjudication packets (talent-feat-pass3b-*).",
+      "intendedOwnership": "B-TAL links them as evidence",
+      "contractRef": "",
+      "proposedSolution": "Link from B-TAL; annotate workbench doc with the A-09 status.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-TAL-013"
+    }
+  ]
+}

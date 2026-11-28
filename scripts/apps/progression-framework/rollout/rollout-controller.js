@@ -12,7 +12,7 @@
  * No alternate build engines, just feature gates on the main pipeline.
  */
 
-import { RolloutSettings } from './rollout-settings.js';
+import { RolloutSettings } from '/systems/foundryvtt-swse/scripts/engine/progression/rollout-settings.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 export class RolloutController {

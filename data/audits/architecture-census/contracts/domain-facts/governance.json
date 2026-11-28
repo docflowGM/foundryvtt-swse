@@ -1,0 +1,987 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "governance",
+ "name": "Sentinel, enforcement gates, integrity and mutation governance",
+ "kind": "infrastructure",
+ "files": 100,
+ "runtimeSloc": 15296,
+ "runtimeFiles": 86,
+ "counts": {
+  "files": 100,
+  "runtimeModules": 81,
+  "runtimeSloc": 14616,
+  "reachability": {
+   "orphan-unreferenced": 20,
+   "unreachable-importers-only": 34,
+   "reachable-static": 22,
+   "string-referenced-only": 1,
+   "reachable-dynamic": 4
+  },
+  "nonRuntimeByRole": {
+   "asset": 1,
+   "evidence-or-doc": 7,
+   "data": 1,
+   "presentation": 1,
+   "module": 4,
+   "test": 5
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/governance/sentinel/sentinel-core.js",
+   "consumers": 33,
+   "sloc": 587,
+   "role": "module",
+   "exports": [
+    "SentinelEngine",
+    "Sentinel"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 370
+  },
+  {
+   "path": "scripts/governance/integrity/missing-prereqs-tracker.js",
+   "consumers": 10,
+   "sloc": 93,
+   "role": "module",
+   "exports": [
+    "MissingPrereqsTracker"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 2,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/governance-system.js",
+   "consumers": 9,
+   "sloc": 140,
+   "role": "module",
+   "exports": [
+    "GovernanceSystem"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/integrity/prerequisite-integrity-checker.js",
+   "consumers": 6,
+   "sloc": 195,
+   "role": "module",
+   "exports": [
+    "PrerequisiteIntegrityChecker"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/snapshot/snapshot-service.js",
+   "consumers": 5,
+   "sloc": 313,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "SnapshotService"
+   ],
+   "writes": 6,
+   "actorEngineCalls": 7,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/enforcement/enforcement-policy.js",
+   "consumers": 4,
+   "sloc": 120,
+   "role": "module",
+   "exports": [
+    "EnforcementPolicy"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/mutation/MutationInterceptor.js",
+   "consumers": 4,
+   "sloc": 131,
+   "role": "module",
+   "exports": [
+    "MutationInterceptor"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/sentinel/mutation-integrity-layer.js",
+   "consumers": 4,
+   "sloc": 198,
+   "role": "module",
+   "exports": [
+    "MutationIntegrityLayer"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/integrity/severity-classifier.js",
+   "consumers": 3,
+   "sloc": 115,
+   "role": "module",
+   "exports": [
+    "SeverityClassifier"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-compendium-forensics.js",
+   "consumers": 3,
+   "sloc": 386,
+   "role": "module",
+   "exports": [
+    "getTraceId",
+    "observeFallback",
+    "registerCompendiumInteractionDiagnostic",
+    "CompendiumInteractionDiagnostic",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-sheet-guardrails.js",
+   "consumers": 3,
+   "sloc": 104,
+   "role": "presentation",
+   "exports": [
+    "SentinelSheetGuardrails"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/governance/snapshot/deletion-aware-patch.js",
+   "consumers": 3,
+   "sloc": 88,
+   "role": "compat-patch",
+   "exports": [
+    "flattenWithPaths",
+    "buildDeletionAwarePatch",
+    "applyFlatPatch"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/governance/mutation/mutation-errors.js",
+   "consumers": 2,
+   "sloc": 97,
+   "role": "module",
+   "exports": [
+    "MutationError",
+    "ProgressionValidationError",
+    "DeltaConflictError",
+    "MutationApplicationError",
+    "isMutationError",
+    "isFromLayer",
+    "categorizeError",
+    "getErrorMessage"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/mutation/mutation-normalization-service.js",
+   "consumers": 2,
+   "sloc": 162,
+   "role": "normalizer",
+   "exports": [
+    "MutationNormalizationService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-mall-cop.js",
+   "consumers": 2,
+   "sloc": 332,
+   "role": "module",
+   "exports": [
+    "SentinelMallCop"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/governance/snapshot/snapshot-restoration-plan.js",
+   "consumers": 2,
+   "sloc": 125,
+   "role": "module",
+   "exports": [
+    "SNAPSHOT_RESTORATION_SCOPE",
+    "SUPPORTED_SNAPSHOT_SCOPES",
+    "scopeIncludesItems",
+    "scopeIncludesEffects",
+    "scopeIncludesRootFields",
+    "scopeIncludesSystemAndFlags",
+    "buildActorRootRestorationPatch",
+    "deepEqualPlain",
+    "EXCLUDED_DOCUMENT_VERIFICATION_FIELDS",
+    "documentsMatch",
+    "buildEmbeddedDocumentRestorePlan"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/contracts/runtime-contract.js",
+   "consumers": 2,
+   "sloc": 135,
+   "role": "module",
+   "exports": [
+    "RuntimeContract"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 59
+  },
+  {
+   "path": "scripts/governance/enforcement/preflight-validator.js",
+   "consumers": 1,
+   "sloc": 236,
+   "role": "module",
+   "exports": [
+    "PreflightValidator"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/mutation/merge-mutations.js",
+   "consumers": 1,
+   "sloc": 270,
+   "role": "module",
+   "exports": [
+    "mergeMutationPlans",
+    "validateMutationPlan",
+    "simulateMerge"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/mutation/mutation-boundary-service.js",
+   "consumers": 1,
+   "sloc": 159,
+   "role": "engine-or-service",
+   "exports": [
+    "MutationBoundaryService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/sentinel/governance-diagnostics.js",
+   "consumers": 1,
+   "sloc": 172,
+   "role": "module",
+   "exports": [
+    "GovernanceDiagnostics",
+    "assertGovernanceCompliance",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 1,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-categories.js",
+   "consumers": 1,
+   "sloc": 137,
+   "role": "module",
+   "exports": [
+    "SENTINEL_CATEGORIES",
+    "getCategoryConfig",
+    "getAllCategories",
+    "validateCategoryAndSubcode"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-debug-api.js",
+   "consumers": 1,
+   "sloc": 179,
+   "role": "module",
+   "exports": [
+    "SentinelDebugAPI",
+    "installSentinelDebugAPI"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-init.js",
+   "consumers": 1,
+   "sloc": 31,
+   "role": "composition-wiring",
+   "exports": [
+    "initializeSentinelGovernance",
+    "installSentinelAPI"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-source-mapper.js",
+   "consumers": 1,
+   "sloc": 77,
+   "role": "normalizer",
+   "exports": [
+    "SentinelSourceMapper"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/governance/sentinel/sentinel-core.js",
+   "sloc": 587,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/governance/sentinel/enforcement-core.js",
+   "sloc": 531,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/governance/sentinel/v2-comprehensive-audit.js",
+   "sloc": 404,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-compendium-forensics.js",
+   "sloc": 386,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/governance/sentinel/appv2-auditor.js",
+   "sloc": 385,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/governance/sentinel/migration-auditor.js",
+   "sloc": 365,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/governance/sentinel/tab-diagnostics.js",
+   "sloc": 341,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-mall-cop.js",
+   "sloc": 332,
+   "reach": "reachable-dynamic"
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-layout-contract.js",
+   "sloc": 326,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/governance/snapshot/snapshot-service.js",
+   "sloc": 313,
+   "reach": "reachable-dynamic"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/governance/sentinel/enforcement-core.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 531,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/v2-comprehensive-audit.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 404,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/appv2-auditor.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 385,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/migration-auditor.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 365,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/tab-diagnostics.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 341,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-layout-contract.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 326,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-layout-debugger.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 312,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-layout-evaluator.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 312,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/mutation-adapter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 295,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/appv2-interaction-auditor.js",
+   "reach": "string-referenced-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 288,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/ui/slot-resolution-flow.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 286,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/layers/combat-layer.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 282,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/ui/rebuild-orchestrator.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 280,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/mutation/batch-1-validation.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 234,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sovereignty-enforcement.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 219,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentry.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 216,
+   "tests": 0
+  },
+  {
+   "path": "scripts/validation/archetype-validator.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 216,
+   "tests": 0
+  },
+  {
+   "path": "scripts/contracts/diagnostic-mode.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 212,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/enforcement/integrity-wiring-validator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 206,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/ui/integrity-dashboard.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 206,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-reporter.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 204,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/css-auditor.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 199,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/repair/actor-repair-engine.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 197,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/audit/audit-trail.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 180,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/governance-integration.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 180,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/investigator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 177,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-template-integrity.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 168,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/integrity/world-integrity-sweep.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 167,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-css-contract.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 163,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/integrity/prerequisite-integrity-tests.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 151,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/layers/utility-layer.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 147,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/enforcement/mutation-path-validator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 141,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/mutation-path-guard.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 127,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/ui/integrity-banner.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 126,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-sheet-hydration.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 122,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/transaction-verification.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 122,
+   "tests": 0
+  },
+  {
+   "path": "scripts/validation/validate-identity-engine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 119,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-update-atomicity.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 118,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-dashboard.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 114,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-roll-pipeline.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 107,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/layers/css-layer.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 101,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/enforcement/import-graph-validator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 99,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/integrity/drift-detector.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 96,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/enforcement/levelup-preflight-gate.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 96,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/layers/sheet-integration-layer.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 94,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/export/export-marking.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 91,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/enforcement/actor-engine-enforcement-gates.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 88,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/appv2-audit-runner.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 77,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/layers/data-layer.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 75,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/layers/hooks-mutation-layer.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 53,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/layers/promises-layer.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 50,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-auditors.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 50,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/layers/hooks-layer.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 49,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/sentinel-registry.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 39,
+   "tests": 0
+  },
+  {
+   "path": "scripts/governance/sentinel/hook-investigator.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 30,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 34,
+  "actor-core": 11,
+  "abilities-effects": 4,
+  "mentor-suggestion": 2,
+  "houserules": 2,
+  "ui-shell": 2,
+  "data-registries": 1,
+  "combat": 1,
+  "dev-tooling": 1,
+  "npc-followers": 1
+ },
+ "dependedOnByDomains": {
+  "actor-core": 18,
+  "infrastructure": 7,
+  "ui-shell": 7,
+  "combat": 2,
+  "progression": 2,
+  "talents": 1,
+  "dev-tooling": 1,
+  "store-economy": 1,
+  "mentor-suggestion": 1,
+  "holonet": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A16-module-caches",
+   "invariant": "A-16",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/governance/sentinel/sentinel-source-mapper.js",
+     "maps": 1,
+     "cacheMentions": 3,
+     "hasInvalidate": false
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [],
+ "exactClones": [
+  {
+   "tokens": 124,
+   "sites": [
+    "scripts/core/css-auditor.js:115 auditIcons",
+    "scripts/governance/sentinel/css-auditor.js:116 auditIcons"
+   ]
+  }
+ ],
+ "duplicateSymbolNames": [
+  {
+   "name": "auditCSSHealth",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditCSSVariable",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditForbiddenStyles",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditHidden",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditIcons",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditOverflow",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditStackingContext",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditZeroSize",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "ProgressionValidationError",
+   "files": [
+    "scripts/engine/progression/engine/manual-step-processor.js",
+    "scripts/governance/mutation/mutation-errors.js"
+   ]
+  },
+  {
+   "name": "runFullCSSAudit",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "ready",
+   "sites": [
+    "scripts/governance/sentinel/sentinel-compendium-forensics.js:527",
+    "scripts/governance/sentinel/sentinel-init.js:14",
+    "scripts/governance/sentinel/sentinel-mall-cop.js:455",
+    "scripts/governance/sentinel/sentinel-sheet-guardrails.js:152"
+   ]
+  },
+  {
+   "name": "renderSidebar",
+   "sites": [
+    "scripts/governance/sentinel/sentinel-compendium-forensics.js:316",
+    "scripts/governance/sentinel/sentinel-compendium-forensics.js:520"
+   ]
+  },
+  {
+   "name": "renderCompendiumDirectory",
+   "sites": [
+    "scripts/governance/sentinel/sentinel-compendium-forensics.js:315",
+    "scripts/governance/sentinel/sentinel-compendium-forensics.js:521",
+    "scripts/governance/sentinel/sentinel-compendium-forensics.js:526"
+   ]
+  },
+  {
+   "name": "swse.mutationAuthorized",
+   "sites": [
+    "scripts/governance/sentinel/mutation-integrity-layer.js:24"
+   ]
+  },
+  {
+   "name": "swse.mutationViolation",
+   "sites": [
+    "scripts/governance/sentinel/mutation-integrity-layer.js:25"
+   ]
+  },
+  {
+   "name": "swse-store-inventory-loaded",
+   "sites": [
+    "scripts/governance/sentinel/sentinel-mall-cop.js:33"
+   ]
+  },
+  {
+   "name": "swse-store-rendered",
+   "sites": [
+    "scripts/governance/sentinel/sentinel-mall-cop.js:38"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "docs/audits/v2-math-integrity-authority-ledger.md",
+  "docs/governance/PARTIAL_SUBPARTIAL_CONTRACT.md",
+  "docs/governance/ROW_TRANSFORMER_STANDARD.md"
+ ],
+ "tests": [
+  "tests/dsp-migration-mutation-pipeline.test.mjs",
+  "tests/phase2-reroll-outcome-integrity.test.mjs",
+  "tests/phase5-subtype-context-integrity.test.mjs",
+  "tests/sentinel-compendium-forensics-invariants.test.mjs",
+  "tests/snapshot-restoration-plan.test.mjs"
+ ]
+}

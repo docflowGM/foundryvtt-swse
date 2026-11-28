@@ -88,6 +88,8 @@ function emitWarning(logger, key, message, details = {}) {
   }
 }
 
+import { registerUiPort } from '/systems/foundryvtt-swse/scripts/utils/ui-ports.js';
+
 export class ShellMutationGuard {
   static install(host, { label = host?.constructor?.name ?? 'ShellHost', logger = null } = {}) {
     if (!host || host[SURFACE_OPTIONS_INSTALLED]) return host;
@@ -314,3 +316,5 @@ export class ShellMutationGuard {
     );
   }
 }
+
+registerUiPort('shellMutationGuard', ShellMutationGuard);

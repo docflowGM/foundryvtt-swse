@@ -71,24 +71,34 @@ export function getHeroicHalfLevel(actor) {
 }
 
 /**
- * Half-level for calculations that should respect:
- * - NPC statblock mode: use actor.system.level (legacy / printed)
- * - NPC progression mode: heroic levels only
- * - PCs: heroic levels (normally equals total)
+ * 3N-DC: ONE level authority, three distinct rules (Core Rulebook, Combat chapter; owner directive):
+ *   - SKILLS            use one-half CHARACTER level (heroic + nonheroic)       -> getHalfCharacterLevel
+ *   - PERSONAL DAMAGE   uses one-half HEROIC level                              -> getHalfHeroicLevel
+ *   - DEFENSES          use HEROIC level (getHeroicLevel, applied by DefenseCalculator)
+ * Statblock NPCs keep the published total (system.level) for both halves. An actor with no class items at all (sparse/legacy data) falls back to
+ * system.level rather than silently to zero.
  */
-export function getEffectiveHalfLevel(actor) {
-  const totalLevel = Number(actor?.system?.level) || 1;
-  const type = actor?.type;
+function isStatblockNpc(actor) {
+  return actor?.type === 'npc' && getNpcMode(actor) !== 'progression';
+}
 
-  if (type === 'npc') {
-    const mode = getNpcMode(actor);
-    if (mode !== 'progression') {return Math.floor(totalLevel / 2);}
-    return getHeroicHalfLevel(actor);
-  }
+function sparseTotal(actor) {
+  return Number(actor?.system?.level) || 1;
+}
 
-  const { heroicLevel, totalLevel: sumTotal } = getLevelSplit(actor);
-  const effective = (heroicLevel > 0 ? heroicLevel : (sumTotal > 0 ? sumTotal : totalLevel));
-  return Math.floor((Number(effective) || 0) / 2);
+/** One-half CHARACTER level, rounded down: the skill-check half level. */
+export function getHalfCharacterLevel(actor) {
+  if (isStatblockNpc(actor)) return Math.floor(sparseTotal(actor) / 2);
+  const { totalLevel } = getLevelSplit(actor);
+  return Math.floor((totalLevel > 0 ? totalLevel : sparseTotal(actor)) / 2);
+}
+
+/** One-half HEROIC level, rounded down: the personal-weapon-damage half level. Nonheroic levels never count. */
+export function getHalfHeroicLevel(actor) {
+  if (isStatblockNpc(actor)) return Math.floor(sparseTotal(actor) / 2);
+  const { heroicLevel, totalLevel } = getLevelSplit(actor);
+  if (totalLevel <= 0) return Math.floor(sparseTotal(actor) / 2);
+  return Math.floor(heroicLevel / 2);
 }
 
 /**
@@ -102,6 +112,4 @@ export function getPlannedHeroicLevel(actor, pendingData = {}) {
   return null;
 }
 
-export function isEpicOverrideEnabled() {
-  return game.settings?.get('foundryvtt-swse', 'epicOverride') === true;
-}
+// Epic-override reads live in scripts/settings/epic-override.js (HouseRuleService-backed); the duplicate here had no importers (F-SET-001).

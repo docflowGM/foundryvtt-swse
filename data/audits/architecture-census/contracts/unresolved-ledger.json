@@ -1,0 +1,1517 @@
+{
+ "schema": "swse.v2-contract.unresolved-ledger/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "generator": "tools/architecture-census/assemble-contracts.mjs",
+ "counts": {
+  "FOUNDRY_ACCEPTANCE_REQUIRED": 100,
+  "UNIMPLEMENTED": 38,
+  "DEFERRED_RULES_REVIEW": 77
+ },
+ "items": [
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "abilities-effects",
+   "id": null,
+   "item": "Managed-effect expiry at turn start/combat end (GM client)",
+   "source": "scripts/infrastructure/hooks/combat-hooks.js:305"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "abilities-effects",
+   "id": null,
+   "item": "Lineage credit award flow after rerouting to TransactionEngine",
+   "source": "scripts/engine/abilities/progression/progression-event-processor.js:374"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "actor-core",
+   "id": "U-ACT-01",
+   "item": "Automatic HP recompute hooks (hp-recompute-hooks.js) wired only from orphan governance-integration.js",
+   "source": "scripts/governance/actor-engine/hp-recompute-hooks.js:3"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "actor-core",
+   "id": null,
+   "item": "Async derived re-render after prepareDerivedData",
+   "source": "scripts/actors/v2/base-actor.js:217"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "actor-core",
+   "id": null,
+   "item": "Multi-client Force/Destiny point ledger serialisation (single-client queue only)",
+   "source": "scripts/governance/actor-engine/actor-engine.js:41"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "actor-core",
+   "id": null,
+   "item": "applyMutationPlan transactional rollback including CREATE-bucket world actors",
+   "source": "scripts/governance/actor-engine/actor-engine.js:3389"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "actor-core",
+   "id": null,
+   "item": "setFlag('swse',...) remap behaviour under Foundry v13 flag-scope validation",
+   "source": "scripts/actors/base/swse-actor-base.js:463"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "chat",
+   "id": "U-CHT-01",
+   "item": "Chat commands parser never loaded",
+   "source": "scripts/chat/chat-commands.js:10"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "chat",
+   "id": null,
+   "item": "Card rendering, whisper/blind roll modes",
+   "source": "scripts/chat/swse-chat.js:291"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "classes",
+   "id": "SWSE-NPC-RD-002",
+   "item": "Nonheroic class skill list (Ride)",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "classes",
+   "id": "SWSE-NPC-RD-004",
+   "item": "Galactic Profile Nonheroic starting feats",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "classes",
+   "id": "CF-RD-001",
+   "item": "Class features whose printed text could not be read",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "classes",
+   "id": "MSV-RD-006",
+   "item": "Talent-tree access for Charlatan/Jedi Master/Sith Lord/Independent Droid",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "classes",
+   "id": null,
+   "item": "Class enumeration when the classes pack is not yet indexed at boot (loader fallback)",
+   "source": "scripts/engine/progression/utils/class-data-loader.js:185"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "classes",
+   "id": null,
+   "item": "Prestige class availability in level-up",
+   "source": "scripts/data/prestige-prerequisites.js:650"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "combat",
+   "id": "U-CMB-01",
+   "item": "Action authority v1 integration (registry/availability/resolver are test-only)",
+   "source": "docs/architecture/action-authority-v1.md"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "combat",
+   "id": "U-CMB-02",
+   "item": "Aid Another / Galaxy of Intrigue / Unknown Regions combat-action adapters never registered",
+   "source": "scripts/engine/combat/aid-another-action-adapter.js"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "combat",
+   "id": "none found — new entry required (DEFERRED_RULES_REVIEW)",
+   "item": "House-rule (enhanced massive damage) damage-threshold formula: DerivedCalculator adds size twice and keeps feat/Will-base/flat adjustments; ThresholdEngine uses fort+level+size only. Which is intended?",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "combat",
+   "id": "none (UNVERIFIED, report only)",
+   "item": "Whether poison damage must be excluded from the half-heroic-level bonus (not in ELEMENTAL_HALF_LEVEL_EXCLUSION_KEYS); not traced",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "combat",
+   "id": null,
+   "item": "Turn economy and reactions",
+   "source": "OSI runtime-risk"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "combat",
+   "id": null,
+   "item": "Damage packet application incl. bookkeeping flags",
+   "source": "R-CMB-04"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "combat",
+   "id": null,
+   "item": "Combat Action Browser execution",
+   "source": "F-CMB-004"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "compat-patches",
+   "id": null,
+   "item": "Any fold-back of a class-F patch (combat attack options, follower lifecycle, progression steps)",
+   "source": "scripts/patches/runtime-bugfix-hotfixes-init.js:21"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "customization",
+   "id": "U-CUS-01",
+   "item": "Certified V2 modification installation (TX-14, selectable: 0)",
+   "source": "docs/audits/transaction-integrity/tx-remediation-ledger.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "customization",
+   "id": "none found — candidate DEFERRED_RULES_REVIEW",
+   "item": "Whether removing an item upgrade refunds credits (droid removal refunds resale; item removal does not)",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "customization",
+   "id": null,
+   "item": "Workbench apply and store staging",
+   "source": "R-CUS-01"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "customization",
+   "id": null,
+   "item": "Lightsaber construction and light sync with two clients",
+   "source": "R-CUS-06, R-CUS-09"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "data-registries",
+   "id": null,
+   "item": "Prerequisite evaluation on draft actors after consolidating level/BAB reads",
+   "source": "scripts/data/prerequisite-checker.js:3094"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "droids",
+   "id": "U-DRD-01",
+   "item": "Production registry certification and cross-application parity for droid components (both 0)",
+   "source": "docs/audits/droids/droid-component-mechanical-certification-closeout.md:22"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "droids",
+   "id": "none (new; to be registered by owner)",
+   "item": "Whether a constructed droid requires an Armor component and at least one appendage for readiness (code paths disagree)",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "droids",
+   "id": "DROID-RD-001",
+   "item": "Stabilized Mount host",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "droids",
+   "id": "DROID-RD-002",
+   "item": "Telescopic Appendage host",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "droids",
+   "id": "DROID-RD-003",
+   "item": "Upgrade Workshop 10-system cap",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "droids",
+   "id": "DROID-BUILD-001",
+   "item": "Re-installing size-default locomotion",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "droids",
+   "id": "CAE-003",
+   "item": "Droid-only evidence for action cards / cyborg hybrids",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "droids",
+   "id": "RECON-002",
+   "item": "Ability increase count for droids/Nonheroic",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "droids",
+   "id": "docs/audits/droids/droid-component-mechanical-certification-closeout.md",
+   "item": "23 component source HOLDs",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "droids",
+   "id": null,
+   "item": "Droid sheet readiness card and component browser",
+   "source": "scripts/sheets/v2/droid-sheet/context-builder.js:438"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "droids",
+   "id": null,
+   "item": "Self-destruct MeasuredTemplate placement",
+   "source": "scripts/sheets/v2/droid-actor-sheet.js:37"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "droids",
+   "id": null,
+   "item": "GM natural healing excludes droids including NPC-type droid followers",
+   "source": "scripts/holonet/subsystems/gm-healing-trigger.js:97"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "equipment",
+   "id": "U-EQP-01",
+   "item": "Player remote equipment mutation route (E4-P4 WP3) — modules test-only by design",
+   "source": "docs/architecture/equipment-ecosystem-e4c0-ssot-persistence-contract.md:15"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "equipment",
+   "id": "EQ-001",
+   "item": "Action cost of reconfiguring a drawn weapon",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "equipment",
+   "id": null,
+   "item": "Posture/occupancy cutover final gate",
+   "source": "E4-P5"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "equipment",
+   "id": null,
+   "item": "Ammo spend/reload, lightsaber ignite and token light",
+   "source": "R-EQP-06"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "feats",
+   "id": "U-FEA-01",
+   "item": "Team feat skill bonuses: prompt is live, bonus patch and producer never registered",
+   "source": "scripts/rolls/skills.js:243; scripts/engine/feats/team-feat-runtime-patches.js:172"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "feats",
+   "id": "U-FEA-02",
+   "item": "Skill-feat reroll/substitution/temporary-defense runtime patches never registered",
+   "source": "scripts/engine/feats/skill-feat-runtime-patches.js:361"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "feats",
+   "id": "U-FEA-03",
+   "item": "Advisory/defense-avoidance riders need a per-attack selected-advisory UI context",
+   "source": "docs/audits/combat-feat-runtime-architecture.md:64"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "feats",
+   "id": "NONE — new entry required (owner)",
+   "item": "Confident Success (Rebellion Era Campaign Guide p.31): is \"FP gained upon reaching current level\" the same as the system FP maximum? Second cap not enforced.",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "feats",
+   "id": "NONE — owner decision; may not be a rules question",
+   "item": "Meaning of a feat \"per day\" limit in a VTT (campaign day vs real-world day) for skill-feat daily uses",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "feats",
+   "id": null,
+   "item": "Multi-client creation/update of a normalized feat: exactly one metadata write, no permission errors on non-owner clients",
+   "source": "F-FEA-001"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "feats",
+   "id": null,
+   "item": "Cleave availability chat card posts once per drop",
+   "source": "F-FEA-006"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "feats",
+   "id": null,
+   "item": "GM empty-pack seeding and icon repair on a migrated v13 world",
+   "source": "R-FEA-03"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "feats",
+   "id": null,
+   "item": "Attack bonus composition with Riflemaster+Pistoleer+Sniper+Dual Weapon+droid+core attack options wrappers",
+   "source": "F-FEA-002"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "force",
+   "id": "U-FRC-01",
+   "item": "Force power resolution schema v1 not used at runtime",
+   "source": "docs/architecture/force-power-resolution-v1.md:3"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "force",
+   "id": "U-FRC-02",
+   "item": "Forceful Recovery picker unreachable (only importer is an orphan feat module)",
+   "source": "scripts/apps/dialogs/forceful-recovery-picker.js"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "force",
+   "id": "U-FRC-03",
+   "item": "dailyForcePoints house rule has no effect on the stored maximum",
+   "source": "scripts/core/settings.js:240; scripts/engine/force/force-points-service.js:82"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "force",
+   "id": "FP-RD-015 (OWNER_CONFIRMATION_PENDING)",
+   "item": "Last Grasp timing/cap exceptions; Emergency Patch failed-check charge",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "force",
+   "id": "FP-RD-003",
+   "item": "Uncertified contracted abilities",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "force",
+   "id": "FP-RD-013",
+   "item": "Temptation of the Dark Side (Force Unleashed p.85)",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "force",
+   "id": "NONE — new entry required (owner)",
+   "item": "Whether the base-6/7 Force Point base persists after a prestige class is removed",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "A1 Force Point spend + finalize",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "A2 Failed paid roll rollback",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "A3 Round cap",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "B1 Destiny spend separate ledger",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "C1 Temptation mark (needs live roll stack)",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "C2 Temptation spend window, owner prompted",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "C3 Initiative reorder",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "C4 Late delivery / reload",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "C5 Concurrent FP + Destiny receipts",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "C6 Two Sith Lords mark each other (live needed)",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "C7 Capped condition track",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "D1 GM world time only",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "E1 Serenity",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "E2 Prophet review",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "F1 Immunities",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "G1 Reactions (verified event, non-owner refused)",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "G2 Reaction settlement on finalize failure",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "H1 WatchCircle Initiate",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "H2 Drain Force",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "I1 Last Grasp / Emergency Patch (provisional FP-RD-015)",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "J1 Force Alchemy multi-resource costs with injected failures (not atomic)",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "J2 Receipt reconciliation",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "K1 Retired legacy entry points absent",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "L1 Cross-client repeat of C2/C4/G1 (cannot be proven offline)",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "Not covered by matrix: Alchemy multi-resource atomicity; Last Grasp timing/cap; unresolved reaction receipts after client close; reactions other than Block/Deflect/Force Fortification via chat-dataset context",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "Proposed: Guardian Spirit claim then Force Point spend, reload",
+   "source": "F-FRC-003"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "Proposed: dailyForcePoints on/off at level-up",
+   "source": "F-FRC-002"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "force",
+   "id": null,
+   "item": "Proposed: end combat with two clients; Force talent cleanup once",
+   "source": "F-FRC-006"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "galactic-profiles",
+   "id": "U-GAL-01",
+   "item": "Generator UI and Generate->Review->Commit (CampaignMutationCoordinator, JobEngine)",
+   "source": "docs/audits/gm-datapad-ecosystem-redesign.md §199-201 (line 9551: not started)"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "galactic-profiles",
+   "id": "U-GAL-02",
+   "item": "Applying generated rewards; credits must go through TransactionEngine (A-10); Store-index pricing adapter does not exist",
+   "source": "docs/audits/gm-datapad-ecosystem-redesign.md §130"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "galactic-profiles",
+   "id": "U-GAL-03",
+   "item": "NPC Opposition Catalog, species-specific names, encounter-balance math, rank/privilege mechanics (deferred; not to be invented)",
+   "source": "docs/audits/gm-datapad-ecosystem-redesign.md §130"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "galactic-profiles",
+   "id": null,
+   "item": "GM Locations / player Atlas surfaces, Scene factory, Location Library import",
+   "source": "docs/audits/gm-datapad-ecosystem-redesign.md:4945 (live checklist not run)"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "games",
+   "id": "U-GAM-01",
+   "item": "PvP credit wagers through Holonet invites",
+   "source": "F-GAM-001"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "games",
+   "id": "U-GAM-02",
+   "item": "Durable recovery for interrupted escrow/settlement",
+   "source": "docs/audits/transaction-integrity/ti4-c0-closure-report.md:50"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "games",
+   "id": null,
+   "item": "One wagered game per engine: escrow->settle and escrow->cancel->refund; GM pending-settlement approval",
+   "source": "OSI runtime-risk (credit movement)"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "games",
+   "id": null,
+   "item": "Remaining runtime checks for each game",
+   "source": "docs/Holopad-Games-Phase-10-QA-Rules-Fidelity-Audit.md:77"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "governance",
+   "id": "U-GOV-01",
+   "item": "Runtime mutation enforcement (observer checking MutationInterceptor context in DEV/STRICT) or retirement of the enforcement claims",
+   "source": "scripts/governance/mutation/MutationInterceptor.js:99"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "governance",
+   "id": "U-GOV-02",
+   "item": "Sentinel invariant-monitoring layers (layers/*, mutation-path-guard, sovereignty-enforcement)",
+   "source": "scripts/governance/sentinel/sentinel-registry.js:54"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "governance",
+   "id": null,
+   "item": "Transactional rollback verification (C-GOV-1)",
+   "source": "scripts/governance/actor-engine/actor-engine.js:3389"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "holonet",
+   "id": "U-HOL-01",
+   "item": "Durable recovery for in-flight trades/payouts (snapshots in memory only)",
+   "source": "docs/audits/transaction-integrity/ti4-c0-closure-report.md:50"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "holonet",
+   "id": "U-HOL-02",
+   "item": "GM tool to resolve indeterminate Party Fund requests",
+   "source": "docs/architecture/v2-contracts/unresolved-ledger.md:68"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "holonet",
+   "id": null,
+   "item": "Credit/item/asset trades including forced rollback; job payouts; Party Fund contribution/payout",
+   "source": "OSI runtime-risk areas (trade/store, credit movement)"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "holonet",
+   "id": null,
+   "item": "Emitter notifications (droid/ship/follower HP) after F-HOL-004 fix",
+   "source": "this contract"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "holonet",
+   "id": null,
+   "item": "Socket relay of GM-authority actions from a player client",
+   "source": "this contract"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "houserules",
+   "id": null,
+   "item": "Per house rule: GM surface toggle produces the rule effect in its owning rule module",
+   "source": "scripts/ui/shell/gm/GMHouseRulesSurfaceService.js:374"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "infrastructure",
+   "id": null,
+   "item": "Boot order after moving hotfix registration into index.js",
+   "source": "index.js:91"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "infrastructure",
+   "id": null,
+   "item": "Foundry v13 acceptance of settings namespace 'swse'",
+   "source": "index.js:361"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "mentor-suggestion",
+   "id": "U-MEN-01",
+   "item": "Certified answer-to-tag crosswalk for survey responses",
+   "source": "docs/design/mentor-survey-v2/01-SHARED-ARCHITECTURE-CONTRACT.md §9 (SV-16)"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "mentor-suggestion",
+   "id": "U-MEN-02",
+   "item": "Single suggestion analytics service (PlayerAnalytics / SuggestionStateService as sole writer)",
+   "source": "docs/architecture/ENGINE-ARCHITECTURE.md §10"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "mentor-suggestion",
+   "id": "U-MEN-03",
+   "item": "Prestige Q6 Mentor dialogue package (not in Git)",
+   "source": "docs/design/mentor-survey-v2/06-CONTENT-STATUS-AND-BLOCKERS.md §3"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "mentor-suggestion",
+   "id": "MSV-RD-001",
+   "item": "L1 Q2 career ranking",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "mentor-suggestion",
+   "id": "MSV-RD-002",
+   "item": "L1 Q4 child-specialization ranking by Q3 tags",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "mentor-suggestion",
+   "id": "MSV-RD-003",
+   "item": "Multiclass Q5 milestone content/mapping",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "mentor-suggestion",
+   "id": "MSV-RD-004",
+   "item": "Origin class keying with two or more prior foundation classes",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "mentor-suggestion",
+   "id": "MSV-RD-005",
+   "item": "Prestige Q1 answer count/rotation/weights",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "mentor-suggestion",
+   "id": "MSV-RD-006",
+   "item": "Talent-tree access for Charlatan, Jedi Master, Sith Lord, Independent Droid",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "mentor-suggestion",
+   "id": "MSV-RD-007",
+   "item": "Multiclass Q2 build-integration inputs",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "mentor-suggestion",
+   "id": "MSV-RD-008",
+   "item": "Q4/Q5 routing after 'I'm not sure yet' in Q1",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "mentor-suggestion",
+   "id": "MSV-RD-009",
+   "item": "Q5 career_continuity milestone and {declared_goal} slot",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "mentor-suggestion",
+   "id": null,
+   "item": "Entire Mentor Survey V2 live pass (NOT PERFORMED)",
+   "source": "docs/design/mentor-survey-v2/20-FOUNDRY-ACCEPTANCE-CHECKLIST.md:3"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "mentor-suggestion",
+   "id": null,
+   "item": "Confirm Foundry rejects flag scope 'swse' (F-MEN-003) and observe multi-client decay behavior (F-MEN-004)",
+   "source": "this contract"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "mentor-suggestion",
+   "id": null,
+   "item": "Sheet/progression re-render count caused by getSuggestions history writes (F-MEN-006)",
+   "source": "this contract"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "migration",
+   "id": "U-MIG-01",
+   "item": "Migration registry / ordered runner with active-GM gate",
+   "source": "index.js:306"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "migration",
+   "id": null,
+   "item": "DSP migration on a real legacy world",
+   "source": "scripts/migration/dark-side-points-migration.js:162"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "migration",
+   "id": null,
+   "item": "Startup migrations with two GMs connected",
+   "source": "index.js:306"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "npc-followers",
+   "id": "U-NPC-01",
+   "item": "Follower mutation authority checker covering all writers and wired into CI",
+   "source": "tools/check-follower-mutation-authority.mjs:87"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "npc-followers",
+   "id": "none (new; owner to register)",
+   "item": "Ability modifier for follower Fortitude Defense (hotfix uses CON, NPC sheet display uses max(STR, CON))",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "npc-followers",
+   "id": "none (new; owner to register)",
+   "item": "Fidelity of MinionManager.MINION_TALENTS paraphrases to printed talents (no source/page)",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "npc-followers",
+   "id": "GP-RD-010",
+   "item": "Beast creation authority",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "npc-followers",
+   "id": "GP-RD-011",
+   "item": "Beast readiness must block",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "npc-followers",
+   "id": "RECON-002",
+   "item": "Ability increase count for droids/Nonheroic",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "npc-followers",
+   "id": "RECON-003",
+   "item": "Which level drives entitlements for Nonheroic/mixed actors",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "npc-followers",
+   "id": null,
+   "item": "Recruiting talent add/remove creates/detaches exactly one slot",
+   "source": "scripts/infrastructure/hooks/follower-hooks.js:307"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "npc-followers",
+   "id": null,
+   "item": "Follower defenses shown vs used in rolls",
+   "source": "scripts/patches/follower-npc-sheet-parity-hotfix.js:312"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "npc-followers",
+   "id": null,
+   "item": "Orphan transfer on owner deletion",
+   "source": "scripts/patches/follower-orphan-transfer-hotfix.js:411"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "npc-followers",
+   "id": null,
+   "item": "NPC import and damage hydration",
+   "source": "scripts/engine/import/npc-damage-hydration-hooks.js:220"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "progression",
+   "id": "U-PRG-01",
+   "item": "ClassPlanBuilder not wired; class compiled inline",
+   "source": "docs/architecture/progression-architecture.md §Intentionally inline domains"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "progression",
+   "id": "U-PRG-02",
+   "item": "Single durable draft store",
+   "source": "this contract (PROPOSED)"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "progression",
+   "id": "U-PRG-03",
+   "item": "SWSELanguageModule.init() never called; its updateActor and swse:progression:completed listeners are dormant",
+   "source": "scripts/engine/progression/modules/language-module.js:12"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "progression",
+   "id": "RECON-006 (related); new ID pending",
+   "item": "Telekinetic Prodigy: runtime-hardcoded talent text and retroactive-slot suppression differ from canonical reference text (new entry required; not created by this audit)",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "progression",
+   "id": "none (new entry required)",
+   "item": "Hard-coded fallback starting credits by class when content lacks a value",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "progression",
+   "id": "RECON-001..RECON-007",
+   "item": "Talent/feat/ability/skill entitlement cadence for multiclass, droid, Nonheroic, house rules",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "progression",
+   "id": null,
+   "item": "Full chargen and level-up finalize through ActorEngine.applyMutationPlan",
+   "source": "docs/architecture/progression-architecture.md §Verification status"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "progression",
+   "id": null,
+   "item": "Chargen store purchase, then abandon / resume chargen",
+   "source": "F-PRG-003"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "progression",
+   "id": null,
+   "item": "Single-step finalize from sheet/Holonet",
+   "source": "R-PRG-06"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "progression",
+   "id": null,
+   "item": "Rollback indeterminate path surfaced to the player",
+   "source": "scripts/apps/progression-framework/shell/progression-finalizer.js:4028"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "progression",
+   "id": null,
+   "item": "System boots and finalizes Force techniques if squad-actions-init.js stops importing the patch",
+   "source": "F-PRG-002"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "rolls",
+   "id": "none yet - to be registered by owner (DEFERRED_RULES_REVIEW)",
+   "item": "Custom skill bonus uses half of system.level (custom-skill-roller.js:35) while derived skills use actor-core level-split helpers; aligning changes results for multiclass/nonheroic actors",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "rolls",
+   "id": null,
+   "item": "Roll dialogs (skill/UTF/custom skill) after consolidation",
+   "source": "scripts/rolls/roll-config.js:746"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "skills",
+   "id": "RECON-007",
+   "item": "Trained-skill entitlement under skill house rules",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "skills",
+   "id": "SPECIES-RD-013",
+   "item": "Species skill reroll result",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "skills",
+   "id": "SWSE-NPC-RD-002",
+   "item": "Nonheroic class skill Ride",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "skills",
+   "id": null,
+   "item": "Sheet extra skill uses (Quick Sabotage, recharge shields)",
+   "source": "scripts/utils/skill-use-filter.js:348"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "skills",
+   "id": null,
+   "item": "Vehicle crew skill routing",
+   "source": "scripts/sheets/v2/vehicle-sheet/crew-skill-router.js:243"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "skills",
+   "id": null,
+   "item": "Skill challenge flow",
+   "source": "scripts/engine/skill-challenges/SkillChallengeEngine.js:21"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "species",
+   "id": "U-SPC-01",
+   "item": "Atomic species replacement on an existing actor is not reachable at runtime",
+   "source": "scripts/species/species-plan-transaction.js"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-001",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-002",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-003",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-004",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-005",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-006",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-007",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-008",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-009",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-010",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-011",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-012",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-013",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-014",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-015",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-016",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-017",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-018",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-019",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-020",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-021",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-022",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "species",
+   "id": "SPECIES-RD-023",
+   "item": "See register entry",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "species",
+   "id": null,
+   "item": "Species change on an existing character",
+   "source": "R-SPC-07"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "species",
+   "id": null,
+   "item": "Activated species abilities in combat",
+   "source": "scripts/engine/species/species-activated-ability-engine.js:12"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "species",
+   "id": null,
+   "item": "Conditional bonus feats after skill training changes",
+   "source": "scripts/infrastructure/hooks/actor-hooks.js:85"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "species",
+   "id": null,
+   "item": "Live checklist",
+   "source": "docs/audits/swse-species-live-foundry-checklist.md"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "store-economy",
+   "id": "U-STO-01",
+   "item": "TE operation identity / exactly-once (TI4-B G17)",
+   "source": "docs/audits/transaction-integrity/ti4-c0-closure-report.md §4"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "store-economy",
+   "id": "U-STO-02",
+   "item": "Cross-client credit lock / CAS",
+   "source": "docs/audits/transaction-integrity/ti4-c0-closure-report.md §3"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "store-economy",
+   "id": null,
+   "item": "Store checkout incl. droid/vehicle acquisition and failure rollback",
+   "source": "R-STO-04"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "store-economy",
+   "id": null,
+   "item": "GM approval / resale / credit transfer under two clients",
+   "source": "ti4c0-closure-report §3"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "talents",
+   "id": "U-TAL-01",
+   "item": "GM relay for cross-actor talent effects",
+   "source": "no socket/executeAsGM in scripts/engine/talent/*-talent-actions.js (grep)"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "talents",
+   "id": "U-TAL-02",
+   "item": "Progression tree-provider API replacing the TalentStep patch",
+   "source": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:296"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "talents",
+   "id": "TALENT-RD-001",
+   "item": "Which trees are Force talent trees for class-slot substitution",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "talents",
+   "id": "RECON-001 / RECON-005",
+   "item": "Multiclass talent entitlement cadence",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "talents",
+   "id": "GP-RD-017",
+   "item": "Name-keyed talent prerequisite collision",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "talents",
+   "id": "FP-RD-001..FP-RD-013",
+   "item": "Contracted Force Point talent uses",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "talents",
+   "id": null,
+   "item": "Affliction turn-start damage applied once, to the correct combatant",
+   "source": "F-TAL-003"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "talents",
+   "id": null,
+   "item": "Master Advisor end-of-turn temporary Force Point granted",
+   "source": "F-TAL-003"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "talents",
+   "id": null,
+   "item": "Player-client use of Sith/Consular/Force Adept talents that mark an enemy actor",
+   "source": "F-TAL-002"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "talents",
+   "id": null,
+   "item": "Guardian Spirit claim then Force Point spend: bonus pool decrements and stays decremented after reload",
+   "source": "F-TAL-007"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "talents",
+   "id": null,
+   "item": "Custom tree workbench trees appear in chargen TalentStep; effect wizard auto-open does not loop renders",
+   "source": "F-TAL-005, F-TAL-006"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "talents",
+   "id": null,
+   "item": "Class/Force V2 matrix rows G1, H1, H2",
+   "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "ui-shell",
+   "id": "U-UIS-01",
+   "item": "Shared pure sheet-context helper module (sanitize/documentToTemplateData/action-economy VM)",
+   "source": "F-UIS-002"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "ui-shell",
+   "id": null,
+   "item": "All four actor types render through the shared template and Holopad frame",
+   "source": "templates/actors/character/v2-concept/character-sheet.hbs:19"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "ui-shell",
+   "id": null,
+   "item": "Tooltips/responsive observer bind on V2 sheets (renderApplication hook name)",
+   "source": "scripts/ui/discovery/index.js:39"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "ui-shell",
+   "id": null,
+   "item": "Credit adjustment through TransactionEngine after F-UIS-001",
+   "source": "scripts/sheets/v2/character-like-sheet.js:6074"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "vehicles",
+   "id": "U-VEH-01",
+   "item": "Vehicle import UI entry (wizard unwired, button disabled)",
+   "source": "scripts/sheets/v2/vehicle-actor-sheet.js:704"
+  },
+  {
+   "kind": "UNIMPLEMENTED",
+   "domain": "vehicles",
+   "id": "U-VEH-02",
+   "item": "GM tool to resolve indeterminate Party Fund requests (P6B-D-074)",
+   "source": "docs/audits/swse-rules-decisions-pending.md:2099"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "vehicles",
+   "id": "V-P6C-21",
+   "item": "Stock launcher printed Payload as canonical ammunition pool",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "vehicles",
+   "id": "V-P5-03",
+   "item": "Non-starship vehicles",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "vehicles",
+   "id": "V-P5-04",
+   "item": "Derived statistics depending on crew quality",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "vehicles",
+   "id": "EQ-004",
+   "item": "Operator authorization for vehicle-mounted weapons",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "vehicles",
+   "id": "CF-RD-006",
+   "item": "Vehicle Dodge stacking",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "DEFERRED_RULES_REVIEW",
+   "domain": "vehicles",
+   "id": "none (new; owner to register if a rules question)",
+   "item": "Whether a maneuver may be marked spent without the Pilot activation check (vehicle sheet path) — owner/rules question raised by F-VEH-003, not registered",
+   "source": "docs/audits/swse-rules-decisions-pending.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "vehicles",
+   "id": null,
+   "item": "Vehicle import/materialization from canonical packs",
+   "source": "docs/audits/vehicles/universal-vehicle-phase4d-native-runtime-acceptance.md"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "vehicles",
+   "id": null,
+   "item": "Party Fund ammunition settlement and restore",
+   "source": "docs/audits/swse-rules-decisions-pending.md:2099"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "vehicles",
+   "id": null,
+   "item": "Starship Tactics feat during chargen finalization: double prompt/grant",
+   "source": "scripts/infrastructure/hooks/starship-maneuver-hooks.js:36"
+  },
+  {
+   "kind": "FOUNDRY_ACCEPTANCE_REQUIRED",
+   "domain": "vehicles",
+   "id": null,
+   "item": "Vehicle crew assignment drop stack",
+   "source": "scripts/sheets/v2/vehicle-actor-sheet.js:286"
+  }
+ ]
+}

@@ -13,7 +13,8 @@ export class SentinelSourceMapper {
   ];
 
   static RATE_LIMIT_MS = 10000; // Re-enrich same stack only every 10s
-  static #enrichCache = new Map(); // stack hash → { file, line, column }
+  static MAX_CACHE_ENTRIES = 500; // bounded (F-GOV-005): oldest entry is evicted first
+  static #enrichCache = new Map(); // stack hash → { source, timestamp }
 
   /**
    * Extract source location from Error stack
@@ -61,6 +62,9 @@ export class SentinelSourceMapper {
    * Called asynchronously after report creation
    * @returns { file, line, column, function, stack }
    */
+  /** Test/diagnostic hook: current cache size. */
+  static get enrichCacheSize() { return this.#enrichCache.size; }
+
   static enrich(report) {
     if (!report.meta?.stack) return null;
 
@@ -80,10 +84,14 @@ export class SentinelSourceMapper {
 
     // Cache result
     if (source) {
+      this.#enrichCache.delete(cacheKey); // re-insert so the Map's insertion order tracks recency
       this.#enrichCache.set(cacheKey, {
         source,
         timestamp: Date.now()
       });
+      while (this.#enrichCache.size > this.MAX_CACHE_ENTRIES) {
+        this.#enrichCache.delete(this.#enrichCache.keys().next().value);
+      }
     }
 
     return source || null;

@@ -1,20 +1,11 @@
-import { LanguageStep } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/language-step.js';
-import { FollowerLanguageStep } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/follower-steps/follower-language-step.js';
-import { FollowerStepBase } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/follower-steps/follower-step-base.js';
 import { TalentStep } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/talent-step.js';
-import { ProgressionShell } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-shell.js';
-import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
 import { TalentRegistry } from '/systems/foundryvtt-swse/scripts/registries/talent-registry.js';
 import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 const REGISTERED = Symbol.for('swse.progressionChoiceLanguageHotfix.v3');
-const LANGUAGE_PATCHED = Symbol.for('swse.progressionChoiceLanguageHotfix.languages.v1');
-const FOLLOWER_LANGUAGE_PATCHED = Symbol.for('swse.progressionChoiceLanguageHotfix.followerLanguages.v1');
-const FOLLOWER_BASE_PATCHED = Symbol.for('swse.progressionChoiceLanguageHotfix.followerBase.v1');
 const FOLLOWER_TALENT_PATCHED = Symbol.for('swse.progressionChoiceLanguageHotfix.followerTalents.v1');
-const STEP_SEARCH_PATCHED = Symbol.for('swse.progressionChoiceLanguageHotfix.stepSearch.v1');
 const SKILL_FOCUS_GUARD_FLAG = 'resolvedSkillFocusChoiceGuard';
 const MASKED_SKILL_FOCUS_NAME = '__SWSE_RESOLVED_SKILL_FOCUS__';
 
@@ -75,115 +66,6 @@ function resolveActorSkill(actor, choice) {
     }
   }
   return null;
-}
-
-function patchStepSearchReset() {
-  const proto = ProgressionShell?.prototype;
-  if (!proto || proto[STEP_SEARCH_PATCHED] || typeof proto._activateStep !== 'function') return;
-
-  const originalActivateStep = proto._activateStep;
-  proto._activateStep = async function patchedActivateStep(stepIndex, options = {}) {
-    const currentStepId = this.steps?.[this.currentStepIndex]?.stepId ?? null;
-    const targetStepId = this.steps?.[stepIndex]?.stepId ?? null;
-    const stepChanged = !!targetStepId && targetStepId !== currentStepId;
-
-    if (stepChanged) {
-      const utilityBar = this.utilityBar;
-      if (utilityBar) {
-        utilityBar._searchQuery = '';
-        utilityBar._focusState = null;
-      }
-
-      const targetPlugin = this.stepPlugins?.get?.(targetStepId);
-      if (targetPlugin) {
-        if ('_searchQuery' in targetPlugin) targetPlugin._searchQuery = '';
-        if ('searchQuery' in targetPlugin) targetPlugin.searchQuery = '';
-        if ('_query' in targetPlugin) targetPlugin._query = '';
-      }
-
-      const searchInput = this.getRootElement?.()?.querySelector?.('[data-utility-search]');
-      if (searchInput) searchInput.value = '';
-
-      swseLogger.debug('[ProgressionShell] Cleared utility search for step transition', {
-        from: currentStepId,
-        to: targetStepId,
-        source: options?.source || 'unknown',
-      });
-    }
-
-    return originalActivateStep.call(this, stepIndex, options);
-  };
-
-  Object.defineProperty(proto, STEP_SEARCH_PATCHED, { value: true });
-}
-
-function patchLanguageSelectionDeduplication() {
-  const proto = LanguageStep?.prototype;
-  if (!proto || proto[LANGUAGE_PATCHED]) return;
-
-  const originalRestore = proto._restoreSelectedBonusLanguagesFromSession;
-  proto._restoreSelectedBonusLanguagesFromSession = function patchedRestoreSelectedBonusLanguages(shell) {
-    originalRestore?.call(this, shell);
-    const granted = new Set((this._knownLanguageGrants || [])
-      .map(grant => normalizeToken(grant?.name || grant))
-      .filter(Boolean));
-    this._selectedBonusLanguages = (this._selectedBonusLanguages || [])
-      .filter(name => !granted.has(normalizeToken(name)));
-  };
-
-  proto._getAvailableLanguages = function patchedGetAvailableLanguages() {
-    const knownSet = new Set((this._knownLanguageGrants || [])
-      .map(grant => normalizeToken(grant?.name || grant))
-      .filter(Boolean));
-    const selectedSet = new Set((this._selectedBonusLanguages || []).map(normalizeToken));
-    return (this._allLanguages || []).filter(language => {
-      const token = normalizeToken(language?.name || language?.label || language?.id);
-      return token && !knownSet.has(token) && !selectedSet.has(token);
-    });
-  };
-
-  Object.defineProperty(proto, LANGUAGE_PATCHED, { value: true });
-}
-
-function patchFollowerLanguageRestoration() {
-  const proto = FollowerLanguageStep?.prototype;
-  if (!proto || proto[FOLLOWER_LANGUAGE_PATCHED]) return;
-
-  const originalRestore = proto._restoreFollowerSelectedLanguages;
-  proto._restoreFollowerSelectedLanguages = function patchedFollowerLanguageRestore(shell) {
-    originalRestore?.call(this, shell);
-    const granted = new Set((this._knownLanguageGrants || [])
-      .map(grant => normalizeToken(grant?.name || grant))
-      .filter(Boolean));
-    this._selectedBonusLanguages = (this._selectedBonusLanguages || [])
-      .filter(name => !granted.has(normalizeToken(name)));
-  };
-
-  Object.defineProperty(proto, FOLLOWER_LANGUAGE_PATCHED, { value: true });
-}
-
-function patchFollowerLanguageCatalogAccess() {
-  const proto = FollowerStepBase?.prototype;
-  if (!proto || proto[FOLLOWER_BASE_PATCHED]) return;
-
-  proto.getAllLanguages = async function patchedGetAllFollowerLanguages() {
-    try {
-      await LanguageRegistry.ensureLoaded();
-      const all = await LanguageRegistry.all();
-      const names = all.map(language => language?.name || language?.label || language?.id).filter(Boolean);
-      if (names.length) return this._uniqueStrings(names);
-    } catch (error) {
-      swseLogger.warn('[FollowerStepBase] Full language catalog unavailable; using core fallback.', error);
-    }
-    return [
-      'Basic', 'Binary', 'Bocce', 'Bothese', 'Dosh', 'Durese', 'Ewokese', 'Gamorrean',
-      'Gunganese', 'High Galactic', 'Huttese', 'Ithorese', 'Jawa Trade Language',
-      'Kel Dor', 'Mon Calamarian', 'Quarrenese', 'Rodese', 'Shyriiwook', 'Sith',
-      'Sullustese', 'Togruti', "Twi'leki", 'Ubese', 'Zabrak',
-    ];
-  };
-
-  Object.defineProperty(proto, FOLLOWER_BASE_PATCHED, { value: true });
 }
 
 function decorateFollowerTalentEntry(entry) {
@@ -325,10 +207,6 @@ export function registerProgressionChoiceLanguageHotfix() {
   if (globalThis[REGISTERED]) return;
   globalThis[REGISTERED] = true;
 
-  patchStepSearchReset();
-  patchLanguageSelectionDeduplication();
-  patchFollowerLanguageRestoration();
-  patchFollowerLanguageCatalogAccess();
   patchFollowerGrantingTalentRepeatability();
   registerResolvedSkillFocusGuard();
 }

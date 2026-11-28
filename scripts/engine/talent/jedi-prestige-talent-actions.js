@@ -1,13 +1,15 @@
 import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { readBonusPool, bonusPoolUpdate } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { getTalentAbilityMod as abilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
+import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/utils/responsible-gm.js";
 
 const NS = 'swse';
 
@@ -77,7 +79,7 @@ async function promptSimple(title, body, fields = []) {
     return `<div class="form-group"><label>${esc(field.label)}</label><input name="${esc(field.name)}" type="text" value="${esc(field.value ?? '')}" placeholder="${esc(field.placeholder ?? '')}" /></div>`;
   }).join('');
   const content = `<form class="swse-dialog swse-jedi-prestige-dialog"><p>${body}</p>${fieldHtml}</form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title,
     content,
     label: 'Continue',
@@ -94,7 +96,7 @@ async function promptSimple(title, body, fields = []) {
 
 async function grantBonusForcePoint(targetActor, { source = 'Bonus Force Point', sourceActorId = null, sourceActorName = '', expires = 'encounter', encounter = encounterId() } = {}) {
   if (!targetActor) return { granted: 0 };
-  const pool = targetActor.getFlag?.(NS, 'bonusForcePoints') ?? {};
+  const pool = readBonusPool(targetActor);
   const entries = Array.isArray(pool.entries) ? [...pool.entries] : [];
   entries.push({
     id: `${slug(source)}-${Date.now()}`,
@@ -110,16 +112,14 @@ async function grantBonusForcePoint(targetActor, { source = 'Bonus Force Point',
   });
   const value = entries.reduce((sum, entry) => sum + Math.max(0, Number(entry.value) || 0), 0);
   const max = entries.reduce((sum, entry) => sum + Math.max(0, Number(entry.max ?? entry.value) || 0), 0);
-  await ActorEngine.updateActor(targetActor, {
-    'flags.swse.bonusForcePoints': {
+  await ActorEngine.updateActor(targetActor, bonusPoolUpdate(targetActor, {
       ...pool,
       value,
       max: Math.max(value, max),
       sources: [...new Set(entries.map(entry => entry.source).filter(Boolean))],
       entries,
       note: 'Bonus Force Points are spent before normal Force Points and may expire by source.'
-    }
-  }, { source: slug(source) });
+    }), { source: slug(source) });
   return { granted: 1, total: value };
 }
 
@@ -368,7 +368,7 @@ export class JediPrestigeTalentActions {
       return null;
     }
     const cap = actorLevel(actor) * 500;
-    await actor.setFlag?.(NS, 'jediNetwork', { used: true, purpose: choice.purpose, cap, usedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'jediNetwork', { used: true, purpose: choice.purpose, cap, usedAt: Date.now() }, { recalc: false });
     const descriptions = {
       equipment: `obtain equipment/funds up to ${cap} credits, subject to licensing/restriction context`,
       information: 'automatically succeed on Gather Information if DC is 20 or lower and cover the check cost',
@@ -389,7 +389,7 @@ export class JediPrestigeTalentActions {
   static async promptJediQuarry(actor) {
     const target = await chooseTargetActor('Jedi Quarry', 'target creature');
     if (!target) return null;
-    await actor.setFlag?.(NS, 'jediQuarry', { targetName: target.name, targetActorId: target.actor?.id ?? null, encounterId: encounterId(), active: true, setAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'jediQuarry', { targetName: target.name, targetActorId: target.actor?.id ?? null, encounterId: encounterId(), active: true, setAt: Date.now() }, { recalc: false });
     return postCard(actor, 'Jedi Quarry', `<p>${esc(actor.name)} designates <strong>${esc(target.name)}</strong> as their Jedi Quarry.</p><p>Gain +2 Speed whenever spending a Move Action to move, provided you end adjacent to the quarry. This lasts until the target surrenders, reaches 0 HP, reaches the bottom of the Condition Track, or the encounter ends.</p>`, { targetActorId: target.actor?.id ?? null });
   }
 
@@ -458,6 +458,7 @@ export class JediPrestigeTalentActions {
     globalThis.SWSE = globalThis.SWSE ?? {};
     globalThis.SWSE.__jediPrestigeTalentActionsRegistered = true;
     Hooks.on('combatTurn', async (combat, prior) => {
+      if (!isResponsibleGM()) return; // fires on every client; the Force Point grant must happen once
       try {
         const priorActor = prior?.combatant?.actor ?? prior?.actor ?? null;
         if (!priorActor) return;
@@ -465,7 +466,7 @@ export class JediPrestigeTalentActions {
         if (!pending || pending.granted === true) return;
         if (pending.encounterId && pending.encounterId !== encounterId()) return;
         const grant = await grantBonusForcePoint(priorActor, { source: 'Master Advisor', sourceActorId: pending.sourceActorId, sourceActorName: pending.sourceActorName, expires: 'encounter', encounter: pending.encounterId ?? encounterId() });
-        await priorActor.setFlag?.(NS, 'pendingMasterAdvisorForcePoint', { ...pending, granted: true, grantedAt: Date.now(), grantedAmount: grant.granted });
+        await ActorEngine.updateActorFlags(priorActor, NS, 'pendingMasterAdvisorForcePoint', { ...pending, granted: true, grantedAt: Date.now(), grantedAmount: grant.granted }, { recalc: false });
         await postCard(priorActor, 'Master Advisor', `<p>${esc(priorActor.name)} gains one temporary Force Point from ${esc(pending.sourceActorName || 'Master Advisor')} at the end of their turn. It expires at the end of the encounter if unspent.</p>`, { targetActorId: priorActor.id, granted: grant.granted });
       } catch (err) {
         console.warn('[SWSE] Master Advisor pending grant failed:', err);

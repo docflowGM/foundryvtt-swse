@@ -1,3 +1,4 @@
+import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
 import { activateCombatTab } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-tab-ui.js";
 import { activateEquipmentWorkspace } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-ui.js";
 import { authorizeDroidComponentOperation } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-component-operation-gate.js";
@@ -986,7 +987,7 @@ export class SWSEV2CharacterLikeSheet extends SWSEV2ActorSheetBase {
 
     // SWSE Skills Registry - CANONICAL: Must match Actor data model / derived calculator keys exactly.
     // Athletics consolidation house rule: Acrobatics + Climb + Jump + Swim → Athletics.
-    const _athleticsOn = (() => { try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; } catch { return false; } })();
+    const _athleticsOn = HouseRuleService.getBoolean('athleticsConsolidation', false);
     const SWSE_SKILL_DEFINITIONS = {
       ...(!_athleticsOn ? { acrobatics: { label: 'Acrobatics', ability: 'dex' } } : {}),
       ...(!_athleticsOn ? { climb: { label: 'Climb', ability: 'str' } } : {}),
@@ -1043,7 +1044,7 @@ export class SWSEV2CharacterLikeSheet extends SWSEV2ActorSheetBase {
         : (Array.isArray(derivedData?.breakdown) ? derivedData.breakdown : []);
       const sourceParts = parts.length ? parts : [
         { key: 'ability', label: `${String(fallbackParts.selectedAbility || '').toUpperCase()} modifier`, value: fallbackParts.abilityMod },
-        { key: 'halfLevel', label: '1/2 heroic level', value: fallbackParts.halfLevel },
+        { key: 'halfLevel', label: '1/2 character level', value: fallbackParts.halfLevel },
         { key: 'trained', label: 'Trained', value: fallbackParts.trained ? 5 : 0 },
         { key: 'focus', label: 'Skill Focus', value: fallbackParts.focused ? 5 : 0 },
         { key: 'misc', label: 'Misc', value: fallbackParts.miscMod }
@@ -6082,9 +6083,19 @@ const forcePoints = [];
         }
         const current = Number(this.actor.system?.credits ?? 0) || 0;
         const next = Math.max(0, current + amount);
+        const applied = next - current; // removing more than the balance clamps at 0, as before
         try {
+          // The wallet change is a TransactionEngine credit adjustment (snapshot-protected, ledgered); the sheet only adds its status-feed entry.
+          if (applied !== 0) {
+            const result = await TransactionEngine.executeCreditAdjustment({
+              actor: this.actor,
+              amount: applied,
+              reason: 'Character sheet credit adjustment',
+              transactionContext: 'sheet-credit-adjustment'
+            }, { source: 'character-sheet-add-credits' });
+            if (!result?.success) throw new Error(result?.error || 'credit adjustment failed');
+          }
           await ActorEngine.updateActor(this.actor, {
-            'system.credits': next,
             'flags.swse.character.statusFeed': prependStatusFeed({
               id: `credits-${Date.now()}`,
               label: amount > 0 ? 'Credits Added' : 'Credits Spent',
@@ -7052,11 +7063,7 @@ const forcePoints = [];
       }
       ui?.notifications?.info?.(`${weapon.name} reloaded by ${result.chargedTo.name ?? 'the second crew member'} (${result.action} action).`);
       try {
-        await ChatMessage.create({
-          speaker: ChatMessage.getSpeaker({ actor: mode.crew }),
-          content: `<section class="swse-chat-card"><header><strong>${mode.crew.name} reloads ${weapon.name}</strong></header><p>${result.action} action by the second crew member; ${result.reload?.message ?? 'reloaded.'}</p></section>`,
-          flags: { swse: { combatAction: 'reload', weaponId: weapon.id, secondCrew: true, chargedTo: result.chargedTo.id } }
-        });
+        await SWSEChat.postHTML({ actor: mode.crew, content: `<section class="swse-chat-card"><header><strong>${mode.crew.name} reloads ${weapon.name}</strong></header><p>${result.action} action by the second crew member; ${result.reload?.message ?? 'reloaded.'}</p></section>`, flags: { swse: { combatAction: 'reload', weaponId: weapon.id, secondCrew: true, chargedTo: result.chargedTo.id } } });
       } catch (err) { console.warn('[SWSE] Failed to post reload chat card:', err); }
       return result;
     }
@@ -7090,11 +7097,7 @@ const forcePoints = [];
 
     ui?.notifications?.info?.(result.message || `${weapon.name} reloaded.`);
     try {
-      await ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        content: `<section class="swse-chat-card"><header><strong>${this.actor.name} reloads ${weapon.name}</strong></header><p>${result.message ?? 'Weapon reloaded.'}</p></section>`,
-        flags: { swse: { combatAction: 'reload', weaponId: weapon.id, workflowContext: context } }
-      });
+      await SWSEChat.postHTML({ actor: this.actor, content: `<section class="swse-chat-card"><header><strong>${this.actor.name} reloads ${weapon.name}</strong></header><p>${result.message ?? 'Weapon reloaded.'}</p></section>`, flags: { swse: { combatAction: 'reload', weaponId: weapon.id, workflowContext: context } } });
     } catch (err) {
       console.warn('[SWSE] Failed to post reload chat card:', err);
     }
@@ -7829,10 +7832,7 @@ const forcePoints = [];
       </section>`;
 
     try {
-      return await ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        content
-      });
+      return await SWSEChat.postHTML({ actor: this.actor, content });
     } catch (err) {
       console.warn('[SWSE] Failed to create manual combat action chat card:', err);
       ui?.notifications?.info?.(`${actionData?.name ?? actionId}: ${actionData?.description ?? actionData?.notes ?? 'Resolve manually.'}`);

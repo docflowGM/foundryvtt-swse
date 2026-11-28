@@ -33,7 +33,8 @@ test('live Consular Adept/Master Negotiator applies immunity before any CT or ef
  const body=source.slice(start,stop);
  const gate=body.indexOf('resolveForceDiscipleIndomitable(targetActor, { mindAffecting: true })');
  const applied=body.indexOf('ConditionEngine.applyConditionStep(');
- const flagged=body.indexOf('targetActor.setFlag(');
+ // The Adept flag write is the governed ActorEngine call (rerouted in 3D.2); the ordering requirement is unchanged: the immunity gate precedes it.
+ const flagged=body.indexOf('ActorEngine.updateActorFlags(targetActor,');
  const effect=body.indexOf('createEffectOnActor(');
  assert.ok(gate>=0&&applied>gate&&flagged>gate&&effect>gate);
  assert.match(body,/if \(immunity\.immune\) \{/);

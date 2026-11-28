@@ -70,8 +70,8 @@ async function normalizePistoleer(item, options = {}) {
 }
 
 export function registerPistoleerNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizePistoleer(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizePistoleer(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizePistoleer(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizePistoleer(item, options) : false);
   SWSELogger.log('[PistoleerNormalization] Hooks registered');
 }
 

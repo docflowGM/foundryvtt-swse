@@ -298,10 +298,12 @@ await check('updateFollowerForOwnerLevel keeps its boolean contract on an indete
   assert.ok(s.calls.material <= 1);
 });
 
-await check('the species-materialization hotfix wrapper forwards the options/report argument', async () => {
-  const src = await readFile(new URL('../scripts/patches/follower-species-materialization-hotfix.js', import.meta.url), 'utf8');
-  assert.match(src, /patchedUpdateFollowerFromMutation\(follower, mutation, \.\.\.rest\)/);
-  assert.match(src, /originalUpdate\(follower, mutation, \.\.\.rest\)/);
+await check('FollowerCreator.updateFollowerFromMutation (species materialization folded in) forwards the options/report argument to the base', async () => {
+  const src = await readFile(new URL('../scripts/apps/follower-creator.js', import.meta.url), 'utf8');
+  assert.match(src, /static async updateFollowerFromMutation\(follower, followerMutation, \.\.\.rest\)/);
+  assert.match(src, /_updateFollowerFromMutationBase\(follower, followerMutation, \.\.\.rest\)/);
+  const hot = await readFile(new URL('../scripts/patches/follower-species-materialization-hotfix.js', import.meta.url), 'utf8');
+  assert.ok(!/FollowerCreator\.\w+\s*=[^=]/.test(hot) && !/import .*follower-creator/.test(hot), 'the hotfix no longer wraps FollowerCreator');
 });
 
 await check('declared rollback scope is the follower Actor: _applyFollowerProgressionMaterial never writes the owner or other documents', async () => {

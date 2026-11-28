@@ -201,8 +201,8 @@ async function normalizeForceScoundrelCombatFeat(item, options = {}) {
 }
 
 export function registerForceScoundrelCombatFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeForceScoundrelCombatFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeForceScoundrelCombatFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeForceScoundrelCombatFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeForceScoundrelCombatFeat(item, options) : false);
   SWSELogger.log('[ForceScoundrelCombatFeatNormalization] Hooks registered');
 }
 

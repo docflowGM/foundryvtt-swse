@@ -94,8 +94,8 @@ async function normalizeRiflemaster(item, options = {}) {
 }
 
 export function registerRiflemasterNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeRiflemaster(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeRiflemaster(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeRiflemaster(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeRiflemaster(item, options) : false);
   SWSELogger.log('[RiflemasterNormalization] Hooks registered');
 }
 

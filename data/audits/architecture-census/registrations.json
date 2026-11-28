@@ -1,0 +1,7111 @@
+{
+ "schema": "swse.architecture-census.registrations/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "hooks": [
+  {
+   "name": "ready",
+   "listeners": 80,
+   "reachableListeners": 34,
+   "sites": [
+    {
+     "path": "index.js",
+     "line": 282,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/allies/faction-registry-service.js",
+     "line": 310,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/bootstrap/holo-init.js",
+     "line": 18,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/config/skills.js",
+     "line": 17,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/compendium-pack-registration-repair.js",
+     "line": 287,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/effect-sanitizer.js",
+     "line": 129,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/hardening-init.js",
+     "line": 197,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/hardening-init.js",
+     "line": 360,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/hardening-init.js",
+     "line": 374,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/migration-integrity-adapter.js",
+     "line": 166,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/phase5-init.js",
+     "line": 42,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sheet-stabilizer.js",
+     "line": 28,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sidebar-icon-class-audit.js",
+     "line": 251,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sidebar-icon-class-audit.js",
+     "line": 272,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sidebar-icon-class-audit.js",
+     "line": 289,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sidebar-icon-fallback.js",
+     "line": 269,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/core/sidebar-icon-instrumentation.js",
+     "line": 179,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sidebar-icon-instrumentation.js",
+     "line": 199,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sidebar-sentinel-trace.js",
+     "line": 108,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sidebar-sentinel-trace.js",
+     "line": 239,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/vehicle-pack-data-loader.js",
+     "line": 104,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/debug/layout-debug.js",
+     "line": 122,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/combat/reactions/reaction-registry.js",
+     "line": 1108,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/area-explosives-runtime-patches.js",
+     "line": 311,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/core-combat-reaction-runtime-patches.js",
+     "line": 439,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/import/npc-damage-hydration-hooks.js",
+     "line": 227,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js",
+     "line": 462,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/hooks/system-init-hooks.js",
+     "line": 53,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/ArchetypeEngineHooks.js",
+     "line": 42,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/suggestion/gm/gm-suggestion-panel.js",
+     "line": 136,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/suggestion/gm/init.js",
+     "line": 20,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/talent/talent-action-linker.js",
+     "line": 208,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/vehicles/vehicle-errata-migration-service.js",
+     "line": 183,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/governance-integration.js",
+     "line": 281,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/enforcement-core.js",
+     "line": 246,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/enforcement-core.js",
+     "line": 555,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/investigator.js",
+     "line": 65,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/layers/data-layer.js",
+     "line": 26,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/layers/utility-layer.js",
+     "line": 27,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-compendium-forensics.js",
+     "line": 527,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-css-contract.js",
+     "line": 194,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-init.js",
+     "line": 14,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-layout-debugger.js",
+     "line": 376,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-layout-evaluator.js",
+     "line": 371,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-mall-cop.js",
+     "line": 455,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-roll-pipeline.js",
+     "line": 150,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-sheet-guardrails.js",
+     "line": 152,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-sheet-hydration.js",
+     "line": 170,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-template-integrity.js",
+     "line": 233,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-update-atomicity.js",
+     "line": 170,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/holonet/scripts/core/sidebar-structure-diagnostics.js",
+     "line": 87,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/houserules/houserule-condition-track.js",
+     "line": 19,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/houserules/houserules-config.js",
+     "line": 164,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/infrastructure/hooks/actor-hooks.js",
+     "line": 179,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/actor-sidebar-controls.js",
+     "line": 356,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/init-hooks.js",
+     "line": 50,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/maintenance/migrations/migrate-talent-tree-descriptions.js",
+     "line": 80,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/mentor/mentor-help-strings.js",
+     "line": 216,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/mentor/mentor-reflective-dialog.js",
+     "line": 38,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/patches/armor-hydration-defense-hotfix.js",
+     "line": 179,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/attack-dialog-combat-corrections-hotfix.js",
+     "line": 369,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-npc-sheet-parity-hotfix.js",
+     "line": 506,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-orphan-transfer-hotfix.js",
+     "line": 429,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-progression-live-state-hotfix.js",
+     "line": 349,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+     "line": 265,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-species-repair-hook.js",
+     "line": 95,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/force-suite-render-guard-hotfix.js",
+     "line": 38,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/progression-ledger-reconciliation-hotfix.js",
+     "line": 232,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/runtime-bugfix-hotfixes.js",
+     "line": 281,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/sheets/v2/sheet-diagnostics-p0.js",
+     "line": 123,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/talents/minion-actions-init.js",
+     "line": 11,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/talents/squad-actions-init.js",
+     "line": 18,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/ability-keyword-highlighter.js",
+     "line": 148,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/cursor-authority.js",
+     "line": 78,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/ui/cursor-authority.js",
+     "line": 101,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/ui/cursor-authority.js",
+     "line": 146,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/ui/shell/shell-responsive-observer.js",
+     "line": 334,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/theme/theme-init.js",
+     "line": 28,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/ui/ui-manager.js",
+     "line": 14,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/skill-resolver.js",
+     "line": 58,
+     "method": "once",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "createItem",
+   "listeners": 57,
+   "reachableListeners": 28,
+   "sites": [
+    {
+     "path": "scripts/engine/feats/ability-meta-schema-default-hooks.js",
+     "line": 116,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/area-explosives-feat-normalization-hooks.js",
+     "line": 298,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/attack-negation-feat-normalization-hooks.js",
+     "line": 99,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/attack-options-feat-normalization-hooks.js",
+     "line": 161,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/combat-mobility-power-feat-normalization-hooks.js",
+     "line": 137,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/condition-track-feat-normalization-hooks.js",
+     "line": 176,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+     "line": 377,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/core-combat-reaction-normalization-hooks.js",
+     "line": 185,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js",
+     "line": 166,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js",
+     "line": 314,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/droid-combat-feat-normalization-hooks.js",
+     "line": 469,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/dual-weapon-mastery-normalization-hooks.js",
+     "line": 81,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/force-point-feat-normalization-hooks.js",
+     "line": 193,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/force-scoundrel-combat-feat-normalization-hooks.js",
+     "line": 204,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/galaxy-intrigue-combat-feat-normalization-hooks.js",
+     "line": 235,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/grapple-feat-normalization-hooks.js",
+     "line": 290,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/legacy-clone-combat-feat-normalization-hooks.js",
+     "line": 178,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/martial-arts-feat-normalization-hooks.js",
+     "line": 135,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js",
+     "line": 92,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/mobility-positioning-feat-normalization-hooks.js",
+     "line": 239,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/pistoleer-normalization-hooks.js",
+     "line": 73,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/rage-feat-normalization-hooks.js",
+     "line": 90,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/ranged-combat-feat-normalization-hooks.js",
+     "line": 135,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/rebellion-combat-feat-normalization-hooks.js",
+     "line": 191,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/rebellion-species-skill-feat-normalization-hooks.js",
+     "line": 382,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/remaining-weapon-armor-feat-normalization-hooks.js",
+     "line": 278,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/return-fire-feat-normalization-hooks.js",
+     "line": 180,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/riflemaster-normalization-hooks.js",
+     "line": 97,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-feat-normalization-hooks.js",
+     "line": 189,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/skill-feat-expanded-addendum-normalization-hooks.js",
+     "line": 220,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/skill-feat-expanded-normalization-hooks.js",
+     "line": 734,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/skill-feat-normalization-hooks.js",
+     "line": 358,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/sniper-normalization-hooks.js",
+     "line": 52,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/species-origin-feat-normalization-hooks.js",
+     "line": 133,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/sport-hunter-normalization-hooks.js",
+     "line": 106,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/starship-vehicle-feat-normalization-hooks.js",
+     "line": 125,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/team-feat-normalization-hooks.js",
+     "line": 279,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/unarmed-style-feat-normalization-hooks.js",
+     "line": 389,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/unknown-regions-combat-feat-normalization-hooks.js",
+     "line": 165,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/unknown-regions-weapon-feat-normalization-hooks.js",
+     "line": 184,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/weapon-armor-rider-normalization-hooks.js",
+     "line": 204,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/weapon-autofire-feat-normalization-hooks.js",
+     "line": 194,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/weapon-critical-feat-normalization-hooks.js",
+     "line": 119,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/weapon-foundation-feat-normalization-hooks.js",
+     "line": 207,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/weapon-leftover-feat-normalization-hooks.js",
+     "line": 236,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/features/feat-effect-applier.js",
+     "line": 169,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/actor-engine/hp-recompute-hooks.js",
+     "line": 296,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/infrastructure/hooks/actor-hooks.js",
+     "line": 122,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/follower-hooks.js",
+     "line": 307,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/force-power-hooks.js",
+     "line": 57,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/starship-maneuver-hooks.js",
+     "line": 17,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/talent-effects-hooks.js",
+     "line": 99,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/patches/follower-progression-live-state-hotfix.js",
+     "line": 326,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+     "line": 239,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/progression-choice-language-hotfix.js",
+     "line": 277,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/progression-ledger-reconciliation-hotfix.js",
+     "line": 238,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/roll-config.js",
+     "line": 2090,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "updateItem",
+   "listeners": 53,
+   "reachableListeners": 23,
+   "sites": [
+    {
+     "path": "scripts/engine/feats/ability-meta-schema-default-hooks.js",
+     "line": 117,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/area-explosives-feat-normalization-hooks.js",
+     "line": 299,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/attack-negation-feat-normalization-hooks.js",
+     "line": 100,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/attack-options-feat-normalization-hooks.js",
+     "line": 162,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/combat-mobility-power-feat-normalization-hooks.js",
+     "line": 138,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/condition-track-feat-normalization-hooks.js",
+     "line": 177,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+     "line": 378,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/core-combat-reaction-normalization-hooks.js",
+     "line": 186,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js",
+     "line": 167,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js",
+     "line": 315,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/droid-combat-feat-normalization-hooks.js",
+     "line": 470,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/dual-weapon-mastery-normalization-hooks.js",
+     "line": 82,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/force-point-feat-normalization-hooks.js",
+     "line": 194,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/force-scoundrel-combat-feat-normalization-hooks.js",
+     "line": 205,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/galaxy-intrigue-combat-feat-normalization-hooks.js",
+     "line": 236,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/grapple-feat-normalization-hooks.js",
+     "line": 291,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/legacy-clone-combat-feat-normalization-hooks.js",
+     "line": 179,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/martial-arts-feat-normalization-hooks.js",
+     "line": 136,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js",
+     "line": 93,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/mobility-positioning-feat-normalization-hooks.js",
+     "line": 240,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/pistoleer-normalization-hooks.js",
+     "line": 74,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/rage-feat-normalization-hooks.js",
+     "line": 91,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/ranged-combat-feat-normalization-hooks.js",
+     "line": 136,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/rebellion-combat-feat-normalization-hooks.js",
+     "line": 192,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/rebellion-species-skill-feat-normalization-hooks.js",
+     "line": 383,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/remaining-weapon-armor-feat-normalization-hooks.js",
+     "line": 282,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/return-fire-feat-normalization-hooks.js",
+     "line": 181,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/riflemaster-normalization-hooks.js",
+     "line": 98,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/second-wind-feat-normalization-hooks.js",
+     "line": 190,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/skill-feat-expanded-addendum-normalization-hooks.js",
+     "line": 221,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/skill-feat-expanded-normalization-hooks.js",
+     "line": 735,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/skill-feat-normalization-hooks.js",
+     "line": 359,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/sniper-normalization-hooks.js",
+     "line": 53,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/species-origin-feat-normalization-hooks.js",
+     "line": 134,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/sport-hunter-normalization-hooks.js",
+     "line": 107,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/starship-vehicle-feat-normalization-hooks.js",
+     "line": 126,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/team-feat-normalization-hooks.js",
+     "line": 280,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/unarmed-style-feat-normalization-hooks.js",
+     "line": 390,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/unknown-regions-combat-feat-normalization-hooks.js",
+     "line": 166,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/unknown-regions-weapon-feat-normalization-hooks.js",
+     "line": 185,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/weapon-armor-rider-normalization-hooks.js",
+     "line": 205,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/weapon-autofire-feat-normalization-hooks.js",
+     "line": 195,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/weapon-critical-feat-normalization-hooks.js",
+     "line": 120,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/weapon-foundation-feat-normalization-hooks.js",
+     "line": 208,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/feats/weapon-leftover-feat-normalization-hooks.js",
+     "line": 237,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/actor-engine/hp-recompute-hooks.js",
+     "line": 297,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/infrastructure/hooks/talent-effects-hooks.js",
+     "line": 107,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/patches/follower-progression-live-state-hotfix.js",
+     "line": 333,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+     "line": 243,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/progression-ledger-reconciliation-hotfix.js",
+     "line": 241,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/roll-config.js",
+     "line": 2096,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/lightsaber-light-sync.js",
+     "line": 215,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/visual/energy-shield-visual-service.js",
+     "line": 213,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "init",
+   "listeners": 22,
+   "reachableListeners": 6,
+   "sites": [
+    {
+     "path": "index.js",
+     "line": 99,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/bootstrap/holo-init.js",
+     "line": 12,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/combat/active-effects-manager.js",
+     "line": 423,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/combat-status.js",
+     "line": 211,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/core/flag-registry.js",
+     "line": 42,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/hardening-init.js",
+     "line": 355,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/init.js",
+     "line": 14,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/init.js",
+     "line": 63,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/init.js",
+     "line": 68,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sheet-stabilizer.js",
+     "line": 14,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sidebar-icon-instrumentation.js",
+     "line": 168,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sidebar-sentinel-trace.js",
+     "line": 94,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/mentor/mentor-selector.js",
+     "line": 135,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/holonet/scripts/core/init.js",
+     "line": 12,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/holonet/scripts/core/init.js",
+     "line": 62,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/holonet/scripts/core/init.js",
+     "line": 67,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/mentor/mentor-guidance.js",
+     "line": 109,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/patches/armor-hydration-defense-hotfix.js",
+     "line": 175,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/cursor-authority.js",
+     "line": 231,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/ui/theme/theme-init.js",
+     "line": 15,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/ui/ui-manager.js",
+     "line": 13,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/skill-use-filter.js",
+     "line": 557,
+     "method": "once",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "updateActor",
+   "listeners": 19,
+   "reachableListeners": 16,
+   "sites": [
+    {
+     "path": "scripts/combat/active-effects-manager.js",
+     "line": 367,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/feats/core-combat-reaction-runtime-patches.js",
+     "line": 396,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/modules/language-module.js",
+     "line": 35,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/ArchetypeEngineHooks.js",
+     "line": 52,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/actor-engine/hp-recompute-hooks.js",
+     "line": 265,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/holonet/emitters/droid-emitter.js",
+     "line": 24,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/holonet/emitters/follower-emitter.js",
+     "line": 39,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/holonet/emitters/ship-emitter.js",
+     "line": 24,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/houserules/houserule-skill-training.js",
+     "line": 17,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/houserules/houserule-status-effects.js",
+     "line": 129,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/actor-hooks.js",
+     "line": 70,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/actor-hooks.js",
+     "line": 85,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/follower-hooks.js",
+     "line": 434,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/force-power-hooks.js",
+     "line": 100,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/starship-maneuver-hooks.js",
+     "line": 56,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-orphan-transfer-hotfix.js",
+     "line": 416,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/progression-ledger-reconciliation-hotfix.js",
+     "line": 233,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/roll-config.js",
+     "line": 2099,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/sheets/v2/character-sheet/chargen-onboarding.js",
+     "line": 275,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "renderApplicationV2",
+   "listeners": 18,
+   "reachableListeners": 8,
+   "sites": [
+    {
+     "path": "scripts/engine/force/force-suite-runtime-repairs.js",
+     "line": 618,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/force/force-suite-runtime-repairs.js",
+     "line": 619,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/sentinel/enforcement-core.js",
+     "line": 84,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/enforcement-core.js",
+     "line": 271,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/enforcement-core.js",
+     "line": 563,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-css-contract.js",
+     "line": 199,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-layout-debugger.js",
+     "line": 392,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-layout-evaluator.js",
+     "line": 376,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-sheet-hydration.js",
+     "line": 26,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-template-integrity.js",
+     "line": 31,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentry.js",
+     "line": 76,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/houserules/houserule-actor-enhancements.js",
+     "line": 22,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/patches/combat-ui-behavior-hotfix.js",
+     "line": 674,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/combat-ui-behavior-hotfix.js",
+     "line": 675,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-orphan-transfer-hotfix.js",
+     "line": 427,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-progression-live-state-hotfix.js",
+     "line": 344,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+     "line": 260,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/force-suite-render-guard-hotfix.js",
+     "line": 37,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "preUpdateActor",
+   "listeners": 11,
+   "reachableListeners": 7,
+   "sites": [
+    {
+     "path": "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+     "line": 185,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+     "line": 186,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+     "line": 187,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/core/effect-sanitizer.js",
+     "line": 114,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/token-name-sync.js",
+     "line": 74,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/sith-talent-actions.js",
+     "line": 823,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-update-atomicity.js",
+     "line": 28,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/houserules/houserule-mechanics.js",
+     "line": 91,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/houserules/houserule-mechanics.js",
+     "line": 130,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/infrastructure/hooks/force-power-hooks.js",
+     "line": 94,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/starship-maneuver-hooks.js",
+     "line": 45,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "createActor",
+   "listeners": 9,
+   "reachableListeners": 6,
+   "sites": [
+    {
+     "path": "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+     "line": 191,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/import/npc-damage-hydration-hooks.js",
+     "line": 220,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/ArchetypeEngineHooks.js",
+     "line": 47,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/governance-integration.js",
+     "line": 284,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/holonet/emitters/follower-emitter.js",
+     "line": 32,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/houserules/houserule-feat-grants.js",
+     "line": 41,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/houserules/houserule-skill-training.js",
+     "line": 16,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+     "line": 251,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/sheets/v2/character-sheet/chargen-onboarding.js",
+     "line": 269,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "deleteItem",
+   "listeners": 9,
+   "reachableListeners": 6,
+   "sites": [
+    {
+     "path": "scripts/engine/features/feat-effect-applier.js",
+     "line": 175,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/actor-engine/hp-recompute-hooks.js",
+     "line": 298,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/infrastructure/hooks/actor-hooks.js",
+     "line": 146,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/follower-hooks.js",
+     "line": 346,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/force-power-hooks.js",
+     "line": 150,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/talent-effects-hooks.js",
+     "line": 117,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+     "line": 247,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/rolls/roll-config.js",
+     "line": 2093,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/visual/energy-shield-visual-service.js",
+     "line": 250,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "combatTurn",
+   "listeners": 7,
+   "reachableListeners": 5,
+   "sites": [
+    {
+     "path": "scripts/combat/active-effects-manager.js",
+     "line": 372,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/combat/combat-automation.js",
+     "line": 35,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/combat/action/action-economy-hooks.js",
+     "line": 23,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/jedi-prestige-talent-actions.js",
+     "line": 460,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/lightsaber-talent-actions.js",
+     "line": 736,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/sith-talent-actions.js",
+     "line": 795,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/houserules/houserule-block-mechanic.js",
+     "line": 154,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse:progression:completed",
+   "listeners": 6,
+   "reachableListeners": 6,
+   "sites": [
+    {
+     "path": "scripts/apps/follower-creator.js",
+     "line": 1707,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/apps/minion-creator.js",
+     "line": 486,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/progression/modules/language-module.js",
+     "line": 18,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/follower-hooks.js",
+     "line": 421,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-progression-live-state-hotfix.js",
+     "line": 340,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+     "line": 255,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "renderSWSEV2CharacterSheet",
+   "listeners": 6,
+   "reachableListeners": 6,
+   "sites": [
+    {
+     "path": "scripts/apps/force-tradition/force-tradition-picker.js",
+     "line": 397,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/features/combat-feature-panel-renderer.js",
+     "line": 93,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/force/force-suite-runtime-repairs.js",
+     "line": 616,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/force/force-suite-runtime-repairs.js",
+     "line": 617,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/combat-ui-behavior-hotfix.js",
+     "line": 673,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/force-suite-render-guard-hotfix.js",
+     "line": 36,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "renderSidebar",
+   "listeners": 6,
+   "reachableListeners": 4,
+   "sites": [
+    {
+     "path": "scripts/core/compendium-directory-click-repair.js",
+     "line": 683,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/core/sidebar-icon-fallback.js",
+     "line": 258,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/sentinel/enforcement-core.js",
+     "line": 571,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-compendium-forensics.js",
+     "line": 316,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-compendium-forensics.js",
+     "line": 520,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/holonet/scripts/core/sidebar-structure-diagnostics.js",
+     "line": 93,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse.destinyPointSpent",
+   "listeners": 6,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/infrastructure/hooks/destiny-hooks.js",
+     "line": 23,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/infrastructure/hooks/destiny-hooks.js",
+     "line": 29,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/infrastructure/hooks/destiny-hooks.js",
+     "line": 35,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/infrastructure/hooks/destiny-hooks.js",
+     "line": 41,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/infrastructure/hooks/destiny-hooks.js",
+     "line": 47,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/infrastructure/hooks/destiny-hooks.js",
+     "line": 53,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "preUpdateItem",
+   "listeners": 5,
+   "reachableListeners": 3,
+   "sites": [
+    {
+     "path": "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+     "line": 188,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/core/effect-sanitizer.js",
+     "line": 92,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/progression/hooks/immutability-hook.js",
+     "line": 62,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/patches/weapon-branch-coherence-hotfix.js",
+     "line": 122,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/utils/lightsaber-light-sync.js",
+     "line": 186,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "preCreateActor",
+   "listeners": 4,
+   "reachableListeners": 3,
+   "sites": [
+    {
+     "path": "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+     "line": 184,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/core/effect-sanitizer.js",
+     "line": 103,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/token-name-sync.js",
+     "line": 66,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/actor-hooks.js",
+     "line": 64,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "renderApplication",
+   "listeners": 4,
+   "reachableListeners": 3,
+   "sites": [
+    {
+     "path": "scripts/apps/force-tradition/force-tradition-picker.js",
+     "line": 400,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/sentinel/migration-auditor.js",
+     "line": 103,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/ui/discovery/index.js",
+     "line": 39,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/shell/shell-responsive-observer.js",
+     "line": 335,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "renderCompendiumDirectory",
+   "listeners": 4,
+   "reachableListeners": 4,
+   "sites": [
+    {
+     "path": "scripts/core/compendium-directory-click-repair.js",
+     "line": 648,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-compendium-forensics.js",
+     "line": 315,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-compendium-forensics.js",
+     "line": 521,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-compendium-forensics.js",
+     "line": 526,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "sidebarCollapse",
+   "listeners": 4,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/core/compendium-directory-click-repair.js",
+     "line": 685,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/core/sidebar-icon-fallback.js",
+     "line": 264,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/core/sidebar-icon-instrumentation.js",
+     "line": 213,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/holonet/scripts/core/sidebar-structure-diagnostics.js",
+     "line": 94,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "setup",
+   "listeners": 4,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/core/compendium-pack-registration-repair.js",
+     "line": 286,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sidebar-icon-class-audit.js",
+     "line": 246,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sidebar-icon-instrumentation.js",
+     "line": 173,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/sidebar-sentinel-trace.js",
+     "line": 101,
+     "method": "once",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "preCreateItem",
+   "listeners": 4,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/core/effect-sanitizer.js",
+     "line": 81,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/patches/progression-choice-language-hotfix.js",
+     "line": 251,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/weapon-branch-coherence-hotfix.js",
+     "line": 101,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/registries/feat-stub-pack.js",
+     "line": 310,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "canvasReady",
+   "listeners": 4,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/core/first-run-experience.js",
+     "line": 234,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/holonet/scripts/core/first-run-experience.js",
+     "line": 149,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/sheets/v2/character-sheet/chargen-onboarding.js",
+     "line": 267,
+     "method": "once",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/cursor-authority.js",
+     "line": 81,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "deleteCombat",
+   "listeners": 4,
+   "reachableListeners": 4,
+   "sites": [
+    {
+     "path": "scripts/engine/combat/action/action-economy-hooks.js",
+     "line": 40,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/threshold-engine.js",
+     "line": 48,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/force/force-executor.js",
+     "line": 1683,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/sith-talent-actions.js",
+     "line": 838,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "updateSetting",
+   "listeners": 4,
+   "reachableListeners": 4,
+   "sites": [
+    {
+     "path": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js",
+     "line": 483,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/houserules/houserule-feat-grants.js",
+     "line": 33,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/ui-manager.js",
+     "line": 87,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/ui-manager.js",
+     "line": 95,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse:suggestion-report-ready",
+   "listeners": 4,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/gm/pacing-monitor.js",
+     "line": 113,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/suggestion/gm/pressure-monitor.js",
+     "line": 73,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/suggestion/gm/spotlight-monitor.js",
+     "line": 74,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/suggestion/gm/tuning-advisor.js",
+     "line": 128,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "restCompleted",
+   "listeners": 4,
+   "reachableListeners": 4,
+   "sites": [
+    {
+     "path": "scripts/holonet/emitters/healing-emitter.js",
+     "line": 23,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/houserules/houserule-recovery.js",
+     "line": 18,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/houserules/houserule-status-effects.js",
+     "line": 130,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/force-power-hooks.js",
+     "line": 129,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "(expr:hook)",
+   "listeners": 3,
+   "reachableListeners": 3,
+   "sites": [
+    {
+     "path": "scripts/engine/combat/recurring-damage-engine.js",
+     "line": 142,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/poison/poison-engine.js",
+     "line": 18,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/shell/AlliesSurfaceController.js",
+     "line": 112,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "createChatMessage",
+   "listeners": 3,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/engine/feats/combat-feat-damage-runtime-patches.js",
+     "line": 70,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-roll-pipeline.js",
+     "line": 28,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/ui/chat/chat-interaction-bridge.js",
+     "line": 794,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "renderChatMessageHTML",
+   "listeners": 3,
+   "reachableListeners": 3,
+   "sites": [
+    {
+     "path": "scripts/engine/force/force-executor.js",
+     "line": 1704,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/patches/runtime-bugfix-hotfixes.js",
+     "line": 221,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/chat/chat-interaction-bridge.js",
+     "line": 790,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse:level-up-complete",
+   "listeners": 2,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/applications/lightsaber/lightsaber-router.js",
+     "line": 13,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionEngineHooks.js",
+     "line": 33,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "renderSWSEV2NpcSheet",
+   "listeners": 2,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/apps/force-tradition/force-tradition-picker.js",
+     "line": 398,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/features/combat-feature-panel-renderer.js",
+     "line": 94,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "renderSWSEV2DroidSheet",
+   "listeners": 2,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/apps/force-tradition/force-tradition-picker.js",
+     "line": 399,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/combat/features/combat-feature-panel-renderer.js",
+     "line": 95,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "updateCombat",
+   "listeners": 2,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/automation/upkeep.js",
+     "line": 7,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/infrastructure/hooks/force-power-hooks.js",
+     "line": 135,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "chatMessage",
+   "listeners": 2,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/chat/chat-commands.js",
+     "line": 10,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/debug/layout-debug.js",
+     "line": 33,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swseStoreTransactionComplete",
+   "listeners": 2,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/chat/store-receipt-chat.js",
+     "line": 410,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/holonet/emitters/store-emitter.js",
+     "line": 23,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swseCustomPurchaseApproved",
+   "listeners": 2,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/chat/store-receipt-chat.js",
+     "line": 416,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/holonet/emitters/store-emitter.js",
+     "line": 29,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swseCustomPurchaseDenied",
+   "listeners": 2,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/chat/store-receipt-chat.js",
+     "line": 417,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/holonet/emitters/store-emitter.js",
+     "line": 35,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "combatStart",
+   "listeners": 2,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/combat/combat-automation.js",
+     "line": 48,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/engine/suggestion/equipment/combat-hooks.js",
+     "line": 38,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "*.*",
+   "listeners": 2,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/core/hooks-emitter.js",
+     "line": 159,
+     "method": "on",
+     "reachable": false
+    },
+    {
+     "path": "scripts/core/hooks-emitter.js",
+     "line": 162,
+     "method": "once",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse.damageApplied",
+   "listeners": 2,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/engine/feats/core-combat-reaction-runtime-patches.js",
+     "line": 417,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/infrastructure/hooks/force-power-hooks.js",
+     "line": 146,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse.attack-resolved",
+   "listeners": 2,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/engine/talent/consular-talent-actions.js",
+     "line": 996,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/engine/talent/sentinel-talent-actions.js",
+     "line": 617,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swseDataReady",
+   "listeners": 2,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/governance/sentinel/investigator.js",
+     "line": 58,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/governance/sentinel/layers/data-layer.js",
+     "line": 21,
+     "method": "once",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swseProgressionLevelUp",
+   "listeners": 2,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/holonet/emitters/follower-emitter.js",
+     "line": 25,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/holonet/emitters/progression-emitter.js",
+     "line": 24,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "renderActorSheet",
+   "listeners": 2,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/ui/discovery/index.js",
+     "line": 40,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/shell/shell-responsive-observer.js",
+     "line": 339,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "renderItemSheet",
+   "listeners": 2,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/ui/discovery/index.js",
+     "line": 41,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/shell/shell-responsive-observer.js",
+     "line": 343,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swseHolonetUpdated",
+   "listeners": 2,
+   "reachableListeners": 2,
+   "sites": [
+    {
+     "path": "scripts/ui/shell/ShellHost.js",
+     "line": 334,
+     "method": "on",
+     "reachable": true
+    },
+    {
+     "path": "scripts/ui/shell/TransmissionDecryptionSurfaceController.js",
+     "line": 36,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "(expr:hookName)",
+   "listeners": 2,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/utils/hook-performance.js",
+     "line": 210,
+     "method": "once",
+     "reachable": false
+    },
+    {
+     "path": "scripts/utils/hook-performance.js",
+     "line": 212,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "renderTokenHUD",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/apps/combat-action-browser.js",
+     "line": 99,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swseHolonet:recordPublished",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/chat/holonet-chat-card.js",
+     "line": 71,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swseStoreSaleComplete",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/chat/store-receipt-chat.js",
+     "line": 411,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swseStoreSaleDenied",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/chat/store-receipt-chat.js",
+     "line": 412,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swseCreditTransferComplete",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/chat/store-receipt-chat.js",
+     "line": 413,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swseCreditGrantComplete",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/chat/store-receipt-chat.js",
+     "line": 414,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swseCreditAdjustmentComplete",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/chat/store-receipt-chat.js",
+     "line": 415,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "combatEnd",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/combat/combat-automation.js",
+     "line": 66,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "applicationWindowReady",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/contracts/diagnostic-mode.js",
+     "line": 207,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "applicationDestroyed",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/contracts/diagnostic-mode.js",
+     "line": 216,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "collapseSidebar",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/core/compendium-directory-click-repair.js",
+     "line": 684,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "error",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/core/error-handler.js",
+     "line": 29,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "preCreateToken",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/core/token-name-sync.js",
+     "line": 91,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "evaluateAttackRoll",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/crafting/phase-3-advanced-crystal-system.js",
+     "line": 25,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "evaluateForcePointRoll",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/crafting/phase-3-advanced-crystal-system.js",
+     "line": 28,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "evaluateHealingRoll",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/crafting/phase-3-advanced-crystal-system.js",
+     "line": 31,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse.coupDeGrace",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/feats/feat-action-listeners.js",
+     "line": 149,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse.damage-before",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/feats/feat-action-listeners.js",
+     "line": 203,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse.grappleManeuver",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/feats/feat-action-listeners.js",
+     "line": 279,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse.forcePointSpent",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/poison/poison-engine.js",
+     "line": 29,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse:houserule-changed",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js",
+     "line": 482,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "preDeleteItem",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/progression/hooks/immutability-hook.js",
+     "line": 18,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse:progression:initialized",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/progression/utils/class-data-readiness.js",
+     "line": 59,
+     "method": "once",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "closeActorSheet",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/ArchetypeEngineHooks.js",
+     "line": 57,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse:classSelected",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/MentorSystem.js",
+     "line": 130,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse:talentSelected",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/MentorSystem.js",
+     "line": 135,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse:featSelected",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/MentorSystem.js",
+     "line": 140,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse:levelUp:committed",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/MentorSystem.js",
+     "line": 145,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse:chargen:sessionCompleted",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/MentorSystem.js",
+     "line": 150,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse:feat-selected",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/SuggestionEngineHooks.js",
+     "line": 31,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse:talent-selected",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/SuggestionEngineHooks.js",
+     "line": 32,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse:mentor-dialog-complete",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/SuggestionEngineHooks.js",
+     "line": 34,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse:suggestion-ignored",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/SuggestionEngineHooks.js",
+     "line": 35,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "combatTurnChange",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/equipment/combat-hooks.js",
+     "line": 14,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "combatRoundChange",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/equipment/combat-hooks.js",
+     "line": 26,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "updateToken",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/equipment/combat-hooks.js",
+     "line": 53,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse:gm-insights-updated",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/gm/gm-suggestion-panel.js",
+     "line": 58,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse:gm-insight-emitted",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/gm/insight-bus.js",
+     "line": 32,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "deleteActor",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/governance/governance-integration.js",
+     "line": 287,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "exportActor",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/governance/governance-integration.js",
+     "line": 290,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "importActor",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/governance/governance-integration.js",
+     "line": 293,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse.prerequisiteViolation",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/governance/governance-integration.js",
+     "line": 296,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse.governanceMode",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/governance/governance-integration.js",
+     "line": 301,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "*",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/governance/sentinel/enforcement-core.js",
+     "line": 558,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse.mutationAuthorized",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/governance/sentinel/mutation-integrity-layer.js",
+     "line": 24,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse.mutationViolation",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/governance/sentinel/mutation-integrity-layer.js",
+     "line": 25,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse-store-inventory-loaded",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/governance/sentinel/sentinel-mall-cop.js",
+     "line": 33,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse-store-rendered",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/governance/sentinel/sentinel-mall-cop.js",
+     "line": 38,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "renderDocumentSheetV2",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/governance/sentinel/sentry.js",
+     "line": 123,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swseApprovalResolved",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/holonet/emitters/approvals-emitter.js",
+     "line": 23,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swseGmCombatRecoveryCompleted",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/holonet/emitters/healing-emitter.js",
+     "line": 29,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swseStoreStateChanged",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/holonet/emitters/store-state-emitter.js",
+     "line": 29,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swseStorePriceChanged",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/holonet/emitters/store-state-emitter.js",
+     "line": 35,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "swse:setting-changed",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 246,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "**",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/holonet/subsystems/holonet-bus.js",
+     "line": 63,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "closeWorld",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/holonet/subsystems/holonews-auto-publisher.js",
+     "line": 129,
+     "method": "once",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "preRollAttack",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/houserules/houserule-flanking.js",
+     "line": 14,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "rollSkill",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/houserules/houserule-healing-skill-integration.js",
+     "line": 21,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "preRollDamage",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/houserules/houserule-mechanics.js",
+     "line": 74,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse.preSkillRoll",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/houserules/houserule-mechanics.js",
+     "line": 268,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "preCreateCombatant",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/houserules/houserule-mechanics.js",
+     "line": 333,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse.postRollAttack",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/infrastructure/hooks/combat-hooks.js",
+     "line": 146,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "getCombatTrackerEntryContext",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/infrastructure/hooks/combat-hooks.js",
+     "line": 154,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "renderActorDirectory",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/infrastructure/hooks/directory-hooks.js",
+     "line": 103,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "swse:mentor:guidance",
+   "listeners": 1,
+   "reachableListeners": 0,
+   "sites": [
+    {
+     "path": "scripts/mentor/mentor-guidance.js",
+     "line": 23,
+     "method": "on",
+     "reachable": false
+    }
+   ]
+  },
+  {
+   "name": "renderSWSEDialogV2",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/patches/combat-ui-behavior-hotfix.js",
+     "line": 676,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "preDeleteActor",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/patches/follower-orphan-transfer-hotfix.js",
+     "line": 411,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "getSceneControlButtons",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/scene-controls/api.js",
+     "line": 250,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  },
+  {
+   "name": "updateUser",
+   "listeners": 1,
+   "reachableListeners": 1,
+   "sites": [
+    {
+     "path": "scripts/ui/mobile-mode-manager.js",
+     "line": 92,
+     "method": "on",
+     "reachable": true
+    }
+   ]
+  }
+ ],
+ "settings": [
+  {
+   "key": "foundryvtt-swse.(expr)",
+   "sites": [
+    {
+     "path": "scripts/games/game-settings.js",
+     "line": 315
+    },
+    {
+     "path": "scripts/infrastructure/hooks/follower-house-rule-settings.js",
+     "line": 24
+    },
+    {
+     "path": "scripts/infrastructure/hooks/follower-house-rule-settings.js",
+     "line": 31
+    },
+    {
+     "path": "scripts/settings/custom-content-approval.js",
+     "line": 13
+    },
+    {
+     "path": "scripts/settings/force-tradition-house-rules.js",
+     "line": 11
+    },
+    {
+     "path": "scripts/settings/mentor-survey-preview.js",
+     "line": 15
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.actionEconomyMode",
+   "sites": [
+    {
+     "path": "scripts/engine/combat/action/action-economy-settings.js",
+     "line": 9
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.actorValidationMigration",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 300
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.allowDroidFollowers",
+   "sites": [
+    {
+     "path": "scripts/settings/house-rules.js",
+     "line": 30
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.allowDroidFollowerSizeChoice",
+   "sites": [
+    {
+     "path": "scripts/settings/house-rules.js",
+     "line": 39
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.allowHomebrew",
+   "sites": [
+    {
+     "path": "scripts/gm-tools/homebrew-manager.js",
+     "line": 34
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.allowHumanFollowerNormalBonus",
+   "sites": [
+    {
+     "path": "scripts/settings/house-rules.js",
+     "line": 21
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.allowOffhandDoubleTripleAttacks",
+   "sites": [
+    {
+     "path": "scripts/settings/house-rules.js",
+     "line": 49
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.allowSuiteReselection",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 541
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.autoConditionRecovery",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 159
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.autoDamageThreshold",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 150
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.autoGrantDoubleTripleAttackByBAB",
+   "sites": [
+    {
+     "path": "scripts/settings/house-rules.js",
+     "line": 58
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.classToTalentTreeIdMigration",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 370
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.classTreeOverrides",
+   "sites": [
+    {
+     "path": "scripts/settings/house-rules.js",
+     "line": 86
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.dailyForcePoints",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 240
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.darkSideMaxMultiplier",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 77
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.darkSidePointsPhase2Migration",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 390
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.darkSideScoreEditPolicy",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 126
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.dataLoaded",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 400
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.debugMode",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 49
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.dev-strict-enforcement",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 655
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.devMode",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 186
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.enableAutomation",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 141
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.enableChatNarrationForRolls",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 516
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.enableCinematicEffects",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 591
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.enableCinematicShields",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 600
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.enableDarkSideTreeAccess",
+   "sites": [
+    {
+     "path": "scripts/settings/house-rules.js",
+     "line": 68
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.enableEnhancedMassiveDamage",
+   "sites": [
+    {
+     "path": "scripts/core/init.js",
+     "line": 45
+    },
+    {
+     "path": "scripts/holonet/scripts/core/init.js",
+     "line": 43
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.enableFollowerBackgrounds",
+   "sites": [
+    {
+     "path": "scripts/settings/house-rules.js",
+     "line": 12
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.enableMentorNotesPanel",
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/suggestion-settings.js",
+     "line": 16
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.enableRawCustomizationWorkbench",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 630
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.enableSuggestionTrace",
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/suggestion-settings.js",
+     "line": 7
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.epicOverride",
+   "sites": [
+    {
+     "path": "scripts/settings/epic-override.js",
+     "line": 10
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.fixItemWeightMigration",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 340
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.forceCompendiumsPopulation",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 320
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.gmApprovalHistory",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 201
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.gmCombatRecoveryLog",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 192
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.governanceVisibilityMode",
+   "sites": [
+    {
+     "path": "scripts/governance/governance-system.js",
+     "line": 213
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonet_party_state",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 60
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonet_player_state",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 52
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonet_records",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 36
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonet_threads",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 44
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonetAssetTradesEnabled",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 114
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonetBulletinContacts",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 176
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonetCreditTransfersEnabled",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 87
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonetCustomPersonas",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 69
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonetItemTradesEnabled",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 96
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonetPartyFundBalance",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 141
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonetPartyFundDefaultCutPercent",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 149
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonetPartyFundEnabled",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 132
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonetPartyFundLedger",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 159
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonetRequireAssetTradeApproval",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 123
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonetRequireCreditTransferApproval",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 78
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonetRequireItemTradeApproval",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 105
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonewsAtomPolicy",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 184
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.holonewsAutoPublisherPolicy",
+   "sites": [
+    {
+     "path": "scripts/holonet/integration/holonet-init.js",
+     "line": 168
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.homebrewContent",
+   "sites": [
+    {
+     "path": "scripts/gm-tools/homebrew-manager.js",
+     "line": 43
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.houseRules",
+   "sites": [
+    {
+     "path": "scripts/gm-tools/homebrew-manager.js",
+     "line": 58
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.itemValidationMigration",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 310
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.jsonBackedIdsMigration",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 380
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.lightsaberConstructionMode",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 640
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.maxTemplatesPerItem",
+   "sites": [
+    {
+     "path": "scripts/core/init.js",
+     "line": 32
+    },
+    {
+     "path": "scripts/core/settings.js",
+     "line": 38
+    },
+    {
+     "path": "scripts/holonet/scripts/core/init.js",
+     "line": 30
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.mentorFocusReactionsEnabled",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 446
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.mentorGuidanceEnabled",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 419
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.mentorReactionDebug",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 455
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.mentorReactionMode",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 432
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.mentorTranslationEnabled",
+   "sites": [
+    {
+     "path": "scripts/mentor/mentor-translation-settings.js",
+     "line": 16
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.mentorTranslationSkipOnClick",
+   "sites": [
+    {
+     "path": "scripts/mentor/mentor-translation-settings.js",
+     "line": 28
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.mentorTranslationSpeed",
+   "sites": [
+    {
+     "path": "scripts/mentor/mentor-translation-settings.js",
+     "line": 40
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.menu:classTreeAccessMenu",
+   "sites": [
+    {
+     "path": "scripts/settings/house-rules.js",
+     "line": 78
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.menu:gmStoreDashboard",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 488
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.menu:houserulesConfig",
+   "sites": [
+    {
+     "path": "scripts/houserules/houserules-config.js",
+     "line": 165
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.multiclassBonusSkillDelta",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 581
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.multiclassEnhancedEnabled",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 554
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.multiclassExtraStartingFeats",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 572
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.multiclassRetraining",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 563
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.pendingCustomPurchases",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 475
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.performanceDiagnostics",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 68
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.postRenderDiagnostics",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 58
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.progression-allow-apply-retry",
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "line": 151
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.progression-allow-session-resume",
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "line": 142
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.progression-enable-advisory",
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "line": 61
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.progression-enable-debug-tools",
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "line": 114
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.progression-enable-forecast",
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "line": 70
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.progression-enable-templates",
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "line": 52
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.progression-legacy-entry-points-visible",
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "line": 173
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.progression-legacy-fallback-enabled",
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "line": 164
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.progression-log-level",
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "line": 123
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.progression-rollout-mode",
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "line": 32
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.progression-show-explainability",
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "line": 83
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.progression-show-support-warnings",
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "line": 105
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.progression-show-template-provenance",
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "line": 92
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.resetResourcesOnCombat",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 168
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.safeMode",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 195
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.sentinelAppv2Strict",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 221
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.sentinelMode",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 205
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.sentinelSheetGuardrails",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 231
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.sheetMotionStyle",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 272
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.sheetTheme",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 256
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.showSuggestionDiffOnLevelUp",
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/suggestion-settings.js",
+     "line": 25
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.sithApprenticeMinimumDSP",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 91
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.sithLordMinimumDSP",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 108
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.skillFavorites",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 409
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.speciesTraitsUpdate",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 330
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.startingCreditMode",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 526
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.store.requireGMApproval",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 465
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.storeSkipLoadingOverlay",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 620
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.strictEnforcementEnabled",
+   "sites": [
+    {
+     "path": "scripts/governance/governance-system.js",
+     "line": 227
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.talentEffectValidationMigration",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 350
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.talentSSOTRefactor",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 360
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.themePromptShown",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 663
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.uiTheme",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 289
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.useAurebesh",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 610
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.vehicleStockSilentArcPolicy",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 26
+    }
+   ]
+  },
+  {
+   "key": "foundryvtt-swse.welcomeShown",
+   "sites": [
+    {
+     "path": "scripts/core/settings.js",
+     "line": 177
+    }
+   ]
+  },
+  {
+   "key": "null.(expr)",
+   "sites": [
+    {
+     "path": "scripts/allies/faction-registry-service.js",
+     "line": 299
+    },
+    {
+     "path": "scripts/core/feature-flags.js",
+     "line": 249
+    },
+    {
+     "path": "scripts/core/first-run-experience.js",
+     "line": 243
+    },
+    {
+     "path": "scripts/core/tooltip-discovery.js",
+     "line": 273
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-cp23c4-gm-observation-ledger.js",
+     "line": 67
+    },
+    {
+     "path": "scripts/engine/skill-challenges/SkillChallengeStore.js",
+     "line": 37
+    },
+    {
+     "path": "scripts/holonet/holonet-preferences.js",
+     "line": 28
+    },
+    {
+     "path": "scripts/holonet/holonet-preferences.js",
+     "line": 38
+    },
+    {
+     "path": "scripts/holonet/scripts/core/first-run-experience.js",
+     "line": 158
+    },
+    {
+     "path": "scripts/houserules/houserule-settings.js",
+     "line": 23
+    },
+    {
+     "path": "scripts/locations/location-registry-service.js",
+     "line": 427
+    },
+    {
+     "path": "scripts/ui/discovery/user-state.js",
+     "line": 29
+    }
+   ]
+  },
+  {
+   "key": "null.disableCallouts",
+   "sites": [
+    {
+     "path": "scripts/ui/discovery/discovery-settings.js",
+     "line": 10
+    }
+   ]
+  },
+  {
+   "key": "null.disableTooltips",
+   "sites": [
+    {
+     "path": "scripts/ui/discovery/discovery-settings.js",
+     "line": 28
+    }
+   ]
+  },
+  {
+   "key": "null.disableTour",
+   "sites": [
+    {
+     "path": "scripts/ui/discovery/discovery-settings.js",
+     "line": 19
+    }
+   ]
+  },
+  {
+   "key": "null.metaTuningConfig",
+   "sites": [
+    {
+     "path": "scripts/engine/MetaTuning.js",
+     "line": 70
+    }
+   ]
+  },
+  {
+   "key": "null.themePromptShown",
+   "sites": [
+    {
+     "path": "scripts/ui/ui-manager.js",
+     "line": 21
+    }
+   ]
+  },
+  {
+   "key": "null.uiTheme",
+   "sites": [
+    {
+     "path": "scripts/ui/theme/theme-init.js",
+     "line": 17
+    }
+   ]
+  },
+  {
+   "key": "swse.(expr)",
+   "sites": [
+    {
+     "path": "index.js",
+     "line": 361
+    }
+   ]
+  },
+  {
+   "key": "swse.menu:homebrewManager",
+   "sites": [
+    {
+     "path": "scripts/gm-tools/homebrew-manager.js",
+     "line": 23
+    }
+   ]
+  }
+ ],
+ "sheets": [
+  {
+   "path": "index.js",
+   "registrar": "Actors",
+   "args": "\"swse\", SWSEV2CharacterSheet, { types: [\"character\"], label: \"SWSE Ch...",
+   "line": 175
+  },
+  {
+   "path": "index.js",
+   "registrar": "Actors",
+   "args": "\"swse\", SWSEV2NpcSheet, { types: [\"npc\"], label: \"SWSE NPC Actor Shee...",
+   "line": 181
+  },
+  {
+   "path": "index.js",
+   "registrar": "Actors",
+   "args": "\"swse\", SWSEV2DroidSheet, { types: [\"droid\"], label: \"SWSE Droid Acto...",
+   "line": 187
+  },
+  {
+   "path": "index.js",
+   "registrar": "Actors",
+   "args": "\"swse\", SWSEV2VehicleSheet, { types: [\"vehicle\"], label: \"SWSE Vehicl...",
+   "line": 193
+  },
+  {
+   "path": "index.js",
+   "registrar": "Items",
+   "args": "\"swse\", SWSEItemSheet, { types: SWSE.itemTypes, label: \"SWSE Item She...",
+   "line": 199
+  }
+ ],
+ "globals": [
+  {
+   "global": "globalThis.window",
+   "files": [
+    "docs/audits/reconciliation-v2-phase0-repro/repro.mjs",
+    "docs/audits/transaction-integrity/repro/_boot.mjs",
+    "tests/_scratch-manifest.mjs",
+    "tests/_scratch2.mjs",
+    "tests/_scratch3.mjs",
+    "tests/ability-acknowledgment-hardening.test.mjs",
+    "tests/ability-acknowledgment-service.test.mjs",
+    "tests/ability-increase-entitlement-integrity.test.mjs",
+    "tests/ability-increase-verification.test.mjs",
+    "tests/acquisition-authority.test.mjs",
+    "tests/action-authority-136-record-reconciliation.test.mjs",
+    "tests/action-authority-groundwork.test.mjs",
+    "tests/armor-hydration-hotfix-shadow-authority-removal.test.mjs",
+    "tests/armor-shield-acp-authority.test.mjs",
+    "tests/asset-bay-ownership-hardening.test.mjs",
+    "tests/attack-bonus-math-integrity.test.mjs",
+    "tests/attack-composition-actionid-diagnostic.test.mjs",
+    "tests/attack-damage-option-context-transport.test.mjs",
+    "tests/attack-dialog-context-authority-correction.test.mjs",
+    "tests/attack-dialog-context-authority.test.mjs",
+    "tests/attack-dialog-profile-context-convergence.test.mjs",
+    "tests/attack-target-defense-authority.test.mjs",
+    "tests/attempt-grab-reflex-defense-authority.test.mjs",
+    "tests/class-force-v2-active-adapter-cutover.test.mjs",
+    "tests/class-force-v2-alchemy-atomicity.test.mjs",
+    "tests/class-force-v2-alchemy-cutover.test.mjs",
+    "tests/class-force-v2-attunement-cutover.test.mjs",
+    "tests/class-force-v2-direct-fp-cutover.test.mjs",
+    "tests/class-force-v2-receipt-reconciliation.test.mjs",
+    "tests/class-force-v2-serenity-takex-denial.test.mjs",
+    "tests/class-force-v2-temptation-trigger.test.mjs",
+    "tests/class-force-v2-threshold-cutover.test.mjs",
+    "tests/class-force-v2-watchcircle-exemption.test.mjs",
+    "tests/class-phase-6z-reaction-execution-admission.test.mjs",
+    "tests/combat-action-eligibility-coverage.test.mjs",
+    "tests/combat-action-eligibility.test.mjs",
+    "tests/combat-action-identity.test.mjs",
+    "tests/combat-action-routing-closure.test.mjs",
+    "tests/combat-feature-stance-authority.test.mjs",
+    "tests/combat-loadout-preview.test.mjs",
+    "tests/combat-tab-ux-contract.test.mjs",
+    "tests/d016-physical-damage-type-flow.test.mjs",
+    "tests/damage-modifier-ssot.test.mjs",
+    "tests/droid-component-browser.test.mjs",
+    "tests/droid-component-operation-gate.test.mjs",
+    "tests/energy-shield-defense-and-activation-authority.test.mjs",
+    "tests/equipment-actor-parity.test.mjs",
+    "tests/equipment-droid-draw-authority.test.mjs",
+    "tests/equipment-e3a3-weapon-grip-integration.test.mjs",
+    "tests/equipment-e3a4-posture-foundation.test.mjs",
+    "tests/equipment-e3a5-effective-posture.test.mjs",
+    "tests/equipment-e4c1-wp1-wp2-foundation.test.mjs",
+    "tests/equipment-e4c1-wp3a-coordinator.test.mjs",
+    "tests/equipment-e4c1-wp4-writer-convergence.test.mjs",
+    "tests/equipment-e4c1-wp5-c1-attack-gate-and-firestate.test.mjs",
+    "tests/equipment-e4c1-wp5-c2-attack-integrity.test.mjs",
+    "tests/equipment-e4c1-wp5-c3-trust-boundaries.test.mjs",
+    "tests/equipment-e4c1-wp5-c3b-force-point-lifecycle.test.mjs",
+    "tests/equipment-e4c1-wp5-combat-readiness.test.mjs",
+    "tests/equipment-follower-capability-parity.test.mjs",
+    "tests/equipment-g18-request-identity.test.mjs",
+    "tests/equipment-g36-gm-control.test.mjs",
+    "tests/equipment-g36-reconciliation.test.mjs",
+    "tests/equipment-lifecycle-slice.test.mjs",
+    "tests/equipment-possessions-browser.test.mjs",
+    "tests/equipment-skill-hook-roll-regression.test.mjs",
+    "tests/equipment-vertical-slice-draw-choice.test.mjs",
+    "tests/equipment-weight-convergence.test.mjs",
+    "tests/equipment-workspace.test.mjs",
+    "tests/equipment-wp3b-player-request-route.test.mjs",
+    "tests/equipment-wp3b-transport-hardening.test.mjs",
+    "tests/feat-housekeeping-houserule-hook.test.mjs",
+    "tests/feat-registry-canonical-identity.test.mjs",
+    "tests/force-power-final-integration.test.mjs",
+    "tests/force-v2-03b-block-deflect-events.test.mjs",
+    "tests/force-v2-03b-consumer-cutover.test.mjs",
+    "tests/force-v2-03b-lightsaber-contracts.test.mjs",
+    "tests/force-v2-03b-regimen-entitlements.test.mjs",
+    "tests/force-v2-03b-talent-contracts.test.mjs",
+    "tests/force-v2-03b-transaction-behavior.test.mjs",
+    "tests/force-v2-03c-suite-recovery.test.mjs",
+    "tests/force-v2-03d-maintained-effects.test.mjs",
+    "tests/force-v2-03e-duplicates-temptation.test.mjs",
+    "tests/force-v2-game-night-integration.test.mjs",
+    "tests/force-v2-release-gate.test.mjs",
+    "tests/garee-full-skill-derivation-parity.test.mjs",
+    "tests/grab-grapple-resistance-channel-split.test.mjs",
+    "tests/grapple-bonus-ssot-parity.test.mjs",
+    "tests/grapple-state-attack-penalty.test.mjs",
+    "tests/grapple-static-modifier-composition.test.mjs",
+    "tests/helpers/foundry-shim/preload.mjs",
+    "tests/helpers/session-harness.mjs",
+    "tests/helpers/talent-progression-harness.mjs",
+    "tests/hp-house-rule-authority.test.mjs",
+    "tests/hp-preservation-authority.test.mjs",
+    "tests/legacy-equip-state-single-pass-authority.test.mjs",
+    "tests/mentor-survey-step.test.mjs",
+    "tests/modification-v2-convergence.test.mjs",
+    "tests/npc-pr1158-review-corrections.test.mjs",
+    "tests/npc-v2-convergence.test.mjs",
+    "tests/ooc-chat-card-surface.test.mjs",
+    "tests/opposed-grapple-tie-authority.test.mjs",
+    "tests/phase6-force-direct-damage.test.mjs",
+    "tests/progression-background-drop-adoption-contract.test.mjs",
+    "tests/progression-completion-reader.test.mjs",
+    "tests/progression-derived-class-stat-audit-contract.test.mjs",
+    "tests/progression-evidence-reconciliation.test.mjs",
+    "tests/progression-evidence-review-ui.test.mjs",
+    "tests/progression-inline-surface-performance.test.mjs",
+    "tests/progression-mentor-nonblocking.test.mjs",
+    "tests/progression-render-scheduler-budgets.test.mjs",
+    "tests/progression-search.test.mjs",
+    "tests/progression-session-persistence-writebehind.test.mjs",
+    "tests/progression-sheet-free-add-single-step-contract.test.mjs",
+    "tests/reconciliation-async-lifecycle-paths.test.mjs",
+    "tests/reconciliation-domain-adapters.test.mjs",
+    "tests/reconciliation-force-training-diagnostic.test.mjs",
+    "tests/reconciliation-house-rules.test.mjs",
+    "tests/reconciliation-phase2-species.test.mjs",
+    "tests/reconciliation-phase3-equipment.test.mjs",
+    "tests/reconciliation-phase4-droid.test.mjs",
+    "tests/reconciliation-phase5-integration.test.mjs",
+    "tests/reconciliation-phase6-advisory.test.mjs",
+    "tests/reconciliation-phase6-review-fixes.test.mjs",
+    "tests/reconciliation-v2-contract.test.mjs",
+    "tests/species-ability-choice-profiles.test.mjs",
+    "tests/species-publication-selection.test.mjs",
+    "tests/species-republic-clone-allocation.test.mjs",
+    "tests/species-snapshot-positive-application.test.mjs",
+    "tests/stock-droid-attack-math.test.mjs",
+    "tests/stock-droid-damage-math.test.mjs",
+    "tests/store-v2-droid-construction.test.mjs",
+    "tests/store-v2-purchase-integrity.test.mjs",
+    "tests/store-v2-s2-commerce-closure.test.mjs",
+    "tests/store-v2-s9-resale-authority.test.mjs",
+    "tests/talent-force-talent-structural-authority.test.mjs",
+    "tests/talent-phase-3g-runtime-identity.test.mjs",
+    "tests/talent-step-focus-render-authority.test.mjs",
+    "tests/target-defense-shared-authority.test.mjs",
+    "tests/ti2-commerce-integrity.test.mjs",
+    "tests/ti3-progression-followers-approvals.test.mjs",
+    "tests/ti4c0-g06-rollback-verification.test.mjs",
+    "tests/ti4c0-g06s1-exact-snapshot.test.mjs",
+    "tests/ti4c0-g11-caller-outcomes.test.mjs",
+    "tests/ti4c0-g11-follower-rollback.test.mjs",
+    "tests/ti4c0-g16-holonet-credit-evidence.test.mjs",
+    "tests/ti4c0-g20-rollback-replay.test.mjs",
+    "tests/ti4c0-g21-legacy-dashboard-reversal.test.mjs",
+    "tests/ti4c0-g22-wager-refund-replay.test.mjs",
+    "tests/ti4c0-g24-pending-sale-identity.test.mjs",
+    "tests/ti4c0-g26-party-fund-integrity.test.mjs",
+    "tests/ti4c0-g34-progression-ledger-sync-authority.test.mjs",
+    "tests/ti4c0-g35-droid-rejection-post-commit.test.mjs",
+    "tests/ti4c0-te-credit-adjustment-safety.test.mjs",
+    "tests/weapon-3gate-damage-branch-authority.test.mjs",
+    "tests/weapon-3gate-evasion-area-path.test.mjs",
+    "tests/weapon-3gate-ledger.test.mjs",
+    "tests/weapon-3gate-math-matrix.test.mjs",
+    "tests/weapon-3gate-w1-minimum-hit-damage.test.mjs",
+    "tests/weapon-3gate-w2-range-authority.test.mjs",
+    "tests/weapon-3gate-w3-range-continuity.test.mjs",
+    "tests/weapon-3gate-w4-golden-arithmetic.test.mjs",
+    "tests/weapon-3gate-w7-legacy-entrypoints.test.mjs",
+    "tests/weapon-phase-5d-a-attack-consumption.test.mjs",
+    "tests/weapon-phase-5d-b-profile-selection.test.mjs",
+    "tests/weapon-phase-5d-c-damage-consumption.test.mjs",
+    "tests/weapon-phase-5d-d-range-resource-consumption.test.mjs",
+    "tests/weapon-phase-5d-d-thrown-melee-correction.test.mjs",
+    "tests/weapon-phase-5d-e-multiplier-correction.test.mjs",
+    "tests/weapon-phase-5d-e-special-effects.test.mjs",
+    "tests/weapon-phase-5d-f-multiattack-convergence.test.mjs",
+    "tests/weapon-phase-5d-g-fire-state-area-selectors.test.mjs",
+    "tests/weapon-phase-5d-h-executable-field-closure.test.mjs",
+    "tests/weapon-phase-5d-i-a-core-attack-residuals.test.mjs",
+    "tests/weapon-phase-5d-i-b-wielding-activation-threat.test.mjs",
+    "tests/weapon-phase-5d-i-c-a-outcome-persistent-effects.test.mjs",
+    "tests/weapon-phase-5d-i-c-b-grapple-control.test.mjs",
+    "tests/weapon-phase-5d-i-c-c-reaction-defense.test.mjs",
+    "tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs",
+    "tests/weapon-phase-5d-i-d-b1-mounting.test.mjs",
+    "tests/weapon-phase-5d-i-d-b2-wielding-size.test.mjs",
+    "tests/weapon-phase-5d-i-d-b3-upgrades.test.mjs",
+    "tests/weapon-phase-5d-i-d-b5-stock.test.mjs",
+    "tests/weapon-phase-5d-i-d-e-talent-relations.test.mjs",
+    "tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs",
+    "tests/weapon-production-mixed-resource-ammunition.test.mjs",
+    "tests/weapon-readiness-production-path.test.mjs",
+    "tests/weapon-readiness-ui-contract.test.mjs",
+    "tools/audit-weapon-v2-gate-a-crosswalk.mjs",
+    "tools/census-weapon-executable-field-closure.mjs",
+    "tools/census-weapon-fire-state-area-selectors.mjs",
+    "tools/census-weapon-special-mechanics.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.ui",
+   "files": [
+    "docs/audits/transaction-integrity/repro/_boot.mjs",
+    "tests/action-authority-136-record-reconciliation.test.mjs",
+    "tests/action-authority-entitlement-reconciliation.test.mjs",
+    "tests/action-authority-groundwork.test.mjs",
+    "tests/action-authority-presentation-reconciliation.test.mjs",
+    "tests/attack-bonus-math-integrity.test.mjs",
+    "tests/attack-composition-actionid-diagnostic.test.mjs",
+    "tests/attack-damage-option-context-transport.test.mjs",
+    "tests/attack-dialog-context-authority-correction.test.mjs",
+    "tests/attack-dialog-context-authority.test.mjs",
+    "tests/attack-dialog-profile-context-convergence.test.mjs",
+    "tests/attack-target-defense-authority.test.mjs",
+    "tests/attempt-grab-reflex-defense-authority.test.mjs",
+    "tests/class-force-v2-active-adapter-cutover.test.mjs",
+    "tests/class-force-v2-alchemy-atomicity.test.mjs",
+    "tests/class-force-v2-alchemy-cutover.test.mjs",
+    "tests/class-force-v2-attunement-cutover.test.mjs",
+    "tests/class-force-v2-direct-fp-cutover.test.mjs",
+    "tests/class-force-v2-receipt-reconciliation.test.mjs",
+    "tests/class-force-v2-temptation-trigger.test.mjs",
+    "tests/class-force-v2-threshold-cutover.test.mjs",
+    "tests/class-force-v2-watchcircle-exemption.test.mjs",
+    "tests/class-phase-6p-force-class-sheet-controls.test.mjs",
+    "tests/combat-action-eligibility-coverage.test.mjs",
+    "tests/combat-action-eligibility.test.mjs",
+    "tests/combat-action-identity.test.mjs",
+    "tests/combat-action-routing-closure.test.mjs",
+    "tests/combat-feature-stance-authority.test.mjs",
+    "tests/combat-loadout-preview.test.mjs",
+    "tests/combat-tab-ux-contract.test.mjs",
+    "tests/d016-physical-damage-type-flow.test.mjs",
+    "tests/damage-modifier-ssot.test.mjs",
+    "tests/droid-component-operation-gate.test.mjs",
+    "tests/equipment-e4c1-wp5-c1-attack-gate-and-firestate.test.mjs",
+    "tests/equipment-e4c1-wp5-c2-attack-integrity.test.mjs",
+    "tests/equipment-e4c1-wp5-c3-trust-boundaries.test.mjs",
+    "tests/equipment-e4c1-wp5-c3b-force-point-lifecycle.test.mjs",
+    "tests/equipment-e4c1-wp5-combat-readiness.test.mjs",
+    "tests/equipment-lifecycle-slice.test.mjs",
+    "tests/equipment-skill-hook-roll-regression.test.mjs",
+    "tests/feat-registry-canonical-identity.test.mjs",
+    "tests/force-power-final-integration.test.mjs",
+    "tests/force-v2-03b-consumer-cutover.test.mjs",
+    "tests/force-v2-03b-lightsaber-contracts.test.mjs",
+    "tests/force-v2-03b-talent-contracts.test.mjs",
+    "tests/force-v2-03c-suite-recovery.test.mjs",
+    "tests/force-v2-03d-maintained-effects.test.mjs",
+    "tests/force-v2-03e-duplicates-temptation.test.mjs",
+    "tests/force-v2-game-night-integration.test.mjs",
+    "tests/force-v2-release-gate.test.mjs",
+    "tests/galactic-profile-step.test.mjs",
+    "tests/grapple-state-attack-penalty.test.mjs",
+    "tests/helpers/vehicle-weapon-world.mjs",
+    "tests/modification-v2-convergence.test.mjs",
+    "tests/opposed-grapple-tie-authority.test.mjs",
+    "tests/phase6-force-direct-damage.test.mjs",
+    "tests/progression-inline-surface-performance.test.mjs",
+    "tests/species-publication-selection.test.mjs",
+    "tests/store-v2-purchase-integrity.test.mjs",
+    "tests/store-v2-s2-commerce-closure.test.mjs",
+    "tests/store-v2-s9-resale-authority.test.mjs",
+    "tests/talent-force-talent-structural-authority.test.mjs",
+    "tests/talent-step-focus-render-authority.test.mjs",
+    "tests/ti2-commerce-integrity.test.mjs",
+    "tests/ti3-progression-followers-approvals.test.mjs",
+    "tests/ti4c0-g06-rollback-verification.test.mjs",
+    "tests/ti4c0-g06s1-exact-snapshot.test.mjs",
+    "tests/ti4c0-g11-caller-outcomes.test.mjs",
+    "tests/ti4c0-g11-follower-rollback.test.mjs",
+    "tests/ti4c0-g20-rollback-replay.test.mjs",
+    "tests/ti4c0-g21-legacy-dashboard-reversal.test.mjs",
+    "tests/ti4c0-g24-pending-sale-identity.test.mjs",
+    "tests/ti4c0-g35-droid-rejection-post-commit.test.mjs",
+    "tests/vehicle-universal-phase4e-p17-operating-context.test.mjs",
+    "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+    "tests/vehicle-universal-phase4e-p23-weapon-integrity.test.mjs",
+    "tests/vehicle-universal-phase4e-p24-capital-and-pilot.test.mjs",
+    "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+    "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+    "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs",
+    "tests/vehicle-universal-phase4e-p29-starship-scale-area.test.mjs",
+    "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+    "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+    "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+    "tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs",
+    "tests/vehicle-universal-phase4e-p5-combat-chain.test.mjs",
+    "tests/vehicle-universal-phase4e-p50-initial-ammunition-policy.test.mjs",
+    "tests/vehicle-universal-phase4e-p51-party-fund-ammunition.test.mjs",
+    "tests/vehicle-universal-phase4e-p52-ammunition-shortcuts.test.mjs",
+    "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs",
+    "tests/weapon-3gate-damage-branch-authority.test.mjs",
+    "tests/weapon-3gate-evasion-area-path.test.mjs",
+    "tests/weapon-3gate-ledger.test.mjs",
+    "tests/weapon-3gate-math-matrix.test.mjs",
+    "tests/weapon-3gate-w1-minimum-hit-damage.test.mjs",
+    "tests/weapon-3gate-w2-range-authority.test.mjs",
+    "tests/weapon-3gate-w3-range-continuity.test.mjs",
+    "tests/weapon-3gate-w4-golden-arithmetic.test.mjs",
+    "tests/weapon-3gate-w7-legacy-entrypoints.test.mjs",
+    "tests/weapon-phase-5d-a-attack-consumption.test.mjs",
+    "tests/weapon-phase-5d-b-profile-selection.test.mjs",
+    "tests/weapon-phase-5d-c-damage-consumption.test.mjs",
+    "tests/weapon-phase-5d-d-range-resource-consumption.test.mjs",
+    "tests/weapon-phase-5d-d-thrown-melee-correction.test.mjs",
+    "tests/weapon-phase-5d-e-multiplier-correction.test.mjs",
+    "tests/weapon-phase-5d-e-special-effects.test.mjs",
+    "tests/weapon-phase-5d-f-multiattack-convergence.test.mjs",
+    "tests/weapon-phase-5d-g-fire-state-area-selectors.test.mjs",
+    "tests/weapon-phase-5d-h-executable-field-closure.test.mjs",
+    "tests/weapon-phase-5d-i-a-core-attack-residuals.test.mjs",
+    "tests/weapon-phase-5d-i-b-wielding-activation-threat.test.mjs",
+    "tests/weapon-phase-5d-i-c-a-outcome-persistent-effects.test.mjs",
+    "tests/weapon-phase-5d-i-c-b-grapple-control.test.mjs",
+    "tests/weapon-phase-5d-i-c-c-reaction-defense.test.mjs",
+    "tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs",
+    "tests/weapon-phase-5d-i-d-b1-mounting.test.mjs",
+    "tests/weapon-phase-5d-i-d-b2-wielding-size.test.mjs",
+    "tests/weapon-phase-5d-i-d-b5-stock.test.mjs",
+    "tests/weapon-phase-5d-i-d-e-talent-relations.test.mjs",
+    "tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs",
+    "tests/weapon-production-mixed-resource-ammunition.test.mjs",
+    "tools/audit-weapon-v2-gate-a-crosswalk.mjs",
+    "tools/census-weapon-executable-field-closure.mjs",
+    "tools/census-weapon-fire-state-area-selectors.mjs",
+    "tools/census-weapon-special-mechanics.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.foundry",
+   "files": [
+    "docs/audits/transaction-integrity/repro/_boot.mjs",
+    "tests/action-authority-136-record-reconciliation.test.mjs",
+    "tests/action-authority-entitlement-reconciliation.test.mjs",
+    "tests/action-authority-groundwork.test.mjs",
+    "tests/action-authority-presentation-reconciliation.test.mjs",
+    "tests/attack-bonus-math-integrity.test.mjs",
+    "tests/attack-composition-actionid-diagnostic.test.mjs",
+    "tests/attack-damage-option-context-transport.test.mjs",
+    "tests/attack-dialog-context-authority-correction.test.mjs",
+    "tests/attack-dialog-context-authority.test.mjs",
+    "tests/attack-dialog-profile-context-convergence.test.mjs",
+    "tests/attack-target-defense-authority.test.mjs",
+    "tests/attempt-grab-reflex-defense-authority.test.mjs",
+    "tests/combat-action-eligibility-coverage.test.mjs",
+    "tests/combat-action-eligibility.test.mjs",
+    "tests/combat-action-identity.test.mjs",
+    "tests/combat-action-routing-closure.test.mjs",
+    "tests/combat-feature-stance-authority.test.mjs",
+    "tests/combat-loadout-preview.test.mjs",
+    "tests/combat-tab-ux-contract.test.mjs",
+    "tests/d016-physical-damage-type-flow.test.mjs",
+    "tests/damage-modifier-ssot.test.mjs",
+    "tests/elite-droid-talent-tree-hydration.test.mjs",
+    "tests/equipment-actor-parity.test.mjs",
+    "tests/equipment-e4c1-wp5-c1-attack-gate-and-firestate.test.mjs",
+    "tests/equipment-e4c1-wp5-c2-attack-integrity.test.mjs",
+    "tests/equipment-e4c1-wp5-c3-trust-boundaries.test.mjs",
+    "tests/equipment-e4c1-wp5-c3b-force-point-lifecycle.test.mjs",
+    "tests/equipment-e4c1-wp5-combat-readiness.test.mjs",
+    "tests/equipment-follower-capability-parity.test.mjs",
+    "tests/equipment-g36-gm-control.test.mjs",
+    "tests/equipment-lifecycle-slice.test.mjs",
+    "tests/equipment-skill-hook-roll-regression.test.mjs",
+    "tests/equipment-vertical-slice-draw-choice.test.mjs",
+    "tests/equipment-workspace.test.mjs",
+    "tests/feat-registry-canonical-identity.test.mjs",
+    "tests/garee-full-skill-derivation-parity.test.mjs",
+    "tests/grab-grapple-resistance-channel-split.test.mjs",
+    "tests/grapple-bonus-ssot-parity.test.mjs",
+    "tests/grapple-state-attack-penalty.test.mjs",
+    "tests/grapple-static-modifier-composition.test.mjs",
+    "tests/helpers/talent-progression-harness.mjs",
+    "tests/krath-talent-tree-hydration.test.mjs",
+    "tests/legacy-equip-state-single-pass-authority.test.mjs",
+    "tests/modification-v2-convergence.test.mjs",
+    "tests/opposed-grapple-tie-authority.test.mjs",
+    "tests/phase2c-vehicle-runtime-integration.test.mjs",
+    "tests/progression-interaction-lifecycle.test.mjs",
+    "tests/progression-suggestion-and-render-contracts.test.mjs",
+    "tests/reconciliation-house-rules.test.mjs",
+    "tests/reconciliation-phase6-review-fixes.test.mjs",
+    "tests/species-ability-choice-profiles.test.mjs",
+    "tests/species-publication-selection.test.mjs",
+    "tests/species-republic-clone-allocation.test.mjs",
+    "tests/species-snapshot-positive-application.test.mjs",
+    "tests/store-v2-purchase-integrity.test.mjs",
+    "tests/store-v2-s2-commerce-closure.test.mjs",
+    "tests/talent-phase-3f-tree-identity.test.mjs",
+    "tests/talent-phase-3g-runtime-identity.test.mjs",
+    "tests/talent-step-focus-render-authority.test.mjs",
+    "tests/talent-tree-registry-runtime.test.mjs",
+    "tests/target-defense-shared-authority.test.mjs",
+    "tests/ti2-commerce-integrity.test.mjs",
+    "tests/ti3-progression-followers-approvals.test.mjs",
+    "tests/ti4c0-g06-rollback-verification.test.mjs",
+    "tests/ti4c0-g06s1-exact-snapshot.test.mjs",
+    "tests/ti4c0-g11-caller-outcomes.test.mjs",
+    "tests/ti4c0-g11-follower-rollback.test.mjs",
+    "tests/ti4c0-g16-holonet-credit-evidence.test.mjs",
+    "tests/ti4c0-g20-rollback-replay.test.mjs",
+    "tests/ti4c0-g21-legacy-dashboard-reversal.test.mjs",
+    "tests/ti4c0-g22-wager-refund-replay.test.mjs",
+    "tests/ti4c0-g24-pending-sale-identity.test.mjs",
+    "tests/ti4c0-g26-party-fund-integrity.test.mjs",
+    "tests/ti4c0-g34-progression-ledger-sync-authority.test.mjs",
+    "tests/ti4c0-g35-droid-rejection-post-commit.test.mjs",
+    "tests/ti4c0-te-credit-adjustment-safety.test.mjs",
+    "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+    "tests/weapon-3gate-evasion-area-path.test.mjs",
+    "tests/weapon-3gate-w3-range-continuity.test.mjs",
+    "tests/weapon-3gate-w7-legacy-entrypoints.test.mjs",
+    "tests/weapon-phase-5d-a-attack-consumption.test.mjs",
+    "tests/weapon-phase-5d-b-profile-selection.test.mjs",
+    "tests/weapon-phase-5d-c-damage-consumption.test.mjs",
+    "tests/weapon-phase-5d-d-range-resource-consumption.test.mjs",
+    "tests/weapon-phase-5d-d-thrown-melee-correction.test.mjs",
+    "tests/weapon-phase-5d-e-multiplier-correction.test.mjs",
+    "tests/weapon-phase-5d-e-special-effects.test.mjs",
+    "tests/weapon-phase-5d-f-multiattack-convergence.test.mjs",
+    "tests/weapon-phase-5d-g-fire-state-area-selectors.test.mjs",
+    "tests/weapon-phase-5d-h-executable-field-closure.test.mjs",
+    "tests/weapon-phase-5d-i-a-core-attack-residuals.test.mjs",
+    "tests/weapon-phase-5d-i-b-wielding-activation-threat.test.mjs",
+    "tests/weapon-phase-5d-i-c-a-outcome-persistent-effects.test.mjs",
+    "tests/weapon-phase-5d-i-c-b-grapple-control.test.mjs",
+    "tests/weapon-phase-5d-i-c-c-reaction-defense.test.mjs",
+    "tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs",
+    "tests/weapon-phase-5d-i-d-b1-mounting.test.mjs",
+    "tests/weapon-phase-5d-i-d-b2-wielding-size.test.mjs",
+    "tests/weapon-phase-5d-i-d-e-talent-relations.test.mjs",
+    "tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs",
+    "tests/weapon-production-mixed-resource-ammunition.test.mjs",
+    "tests/weapon-readiness-production-path.test.mjs",
+    "tools/audit-talent-prerequisite-identity-experiments.mjs",
+    "tools/census-talent-prerequisite-identity.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.Hooks",
+   "files": [
+    "docs/audits/transaction-integrity/repro/_boot.mjs",
+    "tests/action-authority-136-record-reconciliation.test.mjs",
+    "tests/action-authority-entitlement-reconciliation.test.mjs",
+    "tests/action-authority-groundwork.test.mjs",
+    "tests/action-authority-presentation-reconciliation.test.mjs",
+    "tests/attack-bonus-math-integrity.test.mjs",
+    "tests/attack-composition-actionid-diagnostic.test.mjs",
+    "tests/attack-damage-option-context-transport.test.mjs",
+    "tests/attack-dialog-context-authority-correction.test.mjs",
+    "tests/attack-dialog-context-authority.test.mjs",
+    "tests/attack-dialog-profile-context-convergence.test.mjs",
+    "tests/attack-target-defense-authority.test.mjs",
+    "tests/attempt-grab-reflex-defense-authority.test.mjs",
+    "tests/class-force-v2-active-adapter-cutover.test.mjs",
+    "tests/class-force-v2-alchemy-atomicity.test.mjs",
+    "tests/class-force-v2-alchemy-cutover.test.mjs",
+    "tests/class-force-v2-attunement-cutover.test.mjs",
+    "tests/class-force-v2-direct-fp-cutover.test.mjs",
+    "tests/class-force-v2-receipt-reconciliation.test.mjs",
+    "tests/class-force-v2-serenity-takex-denial.test.mjs",
+    "tests/class-force-v2-temptation-trigger.test.mjs",
+    "tests/class-force-v2-threshold-cutover.test.mjs",
+    "tests/class-force-v2-watchcircle-exemption.test.mjs",
+    "tests/class-phase-6z-reaction-execution-admission.test.mjs",
+    "tests/combat-action-eligibility-coverage.test.mjs",
+    "tests/combat-action-eligibility.test.mjs",
+    "tests/combat-action-identity.test.mjs",
+    "tests/combat-action-routing-closure.test.mjs",
+    "tests/combat-feature-stance-authority.test.mjs",
+    "tests/combat-loadout-preview.test.mjs",
+    "tests/combat-tab-ux-contract.test.mjs",
+    "tests/d016-physical-damage-type-flow.test.mjs",
+    "tests/damage-modifier-ssot.test.mjs",
+    "tests/droid-component-operation-gate.test.mjs",
+    "tests/equipment-e4c1-wp5-c1-attack-gate-and-firestate.test.mjs",
+    "tests/equipment-e4c1-wp5-c2-attack-integrity.test.mjs",
+    "tests/equipment-e4c1-wp5-c3-trust-boundaries.test.mjs",
+    "tests/equipment-e4c1-wp5-c3b-force-point-lifecycle.test.mjs",
+    "tests/equipment-e4c1-wp5-combat-readiness.test.mjs",
+    "tests/equipment-lifecycle-slice.test.mjs",
+    "tests/feat-housekeeping-houserule-hook.test.mjs",
+    "tests/feat-registry-canonical-identity.test.mjs",
+    "tests/force-power-final-integration.test.mjs",
+    "tests/force-v2-03b-block-deflect-events.test.mjs",
+    "tests/force-v2-03b-consumer-cutover.test.mjs",
+    "tests/force-v2-03b-lightsaber-contracts.test.mjs",
+    "tests/force-v2-03b-regimen-entitlements.test.mjs",
+    "tests/force-v2-03b-talent-contracts.test.mjs",
+    "tests/force-v2-03b-transaction-behavior.test.mjs",
+    "tests/force-v2-03c-suite-recovery.test.mjs",
+    "tests/force-v2-03d-maintained-effects.test.mjs",
+    "tests/force-v2-03e-duplicates-temptation.test.mjs",
+    "tests/force-v2-game-night-integration.test.mjs",
+    "tests/force-v2-release-gate.test.mjs",
+    "tests/grapple-state-attack-penalty.test.mjs",
+    "tests/helpers/foundry-shim/preload.mjs",
+    "tests/modification-v2-convergence.test.mjs",
+    "tests/opposed-grapple-tie-authority.test.mjs",
+    "tests/phase6-force-direct-damage.test.mjs",
+    "tests/reconciliation-async-lifecycle-paths.test.mjs",
+    "tests/reconciliation-house-rules.test.mjs",
+    "tests/store-v2-purchase-integrity.test.mjs",
+    "tests/store-v2-s2-commerce-closure.test.mjs",
+    "tests/talent-force-talent-structural-authority.test.mjs",
+    "tests/talent-step-focus-render-authority.test.mjs",
+    "tests/ti2-commerce-integrity.test.mjs",
+    "tests/ti3-progression-followers-approvals.test.mjs",
+    "tests/ti4c0-g16-holonet-credit-evidence.test.mjs",
+    "tests/ti4c0-g20-rollback-replay.test.mjs",
+    "tests/ti4c0-g21-legacy-dashboard-reversal.test.mjs",
+    "tests/ti4c0-g22-wager-refund-replay.test.mjs",
+    "tests/ti4c0-g24-pending-sale-identity.test.mjs",
+    "tests/ti4c0-g26-party-fund-integrity.test.mjs",
+    "tests/ti4c0-g34-progression-ledger-sync-authority.test.mjs",
+    "tests/ti4c0-g35-droid-rejection-post-commit.test.mjs",
+    "tests/ti4c0-te-credit-adjustment-safety.test.mjs",
+    "tests/vehicle-universal-phase4e-p17-operating-context.test.mjs",
+    "tests/vehicle-universal-phase4e-p42-startup-and-operator.test.mjs",
+    "tests/weapon-3gate-evasion-area-path.test.mjs",
+    "tests/weapon-3gate-w3-range-continuity.test.mjs",
+    "tests/weapon-3gate-w7-legacy-entrypoints.test.mjs",
+    "tests/weapon-phase-5d-a-attack-consumption.test.mjs",
+    "tests/weapon-phase-5d-b-profile-selection.test.mjs",
+    "tests/weapon-phase-5d-c-damage-consumption.test.mjs",
+    "tests/weapon-phase-5d-d-range-resource-consumption.test.mjs",
+    "tests/weapon-phase-5d-d-thrown-melee-correction.test.mjs",
+    "tests/weapon-phase-5d-e-multiplier-correction.test.mjs",
+    "tests/weapon-phase-5d-e-special-effects.test.mjs",
+    "tests/weapon-phase-5d-f-multiattack-convergence.test.mjs",
+    "tests/weapon-phase-5d-g-fire-state-area-selectors.test.mjs",
+    "tests/weapon-phase-5d-h-executable-field-closure.test.mjs",
+    "tests/weapon-phase-5d-i-a-core-attack-residuals.test.mjs",
+    "tests/weapon-phase-5d-i-b-wielding-activation-threat.test.mjs",
+    "tests/weapon-phase-5d-i-c-a-outcome-persistent-effects.test.mjs",
+    "tests/weapon-phase-5d-i-c-b-grapple-control.test.mjs",
+    "tests/weapon-phase-5d-i-c-c-reaction-defense.test.mjs",
+    "tests/weapon-phase-5d-i-d-b1-mounting.test.mjs",
+    "tests/weapon-phase-5d-i-d-b2-wielding-size.test.mjs",
+    "tests/weapon-phase-5d-i-d-b3-upgrades.test.mjs",
+    "tests/weapon-phase-5d-i-d-b5-stock.test.mjs",
+    "tests/weapon-phase-5d-i-d-e-talent-relations.test.mjs",
+    "tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs",
+    "tests/weapon-production-mixed-resource-ammunition.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.game",
+   "files": [
+    "docs/audits/transaction-integrity/repro/repro-tx03-action-rollback.mjs",
+    "docs/audits/transaction-integrity/repro/repro-tx05-tx06-equipment-coordinator.mjs",
+    "docs/audits/transaction-integrity/repro/repro-tx08-store-snapshot.mjs",
+    "scripts/engine/implants/ImplantEffectRules.js",
+    "scripts/engine/implants/ImplantRules.js",
+    "tests/asset-bay-ownership-hardening.test.mjs",
+    "tests/attack-damage-option-context-transport.test.mjs",
+    "tests/attack-dialog-profile-context-convergence.test.mjs",
+    "tests/class-force-v2-active-adapter-cutover.test.mjs",
+    "tests/class-force-v2-alchemy-atomicity.test.mjs",
+    "tests/class-force-v2-alchemy-cutover.test.mjs",
+    "tests/class-force-v2-attunement-cutover.test.mjs",
+    "tests/class-force-v2-receipt-reconciliation.test.mjs",
+    "tests/class-force-v2-serenity-takex-denial.test.mjs",
+    "tests/class-force-v2-temptation-trigger.test.mjs",
+    "tests/class-force-v2-threshold-cutover.test.mjs",
+    "tests/class-force-v2-watchcircle-exemption.test.mjs",
+    "tests/class-phase-6p-force-class-sheet-controls.test.mjs",
+    "tests/class-realignment-iv-wave-b-target-observation.test.mjs",
+    "tests/class-realignment-iv-wave-c-score-mark.test.mjs",
+    "tests/combat-action-routing-closure.test.mjs",
+    "tests/combat-feature-stance-authority.test.mjs",
+    "tests/combat-loadout-preview.test.mjs",
+    "tests/combat-tab-ux-contract.test.mjs",
+    "tests/d016-physical-damage-type-flow.test.mjs",
+    "tests/damage-modifier-ssot.test.mjs",
+    "tests/equipment-e4c1-wp5-c1-attack-gate-and-firestate.test.mjs",
+    "tests/equipment-e4c1-wp5-c3-trust-boundaries.test.mjs",
+    "tests/equipment-possessions-browser.test.mjs",
+    "tests/force-v2-03d-maintained-effects.test.mjs",
+    "tests/helpers/equipment-coordinator-harness.mjs",
+    "tests/helpers/pack-shim.mjs",
+    "tests/helpers/talent-progression-harness.mjs",
+    "tests/modification-v2-convergence.test.mjs",
+    "tests/phase2c-vehicle-runtime-integration.test.mjs",
+    "tests/phase2c_cp23_pack_reconciliation.test.mjs",
+    "tests/phase2c_cp8_crew_station_evidence.test.mjs",
+    "tests/phase7-droid-panel-reuse-contract.test.mjs",
+    "tests/progression-inline-surface-performance.test.mjs",
+    "tests/progression-session-persistence-writebehind.test.mjs",
+    "tests/progression-suggestion-and-render-contracts.test.mjs",
+    "tests/reconciliation-house-rules.test.mjs",
+    "tests/store-v2-purchase-integrity.test.mjs",
+    "tests/store-v2-s2-commerce-closure.test.mjs",
+    "tests/ti2-commerce-integrity.test.mjs",
+    "tests/ti3-progression-followers-approvals.test.mjs",
+    "tests/ti4c0-g06-rollback-verification.test.mjs",
+    "tests/ti4c0-g06s1-exact-snapshot.test.mjs",
+    "tests/ti4c0-g11-caller-outcomes.test.mjs",
+    "tests/ti4c0-g11-follower-rollback.test.mjs",
+    "tests/ti4c0-g16-holonet-credit-evidence.test.mjs",
+    "tests/ti4c0-g20-rollback-replay.test.mjs",
+    "tests/ti4c0-g21-legacy-dashboard-reversal.test.mjs",
+    "tests/ti4c0-g22-wager-refund-replay.test.mjs",
+    "tests/ti4c0-g24-pending-sale-identity.test.mjs",
+    "tests/ti4c0-g26-party-fund-integrity.test.mjs",
+    "tests/ti4c0-g34-progression-ledger-sync-authority.test.mjs",
+    "tests/ti4c0-g35-droid-rejection-post-commit.test.mjs",
+    "tests/ti4c0-te-credit-adjustment-safety.test.mjs",
+    "tests/v2-gm-authoritative-time.test.mjs",
+    "tests/vehicle-universal-phase4e-p11-shipyard-ui.test.mjs",
+    "tests/vehicle-universal-phase4e-p12-construction-service.test.mjs",
+    "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs",
+    "tests/vehicle-universal-phase4e-p17-operating-context.test.mjs",
+    "tests/vehicle-universal-phase4e-p4c-crew.test.mjs",
+    "tests/vehicle-universal-phase4e-p5-acquisition-assetbay.test.mjs",
+    "tests/vehicle-universal-phase4e-p5-installation-transaction.test.mjs",
+    "tests/vehicle-universal-phase4e-p9-installation-jobs.test.mjs",
+    "tests/vehicle-universal-phase4e-v2-rendering.test.mjs",
+    "tests/vehicle-universal-phase4e-v2-schema-integration.test.mjs",
+    "tests/weapon-3gate-evasion-area-path.test.mjs",
+    "tests/weapon-3gate-math-matrix.test.mjs",
+    "tests/weapon-3gate-w2-range-authority.test.mjs",
+    "tests/weapon-3gate-w3-range-continuity.test.mjs",
+    "tests/weapon-3gate-w7-legacy-entrypoints.test.mjs",
+    "tests/weapon-phase-5d-d-range-resource-consumption.test.mjs",
+    "tests/weapon-phase-5d-g-fire-state-area-selectors.test.mjs",
+    "tests/weapon-phase-5d-h-executable-field-closure.test.mjs",
+    "tests/weapon-phase-5d-i-a-core-attack-residuals.test.mjs",
+    "tests/weapon-phase-5d-i-b-wielding-activation-threat.test.mjs",
+    "tests/weapon-phase-5d-i-c-a-outcome-persistent-effects.test.mjs",
+    "tests/weapon-phase-5d-i-c-b-grapple-control.test.mjs",
+    "tests/weapon-phase-5d-i-c-c-reaction-defense.test.mjs",
+    "tests/weapon-phase-5d-i-d-b1-mounting.test.mjs",
+    "tests/weapon-phase-5d-i-d-b2-wielding-size.test.mjs",
+    "tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs",
+    "tests/weapon-production-mixed-resource-ammunition.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE",
+   "files": [
+    "index.js",
+    "scripts/apps/force-alchemy/force-alchemy-workbench-app.js",
+    "scripts/apps/force-tradition/force-tradition-picker.js",
+    "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js",
+    "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js",
+    "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js",
+    "scripts/apps/talent-tree-workbench/custom-talent-tree-workbench-hooks.js",
+    "scripts/bootstrap/holo-init.js",
+    "scripts/combat/systems/grappling-system.js",
+    "scripts/core/compendium-diagnostics.js",
+    "scripts/core/compendium-directory-click-repair.js",
+    "scripts/core/compendium-pack-registration-repair.js",
+    "scripts/core/hardening-init.js",
+    "scripts/core/sidebar-icon-diagnostics.js",
+    "scripts/core/sidebar-icon-fallback.js",
+    "scripts/engine/combat/recurring-damage-engine.js",
+    "scripts/engine/crew/vehicle-crew-assignment-service.js",
+    "scripts/engine/crew/vehicle-crew-diagnostics.js",
+    "scripts/engine/feats/combat-feat-runtime-support.js",
+    "scripts/engine/feats/core-combat-reaction-runtime-patches.js",
+    "scripts/engine/feats/dual-wield-runtime-patches.js",
+    "scripts/engine/feats/force-point-feat-actions.js",
+    "scripts/engine/feats/force-point-service-runtime-patches.js",
+    "scripts/engine/feats/force-training-entitlement-runtime-patches.js",
+    "scripts/engine/feats/grapple-expanded-runtime-patches.js",
+    "scripts/engine/feats/grapple-feat-actions.js",
+    "scripts/engine/import/npc-damage-hydration-hooks.js",
+    "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+    "scripts/engine/talent/armor-talent-actions.js",
+    "scripts/engine/talent/consular-talent-actions.js",
+    "scripts/engine/talent/force-adept-talent-actions.js",
+    "scripts/engine/talent/guardian-spirit-actions.js",
+    "scripts/engine/talent/jedi-prestige-talent-actions.js",
+    "scripts/engine/talent/lightsaber-talent-actions.js",
+    "scripts/engine/talent/sentinel-talent-actions.js",
+    "scripts/engine/talent/sith-talent-actions.js",
+    "scripts/governance/sentinel/sentinel-debug-api.js",
+    "scripts/governance/sentinel/sentinel-init.js",
+    "scripts/infrastructure/hooks/actor-sidebar-controls.js",
+    "scripts/patches/follower-orphan-transfer-hotfix.js",
+    "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+    "scripts/patches/runtime-bugfix-hotfixes.js",
+    "scripts/scene-controls/swse-canvas-tools.js",
+    "scripts/ui/chat/chat-interaction-bridge.js",
+    "scripts/ui/concept-parity/concept-parity-diagnostics.js",
+    "scripts/ui/discovery/index.js",
+    "tests/combat-loadout-preview.test.mjs",
+    "tests/combat-tab-ux-contract.test.mjs",
+    "tests/d016-physical-damage-type-flow.test.mjs",
+    "tests/opposed-grapple-tie-authority.test.mjs",
+    "tests/progression-evidence-reconciliation.test.mjs",
+    "tests/species-conditional-feat-lifecycle.test.mjs",
+    "tests/species-conditional-feat-requirements.test.mjs",
+    "tests/ti3-progression-followers-approvals.test.mjs",
+    "tests/vehicle-crew-recharge-shields-routing.test.mjs",
+    "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+    "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+    "tests/weapon-3gate-w3-range-continuity.test.mjs",
+    "tests/weapon-3gate-w7-legacy-entrypoints.test.mjs",
+    "tests/weapon-phase-5d-c-damage-consumption.test.mjs",
+    "tests/weapon-phase-5d-e-multiplier-correction.test.mjs",
+    "tests/weapon-phase-5d-e-special-effects.test.mjs",
+    "tests/weapon-phase-5d-f-multiattack-convergence.test.mjs",
+    "tests/weapon-phase-5d-g-fire-state-area-selectors.test.mjs",
+    "tests/weapon-phase-5d-h-executable-field-closure.test.mjs",
+    "tests/weapon-phase-5d-i-a-core-attack-residuals.test.mjs",
+    "tests/weapon-phase-5d-i-b-wielding-activation-threat.test.mjs",
+    "tests/weapon-phase-5d-i-c-a-outcome-persistent-effects.test.mjs",
+    "tests/weapon-phase-5d-i-c-b-grapple-control.test.mjs",
+    "tests/weapon-phase-5d-i-c-c-reaction-defense.test.mjs",
+    "tests/weapon-phase-5d-i-d-b1-mounting.test.mjs",
+    "tests/weapon-phase-5d-i-d-b2-wielding-size.test.mjs",
+    "tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs",
+    "tests/weapon-production-mixed-resource-ammunition.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.ChatMessage",
+   "files": [
+    "docs/audits/transaction-integrity/repro/_boot.mjs",
+    "docs/audits/transaction-integrity/repro/repro-c3-force-point-transaction-vs-real-engine.mjs",
+    "tests/attack-bonus-math-integrity.test.mjs",
+    "tests/attack-composition-actionid-diagnostic.test.mjs",
+    "tests/attack-damage-option-context-transport.test.mjs",
+    "tests/attack-dialog-context-authority-correction.test.mjs",
+    "tests/attack-dialog-context-authority.test.mjs",
+    "tests/attack-dialog-profile-context-convergence.test.mjs",
+    "tests/attack-target-defense-authority.test.mjs",
+    "tests/attempt-grab-reflex-defense-authority.test.mjs",
+    "tests/class-force-v2-active-adapter-cutover.test.mjs",
+    "tests/class-force-v2-alchemy-atomicity.test.mjs",
+    "tests/class-force-v2-alchemy-cutover.test.mjs",
+    "tests/class-force-v2-attunement-cutover.test.mjs",
+    "tests/class-force-v2-direct-fp-cutover.test.mjs",
+    "tests/class-force-v2-receipt-reconciliation.test.mjs",
+    "tests/class-force-v2-serenity-takex-denial.test.mjs",
+    "tests/class-force-v2-temptation-trigger.test.mjs",
+    "tests/class-force-v2-threshold-cutover.test.mjs",
+    "tests/class-force-v2-watchcircle-exemption.test.mjs",
+    "tests/class-phase-6z-reaction-execution-admission.test.mjs",
+    "tests/combat-action-eligibility-coverage.test.mjs",
+    "tests/combat-action-eligibility.test.mjs",
+    "tests/combat-loadout-preview.test.mjs",
+    "tests/combat-tab-ux-contract.test.mjs",
+    "tests/d016-physical-damage-type-flow.test.mjs",
+    "tests/damage-modifier-ssot.test.mjs",
+    "tests/droid-component-operation-gate.test.mjs",
+    "tests/equipment-e4c1-wp5-c1-attack-gate-and-firestate.test.mjs",
+    "tests/equipment-e4c1-wp5-c2-attack-integrity.test.mjs",
+    "tests/equipment-e4c1-wp5-c3-trust-boundaries.test.mjs",
+    "tests/equipment-e4c1-wp5-c3b-force-point-lifecycle.test.mjs",
+    "tests/equipment-lifecycle-slice.test.mjs",
+    "tests/force-power-final-integration.test.mjs",
+    "tests/force-v2-03b-block-deflect-events.test.mjs",
+    "tests/force-v2-03b-consumer-cutover.test.mjs",
+    "tests/force-v2-03b-lightsaber-contracts.test.mjs",
+    "tests/force-v2-03b-regimen-entitlements.test.mjs",
+    "tests/force-v2-03b-talent-contracts.test.mjs",
+    "tests/force-v2-03b-transaction-behavior.test.mjs",
+    "tests/force-v2-03c-suite-recovery.test.mjs",
+    "tests/force-v2-game-night-integration.test.mjs",
+    "tests/opposed-grapple-tie-authority.test.mjs",
+    "tests/phase2c-vehicle-runtime-integration.test.mjs",
+    "tests/phase6-force-direct-damage.test.mjs",
+    "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+    "tests/weapon-3gate-evasion-area-path.test.mjs",
+    "tests/weapon-3gate-w3-range-continuity.test.mjs",
+    "tests/weapon-3gate-w7-legacy-entrypoints.test.mjs",
+    "tests/weapon-phase-5d-a-attack-consumption.test.mjs",
+    "tests/weapon-phase-5d-b-profile-selection.test.mjs",
+    "tests/weapon-phase-5d-c-damage-consumption.test.mjs",
+    "tests/weapon-phase-5d-d-range-resource-consumption.test.mjs",
+    "tests/weapon-phase-5d-d-thrown-melee-correction.test.mjs",
+    "tests/weapon-phase-5d-e-multiplier-correction.test.mjs",
+    "tests/weapon-phase-5d-e-special-effects.test.mjs",
+    "tests/weapon-phase-5d-f-multiattack-convergence.test.mjs",
+    "tests/weapon-phase-5d-g-fire-state-area-selectors.test.mjs",
+    "tests/weapon-phase-5d-h-executable-field-closure.test.mjs",
+    "tests/weapon-phase-5d-i-a-core-attack-residuals.test.mjs",
+    "tests/weapon-phase-5d-i-b-wielding-activation-threat.test.mjs",
+    "tests/weapon-phase-5d-i-c-a-outcome-persistent-effects.test.mjs",
+    "tests/weapon-phase-5d-i-c-b-grapple-control.test.mjs",
+    "tests/weapon-phase-5d-i-c-c-reaction-defense.test.mjs",
+    "tests/weapon-phase-5d-i-d-b1-mounting.test.mjs",
+    "tests/weapon-phase-5d-i-d-b2-wielding-size.test.mjs",
+    "tests/weapon-phase-5d-i-d-e-talent-relations.test.mjs",
+    "tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs",
+    "tests/weapon-production-mixed-resource-ammunition.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.localStorage",
+   "files": [
+    "tests/ability-acknowledgment-hardening.test.mjs",
+    "tests/ability-acknowledgment-service.test.mjs",
+    "tests/ability-increase-entitlement-integrity.test.mjs",
+    "tests/ability-increase-verification.test.mjs",
+    "tests/attack-dialog-profile-context-convergence.test.mjs",
+    "tests/combat-action-routing-closure.test.mjs",
+    "tests/combat-feature-stance-authority.test.mjs",
+    "tests/droid-component-operation-gate.test.mjs",
+    "tests/equipment-e4c1-wp5-c3-trust-boundaries.test.mjs",
+    "tests/equipment-lifecycle-slice.test.mjs",
+    "tests/feat-housekeeping-houserule-hook.test.mjs",
+    "tests/force-v2-03b-talent-contracts.test.mjs",
+    "tests/helpers/session-harness.mjs",
+    "tests/helpers/talent-progression-harness.mjs",
+    "tests/hp-house-rule-authority.test.mjs",
+    "tests/mentor-survey-step.test.mjs",
+    "tests/modification-v2-convergence.test.mjs",
+    "tests/npc-pr1158-review-corrections.test.mjs",
+    "tests/npc-v2-convergence.test.mjs",
+    "tests/progression-background-drop-adoption-contract.test.mjs",
+    "tests/progression-evidence-review-ui.test.mjs",
+    "tests/progression-inline-surface-performance.test.mjs",
+    "tests/progression-mentor-nonblocking.test.mjs",
+    "tests/progression-render-scheduler-budgets.test.mjs",
+    "tests/progression-search.test.mjs",
+    "tests/progression-session-persistence-writebehind.test.mjs",
+    "tests/progression-sheet-free-add-single-step-contract.test.mjs",
+    "tests/species-ability-choice-profiles.test.mjs",
+    "tests/species-publication-selection.test.mjs",
+    "tests/species-republic-clone-allocation.test.mjs",
+    "tests/species-snapshot-positive-application.test.mjs",
+    "tests/talent-force-talent-structural-authority.test.mjs",
+    "tests/talent-phase-3g-runtime-identity.test.mjs",
+    "tests/talent-step-focus-render-authority.test.mjs",
+    "tests/ti2-commerce-integrity.test.mjs",
+    "tests/ti3-progression-followers-approvals.test.mjs",
+    "tests/ti4c0-g06-rollback-verification.test.mjs",
+    "tests/ti4c0-g06s1-exact-snapshot.test.mjs",
+    "tests/ti4c0-g11-caller-outcomes.test.mjs",
+    "tests/ti4c0-g11-follower-rollback.test.mjs",
+    "tests/ti4c0-g16-holonet-credit-evidence.test.mjs",
+    "tests/ti4c0-g21-legacy-dashboard-reversal.test.mjs",
+    "tests/ti4c0-g24-pending-sale-identity.test.mjs",
+    "tests/ti4c0-g26-party-fund-integrity.test.mjs",
+    "tests/ti4c0-g34-progression-ledger-sync-authority.test.mjs",
+    "tests/ti4c0-g35-droid-rejection-post-commit.test.mjs",
+    "tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.document",
+   "files": [
+    "tests/ability-acknowledgment-hardening.test.mjs",
+    "tests/ability-acknowledgment-service.test.mjs",
+    "tests/ability-increase-entitlement-integrity.test.mjs",
+    "tests/ability-increase-verification.test.mjs",
+    "tests/attack-dialog-profile-context-convergence.test.mjs",
+    "tests/combat-action-routing-closure.test.mjs",
+    "tests/helpers/session-harness.mjs",
+    "tests/hp-house-rule-authority.test.mjs",
+    "tests/mentor-survey-step.test.mjs",
+    "tests/mentor-translator-cancellation.test.mjs",
+    "tests/npc-pr1158-review-corrections.test.mjs",
+    "tests/npc-v2-convergence.test.mjs",
+    "tests/ooc-chat-card-surface.test.mjs",
+    "tests/progression-background-drop-adoption-contract.test.mjs",
+    "tests/progression-evidence-review-ui.test.mjs",
+    "tests/progression-inline-surface-performance.test.mjs",
+    "tests/progression-mentor-nonblocking.test.mjs",
+    "tests/progression-render-scheduler-budgets.test.mjs",
+    "tests/progression-search.test.mjs",
+    "tests/progression-session-persistence-writebehind.test.mjs",
+    "tests/progression-sheet-free-add-single-step-contract.test.mjs",
+    "tests/species-ability-choice-profiles.test.mjs",
+    "tests/species-publication-selection.test.mjs",
+    "tests/species-republic-clone-allocation.test.mjs",
+    "tests/species-snapshot-positive-application.test.mjs",
+    "tests/talent-phase-3g-runtime-identity.test.mjs",
+    "tests/ti4c0-g11-follower-rollback.test.mjs",
+    "tests/weapon-3gate-w3-range-continuity.test.mjs",
+    "tests/weapon-phase-5d-b-profile-selection.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.fetch",
+   "files": [
+    "scripts/patches/runtime-bugfix-hotfixes.js",
+    "tests/archetype-registry-ssot-lane.test.mjs",
+    "tests/galactic-profile-step.test.mjs",
+    "tests/helpers/pack-shim.mjs",
+    "tests/mentor-survey-evidence-provenance.test.mjs",
+    "tests/mentor-survey-step.test.mjs",
+    "tests/modification-v2-convergence.test.mjs",
+    "tests/talent-phase-3f-tree-identity.test.mjs",
+    "tests/talent-phase-3g-runtime-identity.test.mjs",
+    "tests/talent-tree-registry-runtime.test.mjs",
+    "tests/vehicle-universal-phase4e-p12-construction-service.test.mjs",
+    "tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs",
+    "tests/weapon-phase-5d-a-attack-consumption.test.mjs",
+    "tools/audit-talent-prerequisite-identity-experiments.mjs",
+    "tools/census-talent-prerequisite-identity.mjs"
+   ]
+  },
+  {
+   "global": "game.swse.feats",
+   "files": [
+    "scripts/engine/feats/action-speed-runtime-patches.js",
+    "scripts/engine/feats/area-explosives-runtime-patches.js",
+    "scripts/engine/feats/attack-negation-runtime-patches.js",
+    "scripts/engine/feats/defense-avoidance-runtime-patches.js",
+    "scripts/engine/feats/droid-combat-runtime-patches.js",
+    "scripts/engine/feats/force-scoundrel-combat-runtime-patches.js",
+    "scripts/engine/feats/galaxy-intrigue-combat-runtime-patches.js",
+    "scripts/engine/feats/legacy-clone-combat-runtime-patches.js",
+    "scripts/engine/feats/mobility-positioning-runtime-patches.js",
+    "scripts/engine/feats/rebellion-combat-runtime-patches.js",
+    "scripts/engine/feats/return-fire-runtime-patches.js",
+    "scripts/engine/feats/starship-vehicle-runtime-patches.js",
+    "scripts/engine/feats/unknown-regions-combat-runtime-patches.js"
+   ]
+  },
+  {
+   "global": "globalThis.CONFIG",
+   "files": [
+    "tests/attack-dialog-profile-context-convergence.test.mjs",
+    "tests/combat-action-routing-closure.test.mjs",
+    "tests/combat-feature-stance-authority.test.mjs",
+    "tests/droid-component-operation-gate.test.mjs",
+    "tests/equipment-e4c1-wp5-c3-trust-boundaries.test.mjs",
+    "tests/equipment-lifecycle-slice.test.mjs",
+    "tests/equipment-skill-hook-roll-regression.test.mjs",
+    "tests/modification-v2-convergence.test.mjs",
+    "tests/v2-derived-panel-cache-coherency.test.mjs",
+    "tests/v2-golden-defense-lifecycle.test.mjs",
+    "tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs",
+    "tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.debug",
+   "files": [
+    "index.js",
+    "scripts/core/compendium-diagnostics.js",
+    "scripts/core/compendium-directory-click-repair.js",
+    "scripts/core/compendium-pack-registration-repair.js",
+    "scripts/core/sidebar-icon-diagnostics.js",
+    "scripts/engine/crew/vehicle-crew-diagnostics.js",
+    "scripts/governance/sentinel/sentinel-debug-api.js",
+    "scripts/infrastructure/hooks/actor-sidebar-controls.js",
+    "scripts/scene-controls/swse-canvas-tools.js",
+    "scripts/ui/concept-parity/concept-parity-diagnostics.js"
+   ]
+  },
+  {
+   "global": "window.addEventListener",
+   "files": [
+    "tests/ti4c0-g11-caller-outcomes.test.mjs",
+    "tests/ti4c0-g11-follower-rollback.test.mjs",
+    "tests/ti4c0-g16-holonet-credit-evidence.test.mjs",
+    "tests/ti4c0-g21-legacy-dashboard-reversal.test.mjs",
+    "tests/ti4c0-g24-pending-sale-identity.test.mjs",
+    "tests/ti4c0-g26-party-fund-integrity.test.mjs",
+    "tests/ti4c0-g34-progression-ledger-sync-authority.test.mjs",
+    "tests/ti4c0-g35-droid-rejection-post-commit.test.mjs"
+   ]
+  },
+  {
+   "global": "window.removeEventListener",
+   "files": [
+    "tests/ti4c0-g11-caller-outcomes.test.mjs",
+    "tests/ti4c0-g11-follower-rollback.test.mjs",
+    "tests/ti4c0-g16-holonet-credit-evidence.test.mjs",
+    "tests/ti4c0-g21-legacy-dashboard-reversal.test.mjs",
+    "tests/ti4c0-g24-pending-sale-identity.test.mjs",
+    "tests/ti4c0-g26-party-fund-integrity.test.mjs",
+    "tests/ti4c0-g34-progression-ledger-sync-authority.test.mjs",
+    "tests/ti4c0-g35-droid-rejection-post-commit.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.Roll",
+   "files": [
+    "docs/audits/transaction-integrity/repro/repro-tx04-force-point-refund.mjs",
+    "tests/droid-component-operation-gate.test.mjs",
+    "tests/equipment-skill-hook-roll-regression.test.mjs",
+    "tests/force-v2-03b-regimen-entitlements.test.mjs",
+    "tests/force-v2-03c-suite-recovery.test.mjs",
+    "tests/roll-expression-transform-authority.test.mjs",
+    "tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.HTMLElement",
+   "files": [
+    "tests/gm-datapad-interaction-repair-lifecycle.test.mjs",
+    "tests/mentor-survey-step.test.mjs",
+    "tests/ooc-chat-card-surface.test.mjs",
+    "tests/progression-inline-surface-performance.test.mjs",
+    "tests/progression-mentor-nonblocking.test.mjs",
+    "tests/progression-render-scheduler-budgets.test.mjs",
+    "tests/talent-step-focus-render-authority.test.mjs"
+   ]
+  },
+  {
+   "global": "window.SWSE",
+   "files": [
+    "scripts/engine/mentor/mentor-selector.js",
+    "scripts/governance/sentinel/migration-auditor.js",
+    "scripts/maintenance/usage-tracker.js",
+    "scripts/talents/minion-actions-init.js",
+    "scripts/talents/squad-actions-init.js",
+    "tests/attack-composition-actionid-diagnostic.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.performance",
+   "files": [
+    "tests/elite-droid-talent-tree-hydration.test.mjs",
+    "tests/krath-talent-tree-hydration.test.mjs",
+    "tests/superior-skills-talent-hydration.test.mjs",
+    "tests/talent-phase-3f-tree-identity.test.mjs",
+    "tests/talent-tree-registry-runtime.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.RollEngine",
+   "files": [
+    "index.js",
+    "scripts/patches/runtime-bugfix-hotfixes.js",
+    "tests/opposed-grapple-tie-authority.test.mjs",
+    "tests/weapon-phase-5d-c-damage-consumption.test.mjs"
+   ]
+  },
+  {
+   "global": "game.swse.utils",
+   "files": [
+    "scripts/core/utils-init.js",
+    "scripts/utils/skill-use-filter.js",
+    "tests/equipment-skill-hook-roll-regression.test.mjs",
+    "tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs"
+   ]
+  },
+  {
+   "global": "game.swse.skills",
+   "files": [
+    "scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js",
+    "scripts/engine/feats/skill-feat-runtime-patches.js",
+    "scripts/engine/feats/team-feat-runtime-patches.js",
+    "scripts/engine/skills/skill-feat-rule-resolver.js"
+   ]
+  },
+  {
+   "global": "globalThis.sessionStorage",
+   "files": [
+    "tests/species-ability-choice-profiles.test.mjs",
+    "tests/species-publication-selection.test.mjs",
+    "tests/species-republic-clone-allocation.test.mjs",
+    "tests/species-snapshot-positive-application.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.navigator",
+   "files": [
+    "tests/species-ability-choice-profiles.test.mjs",
+    "tests/species-publication-selection.test.mjs",
+    "tests/species-republic-clone-allocation.test.mjs",
+    "tests/species-snapshot-positive-application.test.mjs"
+   ]
+  },
+  {
+   "global": "window.onerror",
+   "files": [
+    "scripts/governance/mutation/batch-1-validation.js",
+    "scripts/governance/sentinel/layers/promises-layer.js",
+    "scripts/governance/sentinel/sentry.js"
+   ]
+  },
+  {
+   "global": "globalThis.canvas",
+   "files": [
+    "tests/force-v2-03b-lightsaber-contracts.test.mjs",
+    "tests/helpers/vehicle-weapon-world.mjs",
+    "tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.FormData",
+   "files": [
+    "tests/gm-locations-import-selection-persistence.test.mjs",
+    "tests/gm-locations-library-identity-and-fact-integrity.test.mjs",
+    "tests/gm-locations-truthful-ui-contract.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.requestAnimationFrame",
+   "files": [
+    "tests/mentor-translator-cancellation.test.mjs",
+    "tests/progression-inline-surface-performance.test.mjs",
+    "tests/progression-render-scheduler-budgets.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.cancelAnimationFrame",
+   "files": [
+    "tests/mentor-translator-cancellation.test.mjs",
+    "tests/progression-inline-surface-performance.test.mjs",
+    "tests/progression-render-scheduler-budgets.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.addEventListener",
+   "files": [
+    "tests/species-ability-choice-profiles.test.mjs",
+    "tests/species-publication-selection.test.mjs",
+    "tests/species-republic-clone-allocation.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.removeEventListener",
+   "files": [
+    "tests/species-ability-choice-profiles.test.mjs",
+    "tests/species-publication-selection.test.mjs",
+    "tests/species-republic-clone-allocation.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE_DEBUG_COMPENDIUM_NATIVE_ONLY",
+   "files": [
+    "scripts/core/compendium-directory-click-repair.js",
+    "scripts/governance/sentinel/sentinel-compendium-forensics.js"
+   ]
+  },
+  {
+   "global": "window.SWSEFirstRun",
+   "files": [
+    "scripts/core/first-run-experience.js",
+    "scripts/holonet/scripts/core/first-run-experience.js"
+   ]
+  },
+  {
+   "global": "game.swse.combat",
+   "files": [
+    "scripts/engine/combat/aid-another-action-adapter.js",
+    "scripts/engine/feats/second-wind-rider-runtime-patches.js"
+   ]
+  },
+  {
+   "global": "game.swse.implants",
+   "files": [
+    "scripts/engine/implants/ImplantEffectRules.js",
+    "scripts/engine/implants/ImplantRules.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE_DEBUG_LOGGING",
+   "files": [
+    "scripts/engine/system/HouseRuleService.js",
+    "scripts/utils/logger.js"
+   ]
+  },
+  {
+   "global": "window.EnforcementPolicy",
+   "files": [
+    "scripts/governance/enforcement/enforcement-policy.js",
+    "scripts/governance/governance-integration.js"
+   ]
+  },
+  {
+   "global": "window.Batch1Validation",
+   "files": [
+    "scripts/governance/mutation/batch-1-validation.js",
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.followers",
+   "files": [
+    "scripts/patches/follower-orphan-transfer-hotfix.js",
+    "scripts/patches/follower-repeatable-entitlement-hotfix.js"
+   ]
+  },
+  {
+   "global": "window.SWSE.talents",
+   "files": [
+    "scripts/talents/minion-actions-init.js",
+    "scripts/talents/squad-actions-init.js"
+   ]
+  },
+  {
+   "global": "window.SWSE.macros",
+   "files": [
+    "scripts/talents/minion-actions-init.js",
+    "scripts/talents/squad-actions-init.js"
+   ]
+  },
+  {
+   "global": "globalThis.Dialog",
+   "files": [
+    "tests/droid-component-operation-gate.test.mjs",
+    "tests/weapon-phase-5d-i-d-a1-equipment-skill-hooks.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.CSS",
+   "files": [
+    "tests/gm-datapad-interaction-repair-lifecycle.test.mjs",
+    "tests/progression-inline-surface-performance.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.fromUuid",
+   "files": [
+    "tests/gm-locations-scene-creation-safety.test.mjs",
+    "tests/phase2c_cp8_crew_station_evidence.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.Element",
+   "files": [
+    "tests/mentor-survey-step.test.mjs",
+    "tests/progression-mentor-nonblocking.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.Actor",
+   "files": [
+    "tests/ti4c0-g06-rollback-verification.test.mjs",
+    "tests/ti4c0-g06s1-exact-snapshot.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.ActorEngine",
+   "files": [
+    "index.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.ConditionTrackFeatActions",
+   "files": [
+    "index.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.EntityCreateBrowser",
+   "files": [
+    "index.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.openEntityCreateBrowser",
+   "files": [
+    "index.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.FeatRegistry",
+   "files": [
+    "index.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.FeatEffectRegistry",
+   "files": [
+    "index.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.FeatEffectApplier",
+   "files": [
+    "index.js"
+   ]
+  },
+  {
+   "global": "game.swse.openStore",
+   "files": [
+    "index.js"
+   ]
+  },
+  {
+   "global": "game.swse.repairForcePowerAbilityMeta",
+   "files": [
+    "index.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSEFactionRegistryService",
+   "files": [
+    "scripts/allies/faction-registry-service.js"
+   ]
+  },
+  {
+   "global": "CONFIG.SWSE.openItemCustomization",
+   "files": [
+    "scripts/apps/customization/item-customization-router.js"
+   ]
+  },
+  {
+   "global": "CONFIG.SWSE.openCustomizationWorkbench",
+   "files": [
+    "scripts/apps/customization/item-customization-router.js"
+   ]
+  },
+  {
+   "global": "window.openItemCustomization",
+   "files": [
+    "scripts/apps/customization/item-customization-router.js"
+   ]
+  },
+  {
+   "global": "window.openCustomizationWorkbench",
+   "files": [
+    "scripts/apps/customization/item-customization-router.js"
+   ]
+  },
+  {
+   "global": "window.DestinySpendingDialog",
+   "files": [
+    "scripts/apps/destiny-spending-dialog.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSEDialogV2",
+   "files": [
+    "scripts/apps/dialogs/swse-dialog-v2.js"
+   ]
+  },
+  {
+   "global": "game.swse.openForceAlchemyWorkbench",
+   "files": [
+    "scripts/apps/force-alchemy/force-alchemy-workbench-app.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.openForceAlchemyWorkbench",
+   "files": [
+    "scripts/apps/force-alchemy/force-alchemy-workbench-app.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.ForceAlchemyWorkbenchApp",
+   "files": [
+    "scripts/apps/force-alchemy/force-alchemy-workbench-app.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.openForceTraditionPicker",
+   "files": [
+    "scripts/apps/force-tradition/force-tradition-picker.js"
+   ]
+  },
+  {
+   "global": "window._progressionClickSequence",
+   "files": [
+    "scripts/apps/progression-framework/debug/progression-debug-capture.js"
+   ]
+  },
+  {
+   "global": "window._progressionRenderCycle",
+   "files": [
+    "scripts/apps/progression-framework/debug/progression-debug-capture.js"
+   ]
+  },
+  {
+   "global": "window._progressionMentorSpeak",
+   "files": [
+    "scripts/apps/progression-framework/debug/progression-debug-capture.js"
+   ]
+  },
+  {
+   "global": "window._progressionCurrentStep",
+   "files": [
+    "scripts/apps/progression-framework/debug/progression-debug-capture.js"
+   ]
+  },
+  {
+   "global": "window._progressionFocusedItem",
+   "files": [
+    "scripts/apps/progression-framework/debug/progression-debug-capture.js"
+   ]
+  },
+  {
+   "global": "window._progressionMentorState",
+   "files": [
+    "scripts/apps/progression-framework/debug/progression-debug-capture.js"
+   ]
+  },
+  {
+   "global": "window.swseProgressionRailResizer",
+   "files": [
+    "scripts/apps/progression-framework/shell/progression-rail-resizer.js"
+   ]
+  },
+  {
+   "global": "window._progressionDebugEnabled",
+   "files": [
+    "scripts/apps/progression-framework/shell/progression-shell.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.customContentApprovals",
+   "files": [
+    "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.openCustomTalentEffectWizard",
+   "files": [
+    "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.customTalentTreeOverlay",
+   "files": [
+    "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.openCustomTalentTreeWorkbench",
+   "files": [
+    "scripts/apps/talent-tree-workbench/custom-talent-tree-workbench-hooks.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE_UPKEEP",
+   "files": [
+    "scripts/automation/upkeep.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.HoloUI",
+   "files": [
+    "scripts/bootstrap/holo-init.js"
+   ]
+  },
+  {
+   "global": "game.swse.ActiveEffectsManager",
+   "files": [
+    "scripts/combat/active-effects-manager.js"
+   ]
+  },
+  {
+   "global": "game.swse.CombatStatusResolver",
+   "files": [
+    "scripts/combat/combat-status.js"
+   ]
+  },
+  {
+   "global": "window.SWSEDamage",
+   "files": [
+    "scripts/combat/damage-system.js"
+   ]
+  },
+  {
+   "global": "window.SWSERoll",
+   "files": [
+    "scripts/combat/rolls/enhanced-rolls.js"
+   ]
+  },
+  {
+   "global": "window.SWSECombat",
+   "files": [
+    "scripts/combat/systems/enhanced-combat-system.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.Grappling",
+   "files": [
+    "scripts/combat/systems/grappling-system.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.GrappleStateEngine",
+   "files": [
+    "scripts/combat/systems/grappling-system.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.GrappleLegalityEngine",
+   "files": [
+    "scripts/combat/systems/grappling-system.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSEGrappling",
+   "files": [
+    "scripts/combat/systems/grappling-system.js"
+   ]
+  },
+  {
+   "global": "window.CombatActionsMapper",
+   "files": [
+    "scripts/combat/utils/combat-actions-mapper.js"
+   ]
+  },
+  {
+   "global": "window.__SWSE_RENDER_TRACKING__",
+   "files": [
+    "scripts/contracts/runtime-contract.js"
+   ]
+  },
+  {
+   "global": "window.__SWSE_CONTRACT_INITIALIZED__",
+   "files": [
+    "scripts/contracts/runtime-contract.js"
+   ]
+  },
+  {
+   "global": "window.SWSETracing",
+   "files": [
+    "scripts/core/correlation-id.js"
+   ]
+  },
+  {
+   "global": "window.SWSEFeatures",
+   "files": [
+    "scripts/core/feature-flags.js"
+   ]
+  },
+  {
+   "global": "window.__SWSE_SHEET_DIAGNOSTIC__",
+   "files": [
+    "scripts/core/forensic-sheet-diagnostic.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.consolelog",
+   "files": [
+    "scripts/core/hardening-init.js"
+   ]
+  },
+  {
+   "global": "globalThis.swse",
+   "files": [
+    "scripts/core/hardening-init.js"
+   ]
+  },
+  {
+   "global": "window.MigrationIntegrityAdapter",
+   "files": [
+    "scripts/core/migration-integrity-adapter.js"
+   ]
+  },
+  {
+   "global": "window.SWSEMutations",
+   "files": [
+    "scripts/core/mutation-safety.js"
+   ]
+  },
+  {
+   "global": "game.swse.rolls",
+   "files": [
+    "scripts/core/rolls-init.js"
+   ]
+  },
+  {
+   "global": "window.__swseErrorsSeen",
+   "files": [
+    "scripts/core/runtime-safety.js"
+   ]
+  },
+  {
+   "global": "window.SWSESafety",
+   "files": [
+    "scripts/core/runtime-safety.js"
+   ]
+  },
+  {
+   "global": "window.SWSEValidation",
+   "files": [
+    "scripts/core/schema-validator.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE_CLASS_AUDIT",
+   "files": [
+    "scripts/core/sidebar-icon-class-audit.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE_ICON_COMPARE",
+   "files": [
+    "scripts/core/sidebar-icon-comparison.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE_ICON_DIAG_STOP",
+   "files": [
+    "scripts/core/sidebar-icon-fallback.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE_ICON_DIAG",
+   "files": [
+    "scripts/core/sidebar-icon-fallback.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.iconDiag",
+   "files": [
+    "scripts/core/sidebar-icon-fallback.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE_DEBUG",
+   "files": [
+    "scripts/core/sidebar-icon-instrumentation.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE_SIDEBAR_TRACE",
+   "files": [
+    "scripts/core/sidebar-sentinel-trace.js"
+   ]
+  },
+  {
+   "global": "window.SWSETooltips",
+   "files": [
+    "scripts/core/tooltip-discovery.js"
+   ]
+  },
+  {
+   "global": "game.swse.debug",
+   "files": [
+    "scripts/core/utils-init.js"
+   ]
+  },
+  {
+   "global": "window.SWSEDiagnostics",
+   "files": [
+    "scripts/core/v1-api-scanner.js"
+   ]
+  },
+  {
+   "global": "window.SWSEVersion",
+   "files": [
+    "scripts/core/version-adapter.js"
+   ]
+  },
+  {
+   "global": "window.WorldDataLoader",
+   "files": [
+    "scripts/core/world-data-loader.js"
+   ]
+  },
+  {
+   "global": "window.SWSE_CONTRACT_WARNINGS",
+   "files": [
+    "scripts/debug/contract-warning-helper.js"
+   ]
+  },
+  {
+   "global": "game.swse.layoutDebug",
+   "files": [
+    "scripts/debug/layout-debug.js"
+   ]
+  },
+  {
+   "global": "game.swse.toggleLayoutDebug",
+   "files": [
+    "scripts/debug/layout-debug.js"
+   ]
+  },
+  {
+   "global": "CONFIG.SWSE.debug",
+   "files": [
+    "scripts/debug/phase-9-runtime-matrix.js"
+   ]
+  },
+  {
+   "global": "window.PHASE_9_RESULTS",
+   "files": [
+    "scripts/debug/phase-9-runtime-matrix.js"
+   ]
+  },
+  {
+   "global": "window.runPhase9Matrix",
+   "files": [
+    "scripts/debug/phase-9-runtime-matrix.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE_DEV_MODE",
+   "files": [
+    "scripts/dev/ssot-detection.js"
+   ]
+  },
+  {
+   "global": "window.DamageEngineTest",
+   "files": [
+    "scripts/engine/combat/damage-engine-test.js"
+   ]
+  },
+  {
+   "global": "game.swse.recurringDamageEngine",
+   "files": [
+    "scripts/engine/combat/recurring-damage-engine.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.RecurringDamageEngine",
+   "files": [
+    "scripts/engine/combat/recurring-damage-engine.js"
+   ]
+  },
+  {
+   "global": "game.swse.recurringDamageEngineHooksRegistered",
+   "files": [
+    "scripts/engine/combat/recurring-damage-engine.js"
+   ]
+  },
+  {
+   "global": "globalThis.__swseCombatWorkflowRegistry",
+   "files": [
+    "scripts/engine/combat/workflow/combat-workflow-registry.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.VehicleCrewAssignmentService",
+   "files": [
+    "scripts/engine/crew/vehicle-crew-assignment-service.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.CombatFeatRuntimeSupport",
+   "files": [
+    "scripts/engine/feats/combat-feat-runtime-support.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.CoreCombatReactionFeatActions",
+   "files": [
+    "scripts/engine/feats/core-combat-reaction-runtime-patches.js"
+   ]
+  },
+  {
+   "global": "game.swse.CoreCombatReactionFeatActions",
+   "files": [
+    "scripts/engine/feats/core-combat-reaction-runtime-patches.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.DualWieldCombatShapeResolver",
+   "files": [
+    "scripts/engine/feats/dual-wield-runtime-patches.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.CombinedFullAttackPlanner",
+   "files": [
+    "scripts/engine/feats/dual-wield-runtime-patches.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.ForcePointFeatActions",
+   "files": [
+    "scripts/engine/feats/force-point-feat-actions.js"
+   ]
+  },
+  {
+   "global": "game.swse.ForcePointFeatActions",
+   "files": [
+    "scripts/engine/feats/force-point-feat-actions.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.ForcePointServiceRuntime",
+   "files": [
+    "scripts/engine/feats/force-point-service-runtime-patches.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.ForceTrainingEntitlementRuntime",
+   "files": [
+    "scripts/engine/feats/force-training-entitlement-runtime-patches.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.GrappleExpandedRuntime",
+   "files": [
+    "scripts/engine/feats/grapple-expanded-runtime-patches.js"
+   ]
+  },
+  {
+   "global": "game.swse.GrappleExpandedRuntime",
+   "files": [
+    "scripts/engine/feats/grapple-expanded-runtime-patches.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.GrappleFeatActions",
+   "files": [
+    "scripts/engine/feats/grapple-feat-actions.js"
+   ]
+  },
+  {
+   "global": "game.swse.GrappleFeatActions",
+   "files": [
+    "scripts/engine/feats/grapple-feat-actions.js"
+   ]
+  },
+  {
+   "global": "globalThis.telekineticPowerRepeatAction",
+   "files": [
+    "scripts/engine/force/force-suite-runtime-repairs.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.hydrateNpcDamage",
+   "files": [
+    "scripts/engine/import/npc-damage-hydration-hooks.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.hydrateAllNpcDamage",
+   "files": [
+    "scripts/engine/import/npc-damage-hydration-hooks.js"
+   ]
+  },
+  {
+   "global": "window.DriftDetector",
+   "files": [
+    "scripts/engine/integrity/drift-detector.js"
+   ]
+  },
+  {
+   "global": "window.WorldIntegritySweep",
+   "files": [
+    "scripts/engine/integrity/world-integrity-sweep.js"
+   ]
+  },
+  {
+   "global": "window.SWSE.MentorSelectorWindow",
+   "files": [
+    "scripts/engine/mentor/mentor-selector.js"
+   ]
+  },
+  {
+   "global": "game.swse.poisonEngine",
+   "files": [
+    "scripts/engine/poison/poison-engine.js"
+   ]
+  },
+  {
+   "global": "game.swse.poisonEngineHooksRegistered",
+   "files": [
+    "scripts/engine/poison/poison-engine.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.TelekineticProdigyRuntime",
+   "files": [
+    "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js"
+   ]
+  },
+  {
+   "global": "window.ActorRepairEngine",
+   "files": [
+    "scripts/engine/repair/actor-repair-engine.js"
+   ]
+  },
+  {
+   "global": "game.swse.suggestions",
+   "files": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js"
+   ]
+  },
+  {
+   "global": "globalThis.HouseRuleService",
+   "files": [
+    "scripts/engine/system/HouseRuleService.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSETalentNormalizer",
+   "files": [
+    "scripts/engine/talent/TalentNormalizerEngine.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.ArmorTalentActions",
+   "files": [
+    "scripts/engine/talent/armor-talent-actions.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.__consularTalentActionsRegistered",
+   "files": [
+    "scripts/engine/talent/consular-talent-actions.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.ForceAdeptTalentActions",
+   "files": [
+    "scripts/engine/talent/force-adept-talent-actions.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.GuardianSpiritActions",
+   "files": [
+    "scripts/engine/talent/guardian-spirit-actions.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.__jediPrestigeTalentActionsRegistered",
+   "files": [
+    "scripts/engine/talent/jedi-prestige-talent-actions.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.__lightsaberTalentActionsRegistered",
+   "files": [
+    "scripts/engine/talent/lightsaber-talent-actions.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.__sentinelTalentActionsRegistered",
+   "files": [
+    "scripts/engine/talent/sentinel-talent-actions.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.__sithTalentActionsRegistered",
+   "files": [
+    "scripts/engine/talent/sith-talent-actions.js"
+   ]
+  },
+  {
+   "global": "game.swse.migrations",
+   "files": [
+    "scripts/engine/vehicles/vehicle-errata-migration-service.js"
+   ]
+  },
+  {
+   "global": "game.swse.games",
+   "files": [
+    "scripts/games/game-init.js"
+   ]
+  },
+  {
+   "global": "window.AuditTrail",
+   "files": [
+    "scripts/governance/audit/audit-trail.js"
+   ]
+  },
+  {
+   "global": "window.ActorEngineEnforcementGates",
+   "files": [
+    "scripts/governance/enforcement/actor-engine-enforcement-gates.js"
+   ]
+  },
+  {
+   "global": "window.PreflightValidator",
+   "files": [
+    "scripts/governance/enforcement/preflight-validator.js"
+   ]
+  },
+  {
+   "global": "window.ExportMarking",
+   "files": [
+    "scripts/governance/export/export-marking.js"
+   ]
+  },
+  {
+   "global": "window.GovernanceIntegration",
+   "files": [
+    "scripts/governance/governance-integration.js"
+   ]
+  },
+  {
+   "global": "window.GovernanceSystem",
+   "files": [
+    "scripts/governance/governance-system.js"
+   ]
+  },
+  {
+   "global": "window.PrerequisiteIntegrityTests",
+   "files": [
+    "scripts/governance/integrity/prerequisite-integrity-tests.js"
+   ]
+  },
+  {
+   "global": "window.SeverityClassifier",
+   "files": [
+    "scripts/governance/integrity/severity-classifier.js"
+   ]
+  },
+  {
+   "global": "window.SWSE_AppV2_Audit",
+   "files": [
+    "scripts/governance/sentinel/appv2-audit-runner.js"
+   ]
+  },
+  {
+   "global": "globalThis.SentinelAppV2Auditor",
+   "files": [
+    "scripts/governance/sentinel/appv2-auditor.js"
+   ]
+  },
+  {
+   "global": "window._SWSE_Enforcement",
+   "files": [
+    "scripts/governance/sentinel/enforcement-core.js"
+   ]
+  },
+  {
+   "global": "window.__SWSE_COMBAT_SENTINEL__",
+   "files": [
+    "scripts/governance/sentinel/layers/combat-layer.js"
+   ]
+  },
+  {
+   "global": "window.SWSE.strictV2",
+   "files": [
+    "scripts/governance/sentinel/migration-auditor.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.sentinel",
+   "files": [
+    "scripts/governance/sentinel/sentinel-init.js"
+   ]
+  },
+  {
+   "global": "window.SentinelSovereigntyEnforcement",
+   "files": [
+    "scripts/governance/sentinel/sovereignty-enforcement.js"
+   ]
+  },
+  {
+   "global": "globalThis.SentinelTabDiagnostics",
+   "files": [
+    "scripts/governance/sentinel/tab-diagnostics.js"
+   ]
+  },
+  {
+   "global": "window.IntegrityDashboard",
+   "files": [
+    "scripts/governance/ui/integrity-dashboard.js"
+   ]
+  },
+  {
+   "global": "game.swse.holonet",
+   "files": [
+    "scripts/holonet/integration/holonet-init.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE_SIDEBAR_STRUCTURE",
+   "files": [
+    "scripts/holonet/scripts/core/sidebar-structure-diagnostics.js"
+   ]
+  },
+  {
+   "global": "CONFIG.SWSE.diagonalMovement",
+   "files": [
+    "scripts/houserules/houserule-mechanics.js"
+   ]
+  },
+  {
+   "global": "game.swse.houserules",
+   "files": [
+    "scripts/houserules/houserules-config.js"
+   ]
+  },
+  {
+   "global": "globalThis._swseManifestPresetsCache",
+   "files": [
+    "scripts/houserules/houserules-config.js"
+   ]
+  },
+  {
+   "global": "game.swse.classFeatures",
+   "files": [
+    "scripts/infrastructure/hooks/combat-hooks.js"
+   ]
+  },
+  {
+   "global": "window.SWSEHooks",
+   "files": [
+    "scripts/infrastructure/hooks/hooks-registry.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSELocationRegistryService",
+   "files": [
+    "scripts/locations/location-registry-service.js"
+   ]
+  },
+  {
+   "global": "window.compendiumV2Migration",
+   "files": [
+    "scripts/maintenance/migrate-compendium-to-v2-ids.js"
+   ]
+  },
+  {
+   "global": "window.SWSE.usage",
+   "files": [
+    "scripts/maintenance/usage-tracker.js"
+   ]
+  },
+  {
+   "global": "window.SWSE_SHEET_DIAG",
+   "files": [
+    "scripts/sheets/v2/character-sheet-diagnostics.js"
+   ]
+  },
+  {
+   "global": "window.swseCharacterSheetAudit",
+   "files": [
+    "scripts/sheets/v2/character-sheet-integration-audit.js"
+   ]
+  },
+  {
+   "global": "globalThis.__swseDatapadRegistrationOnboardingInitialized",
+   "files": [
+    "scripts/sheets/v2/character-sheet/chargen-onboarding.js"
+   ]
+  },
+  {
+   "global": "window.CharacterSheetRuntimeVerifier",
+   "files": [
+    "scripts/sheets/v2/runtime-verifier.js"
+   ]
+  },
+  {
+   "global": "window.runP0Diagnostics",
+   "files": [
+    "scripts/sheets/v2/sheet-diagnostics-p0.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSEChatEventBridge",
+   "files": [
+    "scripts/ui/chat/chat-event-bridge.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.ChatInteractionBridge",
+   "files": [
+    "scripts/ui/chat/chat-interaction-bridge.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSEDiscovery",
+   "files": [
+    "scripts/ui/discovery/index.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE.resetDiscoveryTour",
+   "files": [
+    "scripts/ui/discovery/index.js"
+   ]
+  },
+  {
+   "global": "game.swse.ui",
+   "files": [
+    "scripts/ui/mobile-mode-manager.js"
+   ]
+  },
+  {
+   "global": "window.RepairPanel",
+   "files": [
+    "scripts/ui/repair/repair-panel.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSEFactionJobBridgeService",
+   "files": [
+    "scripts/ui/shell/gm/FactionJobBridgeService.js"
+   ]
+  },
+  {
+   "global": "window.SWSEShellResponsive",
+   "files": [
+    "scripts/ui/shell/shell-responsive-observer.js"
+   ]
+  },
+  {
+   "global": "window.DestinyEffects",
+   "files": [
+    "scripts/utils/destiny-effects.js"
+   ]
+  },
+  {
+   "global": "globalThis.SWSE_LAST_HYDRATION_MUTATION",
+   "files": [
+    "scripts/utils/hydration-diagnostics.js"
+   ]
+  },
+  {
+   "global": "game.swse.rollSkill",
+   "files": [
+    "scripts/utils/macro-functions.js"
+   ]
+  },
+  {
+   "global": "game.swse.inspector",
+   "files": [
+    "scripts/utils/reason-inspector.js"
+   ]
+  },
+  {
+   "global": "window.verifySuggestions",
+   "files": [
+    "scripts/utils/verify-suggestions.js"
+   ]
+  },
+  {
+   "global": "window.SWSE.TalentActionLinker",
+   "files": [
+    "tests/attack-composition-actionid-diagnostic.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.CONST",
+   "files": [
+    "tests/class-phase-6p-force-class-sheet-controls.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.__d20",
+   "files": [
+    "tests/force-v2-03c-suite-recovery.test.mjs"
+   ]
+  },
+  {
+   "global": "globalThis.Scene",
+   "files": [
+    "tests/gm-locations-scene-creation-safety.test.mjs"
+   ]
+  }
+ ],
+ "sockets": [
+  {
+   "path": "scripts/holonet/subsystems/holonet-socket-service.js",
+   "channel": "(expr)"
+  }
+ ]
+}

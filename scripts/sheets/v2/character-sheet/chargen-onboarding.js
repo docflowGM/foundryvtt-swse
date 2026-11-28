@@ -13,6 +13,7 @@ import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progres
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const FLAG_SCOPE = 'foundryvtt-swse';
 const FLAG_DISABLED_USERS = 'datapad.registrationPromptDisabledUsers';
@@ -89,7 +90,7 @@ async function getDisabledPromptUsers(actor) {
 async function setPromptDisabledForUser(actor, userId) {
   const users = await getDisabledPromptUsers(actor);
   users[userId] = Date.now();
-  await actor.setFlag(FLAG_SCOPE, FLAG_DISABLED_USERS, users);
+  await ActorEngine.updateActorFlags(actor, FLAG_SCOPE, FLAG_DISABLED_USERS, users, { recalc: false });
 }
 
 function buildDatapadRegistrationContent(actor) {

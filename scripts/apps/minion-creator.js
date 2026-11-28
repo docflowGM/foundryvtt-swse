@@ -405,7 +405,7 @@ export class MinionCreator {
     };
 
     const minions = _uniqueById([...(ownerActor.getFlag(SYSTEM_ID, 'minions') || []), link]);
-    await ownerActor.setFlag(SYSTEM_ID, 'minions', minions);
+    await ActorEngine.updateActorFlags(ownerActor, SYSTEM_ID, 'minions', minions, { recalc: false });
 
     const ownedActors = _uniqueById([...(ownerActor.system?.ownedActors || []), link]);
     await ActorEngine.updateActor(ownerActor, { 'system.ownedActors': ownedActors }, {
@@ -416,7 +416,7 @@ export class MinionCreator {
       if (existing.id !== slot.id) return existing;
       return { ...existing, createdActorId: minion.id, createdAt: existing.createdAt || Date.now(), filledAt: Date.now() };
     });
-    await ownerActor.setFlag(SYSTEM_ID, 'followerSlots', slots);
+    await ActorEngine.updateActorFlags(ownerActor, SYSTEM_ID, 'followerSlots', slots, { recalc: false });
 
     const ownerUser = game.users.find(u => u.character?.id === ownerActor.id);
     if (ownerUser) {

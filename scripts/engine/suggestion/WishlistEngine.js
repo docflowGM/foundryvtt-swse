@@ -7,6 +7,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { PrerequisiteRequirements } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/prerequisite_engine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class WishlistEngine {
   /**
@@ -41,7 +42,7 @@ export class WishlistEngine {
 
       // @mutation-exception: metadata
       // Store player's wishlist for build suggestions (UI-only state)
-      await actor.setFlag('foundryvtt-swse', 'wishlist', wishlist);
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'wishlist', wishlist, { recalc: false });
       SWSELogger.log(`[WISHLIST] Added "${item.name}" to wishlist`);
       return true;
     } catch (err) {
@@ -68,7 +69,7 @@ export class WishlistEngine {
       const removed = wishlist[key].splice(index, 1)[0];
       // @mutation-exception: metadata
       // Update player's wishlist (UI-only state)
-      await actor.setFlag('foundryvtt-swse', 'wishlist', wishlist);
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'wishlist', wishlist, { recalc: false });
       SWSELogger.log(`[WISHLIST] Removed "${removed.name}" from wishlist`);
       return true;
     } catch (err) {

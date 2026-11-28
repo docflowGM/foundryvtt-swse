@@ -1,0 +1,903 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "droids",
+ "name": "Droid mechanics and construction",
+ "kind": "mechanical",
+ "files": 472,
+ "runtimeSloc": 10133,
+ "runtimeFiles": 47,
+ "counts": {
+  "files": 472,
+  "runtimeModules": 45,
+  "runtimeSloc": 10110,
+  "reachability": {
+   "orphan-unreferenced": 6,
+   "reachable-static": 30,
+   "reachable-dynamic": 5,
+   "test-only-import": 2,
+   "unreachable-importers-only": 2
+  },
+  "nonRuntimeByRole": {
+   "asset": 6,
+   "evidence-data": 129,
+   "data": 23,
+   "evidence-or-doc": 149,
+   "presentation-style": 2,
+   "presentation-template": 45,
+   "test": 36,
+   "tool": 37
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/data/droid-part-schema.js",
+   "consumers": 35,
+   "sloc": 699,
+   "role": "module",
+   "exports": [
+    "DROID_PART_CATEGORIES",
+    "normalizeDroidPartId",
+    "getDroidPartDefinition",
+    "getAllDroidPartDefinitions",
+    "getDroidCostFactor",
+    "listConfirmedHostInstances",
+    "findConfirmedHostInstance",
+    "deriveInstalledShieldRating",
+    "collectInstalledComponentEvidence",
+    "deriveHostAppendageBase",
+    "resolveDroidPartQuoteDetailed",
+    "resolveDroidPartQuote"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 372
+  },
+  {
+   "path": "scripts/data/droid-systems.js",
+   "consumers": 22,
+   "sloc": 1185,
+   "role": "module",
+   "exports": [
+    "DROID_SYSTEMS"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 385
+  },
+  {
+   "path": "scripts/domain/droids/droid-installed-component-resolver.js",
+   "consumers": 21,
+   "sloc": 325,
+   "role": "normalizer",
+   "exports": [
+    "resolveInstalledDroidComponents",
+    "DROID_COMPONENT_SOURCE_KIND",
+    "DROID_SYSTEMS_SOURCE_FIELDS"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 383
+  },
+  {
+   "path": "scripts/domain/droids/droid-asset-owner.js",
+   "consumers": 11,
+   "sloc": 56,
+   "role": "module",
+   "exports": [
+    "listRecordedOwnerIds",
+    "listAcquisitionProvenanceIds",
+    "isRecordedOwnerId",
+    "resolveAssetOwner",
+    "resolveAssetOwnerId",
+    "authorizePayer",
+    "payerAuditRecord"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 125
+  },
+  {
+   "path": "scripts/domain/droids/droid-rules-profile.js",
+   "consumers": 10,
+   "sloc": 48,
+   "role": "engine-or-service",
+   "exports": [
+    "resolveDroidRulesProfile",
+    "followsDroidRules",
+    "componentMayContributeDroidModifiers"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 356
+  },
+  {
+   "path": "scripts/domain/droids/droid-component-quote-authority.js",
+   "consumers": 9,
+   "sloc": 193,
+   "role": "engine-or-service",
+   "exports": [
+    "getDroidSizeFactors",
+    "getDroidPriceFactor",
+    "getDroidAccessoryWeightFactor",
+    "resolveDroidComponentQuote",
+    "resolveSourceReviewedDroidQuote",
+    "resolveSourceReviewedDroidQuoteStaged",
+    "resolveDroidBuilderQuote"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 375
+  },
+  {
+   "path": "scripts/domain/droids/droid-appendage-instance.js",
+   "consumers": 8,
+   "sloc": 129,
+   "role": "module",
+   "exports": [
+    "APPENDAGE_INSTANCE_ID_PREFIX",
+    "APPENDAGE_LOCATION_ID_PREFIX",
+    "APPENDAGE_LEDGER_KEY_SEPARATOR",
+    "isPhysicalAppendageDefinition",
+    "appendageMirrorBucket",
+    "isValidInstanceId",
+    "isValidLocationId",
+    "ledgerKeyForInstance",
+    "listLedgerInstances",
+    "instancesOfPart",
+    "findInstance",
+    "dependentsOfInstance"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 373
+  },
+  {
+   "path": "scripts/domain/droids/droid-builder-quote-consumer.js",
+   "consumers": 7,
+   "sloc": 52,
+   "role": "module",
+   "exports": [
+    "quoteDroidBuilderSelection"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 91
+  },
+  {
+   "path": "scripts/domain/droids/droid-build-quote.js",
+   "consumers": 6,
+   "sloc": 126,
+   "role": "module",
+   "exports": [
+    "DROID_BUILD_QUOTE_SCHEMA",
+    "normalizeDroidBuildSnapshot",
+    "quoteDroidBuild"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 82
+  },
+  {
+   "path": "scripts/domain/droids/droid-component-operation-gate.js",
+   "consumers": 5,
+   "sloc": 59,
+   "role": "module",
+   "exports": [
+    "DROID_OPERATION_STATUS",
+    "findInstalledComponent",
+    "authorizeDroidComponentOperation",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 8
+  },
+  {
+   "path": "scripts/domain/droids/droid-initial-installation-service.js",
+   "consumers": 5,
+   "sloc": 83,
+   "role": "engine-or-service",
+   "exports": [
+    "DroidInitialInstallationError",
+    "buildInitialDroidInstallation",
+    "requireInitialDroidInstallation",
+    "applyInitialInstallationToPlan",
+    "resolveFollowerDroidInstallation"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 60
+  },
+  {
+   "path": "scripts/domain/droids/stock-droid-normalizer.js",
+   "consumers": 5,
+   "sloc": 367,
+   "role": "normalizer",
+   "exports": [
+    "StockDroidNormalizer",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/droids/droid-factory.js",
+   "consumers": 5,
+   "sloc": 82,
+   "role": "module",
+   "exports": [
+    "DroidFactory"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/domain/droids/droid-component-prerequisites.js",
+   "consumers": 4,
+   "sloc": 103,
+   "role": "module",
+   "exports": [
+    "DROID_SIZE_ORDER",
+    "evaluateDroidComponentPrerequisites"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 375
+  },
+  {
+   "path": "scripts/domain/droids/droid-component-source-review.js",
+   "consumers": 4,
+   "sloc": 77,
+   "role": "presentation",
+   "exports": [
+    "resolveDroidComponentSourceReview"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 375
+  },
+  {
+   "path": "scripts/domain/droids/droid-converted-system-reconciliation-classifier.js",
+   "consumers": 4,
+   "sloc": 225,
+   "role": "module",
+   "exports": [
+    "RECONCILIATION_CLASSIFICATION",
+    "classifyStockSystemEntry",
+    "annotateWeaponCandidatesAgainstExistingItems",
+    "validateReconciliationSelection",
+    "classifyStockSystemSources"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 5
+  },
+  {
+   "path": "scripts/sheets/v2/droid-sheet/droid-systems-resolver.js",
+   "consumers": 4,
+   "sloc": 378,
+   "role": "normalizer",
+   "exports": [
+    "DroidSystemsResolver"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/domain/droids/droid-converted-system-reconciliation-service.js",
+   "consumers": 3,
+   "sloc": 277,
+   "role": "engine-or-service",
+   "exports": [
+    "inspectReconciliation",
+    "buildReconciliationPlan",
+    "applyReconciliation",
+    "rollbackReconciliation"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 2,
+   "ciTests": 3
+  },
+  {
+   "path": "scripts/domain/droids/droid-item-classification.js",
+   "consumers": 3,
+   "sloc": 41,
+   "role": "module",
+   "exports": [
+    "isIntegratedWeaponItem",
+    "isIntegratedEquipmentItem",
+    "isWeaponizedProjectedPart",
+    "partitionWeaponizedParts",
+    "matchesDroidPartTypeHint"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 8
+  },
+  {
+   "path": "scripts/domain/droids/droid-statblock-conversion-service.js",
+   "consumers": 3,
+   "sloc": 181,
+   "role": "engine-or-service",
+   "exports": [
+    "inspectConversion",
+    "convertToPlayableDerived",
+    "rollbackConversion"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 2,
+   "ciTests": 3
+  },
+  {
+   "path": "scripts/engine/import/stock-droid-importer-engine.js",
+   "consumers": 3,
+   "sloc": 239,
+   "role": "engine-or-service",
+   "exports": [
+    "StockDroidImporterEngine",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/core/droid-template-data-loader.js",
+   "consumers": 3,
+   "sloc": 52,
+   "role": "module",
+   "exports": [
+    "DroidTemplateDataLoader",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/sheets/v2/droid-sheet/droid-component-browser.js",
+   "consumers": 3,
+   "sloc": 136,
+   "role": "presentation",
+   "exports": [
+    "DROID_COMPONENT_CATEGORIES",
+    "statusOf",
+    "buildDroidComponentBrowser",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 3
+  },
+  {
+   "path": "scripts/domain/droids/droid-draft-builder.js",
+   "consumers": 2,
+   "sloc": 93,
+   "role": "module",
+   "exports": [
+    "normalizeAppendageId",
+    "resolveDroidSystemsSelection",
+    "buildDroidDraft"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 53
+  },
+  {
+   "path": "scripts/domain/droids/droid-initial-installation.js",
+   "consumers": 2,
+   "sloc": 216,
+   "role": "module",
+   "exports": [
+    "stableInstanceId",
+    "projectInitialInstallation"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 60
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/data/droid-systems.js",
+   "sloc": 1185,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/sheets/v2/droid-sheet/context-builder.js",
+   "sloc": 884,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/domain/droids/droid-part-schema.js",
+   "sloc": 829,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/data/droid-part-schema.js",
+   "sloc": 699,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/data/generated-droid-component-source-status.js",
+   "sloc": 612,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/stock-droid-import-wizard.js",
+   "sloc": 502,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/sheets/v2/droid-sheet/droid-systems-resolver.js",
+   "sloc": 378,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/domain/droids/stock-droid-normalizer.js",
+   "sloc": 367,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/sheets/v2/droid-actor-sheet.js",
+   "sloc": 364,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/domain/droids/droid-installed-component-resolver.js",
+   "sloc": 325,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/apps/stock-droid-import-wizard.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 502,
+   "tests": 0
+  },
+  {
+   "path": "scripts/domain/droids/droid-installation-reconciler.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 275,
+   "tests": 2
+  },
+  {
+   "path": "scripts/domain/droids/stock-droid-converter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 256,
+   "tests": 0
+  },
+  {
+   "path": "scripts/domain/droids/stock-droid-comparison-utility.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 228,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/stock-droid-comparison-dialog.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 192,
+   "tests": 0
+  },
+  {
+   "path": "scripts/data/droid-modifications.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 170,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/droid-appendage-utils.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 102,
+   "tests": 0
+  },
+  {
+   "path": "scripts/domain/droids/droid-installation-drift-revision.js",
+   "reach": "test-only-import",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 35,
+   "tests": 1
+  },
+  {
+   "path": "scripts/engine/import/droid-template-importer-engine.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 18,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/character-sheet/droid-actor-mode.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 6,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "actor-core": 17,
+  "infrastructure": 15,
+  "progression": 8,
+  "ui-shell": 3,
+  "combat": 2,
+  "equipment": 2,
+  "abilities-effects": 1
+ },
+ "dependedOnByDomains": {
+  "customization": 13,
+  "progression": 12,
+  "equipment": 8,
+  "ui-shell": 6,
+  "combat": 4,
+  "store-economy": 3,
+  "dev-tooling": 3,
+  "abilities-effects": 3,
+  "galactic-profiles": 2,
+  "vehicles": 2,
+  "infrastructure": 1,
+  "npc-followers": 1,
+  "data-registries": 1,
+  "compat-patches": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A05-chat-outside-swse-chat",
+   "invariant": "A-05",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/sheets/v2/droid-actor-sheet.js",
+     "domain": "droids",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      127
+     ]
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "damage-formula",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "equipment",
+    "species",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/data/droid-part-schema.js:843 getSelfDestructDamage",
+    "scripts/domain/droids/droid-part-schema.js:795 getSelfDestructDamage",
+    "scripts/domain/droids/stock-droid-damage-formula.js:96 buildStockDroidDamageFormula"
+   ]
+  },
+  {
+   "responsibility": "price-computation",
+   "otherDomains": [
+    "combat",
+    "customization",
+    "equipment",
+    "feats",
+    "mentor-suggestion",
+    "skills",
+    "store-economy"
+   ],
+   "sites": [
+    "scripts/data/droid-part-schema.js:775 computeDroidLocomotionCost"
+   ]
+  },
+  {
+   "responsibility": "prerequisite-evaluation",
+   "otherDomains": [
+    "data-registries",
+    "progression",
+    "talents",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/domain/droids/droid-component-prerequisites.js:70 evaluateDroidComponentPrerequisites"
+   ]
+  },
+  {
+   "responsibility": "upgrade-slots",
+   "otherDomains": [
+    "compat-patches",
+    "customization",
+    "npc-followers",
+    "progression",
+    "store-economy",
+    "ui-shell",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/domain/droids/droid-part-schema.js:837 resolveProcessorSlots",
+    "scripts/domain/droids/droid-part-schema.js:854 resolveAppendageSlots"
+   ]
+  }
+ ],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "DROID_PART_CATEGORIES",
+   "files": [
+    "scripts/data/droid-part-schema.js",
+    "scripts/domain/droids/droid-part-schema.js"
+   ]
+  },
+  {
+   "name": "getDroidPartDefinition",
+   "files": [
+    "scripts/data/droid-part-schema.js",
+    "scripts/domain/droids/droid-part-schema.js"
+   ]
+  },
+  {
+   "name": "getSelfDestructDamage",
+   "files": [
+    "scripts/data/droid-part-schema.js",
+    "scripts/domain/droids/droid-part-schema.js"
+   ]
+  },
+  {
+   "name": "stableStringify",
+   "files": [
+    "scripts/domain/droids/droid-revision-hash.js",
+    "scripts/mentor/mentor-survey-v2/contract.js"
+   ]
+  }
+ ],
+ "liveHooks": [],
+ "nonRuntimeEvidence": [
+  "data/audits/droids/clone-census-identity.json",
+  "data/audits/droids/clone-field-evidence.json",
+  "data/audits/droids/clone-review-backlog.json",
+  "data/audits/droids/clone-source-mechanics-feat-scope-018-033.json",
+  "data/audits/droids/clone-source-mechanics-second-pass-closeout.json",
+  "data/audits/droids/clone-source-mechanics-sprint-001-005.json",
+  "data/audits/droids/clone-source-mechanics-sprint-006-010.json",
+  "data/audits/droids/clone-source-mechanics-sprint-011-017.json",
+  "data/audits/droids/clone-source-mechanics-sprint-018-033.json",
+  "data/audits/droids/clone-source-mechanics-sprint-034-040.json",
+  "data/audits/droids/clone-visual-field-review.json",
+  "data/audits/droids/component-122-identity-source-coverage.json",
+  "data/audits/droids/component-canonical-migration-backlog.json",
+  "data/audits/droids/component-core-cost-factor-audit.json",
+  "data/audits/droids/component-edit-families-source-facts-c2-001.json",
+  "data/audits/droids/component-keep-003-cross-app-fixtures.json",
+  "data/audits/droids/component-keep-source-facts-armor-and-uncovered-008.json",
+  "data/audits/droids/component-keep-source-facts-core-001.json",
+  "data/audits/droids/component-keep-source-facts-core-002.json",
+  "data/audits/droids/component-keep-source-facts-core-003.json",
+  "data/audits/droids/component-keep-source-facts-coverage-008.json",
+  "data/audits/droids/component-keep-source-facts-sgd-004.json",
+  "data/audits/droids/component-keep-source-facts-sgd-005.json",
+  "data/audits/droids/component-keep-source-facts-sgd-006.json",
+  "data/audits/droids/component-keep-source-facts-sgd-007.json",
+  "data/audits/droids/component-mechanical-certification-batch-001-acceptance.json",
+  "data/audits/droids/component-mechanical-certification-batch-001.json",
+  "data/audits/droids/component-mechanical-certification-batch-002-fixtures.json",
+  "data/audits/droids/component-mechanical-certification-batch-002.json",
+  "data/audits/droids/component-mechanical-certification-batch-003-fixtures.json",
+  "data/audits/droids/component-mechanical-certification-batch-003.json",
+  "data/audits/droids/component-mechanical-certification-batch-004-fixtures.json",
+  "data/audits/droids/component-mechanical-certification-batch-004.json",
+  "data/audits/droids/component-mechanical-certification-batch-005-fixtures.json",
+  "data/audits/droids/component-mechanical-certification-batch-005.json",
+  "data/audits/droids/component-mechanical-certification-ledger-delta-003.json",
+  "data/audits/droids/component-mechanical-certification-ledger-delta-004.json",
+  "data/audits/droids/component-mechanical-certification-ledger-delta-005.json",
+  "data/audits/droids/component-mechanical-certification-ledger.json",
+  "data/audits/droids/component-repo-only-source-screen-c3-001.json",
+  "data/audits/droids/component-source-fact-review-rollup.json",
+  "data/audits/droids/component-source-facts-sgd-sprint-001.json",
+  "data/audits/droids/component-source-facts-sprint-002.json",
+  "data/audits/droids/component-source-facts-sprint-003.json",
+  "data/audits/droids/core-census-identity.json",
+  "data/audits/droids/core-field-evidence.json",
+  "data/audits/droids/core-review-backlog.json",
+  "data/audits/droids/core-visual-field-review.json",
+  "data/audits/droids/droid-component-mechanical-hold-triage-001.json",
+  "data/audits/droids/droid-component-official-errata-authority-001.json",
+  "data/audits/droids/droid-component-sgd-errata-host-002-fixtures.json",
+  "data/audits/droids/droid-component-sgd-errata-host-002.json",
+  "data/audits/droids/droid-hydration-progress.local.json",
+  "data/audits/droids/droid-mechanical-hydration-queue.json",
+  "data/audits/droids/droid-progress-counter.local.json",
+  "data/audits/droids/droid-publication-census.json",
+  "data/audits/droids/droid-v2-component-migration-acceptance-001.json",
+  "data/audits/droids/gaw-census-identity.json",
+  "data/audits/droids/gaw-field-evidence.json",
+  "data/audits/droids/gaw-model-mechanics-boundary-review.json",
+  "data/audits/droids/gaw-review-backlog.json",
+  "data/audits/droids/gaw-systems-possessions-source-review.json",
+  "data/audits/droids/gaw-visual-field-review.json",
+  "data/audits/droids/goi-census-identity.json",
+  "data/audits/droids/goi-field-evidence.json",
+  "data/audits/droids/goi-review-backlog.json",
+  "data/audits/droids/goi-visual-field-review.json",
+  "data/audits/droids/kotor-census-identity.json",
+  "data/audits/droids/kotor-field-evidence.json",
+  "data/audits/droids/kotor-model-mechanics-boundary-review.json",
+  "data/audits/droids/kotor-review-backlog.json",
+  "data/audits/droids/kotor-systems-possessions-source-review.json",
+  "data/audits/droids/kotor-visual-field-review.json",
+  "data/audits/droids/legacy-census-identity.json",
+  "data/audits/droids/legacy-field-evidence.json",
+  "data/audits/droids/legacy-review-backlog.json",
+  "data/audits/droids/legacy-visual-field-review.json",
+  "data/audits/droids/rebellion-census-identity.json",
+  "data/audits/droids/rebellion-field-evidence.json",
+  "data/audits/droids/rebellion-review-backlog.json",
+  "data/audits/droids/rebellion-visual-field-review.json",
+  "data/audits/droids/scum-census-identity.json",
+  "data/audits/droids/scum-field-evidence.json",
+  "data/audits/droids/scum-review-backlog.json",
+  "data/audits/droids/scum-visual-field-review.json",
+  "data/audits/droids/sgd-field-evidence.json",
+  "data/audits/droids/sgd-mechanical-hydration-closeout.json",
+  "data/audits/droids/sgd-mechanical-sprint-001-015.json",
+  "data/audits/droids/sgd-mechanical-sprint-016-030.json",
+  "data/audits/droids/sgd-mechanical-sprint-031-045.json",
+  "data/audits/droids/sgd-review-backlog.json",
+  "data/audits/droids/sgd-source-mechanics-second-pass-closeout.json",
+  "data/audits/droids/sgd-source-mechanics-sprint-001-005.json",
+  "data/audits/droids/sgd-source-mechanics-sprint-006-010.json",
+  "data/audits/droids/sgd-source-mechanics-sprint-011-015.json",
+  "data/audits/droids/sgd-source-mechanics-sprint-016-020.json",
+  "data/audits/droids/sgd-source-mechanics-sprint-021-025.json",
+  "data/audits/droids/sgd-source-mechanics-sprint-026-030.json",
+  "data/audits/droids/sgd-source-mechanics-sprint-031-035.json",
+  "data/audits/droids/sgd-source-mechanics-sprint-036-040.json",
+  "data/audits/droids/sgd-source-mechanics-sprint-041-045.json",
+  "data/audits/droids/sgd-visual-field-review.json",
+  "data/audits/droids/sotg-census-identity.json",
+  "data/audits/droids/sotg-field-evidence.json",
+  "data/audits/droids/sotg-review-backlog.json",
+  "data/audits/droids/sotg-vehicle-source-evidence.json",
+  "data/audits/droids/sotg-visual-field-review.json",
+  "data/audits/droids/threats-census-identity.json",
+  "data/audits/droids/threats-field-evidence.json",
+  "data/audits/droids/threats-review-backlog.json",
+  "data/audits/droids/threats-source-mechanics-second-pass-closeout.json",
+  "data/audits/droids/threats-source-mechanics-sprint-001-006.json",
+  "data/audits/droids/threats-source-mechanics-sprint-007-012.json",
+  "data/audits/droids/threats-source-mechanics-sprint-013-018.json",
+  "data/audits/droids/threats-source-mechanics-sprint-019-024.json",
+  "data/audits/droids/threats-source-mechanics-sprint-025-029.json",
+  "data/audits/droids/threats-visual-field-review.json",
+  "data/audits/droids/two-book-kotor-gaw-mechanics-handoff.json",
+  "data/audits/droids/universal-droid-source-entry.blank.json",
+  "data/audits/droids/universal-droid-source-entry.schema.json",
+  "data/audits/droids/unknown-census-identity.json",
+  "data/audits/droids/unknown-field-evidence.json",
+  "data/audits/droids/unknown-review-backlog.json",
+  "data/audits/droids/unknown-visual-field-review.json",
+  "data/audits/talent-phase-2-scavengers-guide-to-droids-content.json",
+  "data/audits/talent-phase-2-scavengers-guide-to-droids-discrepancy-manifest.json",
+  "data/audits/talent-phase-3b-scavengers-guide-to-droids-manifest.json",
+  "data/audits/vehicles/swse-universal-phase1n-scavengers-guide-to-droids.json",
+  "data/audits/vehicles/swse-universal-phase2n-scavengers-guide-to-droids-staged.json",
+  "docs/audits/droid-authority-consolidation-phase-1.md",
+  "docs/audits/droid-authority-consolidation-phase-2.md",
+  "docs/audits/droid-authority-consolidation-phase-3.md",
+  "docs/audits/droid-authority-static-review-round-3-correction.md",
+  "docs/audits/droid-combat-feat-addendum-2026-07-06.json",
+  "docs/audits/droid-converted-system-reconciliation-phase-4.md",
+  "docs/audits/droid-expanded-feat-addendum-2026-07-07.json",
+  "docs/audits/droid-live-runtime-validation-phase-5.md",
+  "docs/audits/droid-stock-statblock-authority-phase-3.md",
+  "docs/audits/droid-vehicle-ui-convergence.md",
+  "docs/audits/droids/CHECKPOINT11_SUMMARY.md",
+  "docs/audits/droids/DROID_MECHANICAL_HYDRATION_HANDOFF.md",
+  "docs/audits/droids/GIT_CHECKPOINT11_README.md",
+  "docs/audits/droids/SWSE_Droid_Rules_to_Schema_v0_15.md",
+  "docs/audits/droids/UNIVERSAL_DROID_SCHEMA_REVIEW_v0_1.md",
+  "docs/audits/droids/checkpoint10-three-books.local.json",
+  "docs/audits/droids/checkpoint11-sha256sums.txt",
+  "docs/audits/droids/checkpoint11-source-review-complete.json",
+  "docs/audits/droids/clone-local-state.json",
+  "docs/audits/droids/clone-local-validation.json",
+  "docs/audits/droids/clone-source-mechanics-deepening-001-005.md",
+  "docs/audits/droids/clone-source-mechanics-deepening-006-010.md",
+  "docs/audits/droids/clone-source-mechanics-deepening-011-017.md",
+  "docs/audits/droids/clone-source-mechanics-deepening-018-033.md",
+  "docs/audits/droids/clone-source-mechanics-deepening-034-040.md",
+  "docs/audits/droids/clone-source-mechanics-feat-scope-018-033.md",
+  "docs/audits/droids/clone-source-mechanics-second-pass-closeout.md",
+  "docs/audits/droids/core-local-state.json",
+  "docs/audits/droids/core-local-validation.json",
+  "docs/audits/droids/droid-component-122-identity-source-coverage.md",
+  "docs/audits/droids/droid-component-core-cost-factor-audit.md",
+  "docs/audits/droids/droid-component-edit-families-c2-001.md",
+  "docs/audits/droids/droid-component-keep-003-cross-app-acceptance.md",
+  "docs/audits/droids/droid-component-keep-008-coverage-and-armor.md",
+  "docs/audits/droids/droid-component-keep-core-001.md",
+  "docs/audits/droids/droid-component-keep-core-002.md",
+  "docs/audits/droids/droid-component-keep-core-003.md",
+  "docs/audits/droids/droid-component-keep-sgd-004.md",
+  "docs/audits/droids/droid-component-keep-sgd-005.md",
+  "docs/audits/droids/droid-component-keep-sgd-006.md",
+  "docs/audits/droids/droid-component-keep-sgd-007.md",
+  "docs/audits/droids/droid-component-mechanical-certification-batch-001.md",
+  "docs/audits/droids/droid-component-mechanical-certification-batch-002.md",
+  "docs/audits/droids/droid-component-mechanical-certification-batch-003.md",
+  "docs/audits/droids/droid-component-mechanical-certification-batch-004.md",
+  "docs/audits/droids/droid-component-mechanical-certification-batch-005.md",
+  "docs/audits/droids/droid-component-mechanical-certification-closeout.md",
+  "docs/audits/droids/droid-component-mechanical-hold-triage-001.md",
+  "docs/audits/droids/droid-component-official-errata-001.md",
+  "docs/audits/droids/droid-component-refactor-fresh-chat-handoff.md",
+  "docs/audits/droids/droid-component-repo-only-screen-c3-001.md",
+  "docs/audits/droids/droid-component-sgd-errata-host-002.md",
+  "docs/audits/droids/droid-component-source-facts-sprint-002.md",
+  "docs/audits/droids/droid-component-source-facts-sprint-003.md",
+  "docs/audits/droids/droid-mechanical-initial-census-closeout-status.md",
+  "docs/audits/droids/droid-progress-rolling.md",
+  "docs/audits/droids/droid-publication-census.md",
+  "docs/audits/droids/droid-source-review-final.md",
+  "docs/audits/droids/droid-v2-component-authority-migration-gate.md",
+  "docs/audits/droids/droid-v2-gate-a-implementation-checkpoint.md",
+  "docs/audits/droids/droid-v2-gate-c1-appendage-identity.md",
+  "docs/audits/droids/droid-v2-gate-c3a-initial-installation.md",
+  "docs/audits/droids/droid-v2-integration-freeze-handoff-2026-11-05.md",
+  "docs/audits/droids/droid-v2-u0-convergence-audit.md",
+  "docs/audits/droids/droid-v2-wave-2a-guard-closure.md",
+  "docs/audits/droids/droid-v2-wave-2b-installation-eligibility.md",
+  "docs/audits/droids/gaw-crossbook-test-status.json",
+  "docs/audits/droids/gaw-local-state.json",
+  "docs/audits/droids/gaw-local-validation.json",
+  "docs/audits/droids/gaw-model-mechanics-boundary-review.md",
+  "docs/audits/droids/gaw-systems-possessions-source-review.md"
+ ],
+ "tests": [
+  "tests/droid-appendage-instance-identity.test.mjs",
+  "tests/droid-asset-payer-authorization.test.mjs",
+  "tests/droid-builder-v2-quote-integration.test.mjs",
+  "tests/droid-component-browser.test.mjs",
+  "tests/droid-component-operation-gate.test.mjs",
+  "tests/droid-component-prerequisites.test.mjs",
+  "tests/droid-component-quote-authority.test.mjs",
+  "tests/droid-converted-system-reconciliation-classifier.test.mjs",
+  "tests/droid-customization-postcondition.test.mjs",
+  "tests/droid-dead-surface-removed.test.mjs",
+  "tests/droid-factory-stock-contract.test.mjs",
+  "tests/droid-follower-owner-wallet.test.mjs",
+  "tests/droid-gate-c1-appendage-instances.test.mjs",
+  "tests/droid-gate-c1-sheet-rows.test.mjs",
+  "tests/droid-gate-c3a-initial-installation.test.mjs",
+  "tests/droid-hardened-source-modifier-consumption.test.mjs",
+  "tests/droid-installation-drift-repair-intent-boundary.test.mjs",
+  "tests/droid-installation-reconciler.test.mjs",
+  "tests/droid-installed-component-resolver.test.mjs",
+  "tests/droid-item-classification.test.mjs",
+  "tests/droid-part-source-quote-adapter.test.mjs",
+  "tests/droid-prerequisite-evidence.test.mjs",
+  "tests/droid-reconciliation-intent-boundary.test.mjs",
+  "tests/droid-rules-profile.test.mjs",
+  "tests/droid-sgd-host002-arithmetic.test.mjs",
+  "tests/droid-source-review-gate.test.mjs",
+  "tests/droid-strict-authority-guards.test.mjs",
+  "tests/droid-wave2b-installation-eligibility.test.mjs",
+  "tests/equipment-e2b-i3b-universal-integrity.test.mjs",
+  "tests/galactic-droid-draft-builder.test.mjs",
+  "tests/phase7-droid-editability-authority-contract.test.mjs",
+  "tests/phase7-droid-panel-reuse-contract.test.mjs",
+  "tests/stock-droid-damage-formula.test.mjs",
+  "tests/stock-droid-importer-document-api.test.mjs",
+  "tests/store-v2-droid-construction.test.mjs",
+  "tests/vehicle-universal-phase3n-scavengers-guide-to-droids.test.mjs"
+ ]
+}

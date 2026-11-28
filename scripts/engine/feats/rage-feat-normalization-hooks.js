@@ -87,8 +87,8 @@ async function normalizeRageFeat(item, options = {}) {
 }
 
 export function registerRageFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeRageFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeRageFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeRageFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeRageFeat(item, options) : false);
   SWSELogger.log('[RageFeatNormalization] Hooks registered');
 }
 

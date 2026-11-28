@@ -1,0 +1,810 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "customization",
+ "name": "Item customization, upgrades, modifications, crafting, implants",
+ "kind": "mechanical",
+ "files": 172,
+ "runtimeSloc": 14114,
+ "runtimeFiles": 59,
+ "counts": {
+  "files": 172,
+  "runtimeModules": 59,
+  "runtimeSloc": 14114,
+  "reachability": {
+   "reachable-dynamic": 3,
+   "orphan-unreferenced": 8,
+   "unreachable-importers-only": 4,
+   "reachable-static": 43,
+   "test-only-import": 1
+  },
+  "nonRuntimeByRole": {
+   "asset": 3,
+   "evidence-data": 4,
+   "data": 14,
+   "evidence-or-doc": 42,
+   "presentation-style": 10,
+   "presentation-template": 15,
+   "test": 20,
+   "tool": 5
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/apps/customization/item-customization-router.js",
+   "consumers": 12,
+   "sloc": 153,
+   "role": "presentation",
+   "exports": [
+    "resolveCustomizationCategory",
+    "normalizeCategory",
+    "isCustomizableItem",
+    "openItemCustomization",
+    "openItemCustomizationByReference",
+    "openLightsaberWorkbench",
+    "openWorkbenchForCategory",
+    "openCustomizationWorkbench",
+    "installCustomizationLauncherGlobals",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/customization/droid-customization-engine.js",
+   "consumers": 12,
+   "sloc": 635,
+   "role": "engine-or-service",
+   "exports": [
+    "DroidCustomizationEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 39
+  },
+  {
+   "path": "scripts/engine/upgrades/UpgradeService.js",
+   "consumers": 11,
+   "sloc": 606,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "VEHICLE_WORKSHOP_REFUSAL",
+    "UpgradeService"
+   ],
+   "writes": 5,
+   "actorEngineCalls": 3,
+   "ciTests": 29
+  },
+  {
+   "path": "scripts/engine/implants/ImplantEffectRules.js",
+   "consumers": 9,
+   "sloc": 202,
+   "role": "engine-or-service",
+   "exports": [
+    "ImplantEffectRules",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/customization/modification-v2-runtime/modification-effects.js",
+   "consumers": 7,
+   "sloc": 86,
+   "role": "module",
+   "exports": [
+    "activeEffectOperations",
+    "effectiveShotCapacity",
+    "wornArmorStunThresholdBonus",
+    "wornArmorDamageTypeReductions",
+    "criticalPostMultiplierDice",
+    "modificationAttackRerollRules",
+    "EFFECT_TARGETS",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/customization/modification-v2-runtime/modification-install-service.js",
+   "consumers": 6,
+   "sloc": 313,
+   "role": "engine-or-service",
+   "exports": [
+    "RUNTIME_PATH",
+    "SPECIFICATION_PATH",
+    "INSTANCE_FLAG_PATH",
+    "ATTEMPT_FLAG_PATH",
+    "PROVISIONAL_BASIS",
+    "PROVISIONAL_SET",
+    "TABLE_2_2",
+    "TIME_INCREMENTS",
+    "loadModificationData",
+    "getLoadedModificationData",
+    "makeCanonicalWeaponLookup",
+    "productionWeaponLookup"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 1,
+   "ciTests": 54
+  },
+  {
+   "path": "scripts/engine/customization/restriction-model.js",
+   "consumers": 6,
+   "sloc": 19,
+   "role": "module",
+   "exports": [
+    "RESTRICTION_ORDER",
+    "normalizeRestriction",
+    "getMostRestrictive",
+    "isRestrictionMoreSevere"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 69
+  },
+  {
+   "path": "scripts/engine/customization/upgrade-catalog.js",
+   "consumers": 6,
+   "sloc": 92,
+   "role": "registry",
+   "exports": [
+    "UPGRADE_CATALOG",
+    "TEMPLATE_CATALOG",
+    "getUpgradeDefinition",
+    "getTemplateDefinition"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 29
+  },
+  {
+   "path": "scripts/engine/implants/ImplantRules.js",
+   "consumers": 6,
+   "sloc": 155,
+   "role": "engine-or-service",
+   "exports": [
+    "ImplantRules",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/crafting/lightsaber-construction-engine.js",
+   "consumers": 5,
+   "sloc": 805,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "LightsaberConstructionEngine"
+   ],
+   "writes": 4,
+   "actorEngineCalls": 2,
+   "ciTests": 54
+  },
+  {
+   "path": "scripts/engine/customization/modification-v2-runtime/modification-data-store.js",
+   "consumers": 5,
+   "sloc": 5,
+   "role": "module",
+   "exports": [
+    "setVerifiedModificationData",
+    "getVerifiedModificationData",
+    "_resetVerifiedModificationDataForTests",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/customization/safety-engine.js",
+   "consumers": 5,
+   "sloc": 391,
+   "role": "engine-or-service",
+   "exports": [
+    "SafetyEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 69
+  },
+  {
+   "path": "scripts/apps/customization/item-customization-workbench.js",
+   "consumers": 4,
+   "sloc": 3416,
+   "role": "presentation",
+   "exports": [
+    "ItemCustomizationWorkbench"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 52
+  },
+  {
+   "path": "scripts/engine/customization/vehicle-customization-engine.js",
+   "consumers": 4,
+   "sloc": 239,
+   "role": "engine-or-service",
+   "exports": [
+    "VehicleCustomizationEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 35
+  },
+  {
+   "path": "scripts/ui/shell/CustomizationSurfaceAdapter.js",
+   "consumers": 4,
+   "sloc": 179,
+   "role": "presentation",
+   "exports": [
+    "CustomizationSurfaceAdapter"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 9
+  },
+  {
+   "path": "scripts/engine/customization/customization-cost-engine.js",
+   "consumers": 3,
+   "sloc": 36,
+   "role": "engine-or-service",
+   "exports": [
+    "CustomizationCostEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 69
+  },
+  {
+   "path": "scripts/engine/customization/customization-workflow.js",
+   "consumers": 3,
+   "sloc": 237,
+   "role": "module",
+   "exports": [
+    "CustomizationWorkflow"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 29
+  },
+  {
+   "path": "scripts/engine/customization/item-profile-resolver.js",
+   "consumers": 3,
+   "sloc": 174,
+   "role": "normalizer",
+   "exports": [
+    "ItemProfileResolver"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 69
+  },
+  {
+   "path": "scripts/engine/customization/modification-slot-authority.js",
+   "consumers": 3,
+   "sloc": 943,
+   "role": "engine-or-service",
+   "exports": [
+    "CONTRACT_VERSION",
+    "BASELINE_TABLE",
+    "resolveSlotState"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 56
+  },
+  {
+   "path": "scripts/engine/customization/modification-v2-runtime/modification-development-mode.js",
+   "consumers": 3,
+   "sloc": 10,
+   "role": "module",
+   "exports": [
+    "DEVELOPMENT_SETTING",
+    "DEVELOPMENT_BASIS",
+    "DEVELOPMENT_SET",
+    "DEVELOPMENT_EQUIPMENT_SET",
+    "DEVELOPMENT_EQUIPMENT_POLICY",
+    "DEVELOPMENT_POLICY",
+    "isDevelopmentModeEnabled",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/customization/modification-v2/modification-planner.js",
+   "consumers": 3,
+   "sloc": 139,
+   "role": "module",
+   "exports": [
+    "PLAN_VERSION",
+    "readInstances",
+    "inspectInstances",
+    "slotView",
+    "planModification"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 55
+  },
+  {
+   "path": "scripts/engine/customization/modification-v2/modification-slot-closure.js",
+   "consumers": 3,
+   "sloc": 24,
+   "role": "module",
+   "exports": [
+    "createCertifiedDefinitionLookup"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 55
+  },
+  {
+   "path": "scripts/engine/customization/template-engine.js",
+   "consumers": 3,
+   "sloc": 100,
+   "role": "engine-or-service",
+   "exports": [
+    "TemplateEngine",
+    "TEMPLATE_CATALOG",
+    "getTemplateDefinition"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 1,
+   "ciTests": 29
+  },
+  {
+   "path": "scripts/engine/customization/upgrade-slot-engine.js",
+   "consumers": 3,
+   "sloc": 106,
+   "role": "engine-or-service",
+   "exports": [
+    "UpgradeSlotEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 69
+  },
+  {
+   "path": "scripts/data/armor-upgrades.js",
+   "consumers": 3,
+   "sloc": 68,
+   "role": "module",
+   "exports": [
+    "ARMOR_UPGRADES",
+    "ARMOR_UPGRADE_GROUPS",
+    "MAX_ARMOR_UPGRADES"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 69
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/apps/customization/item-customization-workbench.js",
+   "sloc": 3416,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/customization/modification-slot-authority.js",
+   "sloc": 943,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/customization/customization-bay-app.js",
+   "sloc": 842,
+   "reach": "reachable-dynamic"
+  },
+  {
+   "path": "scripts/engine/crafting/lightsaber-construction-engine.js",
+   "sloc": 805,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/customization/tech-specialist-modification-service.js",
+   "sloc": 694,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/customization/droid-customization-engine.js",
+   "sloc": 635,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/upgrades/UpgradeService.js",
+   "sloc": 606,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/data/lightsaber-crystals-map.js",
+   "sloc": 487,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/data/lightsaber-chassis-visuals.js",
+   "sloc": 399,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/customization/safety-engine.js",
+   "sloc": 391,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/data/lightsaber-crystals-map.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 487,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/crafting/phase-3-advanced-crystal-system.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 239,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/crafting/modification-intent-builder.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 146,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/customization/restriction-propagation-engine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 136,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/customization/unified-workbench-integration.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 36,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/customization/customization-workbench-app.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 32,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/crafting/blaster-customization-engine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 30,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/customization/unified-customization-workbench.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 21,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/customization/modification-v2/modification-legality.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 21,
+   "tests": 1
+  },
+  {
+   "path": "scripts/apps/customization/raw-customization-workbench-app.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 20,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/customization/index.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 19,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/customization/index.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 10,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/customization/customization-router.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 5,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "actor-core": 17,
+  "infrastructure": 15,
+  "store-economy": 14,
+  "droids": 13,
+  "equipment": 13,
+  "ui-shell": 10,
+  "mentor-suggestion": 8,
+  "holonet": 7,
+  "vehicles": 5,
+  "rolls": 3,
+  "combat": 1,
+  "data-registries": 1,
+  "feats": 1
+ },
+ "dependedOnByDomains": {
+  "ui-shell": 14,
+  "actor-core": 11,
+  "combat": 7,
+  "equipment": 6,
+  "infrastructure": 3,
+  "store-economy": 2,
+  "feats": 1,
+  "holonet": 1,
+  "rolls": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 15,
+   "sites": [
+    {
+     "path": "scripts/utils/lightsaber-light-sync.js",
+     "domain": "customization",
+     "reach": "reachable-static",
+     "count": 5,
+     "lines": [
+      89,
+      102,
+      111,
+      132,
+      167
+     ]
+    },
+    {
+     "path": "scripts/applications/lightsaber/lightsaber-router.js",
+     "domain": "customization",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      75,
+      76,
+      84,
+      85
+     ]
+    },
+    {
+     "path": "scripts/engine/crafting/lightsaber-construction-engine.js",
+     "domain": "customization",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      652,
+      653,
+      654
+     ]
+    },
+    {
+     "path": "scripts/engine/upgrades/UpgradeService.js",
+     "domain": "customization",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      705,
+      761,
+      775
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A04-presentation-direct-writes",
+   "invariant": "A-04",
+   "count": 4,
+   "sites": [
+    {
+     "path": "scripts/applications/lightsaber/lightsaber-router.js",
+     "domain": "customization",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      75,
+      76,
+      84,
+      85
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A05-chat-outside-swse-chat",
+   "invariant": "A-05",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/customization/tech-specialist-modification-service.js",
+     "domain": "customization",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      427
+     ]
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "price-computation",
+   "otherDomains": [
+    "combat",
+    "droids",
+    "equipment",
+    "feats",
+    "mentor-suggestion",
+    "skills",
+    "store-economy"
+   ],
+   "sites": [
+    "scripts/engine/customization/customization-cost-engine.js:22 getRemovalCost",
+    "scripts/engine/customization/modification-v2/modification-price.js:6 resolvePrice"
+   ]
+  },
+  {
+   "responsibility": "upgrade-slots",
+   "otherDomains": [
+    "compat-patches",
+    "droids",
+    "npc-followers",
+    "progression",
+    "store-economy",
+    "ui-shell",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/engine/customization/upgrade-slot-engine.js:27 getStockBaseSlots"
+   ]
+  }
+ ],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "EffectResolver",
+   "files": [
+    "scripts/engine/abilities/active/effect-resolver.js",
+    "scripts/engine/customization/effect-resolver.js"
+   ]
+  },
+  {
+   "name": "getTemplateDefinition",
+   "files": [
+    "scripts/engine/customization/template-engine.js",
+    "scripts/engine/customization/upgrade-catalog.js"
+   ]
+  },
+  {
+   "name": "PROVISIONAL_SET",
+   "files": [
+    "scripts/engine/customization/modification-v2-runtime/modification-install-service.js",
+    "scripts/engine/customization/modification-v2-runtime/modification-provisional-set.js"
+   ]
+  },
+  {
+   "name": "TEMPLATE_CATALOG",
+   "files": [
+    "scripts/engine/customization/template-engine.js",
+    "scripts/engine/customization/upgrade-catalog.js"
+   ]
+  },
+  {
+   "name": "TemplateEngine",
+   "files": [
+    "scripts/engine/customization/template-engine.js",
+    "scripts/engine/progression/engine/template-engine.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "updateItem",
+   "sites": [
+    "scripts/utils/lightsaber-light-sync.js:215"
+   ]
+  },
+  {
+   "name": "preUpdateItem",
+   "sites": [
+    "scripts/utils/lightsaber-light-sync.js:186"
+   ]
+  },
+  {
+   "name": "swse:level-up-complete",
+   "sites": [
+    "scripts/applications/lightsaber/lightsaber-router.js:13"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "data/audits/item-weapons-phase-4b-lightsaber-round1-selector-retrofit.json",
+  "data/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.json",
+  "data/audits/modification-rolling-authority-v1.5.json",
+  "data/audits/modification-rolling-authority-v1.5.manifest.json",
+  "docs/audits/cybernetic-surgery-policy.md",
+  "docs/audits/d-005-universal-upgrade-host-source-examination.md",
+  "docs/audits/d-005-universal-upgrade-host-text-transcription.md",
+  "docs/audits/generated/cybernetic-surgery-policy-report.json",
+  "docs/audits/generated/cybernetic-surgery-policy-report.md",
+  "docs/audits/generated/implant-content-readiness-report.json",
+  "docs/audits/generated/implant-content-readiness-report.md",
+  "docs/audits/generated/implant-effects-report.json",
+  "docs/audits/generated/implant-effects-report.md",
+  "docs/audits/generated/implant-rules-report.json",
+  "docs/audits/generated/implant-rules-report.md",
+  "docs/audits/generated/implant-ux-visibility-report.json",
+  "docs/audits/generated/implant-ux-visibility-report.md",
+  "docs/audits/implant-content-readiness.md",
+  "docs/audits/implant-effects.md",
+  "docs/audits/implant-rules.md",
+  "docs/audits/implant-ux-visibility.md",
+  "docs/audits/item-weapons-phase-4b-lightsaber-round1-selector-retrofit.md",
+  "docs/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.md",
+  "docs/audits/modification-canonical-registry-phase-1b-contract.md",
+  "docs/audits/modification-phase-1a-armor-capacity-reconciliation-plan.md",
+  "docs/audits/modification-registry-g1-snapshot.md",
+  "docs/audits/modification-registry-v1.5-correction-addendum-d005.md",
+  "docs/audits/modification-rolling-authority-v1.5.md",
+  "docs/audits/modification-slot-authority-phase-1a-contract.md",
+  "docs/audits/modification-system-canonical-compliance-audit.md",
+  "docs/audits/modification-v2-g3-offline-engines.md",
+  "docs/audits/modification-v2-legacy-inventory.md",
+  "docs/audits/modification-v2-q033-atomicity-failure-injection-design.md",
+  "docs/audits/modification-v2-replacement-architecture.md",
+  "docs/audits/modification-v2-runtime-schema.md",
+  "docs/audits/weapon-modification-convergence-phase-0-audit.md",
+  "docs/audits/weapon-phase-5d-i-d-b3-upgrades.md",
+  "docs/design/cybernetic-surgery-policy-phase4c.md",
+  "docs/design/implant-content-readiness-phase4d.md",
+  "docs/design/implant-effects-phase4f.md",
+  "docs/design/implant-rules-easy-win.md",
+  "docs/design/implant-rules-phase4b-ux-visibility.md",
+  "docs/tech-specialist-contextual-modifications-phase21.json"
+ ],
+ "tests": [
+  "tests/customization-bay-foundation-contract.test.mjs",
+  "tests/customization-bay-information-hierarchy.test.mjs",
+  "tests/customization-bay-inline-structural-flattening.test.mjs",
+  "tests/customization-bay-scroll-responsive-contract.test.mjs",
+  "tests/customization-bay-visual-polish-contract.test.mjs",
+  "tests/droid-customization-exploit.test.mjs",
+  "tests/droid-garage-resale-evidence.test.mjs",
+  "tests/droid-gate-c1-workshop-removal.test.mjs",
+  "tests/lightsaber-accessory-attack-provenance-safety.test.mjs",
+  "tests/modification-registry-validator.test.mjs",
+  "tests/modification-runtime-generator.test.mjs",
+  "tests/modification-slot-authority.test.mjs",
+  "tests/modification-v2-convergence.test.mjs",
+  "tests/modification-v2-offline.test.mjs",
+  "tests/vehicle-upgrade-writer-closure.test.mjs",
+  "tests/weapon-phase-5d-i-d-b3-upgrades.test.mjs",
+  "tests/workbench-information-hierarchy.test.mjs",
+  "tests/workbench-inline-structural-flattening.test.mjs",
+  "tests/workbench-scroll-responsive-contract.test.mjs",
+  "tests/workbench-visual-polish-contract.test.mjs"
+ ]
+}

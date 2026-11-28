@@ -14,6 +14,7 @@ import {
 } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-data.js";
 import { ForceAlchemyStateService, readForceAlchemyState } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-state-service.js";
 import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 const EFFECT_SCOPE = 'foundryvtt-swse';
 
@@ -1198,11 +1199,7 @@ async function postRiteChat(actor, detail, { mode = 'applied', resourceChanges =
       <div class="fa-chat-body">${lines.join('')}</div>
       ${preview ? `<details><summary>Rite preview</summary><ul>${preview}</ul></details>` : ''}
     </section>`;
-  await ChatMessage.create({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    content,
-    flags: { [EFFECT_SCOPE]: { forceAlchemyChat: { riteId: rite.id, mode, target } } }
-  });
+  await SWSEChat.postHTML({ actor, content, flags: { [EFFECT_SCOPE]: { forceAlchemyChat: { riteId: rite.id, mode, target } } } });
 }
 
 export async function applyForceAlchemySelection(actor, detail) {
@@ -1415,11 +1412,7 @@ export async function consumeRapidAlchemySurge(actor) {
     pendingEffects: false,
     pendingCosts: false
   });
-  await ChatMessage.create({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    content: `<section class="swse-chat-card swse-force-alchemy-chat-card"><header><strong>Rapid Alchemy</strong><span>Damage Surge</span></header><p>The +2 attack bonus on <strong>${esc(entry.targetName)}</strong> has been consumed. Apply a <strong>+5 Equipment bonus</strong> to one damage roll with that weapon before the encounter ends, then remove the surge effect.</p></section>`,
-    flags: { [EFFECT_SCOPE]: { forceAlchemyChat: { riteId: 'rapid-alchemy-surge', mode: 'surge-ready', target: entry.targetName } } }
-  });
+  await SWSEChat.postHTML({ actor, content: `<section class="swse-chat-card swse-force-alchemy-chat-card"><header><strong>Rapid Alchemy</strong><span>Damage Surge</span></header><p>The +2 attack bonus on <strong>${esc(entry.targetName)}</strong> has been consumed. Apply a <strong>+5 Equipment bonus</strong> to one damage roll with that weapon before the encounter ends, then remove the surge effect.</p></section>`, flags: { [EFFECT_SCOPE]: { forceAlchemyChat: { riteId: 'rapid-alchemy-surge', mode: 'surge-ready', target: entry.targetName } } } });
   return stateAfter;
 }
 

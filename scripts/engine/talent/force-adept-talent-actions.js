@@ -1,12 +1,13 @@
 import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { readBonusPool, bonusPoolUpdate } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
+import { DialogPort, openForceAlchemyWorkbenchPort as openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { rollAttack, rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { getClassLevel, getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
-import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
+
 import { countForceTalents } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
 import { getTalentAbilityMod as abilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
 
@@ -93,7 +94,7 @@ async function worsenConditionTrack(actor, steps = 1, source = 'force-adept-tale
 }
 
 async function grantTemporaryForcePoint(actor, source, expires = 'end_of_turn') {
-  const pool = actor.getFlag?.(NS, 'bonusForcePoints') ?? {};
+  const pool = readBonusPool(actor);
   const entries = Array.isArray(pool.entries) ? [...pool.entries] : [];
   entries.push({
     id: `${slug(source)}-${Date.now()}`,
@@ -109,16 +110,14 @@ async function grantTemporaryForcePoint(actor, source, expires = 'end_of_turn') 
   });
   const value = entries.reduce((sum, entry) => sum + Math.max(0, Number(entry.value) || 0), 0);
   const max = entries.reduce((sum, entry) => sum + Math.max(0, Number(entry.max ?? entry.value) || 0), 0);
-  await ActorEngine.updateActor(actor, {
-    'flags.swse.bonusForcePoints': {
+  await ActorEngine.updateActor(actor, bonusPoolUpdate(actor, {
       ...pool,
       value,
       max: Math.max(value, max),
       sources: [...new Set(entries.map(entry => entry.source).filter(Boolean))],
       entries,
       note: 'Bonus Force Points are spent before normal Force Points and may expire by source.'
-    }
-  }, { source: slug(source) });
+    }), { source: slug(source) });
   return { granted: 1, total: value };
 }
 
@@ -218,7 +217,7 @@ async function promptFields(title, body, fields = []) {
     return `<div class="form-group"><label>${esc(field.label)}</label><input type="text" name="${esc(field.name)}" value="${esc(field.value ?? '')}" placeholder="${esc(field.placeholder ?? '')}" /></div>`;
   }).join('');
   const content = `<form class="swse-dialog swse-force-adept-talent-dialog"><p>${body}</p>${fieldHtml}</form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title,
     content,
     label: 'Continue',
@@ -235,7 +234,7 @@ async function promptFields(title, body, fields = []) {
 
 
 async function grantBonusForcePoint(actor, source) {
-  const pool = actor.getFlag?.(NS, 'bonusForcePoints') ?? {};
+  const pool = readBonusPool(actor);
   const entries = Array.isArray(pool.entries) ? [...pool.entries] : [];
   entries.push({
     id: `${slug(source)}-${Date.now()}`,
@@ -249,16 +248,14 @@ async function grantBonusForcePoint(actor, source) {
   });
   const value = entries.reduce((sum, entry) => sum + Math.max(0, Number(entry.value) || 0), 0);
   const max = entries.reduce((sum, entry) => sum + Math.max(0, Number(entry.max ?? entry.value) || 0), 0);
-  await ActorEngine.updateActor(actor, {
-    'flags.swse.bonusForcePoints': {
+  await ActorEngine.updateActor(actor, bonusPoolUpdate(actor, {
       ...pool,
       value,
       max: Math.max(value, max),
       sources: [...new Set(entries.map(entry => entry.source).filter(Boolean))],
       entries,
       note: 'Bonus Force Points are spent before normal Force Points and may expire by source.'
-    }
-  }, { source: slug(source) });
+    }), { source: slug(source) });
   return { granted: 1, total: value };
 }
 
@@ -379,7 +376,7 @@ export class ForceAdeptTalentActions {
     ]);
     if (!selected?.powerName) return null;
     const nextPowers = [...new Set([...selectedPowers, selected.powerName])];
-    await actor.setFlag?.(NS, 'forcePowerAdept', { powerName: selected.powerName, powers: nextPowers, recordedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'forcePowerAdept', { powerName: selected.powerName, powers: nextPowers, recordedAt: Date.now() }, { recalc: false });
     if (selected.recordOnly) {
       return postCard(actor, 'Force Power Adept', `<p>Recorded <strong>${esc(selected.powerName)}</strong> as a selected Force Power for Force Power Adept.</p><p>Recorded selections: <strong>${nextPowers.map(esc).join(', ')}</strong>.</p><p>When using a selected power, this actor may spend a Force Point to roll two Use the Force checks and keep the better result.</p>`, { powerName: selected.powerName, powers: nextPowers, recordedOnly: true });
     }
@@ -491,7 +488,7 @@ export class ForceAdeptTalentActions {
       const granted = await grantBonusForcePoint(actor, 'Mystical Link');
       return postCard(actor, 'Mystical Link', `<p>Mystical Link succeeded. ${esc(actor.name)} gains 1 temporary Force Point that expires at the end of the encounter.</p><p>Current bonus Force Points: <strong>${granted.total ?? '?'}</strong>.</p>`, { success: true, benefit: choice.benefit });
     }
-    await actor.setFlag?.(NS, `mysticalLink.${choice.benefit}`, { encounterId: encounterId(), actorId: actor.id, createdAt: Date.now(), unresolved: true });
+    await ActorEngine.updateActorFlags(actor, NS, `mysticalLink.${choice.benefit}`, { encounterId: encounterId(), actorId: actor.id, createdAt: Date.now(), unresolved: true }, { recalc: false });
     return postCard(actor, 'Mystical Link', `<p>Mystical Link succeeded. GM selected: <strong>${esc(choice.benefit === 'encounterUse' ? 'additional once/encounter use' : 'additional die on Use the Force')}</strong>.</p><p>This benefit has been recorded on the actor for manual resolution.</p>`, { success: true, benefit: choice.benefit, manualResolution: true });
   }
 
@@ -547,7 +544,7 @@ export class ForceAdeptTalentActions {
       { type: 'checkbox', name: 'recordOnly', label: 'Record talisman selection only; do not spend a Force Point now', checked: true }
     ]);
     if (!choice?.powerName) return null;
-    await actor.setFlag?.(NS, 'focusedForceTalisman', { powerName: choice.powerName, greater, recordedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'focusedForceTalisman', { powerName: choice.powerName, greater, recordedAt: Date.now() }, { recalc: false });
     if (choice.recordOnly) {
       return postCard(actor, title, `<p>Recorded <strong>${esc(choice.powerName)}</strong> as the Focused Force Talisman power.</p><p>Creation/equipment state remains manual until talisman UI exists.</p>`, { powerName: choice.powerName, greater, recordedOnly: true });
     }
@@ -627,7 +624,7 @@ export class ForceAdeptTalentActions {
         const will = defenseTotal(target, 'will');
         const affected = total >= will;
         if (affected) {
-          await target.setFlag?.(NS, 'forceAdept.unsettlingPresence', { encounterId: enc, sourceActorId: actor.id, sourceActorName: actor.name, attackPenalty: -2, skillPenalty: -2, useTheForceTotal: total, createdAt: Date.now() });
+          await ActorEngine.updateActorFlags(target, NS, 'forceAdept.unsettlingPresence', { encounterId: enc, sourceActorId: actor.id, sourceActorName: actor.name, attackPenalty: -2, skillPenalty: -2, useTheForceTotal: total, createdAt: Date.now() }, { recalc: false });
         }
         rows.push(`<li><strong>${esc(target.name)}</strong>: ${total} vs Will ${will}; ${affected ? 'affected (-2 attack/skill while within 6 squares)' : 'not affected'}.</li>`);
       }
@@ -704,7 +701,7 @@ export class ForceAdeptTalentActions {
     if (!hasTalent(actor, 'Telepathic Intruder')) return postCard(actor, 'Telepathic Intruder', '<p>This actor does not have Telepathic Intruder.</p>');
     const target = selectedTargetActors()[0] ?? null;
     if (!target) return postCard(actor, 'Telepathic Intruder', '<p>Target the creature that was successfully affected by your [Mind-Affecting] Force Power, then use this action again.</p>', { requiresTarget: true });
-    await actor.setFlag?.(NS, 'telepathicIntruder', { targetActorId: target.id, targetName: target.name, bonus: 2, bonusType: 'force', expires: 'end_next_turn', encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, createdAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'telepathicIntruder', { targetActorId: target.id, targetName: target.name, bonus: 2, bonusType: 'force', expires: 'end_next_turn', encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, createdAt: Date.now() }, { recalc: false });
     return postCard(actor, 'Telepathic Intruder', `<p>${esc(actor.name)} records <strong>${esc(target.name)}</strong> as the Telepathic Intruder target until the end of ${esc(actor.name)}'s next turn.</p><p>The Force executor applies a <strong>+2 Force bonus</strong> to [Mind-Affecting] Force Power activation checks against that target when target context is passed.</p>`, { targetActorId: target.id, bonus: 2, expires: 'end_next_turn' });
   }
 }

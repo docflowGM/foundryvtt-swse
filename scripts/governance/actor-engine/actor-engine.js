@@ -20,12 +20,20 @@ import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sent
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { planHpRecompute, HP_LEDGER_PATH } from "/systems/foundryvtt-swse/scripts/engine/HP/hp-accounting.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
+import { readBonusPool, bonusPoolUpdate } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 import { SecondWindRules } from "/systems/foundryvtt-swse/scripts/engine/combat/SecondWindRules.js";
 import { MutationNormalizationService } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-normalization-service.js";
 import { MutationBoundaryService } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-boundary-service.js";
 import * as PlanBuilders from "/systems/foundryvtt-swse/scripts/governance/actor-engine/plan-builders.js";
 import { normalizeActiveEffectDataForRuntime } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
+import { ensureCanonicalAbilityShapes, ensureCanonicalDefenseShapes, ensureCanonicalHpShape, ensureCanonicalSkillShapes, ensureCanonicalXpShape, getCanonicalAbilityBase, getCanonicalAbilityMod } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/canonical-actor-shapes.js";
+import { buildDerivedStateViewModel, rewriteTemporaryIds, validateMutationPlan, validateRecoverySnapshot } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/mutation-plan-helpers.js";
+import { configurePointLedgers, withForcePointQueue, gainForcePoints as gainForcePointsImpl, spendForcePoints as spendForcePointsImpl, listUnsettledForcePointReceipts as listUnsettledForcePointReceiptsImpl, reconcileForcePointReceipt as reconcileForcePointReceiptImpl, rollbackForcePointSpend as rollbackForcePointSpendImpl, finalizeForcePointSpend as finalizeForcePointSpendImpl, dispatchForcePointTriggers as dispatchForcePointTriggersImpl, ackForcePointTrigger as ackForcePointTriggerImpl, spendDestinyPoints as spendDestinyPointsImpl, rollbackDestinyPointSpend as rollbackDestinyPointSpendImpl, finalizeDestinyPointSpend as finalizeDestinyPointSpendImpl, dispatchDestinyPointTriggers as dispatchDestinyPointTriggersImpl, ackDestinyPointTrigger as ackDestinyPointTriggerImpl } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/point-ledgers.js";
+import { restoreSnapshotVerifiedImpl, captureRecoverySnapshotImpl, rollbackTransactionalPlan, applyCreateOps, applyDeleteOps, applySetOps, applyUpdateOps, applyAddOps } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/plan-stages.js";
+import { configureDamageOrchestration, recoverConditionStepImpl, updateActionEconomyImpl, applySecondWindEdgeOfExhaustionImpl, rechargeShieldsImpl, applyHealingImpl, applyConditionShiftImpl, applyDamageImpl, setConditionStepImpl, setConditionPersistentImpl, incrementPersistentConditionStepsImpl, settleForcePointRescue, maybeResolveForcePointRescue, applySecondWindImpl, resetSecondWindImpl } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/damage-condition-orchestration.js";
+import { preflightAdoptionPayloads, applyImpl } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/apply-plan.js";
+import { configureDerivedRecalc, applyDerivedUpdates, refreshOpenActorApps, recalcAllImpl, validateDerivedWriteAuthority, checkIntegrity, detectUpdateLoop } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/derived-recalc.js";
 
 /**
  * ActorEngine
@@ -42,43 +50,23 @@ const _instrumentedActors = new WeakMap();
 // Serialize Force Point commits/compensations for one Actor document in this
 // client. Foundry has no cross-client compare-and-swap; live multi-client
 // authority remains a separate acceptance requirement.
-const _forcePointQueues = new WeakMap();
-async function withForcePointQueue(actor, operation) {
-  const prior = _forcePointQueues.get(actor) ?? Promise.resolve();
-  let release;
-  const pending = new Promise(resolve => { release = resolve; });
-  const tail = prior.then(() => pending);
-  _forcePointQueues.set(actor, tail);
-  await prior;
-  try { return await operation(); }
-  finally {
-    release();
-    if (_forcePointQueues.get(actor) === tail) _forcePointQueues.delete(actor);
-  }
-}
+
+
 
 
 // Force Point trigger outbox support (see finalizeForcePointSpend / dispatchForcePointTriggers).
-const _forcePointTriggersInFlight = new Set();
+
 
 // Destiny Point ledger support: a SEPARATE actor-owned ledger (flags.swse.destinyPointLedger), queue and outbox. Destiny is
 // never treated as a Force Point and its entries are never written to the Force Point ledger.
-const _destinyPointQueues = new WeakMap();
-const _destinyTriggersInFlight = new Set();
-async function withDestinyPointQueue(actor, operation) {
-  const prior = _destinyPointQueues.get(actor) ?? Promise.resolve();
-  let release;
-  const pending = new Promise(resolve => { release = resolve; });
-  const tail = prior.then(() => pending);
-  _destinyPointQueues.set(actor, tail);
-  await prior;
-  try { return await operation(); }
-  finally {
-    release();
-    if (_destinyPointQueues.get(actor) === tail) _destinyPointQueues.delete(actor);
-  }
-}
-const destinyLedgerOf = (actor) => actor.getFlag?.('swse', 'destinyPointLedger') ?? actor.flags?.swse?.destinyPointLedger ?? {};
+
+
+
+
+
+configurePointLedgers({ ForcePointsService });
+configureDamageOrchestration({ ForcePointsService });
+configureDerivedRecalc({ DerivedCalculator, PrerequisiteIntegrityChecker });
 
 export const ActorEngine = {
   // PHASE 2: In-flight mutation guard per actor (actor id → reference count)
@@ -93,6 +81,9 @@ export const ActorEngine = {
    */
   _instrumentActorItemsForSSSTOT(actor) {
     if (!actor?.items) return;
+    // Diagnostic only (F-ACT-007): with Sentinel OFF the wrappers could only return immediately, so the collection is left untouched; a later
+    // update re-checks the mode, so enabling diagnostics instruments the actor from then on.
+    if (SentinelEngine.getMode() === SentinelEngine.MODES.OFF) return;
     if (_instrumentedActors.has(actor)) return;
 
     try {
@@ -148,40 +139,7 @@ export const ActorEngine = {
    * @private
    */
   _applyDerivedUpdates(actor, updates, signature = null) {
-    if (!actor?.system || !updates || typeof updates !== 'object') return;
-
-    const expanded = foundry.utils.expandObject(updates);
-    const derivedUpdate = expanded?.system?.derived;
-    if (!derivedUpdate || typeof derivedUpdate !== 'object') return;
-
-    actor.system.derived ??= {};
-
-    // HARDENING: system.derived.skills must remain the engine-owned object map.
-    // Some sheet/view-model paths render skill rows as arrays; if that display shape ever
-    // leaks onto actor.system.derived.skills, later skill edits repaint every total as 0
-    // because ModifierEngine and the concept sheet read an array instead of keyed skills.
-    if (derivedUpdate.skills && typeof derivedUpdate.skills === 'object' && !Array.isArray(derivedUpdate.skills)) {
-      if (!actor.system.derived.skills || typeof actor.system.derived.skills !== 'object' || Array.isArray(actor.system.derived.skills)) {
-        actor.system.derived.skills = {};
-      }
-    }
-
-    foundry.utils.mergeObject(actor.system.derived, derivedUpdate, {
-      inplace: true,
-      insertKeys: true,
-      insertValues: true,
-      overwrite: true,
-      recursive: true
-    });
-
-    // Stamp the same runtime-only derived-generation authority
-    // SWSEV2BaseActor._computeDerivedAsync() uses (see derived-generation.js)
-    // so panel/view-model caches invalidate correctly regardless of which of
-    // the two derived-write paths actually applied the update. A single
-    // shared stamp keeps both paths on one coherent invalidation authority
-    // instead of two counters that could drift out of sync.
-    stampDerivedGeneration(actor, actor.system, signature);
-    announceDerivedApplied(actor, signature);
+    return applyDerivedUpdates(this, ...arguments);
   },
 
   /**
@@ -195,47 +153,7 @@ export const ActorEngine = {
    * @private
    */
   _refreshOpenActorApps(actor, options = {}) {
-    if (options?.suppressAppRefresh) {
-      SWSELogger.debug(`[RENDER REFRESH] Suppressed open-app refresh for ${actor?.name ?? 'unknown actor'}`, {
-        actorId: actor?.id,
-        source: options?.source ?? null
-      });
-      return;
-    }
-
-    const apps = Object.values(actor?.apps ?? {});
-    if (!apps.length) return;
-
-    queueMicrotask(() => {
-      for (const app of apps) {
-        const surfaceId = app?._shellSurface ?? app?.shellSurface ?? app?.currentPage ?? 'sheet';
-        try {
-          if (typeof app?.requestSurfaceRender === 'function') {
-            app.requestSurfaceRender({
-              reason: options?.source ?? 'actor-engine-refresh',
-              surfaceId,
-              preserveUi: true
-            });
-            continue;
-          }
-          if (typeof app?.render === 'function') {
-            import('/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js')
-              .then(({ requestShellRender }) => requestShellRender(app, {
-                reason: options?.source ?? 'actor-engine-refresh',
-                surfaceId,
-                preserveUi: true
-              }))
-              .catch(() => app.render(false));
-          }
-        } catch (err) {
-          SWSELogger.warn(`[RENDER REFRESH] Failed to refresh app for ${actor?.name ?? 'unknown actor'}`, {
-            actorId: actor?.id,
-            appId: app?.id,
-            error: err?.message
-          });
-        }
-      }
-    });
+    return refreshOpenActorApps(this, ...arguments);
   },
   /**
    * Perform any derived-stat recalculation.
@@ -249,108 +167,7 @@ export const ActorEngine = {
    * modifiers such as Skill Focus).
    */
   async recalcAll(actor) {
-    if (!actor) throw new Error('recalcAll() called with no actor');
-
-    // PHASE 3: Recomputation observability
-    const recomputeStart = performance.now();
-    const enforcementLevel = MutationInterceptor.getEnforcementLevel();
-    const isDevEnvironment = (
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1'
-    );
-    const observabilityEnabled = (enforcementLevel === 'strict' || isDevEnvironment);
-
-    try {
-      if (observabilityEnabled) {
-        SWSELogger.debug(`[RECOMPUTE START] ${actor.name}`, {
-          stage: 'begin',
-          enforceLevel: enforcementLevel,
-          timestamp: new Date().toISOString()
-        });
-      }
-
-      // ========================================
-      // PHASE 1: Mark that we're in derived calc cycle
-      // ========================================
-      actor._isDerivedCalcCycle = true;
-      try {
-        // ========================================
-        // PHASE 2: Compute base derived values
-        // ========================================
-        if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] DerivedCalculator.computeAll() starting...`, { actor: actor.name });
-        }
-        const recalcAllSignature = DerivedCalculator.getActorComputeSignature(actor);
-        const derivedUpdates = await DerivedCalculator.computeAll(actor, { signature: recalcAllSignature });
-        this._applyDerivedUpdates(actor, derivedUpdates, recalcAllSignature);
-        if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] DerivedCalculator.computeAll() completed`, {
-            actor: actor.name,
-            derivedHP: actor.system?.derived?.hp?.total,
-            derivedBAB: actor.system?.derived?.bab,
-            defensesFort: actor.system?.derived?.defenses?.fortitude?.total
-          });
-        }
-
-        // ========================================
-        // Modifier bundle legacy pass removed
-        // ========================================
-        // DerivedCalculator.computeAll() already applies static/passive modifiers
-        // and writes system.derived.modifiers for UI breakdown. The old
-        // ModifierEngine bundle pass that ran here has been removed: it was
-        // non-idempotent and double-counted static modifiers such as Skill Focus.
-      } finally {
-        actor._isDerivedCalcCycle = false;
-      }
-
-      // ========================================
-      // PHASE 4: Check prerequisite integrity
-      // ========================================
-      // PHASE 3: In strict mode, reject skip flags (S2 hardening)
-      if (actor._skipIntegrityCheck && enforcementLevel === 'strict') {
-        const message = (
-          `[INTEGRITY SKIP REJECTED] Attempted to skip integrity checks in strict mode\n` +
-          `_skipIntegrityCheck is only allowed for legitimate recursion prevention\n` +
-          `In strict mode, all mutations must include integrity validation`
-        );
-        throw new Error(message);
-      }
-
-      // Skip if flagged as integrity check (prevent recursion)
-      if (!actor._skipIntegrityCheck) {
-        if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] Integrity checks starting...`, { actor: actor.name });
-        }
-        await this._checkIntegrity(actor);
-        if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] Integrity checks completed`, { actor: actor.name });
-        }
-      } else {
-        // PHASE 3: In normal mode, still warn about skip flag
-        if (enforcementLevel !== 'silent') {
-          SWSELogger.warn(`[INTEGRITY SKIP] Integrity checks skipped for ${actor.name} due to _skipIntegrityCheck flag`);
-        }
-      }
-
-      // ========================================
-      // PHASE 5: Recomputation complete
-      // ========================================
-      const recomputeEnd = performance.now();
-      const duration = (recomputeEnd - recomputeStart).toFixed(2);
-      if (observabilityEnabled) {
-        SWSELogger.debug(`[RECOMPUTE END] ${actor.name} — Pipeline completed`, {
-          stage: 'complete',
-          durationMs: duration,
-          enforceLevel: enforcementLevel,
-          timestamp: new Date().toISOString()
-        });
-      }
-    } catch (err) {
-      const recomputeEnd = performance.now();
-      const duration = (recomputeEnd - recomputeStart).toFixed(2);
-      SWSELogger.error(`[RECOMPUTE FAILED] ${actor.name} — Pipeline error after ${duration}ms:`, err);
-      throw err; // Re-throw in strict mode
-    }
+    return recalcAllImpl(this, ...arguments);
   },
 
   /**
@@ -368,43 +185,7 @@ export const ActorEngine = {
    * @private
    */
   _validateDerivedWriteAuthority(changes, actor, options = {}) {
-    const derivedPaths = [];
-
-    const checkObject = (obj, prefix = '') => {
-      if (!obj || typeof obj !== 'object') return;
-      for (const [key, value] of Object.entries(obj)) {
-        const path = prefix ? `${prefix}.${key}` : key;
-        if (path.startsWith('system.derived.')) {
-          derivedPaths.push(path);
-        }
-        if (typeof value === 'object' && value !== null) {
-          checkObject(value, path);
-        }
-      }
-    };
-
-    checkObject(changes);
-
-    // Enforce derived write authority
-    if (derivedPaths.length > 0 &&
-        !actor._isDerivedCalcCycle &&
-        !options.isDerivedCalculatorCall) {
-      const violationList = derivedPaths.slice(0, 5).join(', ');
-      const enforcementLevel = MutationInterceptor.getEnforcementLevel();
-      const message = (
-        `[SSOT VIOLATION] Attempted direct write to derived paths: ${violationList}${derivedPaths.length > 5 ? '...' : ''}\n` +
-        `Only DerivedCalculator may write system.derived.*\n` +
-        `Caller: ${new Error().stack.split('\n')[2]}`
-      );
-
-      if (enforcementLevel === 'strict') {
-        // PHASE 3: Hard enforcement in strict mode
-        throw new Error(message);
-      } else {
-        // PHASE 3: Warning-only in normal/log-only mode
-        SWSELogger.warn(message);
-      }
-    }
+    return validateDerivedWriteAuthority(this, ...arguments);
   },
 
   /**
@@ -413,15 +194,7 @@ export const ActorEngine = {
    * @private
    */
   async _checkIntegrity(actor) {
-    try {
-      const report = await PrerequisiteIntegrityChecker.evaluate(actor);
-      if (Object.keys(report.violations).length > 0) {
-        SWSELogger.warn(`[INTEGRITY] Prerequisite violations detected for ${actor.name}:`, report.violations);
-      }
-    } catch (err) {
-      SWSELogger.error('[INTEGRITY] Failed to check prerequisites:', err);
-      // Don't throw — integrity check failure shouldn't block gameplay
-    }
+    return checkIntegrity(this, ...arguments);
   },
 
   // PHASE 11: Track active migrations to prevent recursion
@@ -437,38 +210,7 @@ export const ActorEngine = {
    * @param {string} source - Caller or guardKey
    */
   _detectUpdateLoop(actor, source) {
-    const key = actor.id;
-    const now = performance.now();
-
-    if (!this._updateStack.has(key)) {
-      this._updateStack.set(key, { count: 0, timestamp: now, sources: [] });
-    }
-
-    const state = this._updateStack.get(key);
-
-    // Reset if > 50ms has passed (new mutation cycle)
-    if (now - state.timestamp > 50) {
-      state.count = 0;
-      state.sources = [];
-      state.timestamp = now;
-    }
-
-    state.count++;
-    state.sources.push(source);
-
-    // WARN if same actor updated >5 times in 50ms
-    if (state.count > 5 && globalThis.SWSE?.SentinelEngine) {
-      globalThis.SWSE.SentinelEngine.report('actor-update-loop',
-        globalThis.SWSE.SentinelEngine.SEVERITY?.WARN ?? 'warn',
-        `Possible update loop: ${actor.name} updated ${state.count}x in 50ms`,
-        {
-          actorId: actor.id,
-          actorName: actor.name,
-          count: state.count,
-          sources: state.sources
-        }
-      );
-    }
+    return detectUpdateLoop(this, ...arguments);
   },
 
   /**
@@ -1252,145 +994,11 @@ export const ActorEngine = {
    * @throws {Error} If validation fails
    */
   _preflightAdoptionPayloads(mutationPlan) {
-    const itemsToCreate = [];
-    const effectsToCreate = [];
-
-    if (mutationPlan.createEmbedded?.length > 0) {
-      for (const embedded of mutationPlan.createEmbedded) {
-        if (!embedded.type || !embedded.data) {
-          throw new Error('Invalid createEmbedded in adoption: missing type or data');
-        }
-
-        if (embedded.type === 'Item') {
-          itemsToCreate.push(embedded.data);
-        } else if (embedded.type === 'ActiveEffect') {
-          effectsToCreate.push(embedded.data);
-        } else {
-          throw new Error(`Invalid embedded type in adoption: ${embedded.type}`);
-        }
-      }
-    }
-
-    return { itemsToCreate, effectsToCreate };
+    return preflightAdoptionPayloads(this, ...arguments);
   },
 
   async apply(actor, mutationPlan, options = {}) {
-    try {
-      if (!actor) {throw new Error('apply() called with no actor');}
-      if (!mutationPlan) {return;} // noop
-
-      const isAdoption = mutationPlan.replaceSystem !== undefined;
-
-      SWSELogger.debug(`ActorEngine.apply → ${actor.name}`, {
-        isAdoption,
-        mutationPlan: isAdoption ? { adoption: true } : mutationPlan
-      });
-
-      // ========================================
-      // PHASE 0: ADOPTION (Identity Mutation)
-      // ========================================
-
-      if (isAdoption) {
-        SWSELogger.info(`[Adoption] ${actor.name} (ID: ${actor.id}) adopting from ${mutationPlan._adoptionSource}`);
-
-        // ---- ADOPTION PREFLIGHT: Validate all replacement payloads BEFORE destructive operations ----
-        // This ensures the actor is not left in a broken state if creation fails after deletion.
-        const { itemsToCreate, effectsToCreate } = this._preflightAdoptionPayloads(mutationPlan);
-
-        // ---- ADOPTION PHASE 1: Delete all existing embedded documents ----
-        if (actor.items?.length > 0) {
-          const itemIds = actor.items.map(i => i.id);
-          await this.deleteEmbeddedDocuments(actor, 'Item', itemIds);
-        }
-
-        if (actor.effects?.length > 0) {
-          const effectIds = actor.effects.map(e => e.id);
-          await this.deleteEmbeddedDocuments(actor, 'ActiveEffect', effectIds);
-        }
-
-        // ---- ADOPTION PHASE 2: Create replacement embedded documents ----
-        if (itemsToCreate.length > 0) {
-          await this.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
-        }
-
-        if (effectsToCreate.length > 0) {
-          await this.createEmbeddedDocuments(actor, 'ActiveEffect', effectsToCreate);
-        }
-
-        // ---- ADOPTION PHASE 3: Replace system ----
-        if (mutationPlan.replaceSystem && Object.keys(mutationPlan.replaceSystem).length > 0) {
-          // Source tag required: this is an intentionally broad system replacement (adoption).
-          // The diagnostic classifier recognizes 'ActorEngine.apply:adoption' → canonical-normalization.
-          await this.updateActor(actor, { system: mutationPlan.replaceSystem }, {
-            source: 'ActorEngine.apply:adoption'
-          });
-        }
-      }
-
-      // ========================================
-      // PHASE 1-4: Standard Mutations
-      // ========================================
-
-      // ---- PHASE 1: Create Embedded Documents (non-adoption) ----
-      if (!isAdoption && mutationPlan.createEmbedded?.length > 0) {
-        const itemsToCreate = mutationPlan.createEmbedded.map(item => {
-          if (!item.type || !item.data) {
-            throw new Error('Invalid createEmbedded item: missing type or data');
-          }
-          return item.data;
-        });
-        await this.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
-      }
-
-      // ---- PHASE 2: Update Embedded Documents ----
-      if (mutationPlan.updateEmbedded?.length > 0) {
-        for (const update of mutationPlan.updateEmbedded) {
-          if (!update._id || !update.update) {
-            throw new Error('Invalid updateEmbedded: missing _id or update');
-          }
-        }
-        await this.updateEmbeddedDocuments(actor, 'Item', mutationPlan.updateEmbedded);
-      }
-
-      // ---- PHASE 3: Delete Embedded Documents (non-adoption) ----
-      if (!isAdoption && mutationPlan.deleteEmbedded?.length > 0) {
-        const idsToDelete = mutationPlan.deleteEmbedded.map(item => {
-          if (!item._id) {
-            throw new Error('Invalid deleteEmbedded: missing _id');
-          }
-          return item._id;
-        });
-        await this.deleteEmbeddedDocuments(actor, 'Item', idsToDelete);
-      }
-
-      // ---- PHASE 4: Update Actor System (non-adoption) ----
-      if (!isAdoption && mutationPlan.update && Object.keys(mutationPlan.update).length > 0) {
-        // Guard against derived writes
-        for (const path of Object.keys(mutationPlan.update)) {
-          if (path.startsWith('system.derived')) {
-            throw new Error(
-              `ARCHITECTURE VIOLATION: mutationPlan attempted to write to ${path}. ` +
-              'Derived fields are computed, not mutated.'
-            );
-          }
-        }
-        await this.updateActor(actor, mutationPlan.update, options);
-      }
-
-      if (isAdoption) {
-        SWSELogger.log(`[Adoption] Complete: ${actor.name} (ID: ${actor.id})`);
-      } else {
-        SWSELogger.log(`ActorEngine.apply completed for ${actor.name}`);
-      }
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.apply failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        isAdoption: mutationPlan?.replaceSystem !== undefined,
-        mutationPlan: mutationPlan?.replaceSystem ? { adoption: true } : mutationPlan
-      });
-      throw err;
-    }
+    return applyImpl(this, ...arguments);
   },
 
   // ============================================================================
@@ -1419,135 +1027,7 @@ export const ActorEngine = {
    * }
    */
   async applyDamage(actor, damagePacket) {
-    try {
-      if (!actor) {throw new Error('applyDamage() called with no actor');}
-      if (!damagePacket) {throw new Error('applyDamage() called with no damagePacket');}
-      if (typeof damagePacket.amount !== 'number' || damagePacket.amount < 0) {
-        throw new Error(`Invalid damage amount: ${damagePacket.amount}`);
-      }
-
-      SWSELogger.debug(`ActorEngine.applyDamage → ${actor.name}`, {
-        amount: damagePacket.amount,
-        type: damagePacket.type,
-        source: damagePacket.source
-      });
-
-      const { DamageResolutionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/damage-resolution-engine.js");
-
-      // Canonical Damage Packet (Phase 3 foundation): normalize every applyDamage
-      // input to per-component { amount, type, tags, source } before mitigation, so
-      // the resolver always receives damage type/tags instead of a bare number.
-      // Shape only — behaviour-preserving: a single-component packet still falls
-      // through resolveComponentMitigation() (needs >1) to the unchanged single-total
-      // path, and the effective damageType is preserved (explicit type wins; bare
-      // numbers stay 'normal'). Immunity/DR/resistance behaviour is unchanged here.
-      const { buildCanonicalDamagePacket } = await import("/systems/foundryvtt-swse/scripts/engine/combat/canonical-damage-packet.js");
-      const canonicalPacket = buildCanonicalDamagePacket(damagePacket);
-
-      const resolution = await DamageResolutionEngine.resolveDamage({
-        actor,
-        damage: damagePacket.amount,
-        damageType: damagePacket.type ?? canonicalPacket.primaryType,
-        source: damagePacket.sourceActor ?? null,
-        options: {
-          ...(damagePacket.options ?? {}),
-          damageComponents: (Array.isArray(damagePacket.options?.damageComponents) && damagePacket.options.damageComponents.length)
-            ? damagePacket.options.damageComponents
-            : canonicalPacket.components,
-          canonicalPacket
-        },
-      });
-
-      await this._maybeResolveForcePointRescue(actor, resolution, damagePacket);
-
-      const updates = {
-        ...SchemaAdapters.setHPUpdate(resolution.hpAfter)
-      };
-
-      // Persist bonus/temp HP depletion from the same authoritative resolution packet.
-      if (resolution.bonusHpAfter !== undefined) {
-        updates['system.hp.bonus'] = Math.max(0, Number(resolution.bonusHpAfter) || 0);
-      }
-      if (resolution.mitigation?.tempHP?.after !== undefined) {
-        updates['system.hp.temp'] = Math.max(0, Number(resolution.mitigation.tempHP.after) || 0);
-      }
-
-      // Persist Shield Rating depletion (RAW CRB p.161: an attack exceeding the
-      // current SR permanently reduces SR by 5 until recharged). ShieldMitigationResolver
-      // stays pure; ActorEngine is the writer. system.shields is the stored SSOT — only
-      // persist when the mitigating SR came from that stored resource (marked
-      // derived.shield.stored), never from a transient force-shield effect that writes
-      // derived.shield.current directly.
-      const shieldMitigation = resolution.mitigation?.shield;
-      if (shieldMitigation && Number(shieldMitigation.degraded) > 0 && actor.system?.derived?.shield?.stored === true) {
-        updates['system.shields.value'] = Math.max(0, Number(shieldMitigation.remaining) || 0);
-      }
-
-      if (resolution.conditionAfter !== undefined && resolution.conditionAfter !== (actor.system?.conditionTrack?.current ?? 0)) {
-        updates['system.conditionTrack.current'] = resolution.conditionAfter;
-      }
-      if (resolution.conditionPersistent === true) {
-        updates['system.conditionTrack.persistent'] = true;
-      }
-
-      if (actor.type === 'droid') {
-        if (resolution.destroyed === true) {
-          updates['system.droidState.status'] = 'destroyed';
-          updates['system.droidState.destroyed'] = true;
-          updates['system.droidState.disabled'] = false;
-          updates['system.droidState.canBeRepaired'] = false;
-          updates['system.droidState.destroyedAt'] = Date.now();
-          updates['system.droidState.destroyedBy'] = damagePacket.source ?? damagePacket.type ?? 'damage';
-        } else if (resolution.disabled === true) {
-          updates['system.droidState.status'] = 'disabled';
-          updates['system.droidState.disabled'] = true;
-          updates['system.droidState.destroyed'] = false;
-          updates['system.droidState.canBeRepaired'] = true;
-        } else if ((resolution.hpAfter ?? 0) > 0 && actor.system?.droidState?.status === 'disabled') {
-          updates['system.droidState.status'] = 'operational';
-          updates['system.droidState.disabled'] = false;
-          updates['system.droidState.canBeRepaired'] = true;
-        }
-      }
-
-      // RENDER SEQUENCING FIX: Suppress intermediate renders. Damage application affects
-      // both HP and condition track, which both impact derived values. After updateActor
-      // completes recalcAll(), _refreshOpenActorApps() will render with stable data.
-      const rescueReceipt = resolution.forcePointRescueReceipt ?? null;
-      try {
-        await this.updateActor(actor, updates, {
-          render: false
-        });
-      } catch (writeErr) {
-        if (rescueReceipt) await this._settleForcePointRescue(actor, rescueReceipt, resolution, writeErr);
-        throw writeErr;
-      }
-      if (rescueReceipt) await this._settleForcePointRescue(actor, rescueReceipt, resolution, null);
-      // Notification only (local to the client that applied the damage): consumers such as Force power maintenance
-      // react to damage actually taken; they never alter this resolution.
-      try { globalThis.Hooks?.callAll?.('swse.damageApplied', { actor, damageToHP: resolution.damageToHP ?? 0, source: damagePacket.source ?? null }); } catch (_e) { /* listeners never break damage */ }
-
-      SWSELogger.log(`Damage applied to ${actor.name}: ${damagePacket.amount} incoming → ${resolution.damageToHP} HP`, {
-        source: damagePacket.source,
-        thresholdExceeded: resolution.thresholdExceeded,
-        conditionAfter: resolution.conditionAfter,
-        measuredDamageForThreshold: resolution.thresholdMeasuredDamage
-      });
-
-      return {
-        applied: resolution.damageToHP,
-        newHP: resolution.hpAfter,
-        conditionShifted: resolution.conditionAfter !== (actor.system?.conditionTrack?.current ?? 0),
-        resolution
-      };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.applyDamage failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        damagePacket
-      });
-      throw err;
-    }
+    return applyDamageImpl(this, ...arguments);
   },
 
   /**
@@ -1569,30 +1049,7 @@ export const ActorEngine = {
    * @returns {Promise<{restored:number, current:number, max:number}>}
    */
   async rechargeShields(actor, { amount = 5 } = {}) {
-    if (!actor) {throw new Error('rechargeShields() requires actor');}
-    // Regenerating shields (certified installation) raise a vehicle's normal 5 to 10.
-    amount = getEffectiveRechargeShieldsAmount(actor, amount);
-
-    const shields = actor.system?.shields || {};
-    const max = Math.max(
-      Number(shields.max ?? shields.rating ?? 0) || 0,
-      Number(actor.system?.shieldRating ?? 0) || 0,
-      Number(actor.system?.derived?.shield?.max ?? 0) || 0
-    );
-
-    if (max <= 0) {
-      return { restored: 0, current: Number(shields.value ?? 0) || 0, max: 0 };
-    }
-
-    const current = Number(actor.system?.derived?.shield?.current ?? shields.value ?? 0) || 0;
-    const next = Math.min(max, current + (Number(amount) || 0));
-    const restored = Math.max(0, next - current);
-
-    if (restored > 0) {
-      await this.updateActor(actor, { 'system.shields.value': next });
-    }
-
-    return { restored, current: next, max };
+    return rechargeShieldsImpl(this, ...arguments);
   },
 
   /**
@@ -1606,66 +1063,7 @@ export const ActorEngine = {
    * @param {string} source - healing source
    */
   async applyHealing(actor, amount, source = 'healing') {
-    try {
-      if (!actor) {throw new Error('applyHealing() called with no actor');}
-      if (typeof amount !== 'number' || amount < 0) {
-        throw new Error(`Invalid healing amount: ${amount}`);
-      }
-
-      SWSELogger.debug(`ActorEngine.applyHealing → ${actor.name}`, {
-        amount,
-        source
-      });
-
-      if (actor.type === 'droid' && actor.system?.droidState?.destroyed === true) {
-        throw new Error(`${actor.name} is destroyed and cannot be repaired or healed.`);
-      }
-
-      const currentHP = SchemaAdapters.getHP(actor);
-      const maxHP = SchemaAdapters.getMaxHP(actor);
-      const currentCT = Number(actor.system?.conditionTrack?.current ?? 0);
-      const newHP = Math.min(maxHP, currentHP + amount);
-      const actualHealing = newHP - currentHP;
-
-      if (actualHealing === 0) {
-        SWSELogger.debug(`${actor.name} healing had no effect (already at max HP)`);
-        return { applied: 0, newHP };
-      }
-
-      const updates = {
-        ...SchemaAdapters.setHPUpdate(newHP)
-      };
-
-      // RAW: Any healing while at 0 HP / disabled revives and moves +1 step up the CT.
-      const recoveredStep = ConditionTrackRules.resolveHealingConditionRecovery(currentHP, currentCT);
-      if (recoveredStep !== null) {
-        updates['system.conditionTrack.current'] = recoveredStep;
-      }
-      if (actor.type === 'droid' && newHP > 0 && actor.system?.droidState?.status === 'disabled') {
-        updates['system.droidState.status'] = 'operational';
-        updates['system.droidState.disabled'] = false;
-        updates['system.droidState.canBeRepaired'] = true;
-      }
-
-      await this.updateActor(actor, updates);
-
-      SWSELogger.log(`Healing applied to ${actor.name}: +${actualHealing}HP (now: ${newHP}/${maxHP})`, {
-        source
-      });
-
-      return {
-        applied: actualHealing,
-        newHP
-      };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.applyHealing failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        amount,
-        source
-      });
-      throw err;
-    }
+    return applyHealingImpl(this, ...arguments);
   },
 
   /**
@@ -1679,48 +1077,7 @@ export const ActorEngine = {
    * @param {string} source - reason for change
    */
   async setConditionStep(actor, step, source = 'manual') {
-    try {
-      if (!actor) {throw new Error('setConditionStep() requires actor');}
-      if (typeof step !== 'number' || !Number.isFinite(step)) {
-        throw new Error(`Invalid condition step: ${step}`);
-      }
-
-      const conditionCap = ConditionTrackRules.getConditionStepCap();
-      const clampedStep = Math.min(conditionCap, Math.max(0, step));
-      const current = actor.system.conditionTrack?.current || 0;
-
-      if (clampedStep === current) {
-        SWSELogger.debug(`${actor.name} condition already at step ${clampedStep}`);
-        return { applied: 0, newStep: clampedStep };
-      }
-
-      // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
-      // Pass render: false to actor.update() to prevent Foundry from auto-rendering.
-      // After recalcAll() completes, _refreshOpenActorApps() will render once with
-      // stable derived data (system.derived.damage.conditionPenalty). This ensures the
-      // condition track step and penalty display are always in sync.
-      await this.updateActor(actor, {
-        'system.conditionTrack.current': clampedStep
-      }, {
-        render: false
-      });
-
-      SWSELogger.log(`Condition step updated for ${actor.name}`, {
-        from: current,
-        to: clampedStep,
-        source
-      });
-
-      return { applied: 1, newStep: clampedStep };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.setConditionStep failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        step,
-        source
-      });
-      throw err;
-    }
+    return setConditionStepImpl(this, ...arguments);
   },
 
   /**
@@ -1733,39 +1090,7 @@ export const ActorEngine = {
    * @param {string} source - reason for change
    */
   async setConditionPersistent(actor, persistent, source = 'manual') {
-    try {
-      if (!actor) {throw new Error('setConditionPersistent() requires actor');}
-
-      const current = actor.system.conditionTrack?.persistent ?? false;
-
-      if (persistent === current) {
-        SWSELogger.debug(`${actor.name} persistent condition already ${persistent ? 'set' : 'clear'}`);
-        return { applied: 0, persistent };
-      }
-
-      // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
-      await this.updateActor(actor, {
-        'system.conditionTrack.persistent': persistent,
-        ...(persistent ? {} : { 'system.conditionTrack.persistentSteps': 0 })
-      }, {
-        render: false
-      });
-
-      SWSELogger.log(`Condition persistent flag updated for ${actor.name}`, {
-        persistent,
-        source
-      });
-
-      return { applied: 1, persistent };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.setConditionPersistent failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        persistent,
-        source
-      });
-      throw err;
-    }
+    return setConditionPersistentImpl(this, ...arguments);
   },
 
   /**
@@ -1779,52 +1104,7 @@ export const ActorEngine = {
    * @param {string} source - reason for shift
    */
   async applyConditionShift(actor, direction, source = 'manual') {
-    try {
-      if (!actor) {throw new Error('applyConditionShift() called with no actor');}
-      if (!Number.isInteger(direction) || direction === 0) {
-        throw new Error(`Invalid shift direction: ${direction} (must be a non-zero integer)`);
-      }
-
-      SWSELogger.debug(`ActorEngine.applyConditionShift → ${actor.name}`, {
-        direction,
-        source
-      });
-
-      const shift = ConditionTrackRules.resolveConditionShift(actor, direction);
-
-      if (shift.appliedShift === 0) {
-        SWSELogger.debug(`${actor.name} condition shift had no effect (at boundary)`);
-        return { applied: 0, newCondition: shift.next };
-      }
-
-      // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
-      await this.updateActor(actor, {
-        'system.conditionTrack.current': shift.next
-      }, {
-        render: false
-      });
-
-      const directionLabel = direction > 0 ? 'worsened' : 'improved';
-      SWSELogger.log(`Condition ${directionLabel} for ${actor.name} (now: ${shift.next})`, {
-        source,
-        requestedShift: direction,
-        implantExtraStep: shift.implantExtraStep,
-        appliedShift: shift.appliedShift
-      });
-
-      return {
-        applied: shift.appliedShift,
-        newCondition: shift.next
-      };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.applyConditionShift failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        direction,
-        source
-      });
-      throw err;
-    }
+    return applyConditionShiftImpl(this, ...arguments);
   },
 
   /**
@@ -1832,22 +1112,7 @@ export const ActorEngine = {
    * Used by threshold house rules to track capped persistent penalties.
    */
   async incrementPersistentConditionSteps(actor, amount = 1, source = 'threshold') {
-    try {
-      if (!actor) throw new Error('incrementPersistentConditionSteps() requires actor');
-      const delta = Math.max(0, Number(amount) || 0);
-      if (delta === 0) return { applied: 0, total: Number(actor.system?.conditionTrack?.persistentSteps ?? 0) };
-
-      const current = Math.max(0, Number(actor.system?.conditionTrack?.persistentSteps ?? 0));
-      const total = current + delta;
-      // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
-      await this.updateActor(actor, { 'system.conditionTrack.persistentSteps': total }, {
-        render: false
-      });
-      return { applied: delta, total, source };
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.incrementPersistentConditionSteps failed for ${actor?.name ?? 'unknown actor'}`, { error: err, amount, source });
-      throw err;
-    }
+    return incrementPersistentConditionStepsImpl(this, ...arguments);
   },
 
   /**
@@ -1858,20 +1123,7 @@ export const ActorEngine = {
    * @private
    */
   async _settleForcePointRescue(actor, receipt, resolution, writeError) {
-    try {
-      const applied = !writeError || Number(actor.system?.hp?.value) === Number(resolution.hpAfter) &&
-        Number(actor.system?.conditionTrack?.current ?? 0) === Number(resolution.conditionAfter);
-      if (applied) {
-        const finality = await this.finalizeForcePointSpend(actor, receipt);
-        if (!finality?.finalized) SWSELogger.error('Force Point rescue applied but receipt finalization failed', finality);
-        return;
-      }
-      const outcome = await this.rollbackForcePointSpend(actor, receipt);
-      if (!outcome?.rolledBack) SWSELogger.error('Force Point rescue failed and compensation was refused; manual reconciliation required', outcome);
-      await actor.unsetFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution');
-    } catch (settleErr) {
-      SWSELogger.error('Force Point rescue settlement indeterminate; manual reconciliation required', { error: settleErr });
-    }
+    return settleForcePointRescue(this, ...arguments);
   },
 
   /**
@@ -1895,77 +1147,7 @@ export const ActorEngine = {
    * @private
    */
   async _maybeResolveForcePointRescue(actor, resolution, damagePacket = {}) {
-    try {
-      if (!actor || !resolution?.forceRescueEligible || (!resolution.dead && !resolution.destroyed)) return false;
-
-      const { ForcePointsService } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js');
-      const rescueContext = {
-        damage: resolution.thresholdMeasuredDamage ?? damagePacket.amount ?? 0,
-        hp: resolution.hpAfter,
-        threshold: resolution.thresholdTotal
-      };
-      if (!ForcePointsService.canRescue(actor, rescueContext)) return false;
-
-      const { SWSEDialogV2 } = await import('/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js');
-      const label = resolution.destroyed ? 'destruction' : 'death';
-      const title = resolution.destroyed ? 'Spend Force Point to Avoid Destruction?' : 'Spend Force Point to Avoid Death?';
-      const yes = await SWSEDialogV2.confirm({
-        title,
-        content: `<p><strong>${actor.name}</strong> would suffer ${label} from this hit.</p><p>Spend 1 Force Point to remain at <strong>0 HP</strong>, move to the bottom of the Condition Track, and become ${resolution.destroyed ? 'disabled' : 'unconscious'} instead?</p>`,
-        defaultYes: true
-      });
-      if (!yes) return false;
-
-      // Post-dialog re-check: FP may have been spent elsewhere while the dialog was open.
-      if (!ForcePointsService.canRescue(actor, rescueContext)) {
-        ui.notifications?.warn?.(`${actor.name}: Force Point rescue is no longer available — a Force Point may have been spent while the dialog was open.`);
-        return false;
-      }
-
-      // This method is the damage owner: it has just verified the lethal hit
-      // (forceRescueEligible + canRescue) and the player's confirmation, so it
-      // persists the event receipt that ForcePointsService.authorizeSpend
-      // requires for 'avoid-death'. Core p.93: the rescue is a reaction.
-      const sourceEventId = globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.();
-      if (!sourceEventId) throw new Error('Death-rescue event identity unavailable');
-      await this.updateActor(actor, {
-        'flags.swse.forceDeathRescueEvent': { id: sourceEventId, actorId: actor.id, state: 'eligible', createdAt: Date.now() }
-      });
-      let spend;
-      try {
-        spend = await this.spendForcePoints(actor, 1, { useKind: 'avoid-death', sourceEventId });
-      } catch (spendErr) {
-        ui.notifications?.warn?.(`${actor.name}: Force Point rescue not permitted — ${spendErr.message}`);
-        return false;
-      } finally {
-        // Single-use: the receipt can never authorize a second spend.
-        await this.updateActor(actor, { 'flags.swse.forceDeathRescueEvent': { id: sourceEventId, actorId: actor.id, state: 'consumed' } });
-      }
-      if (!spend?.spent) {
-        ui.notifications?.warn?.(`${actor.name}: Force Point rescue failed — no Force Points remaining.`);
-        return false;
-      }
-      // Finality is NOT granted here: the rescue is only real once applyDamage
-      // persists the rescued HP/condition state. applyDamage finalizes (or
-      // compensates) the receipt at that boundary.
-      resolution.forcePointRescueReceipt = spend;
-      await actor.setFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution', true);
-
-      resolution.forceRescueUsed = true;
-      resolution.forceRescueEligible = false;
-      resolution.dead = false;
-      resolution.destroyed = false;
-      resolution.unconscious = actor.type === 'character' || actor.type === 'npc' || actor.type === 'beast';
-      resolution.disabled = actor.type === 'droid' || actor.type === 'object' || actor.type === 'device' || actor.type === 'vehicle';
-      resolution.hpAfter = 0;
-      resolution.conditionAfter = 5;
-      resolution.conditionDelta = Math.max(0, 5 - Number(resolution.conditionBefore ?? 0));
-      resolution.resolutionNote = 'force-point-rescue';
-      return true;
-    } catch (err) {
-      SWSELogger.error(`ActorEngine._maybeResolveForcePointRescue failed for ${actor?.name ?? 'unknown actor'}`, { error: err });
-      return false;
-    }
+    return maybeResolveForcePointRescue(this, ...arguments);
   },
 
   /**
@@ -1976,52 +1158,7 @@ export const ActorEngine = {
    * conditions block the Recover Action.
    */
   async recoverConditionStep(actor, source = 'recover-action') {
-    try {
-      if (!actor) throw new Error('recoverConditionStep() requires actor');
-
-      const current = Math.max(0, Number(actor.system?.conditionTrack?.current ?? 0));
-      const persistent = actor.system?.conditionTrack?.persistent === true;
-      if (current <= 0) return { applied: false, reason: 'no-condition' };
-      if (persistent) return { applied: false, reason: 'persistent' };
-
-      const combat = game.combat;
-      const combatant = combat?.combatants?.find?.(c => c.actorId === actor.id) ?? actor.combatant;
-      const inCombat = !!combat && !!combatant;
-
-      if (!inCombat) {
-        await this.applyConditionShift(actor, -1, source);
-        await actor.unsetFlag?.('foundryvtt-swse', 'conditionRecoverProgress');
-        return { applied: true, stepsRecovered: 1, spent: 3, inCombat: false, complete: true };
-      }
-
-      const progress = foundry.utils.deepClone(
-        actor.getFlag?.('foundryvtt-swse', 'conditionRecoverProgress') ?? {}
-      );
-      const combatId = combat.id;
-      const round = Number(combat.round ?? 0);
-
-      const sameCombat = progress.combatId === combatId;
-      const sameRound = Number(progress.round ?? -999) == round;
-      const nextRound = Number(progress.round ?? -999) == (round - 1);
-
-      const spent = (sameCombat && (sameRound || nextRound)) ? Number(progress.spent ?? 0) + 1 : 1;
-      const payload = { combatId, round, spent };
-
-      if (spent >= 3) {
-        await this.applyConditionShift(actor, -1, source);
-        await actor.unsetFlag?.('foundryvtt-swse', 'conditionRecoverProgress');
-        return { applied: true, stepsRecovered: 1, spent, inCombat: true, complete: true };
-      }
-
-      await actor.setFlag?.('foundryvtt-swse', 'conditionRecoverProgress', payload);
-      return { applied: false, reason: 'progress', spent, remaining: Math.max(0, 3 - spent), inCombat: true, complete: false };
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.recoverConditionStep failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        source
-      });
-      return { applied: false, reason: 'error', error: err };
-    }
+    return recoverConditionStepImpl(this, ...arguments);
   },
 
 
@@ -2035,37 +1172,7 @@ export const ActorEngine = {
    * @param {Object} actionEconomy - { swift, move, standard, fullRound, reaction }
    */
   async updateActionEconomy(actor, actionEconomy) {
-    try {
-      if (!actor) {throw new Error('updateActionEconomy() called with no actor');}
-      if (!actionEconomy || typeof actionEconomy !== 'object') {
-        throw new Error('updateActionEconomy() requires actionEconomy object');
-      }
-
-      SWSELogger.debug(`ActorEngine.updateActionEconomy → ${actor.name}`, {
-        swift: actionEconomy.swift,
-        move: actionEconomy.move,
-        standard: actionEconomy.standard,
-        fullRound: actionEconomy.fullRound,
-        reaction: actionEconomy.reaction
-      });
-
-      await this.updateActor(actor, {
-        'system.actionEconomy': actionEconomy
-      });
-
-      SWSELogger.log(`Action economy updated for ${actor.name}`, {
-        actionEconomy
-      });
-
-      return { updated: true, actionEconomy };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.updateActionEconomy failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        actionEconomy
-      });
-      throw err;
-    }
+    return updateActionEconomyImpl(this, ...arguments);
   },
 
   /**
@@ -2075,37 +1182,7 @@ export const ActorEngine = {
    * @param {number} amount - number of points to gain
    */
   async gainForcePoints(actor, amount = 1) {
-    try {
-      if (!actor) {throw new Error('gainForcePoints() requires actor');}
-      if (typeof amount !== 'number' || amount < 0) {
-        throw new Error(`Invalid force point amount: ${amount}`);
-      }
-
-      // Delegate calculation to ForcePointsService; mutation stays here
-      const { newValue: newFP, actualGain, maxFP } = ForcePointsService.calcGain(actor, amount);
-
-      if (actualGain === 0) {
-        SWSELogger.debug(`${actor.name} force points already at max`);
-        return { gained: 0, current: newFP, max: maxFP };
-      }
-
-      await this.updateActor(actor, {
-        'system.forcePoints.value': newFP
-      });
-
-      SWSELogger.log(`Force points gained: ${actor.name} gained ${actualGain}FP (now: ${newFP}/${maxFP})`, {
-        amount: actualGain
-      });
-
-      return { gained: actualGain, current: newFP, max: maxFP };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.gainForcePoints failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        amount
-      });
-      throw err;
-    }
+    return gainForcePointsImpl(this, ...arguments);
   },
 
   /**
@@ -2114,80 +1191,7 @@ export const ActorEngine = {
    * Unclassified two-argument callers must be cut over, not silently allowed.
    */
   async spendForcePoints(actor, amount = 1, context = {}) {
-    if (!actor?.id) throw new Error('spendForcePoints requires an identified actor');
-    return withForcePointQueue(actor, async () => {
-      const requestId = String(context?.requestId ||
-        globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.() || '');
-      if (!requestId) throw new Error('Force Point transaction request identity unavailable');
-      const decision = ForcePointsService.authorizeSpend(actor, {
-        ...context, requestedCount: amount, requestId
-      });
-      if (!decision.valid) throw new Error(decision.message);
-
-      const pool = actor.getFlag?.('swse', 'bonusForcePoints') ?? actor.flags?.swse?.bonusForcePoints ?? {};
-      const sourceEntries = Array.isArray(pool.entries) ? pool.entries.map(entry => ({ ...entry })) : [];
-      const debit = decision.bonusEntriesSpent ?? [];
-      for (const spentEntry of debit) {
-        const found = sourceEntries.find(entry => entry.id === spentEntry.id);
-        if (!found || Number(found.value) < spentEntry.amount) {
-          throw new Error('Bonus Force Point source changed before commit');
-        }
-        found.value = Number(found.value) - spentEntry.amount;
-      }
-      const normal = Number(actor.system?.forcePoints?.value ?? 0);
-      if (normal < decision.normalSpent) throw new Error('Normal Force Points changed before commit');
-      const kept = sourceEntries.filter(entry => Number(entry.value ?? 0) > 0);
-      const bonusAfter = kept.reduce((sum, entry) => sum + Number(entry.value), 0);
-      const normalAfter = normal - decision.normalSpent;
-      const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
-      const entries = Array.isArray(currentLedger.receipts) ? currentLedger.receipts : [];
-      if (entries.some(entry => entry.requestId === requestId)) throw new Error('Duplicate Force Point transaction');
-      const receiptId = globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.();
-      if (!receiptId) throw new Error('Force Point receipt identity unavailable');
-      const receipt = {
-        receiptId, requestId, actorId: actor.id,
-        roundKey: decision.roundKey, useKind: decision.useKind, reactionEventId: decision.reactionEventId ?? null, entitlement: decision.entitlement ?? null, abilitySourceRef: decision.abilitySourceRef ?? null, adjudicatedBy: decision.adjudicatedBy ?? null,
-        countsTowardRoundLimit: decision.countsTowardRoundLimit,
-        // Campaign clock at the spend (once-per-day contract limits read it; null when the world has no clock).
-        worldTime: Number.isFinite(Number(globalThis.game?.time?.worldTime)) ? Number(globalThis.game.time.worldTime) : null,
-        normalSpent: decision.normalSpent,
-        bonusEntriesSpent: debit.map(({ id, source, amount, entry }) =>
-          ({ id, source, amount, entry: { ...entry } })),
-        spent: amount, state: 'committed',
-        // Immutable spend-time evidence for delayed, feature-defined consequences. Captured from authoritative state HERE (the
-        // commit), never from a caller flag and never re-derived at finalization/delivery time.
-        spendEvidence: captureSpendEvidence(actor, 'force')
-      };
-      // Bounded retention: only settled receipts (finalized/rolled-back) older than
-      // the newest 200 are dropped; committed receipts are never dropped, so the
-      // round limit and replay guard for any live use are unaffected.
-      let retained = [...entries, receipt];
-      if (retained.length > 200) {
-        let drop = retained.length - 200;
-        retained = retained.filter(r => !(drop > 0 && r.state !== 'committed' && r.trigger?.state !== 'pending' && drop--));
-      }
-      const ledger = { receipts: retained };
-      const update = {
-        'system.forcePoints.value': normalAfter,
-        'flags.swse.forcePointLedger': ledger
-      };
-      if (debit.length > 0) {
-        update['flags.swse.bonusForcePoints'] = {
-          ...pool,
-          entries: kept,
-          value: bonusAfter,
-          max: Math.max(bonusAfter, kept.reduce((sum, entry) => sum + Number(entry.max ?? entry.value ?? 0), 0)),
-          sources: [...new Set(kept.map(entry => entry.source).filter(Boolean))]
-        };
-      }
-      // A rejected or thrown write is never interpreted as a successful
-      // payment; an applied-then-threw write is indeterminate, not retried.
-      await this.updateActor(actor, update);
-      return {
-        ...receipt, remaining: normalAfter, bonusRemaining: bonusAfter,
-        bonusSpent: debit.reduce((sum, entry) => sum + entry.amount, 0)
-      };
-    });
+    return spendForcePointsImpl(this, ...arguments);
   },
 
   /**
@@ -2197,15 +1201,7 @@ export const ActorEngine = {
    * is not knowable from the ledger alone, so settlement is a recorded GM decision (reconcileForcePointReceipt).
    */
   listUnsettledForcePointReceipts(actor, { inFlight = [] } = {}) {
-    const ledger = actor?.getFlag?.('swse', 'forcePointLedger') ?? actor?.flags?.swse?.forcePointLedger ?? {};
-    const skip = new Set(inFlight);
-    return (Array.isArray(ledger.receipts) ? ledger.receipts : [])
-      .filter(r => r?.state === 'committed' && !skip.has(r.receiptId))
-      .map(r => ({
-        receiptId: r.receiptId, actorId: r.actorId, requestId: r.requestId ?? null, spent: r.spent ?? null,
-        abilitySourceRef: r.abilitySourceRef ?? null, reactionEventId: r.reactionEventId ?? null,
-        roundKey: r.roundKey ?? null, adjudicatedBy: r.adjudicatedBy ?? null
-      }));
+    return listUnsettledForcePointReceiptsImpl(this, ...arguments);
   },
 
   /**
@@ -2214,19 +1210,7 @@ export const ActorEngine = {
    * records both on the receipt, never guesses, and is idempotent (a settled receipt is reported, not touched twice).
    */
   async reconcileForcePointReceipt(actor, receiptId, { decision, reason } = {}) {
-    if (globalThis.game?.user?.isGM !== true) throw new Error('Only a GM may reconcile an unsettled Force Point receipt');
-    if (!actor?.id || !receiptId) throw new Error('Identified actor and receipt id required');
-    if (!['finalize', 'rollback'].includes(decision)) throw new Error("decision must be 'finalize' or 'rollback'");
-    if (typeof reason !== 'string' || !reason.trim()) throw new Error('A written reason is required to reconcile a receipt');
-    const ledger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
-    const record = (Array.isArray(ledger.receipts) ? ledger.receipts : []).find(r => r.receiptId === receiptId && r.actorId === actor.id);
-    if (!record) return { reconciled: false, reason: 'Receipt not found on this actor' };
-    if (record.state !== 'committed') return { reconciled: false, reason: `Receipt is already ${record.state}`, state: record.state };
-    const meta = { decision, reason: reason.trim(), userId: globalThis.game.user.id ?? null, worldTime: Number.isFinite(Number(globalThis.game?.time?.worldTime)) ? Number(globalThis.game.time.worldTime) : null };
-    const outcome = decision === 'finalize'
-      ? await this.finalizeForcePointSpend(actor, record, meta)
-      : await this.rollbackForcePointSpend(actor, record, meta);
-    return { reconciled: Boolean(outcome?.finalized || outcome?.rolledBack), decision, outcome };
+    return reconcileForcePointReceiptImpl(this, ...arguments);
   },
 
   /**
@@ -2234,57 +1218,7 @@ export const ActorEngine = {
    * Read the actor-owned journal, never trust a caller-supplied debit amount.
    */
   async rollbackForcePointSpend(actor, spentReceipt, reconciliation = null) {
-    if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Identified actor and Force Point receipt required');
-    return withForcePointQueue(actor, async () => {
-      const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
-      const records = Array.isArray(currentLedger.receipts) ? currentLedger.receipts : [];
-      const index = records.findIndex(entry => entry.receiptId === spentReceipt.receiptId && entry.actorId === actor.id);
-      if (index < 0 || records[index].state !== 'committed') return { rolledBack: false, reason: 'Receipt missing or already compensated' };
-      const own = records[index];
-      const normal = Number(actor.system?.forcePoints?.value ?? 0);
-      const max = Number(actor.system?.forcePoints?.max ?? normal);
-      // The normal pool can never exceed its maximum. If the actor was refilled
-      // after the debit, only the headroom is restored (nothing is fabricated);
-      // the receipt is still closed so the cancelled use frees its round slot.
-      // Bonus entries are never converted into normal points, nor vice versa.
-      const normalRestored = Math.max(0, Math.min(own.normalSpent, max - normal));
-      const pool = actor.getFlag?.('swse', 'bonusForcePoints') ?? actor.flags?.swse?.bonusForcePoints ?? {};
-      const merged = Array.isArray(pool.entries) ? pool.entries.map(e => ({ ...e })) : [];
-      for (const used of own.bonusEntriesSpent ?? []) {
-        const existing = merged.find(e => e.id === used.id);
-        if (existing) {
-          const e = used.entry;
-          if (existing.source !== e.source || existing.expires !== e.expires ||
-              JSON.stringify(existing.restrictions ?? existing.restriction ?? '') !== JSON.stringify(e.restrictions ?? e.restriction ?? '')) {
-            return { rolledBack: false, reason: 'Bonus Force Point entry identity has changed' };
-          }
-          if (Number(existing.value ?? 0) + used.amount > Number(existing.max ?? e.max ?? 0)) {
-            return { rolledBack: false, reason: 'Bonus Force Point entry has no capacity for exact refund' };
-          }
-          existing.value = Number(existing.value) + used.amount;
-        } else {
-          merged.push({ ...used.entry, value: used.amount });
-        }
-      }
-      const bonusValue = merged.reduce((sum, e) => sum + Number(e.value ?? 0), 0);
-      const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'rolled-back', ...(reconciliation ? { reconciliation } : {}) } : r);
-      const update = {
-        'system.forcePoints.value': normal + normalRestored,
-        'flags.swse.forcePointLedger': { ...currentLedger, receipts: updatedRecords }
-      };
-      if (own.bonusEntriesSpent?.length) {
-        update['flags.swse.bonusForcePoints'] = {
-          ...pool,
-          entries: merged,
-          value: bonusValue,
-          max: Math.max(bonusValue, merged.reduce((sum, e) => sum + Number(e.max ?? e.value ?? 0), 0)),
-          sources: [...new Set(merged.map(e => e.source).filter(Boolean))]
-        };
-      }
-      await this.updateActor(actor, update);
-      return { rolledBack: true, receiptId: own.receiptId, normalRestored,
-        bonusRestored: (own.bonusEntriesSpent ?? []).reduce((sum, e) => sum + e.amount, 0) };
-    });
+    return rollbackForcePointSpendImpl(this, ...arguments);
   },
 
   /**
@@ -2292,33 +1226,7 @@ export const ActorEngine = {
    * receipts still count toward the round limit, but are never refundable.
    */
   async finalizeForcePointSpend(actor, spentReceipt, reconciliation = null) {
-    if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Force Point finalization requires an actor and receipt');
-    let firstFinalization = false;
-    const outcome = await withForcePointQueue(actor, async () => {
-      const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
-      const records = Array.isArray(currentLedger.receipts) ? currentLedger.receipts : [];
-      const index = records.findIndex(r => r.receiptId === spentReceipt.receiptId && r.actorId === actor.id);
-      if (index < 0) return { finalized: false, reason: 'Receipt not found' };
-      if (records[index].state === 'finalized') return { finalized: true, alreadyFinalized: true };
-      if (records[index].state !== 'committed') return { finalized: false, reason: 'Receipt is not pending finalization' };
-      // Durable outbox: the trigger is recorded in the SAME write that makes the receipt final, so a
-      // listener failure or client disconnect after this point can always be reconciled from the ledger.
-      // Only the first committed->finalized transition records it; an alreadyFinalized retry never does.
-      const trigger = hasForcePointTriggerConsumers()
-        ? { state: 'pending', recordedAt: Date.now() }
-        : undefined;
-      const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'finalized', ...(trigger ? { trigger } : {}), ...(reconciliation ? { reconciliation } : {}) } : r);
-      await this.updateActor(actor, { 'flags.swse.forcePointLedger': { ...currentLedger, receipts: updatedRecords } });
-      firstFinalization = Boolean(trigger);
-      return { finalized: true, receiptId: spentReceipt.receiptId };
-    });
-    // Delivered AFTER the queue lock is released so a consumer may call ActorEngine writers without
-    // re-entering the Force Point queue. A delivery failure never reverses the applied paid effect.
-    if (firstFinalization) {
-      try { await this.dispatchForcePointTriggers(actor, { receiptId: outcome.receiptId }); }
-      catch (error) { SWSELogger.error('[ActorEngine] Force Point trigger delivery failed; receipt stays final, trigger stays pending for reconcile', error); }
-    }
-    return outcome;
+    return finalizeForcePointSpendImpl(this, ...arguments);
   },
 
   /**
@@ -2326,47 +1234,12 @@ export const ActorEngine = {
    * Events are built from the finalized receipt; a consumer that throws leaves the trigger pending.
    */
   async dispatchForcePointTriggers(actor, { receiptId = null } = {}) {
-    if (!actor?.id) throw new Error('dispatchForcePointTriggers requires an identified actor');
-    const consumers = forcePointTriggerConsumers();
-    const report = { delivered: 0, pending: 0, invalid: 0 };
-    if (!consumers.length) return report;
-    const ledger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
-    const rows = (Array.isArray(ledger.receipts) ? ledger.receipts : []).filter(r =>
-      r.actorId === actor.id && r.state === 'finalized' && r.trigger?.state === 'pending'
-      && (receiptId === null || r.receiptId === receiptId));
-    for (const r of rows) {
-      const key = `${actor.id}:${r.receiptId}`;
-      if (_forcePointTriggersInFlight.has(key)) continue;
-      _forcePointTriggersInFlight.add(key);
-      try {
-        if (!Number.isSafeInteger(r.spent) || r.spent < 1) { await this.ackForcePointTrigger(actor, r.receiptId, 'invalid'); report.invalid++; continue; }
-        const event = {
-          actor, actorId: String(actor.uuid || actor.id), resource: 'force', spent: r.spent, committed: true,
-          receiptId: r.receiptId, source: 'ActorEngine.finalizeForcePointSpend'
-        };
-        let allOk = true;
-        for (const consume of consumers) {
-          try { await consume(event); }
-          catch (error) { allOk = false; SWSELogger.error(`[ActorEngine] Force Point trigger consumer failed for receipt ${r.receiptId}; stays pending`, error); }
-        }
-        if (allOk) { await this.ackForcePointTrigger(actor, r.receiptId, 'delivered'); report.delivered++; } else report.pending++;
-      } finally { _forcePointTriggersInFlight.delete(key); }
-    }
-    return report;
+    return dispatchForcePointTriggersImpl(this, ...arguments);
   },
 
   /** Mark a trigger settled. Only the trigger sub-record changes; the spend/finality state is never touched. */
   async ackForcePointTrigger(actor, receiptId, outcome = 'delivered') {
-    if (!actor?.id || !receiptId) throw new Error('ackForcePointTrigger requires an actor and receiptId');
-    return withForcePointQueue(actor, async () => {
-      const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
-      const records = Array.isArray(currentLedger.receipts) ? currentLedger.receipts : [];
-      const index = records.findIndex(r => r.receiptId === receiptId && r.actorId === actor.id);
-      if (index < 0 || records[index].trigger?.state !== 'pending') return { acked: false };
-      const updated = records.map((r, i) => i === index ? { ...r, trigger: { ...r.trigger, state: outcome, ackedAt: Date.now() } } : r);
-      await this.updateActor(actor, { 'flags.swse.forcePointLedger': { ...currentLedger, receipts: updated } });
-      return { acked: true, outcome };
-    });
+    return ackForcePointTriggerImpl(this, ...arguments);
   },
 
   /**
@@ -2415,13 +1288,13 @@ export const ActorEngine = {
     if (current && Number.isFinite(Number(current.expiresWorldTime)) && now < Number(current.expiresWorldTime) && current.grantId !== e.grantId) {
       return { granted: false, reason: 'Only one Force regimen can be in effect in a 24-hour period' };
     }
-    const pool = actor.getFlag?.('swse', 'bonusForcePoints') ?? actor.flags?.swse?.bonusForcePoints ?? {};
+    const pool = readBonusPool(actor);
     const kept = (Array.isArray(pool.entries) ? pool.entries : []).filter(en => !en?.entitlement || en.entitlement.grantId === e.grantId);
     const entries = [...kept.filter(en => !built.temporaryEntries.some(t => t.id === en.id)), ...built.temporaryEntries];
     const value = entries.reduce((n, en) => n + Number(en.value ?? 0), 0);
     const update = { 'flags.swse.regimenEntitlement': e };
     if (built.temporaryEntries.length || kept.length !== (pool.entries ?? []).length) {
-      update['flags.swse.bonusForcePoints'] = { ...pool, entries, value, max: Math.max(value, entries.reduce((n, en) => n + Number(en.max ?? en.value ?? 0), 0)), sources: [...new Set(entries.map(en => en.source).filter(Boolean))] };
+      Object.assign(update, bonusPoolUpdate(actor, { ...pool, entries, value, max: Math.max(value, entries.reduce((n, en) => n + Number(en.max ?? en.value ?? 0), 0)), sources: [...new Set(entries.map(en => en.source).filter(Boolean))] }));
     }
     await this.updateActor(actor, update);
     return { granted: true, entitlement: e, temporaryGranted: built.temporaryEntries.reduce((n, t) => n + t.value, 0) };
@@ -2464,78 +1337,12 @@ export const ActorEngine = {
    * @param {number} amount - number of points to spend
    */
   async spendDestinyPoints(actor, amount = 1, context = {}) {
-    try {
-      if (!actor) {throw new Error('spendDestinyPoints() called with no actor');}
-      if (typeof amount !== 'number' || amount < 0) {
-        throw new Error(`Invalid destiny point amount: ${amount}`);
-      }
-      if (!actor.id) {throw new Error('spendDestinyPoints requires an identified actor');}
-
-      return await withDestinyPointQueue(actor, async () => {
-        // Delegate calculation to ForcePointsService; mutation stays here
-        const { newValue: newDP, actualSpent } = ForcePointsService.calcDestinySpend(actor, amount);
-
-        if (actualSpent === 0) {
-          SWSELogger.debug(`${actor.name} has no destiny points to spend`);
-          return { spent: 0, remaining: newDP };
-        }
-
-        const ledger = destinyLedgerOf(actor);
-        const entries = Array.isArray(ledger.receipts) ? ledger.receipts : [];
-        const requestId = String(context?.requestId ||
-          globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.() || '');
-        const receiptId = globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.();
-        if (!requestId || !receiptId) throw new Error('Destiny Point transaction identity unavailable');
-        if (entries.some(entry => entry.requestId === requestId)) throw new Error('Duplicate Destiny Point transaction');
-        const receipt = {
-          receiptId, requestId, actorId: actor.id, spent: actualSpent, state: 'committed',
-          worldTime: Number.isFinite(Number(globalThis.game?.time?.worldTime)) ? Number(globalThis.game.time.worldTime) : null,
-          // Immutable spend-time evidence (Decision C), persisted with the debit; never a caller flag.
-          spendEvidence: captureSpendEvidence(actor, 'destiny')
-        };
-        // Bounded retention: only settled receipts with no pending trigger are ever dropped.
-        let retained = [...entries, receipt];
-        if (retained.length > 200) {
-          let drop = retained.length - 200;
-          retained = retained.filter(r => !(drop > 0 && r.state !== 'committed' && r.trigger?.state !== 'pending' && drop--));
-        }
-        // The debit and its receipt are ONE write: there is never a spend without a receipt or a receipt without a spend.
-        await this.updateActor(actor, {
-          'system.destinyPoints.value': newDP,
-          'flags.swse.destinyPointLedger': { receipts: retained }
-        });
-
-        SWSELogger.log(`Destiny points spent: ${actor.name} used ${actualSpent}DP (now: ${newDP})`, {
-          amount: actualSpent
-        });
-        return { ...receipt, remaining: newDP };
-      });
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.spendDestinyPoints failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        amount
-      });
-      throw err;
-    }
+    return spendDestinyPointsImpl(this, ...arguments);
   },
 
   /** Exact compensation of ONE committed, not-yet-finalized Destiny spend. Never restores a historical balance. */
   async rollbackDestinyPointSpend(actor, spentReceipt) {
-    if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Identified actor and Destiny Point receipt required');
-    return withDestinyPointQueue(actor, async () => {
-      const ledger = destinyLedgerOf(actor);
-      const records = Array.isArray(ledger.receipts) ? ledger.receipts : [];
-      const index = records.findIndex(r => r.receiptId === spentReceipt.receiptId && r.actorId === actor.id);
-      if (index < 0 || records[index].state !== 'committed') return { rolledBack: false, reason: 'Receipt missing or already settled' };
-      const own = records[index];
-      const current = Number(actor.system?.destinyPoints?.value ?? 0);
-      const updated = records.map((r, i) => i === index ? { ...r, state: 'rolled-back' } : r);
-      await this.updateActor(actor, {
-        'system.destinyPoints.value': current + own.spent,
-        'flags.swse.destinyPointLedger': { ...ledger, receipts: updated }
-      });
-      return { rolledBack: true, receiptId: own.receiptId, restored: own.spent };
-    });
+    return rollbackDestinyPointSpendImpl(this, ...arguments);
   },
 
   /**
@@ -2543,70 +1350,17 @@ export const ActorEngine = {
    * the first committed->finalized transition and delivered after the queue lock is released.
    */
   async finalizeDestinyPointSpend(actor, spentReceipt) {
-    if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Destiny Point finalization requires an actor and receipt');
-    let firstFinalization = false;
-    const outcome = await withDestinyPointQueue(actor, async () => {
-      const ledger = destinyLedgerOf(actor);
-      const records = Array.isArray(ledger.receipts) ? ledger.receipts : [];
-      const index = records.findIndex(r => r.receiptId === spentReceipt.receiptId && r.actorId === actor.id);
-      if (index < 0) return { finalized: false, reason: 'Receipt not found' };
-      if (records[index].state === 'finalized') return { finalized: true, alreadyFinalized: true };
-      if (records[index].state !== 'committed') return { finalized: false, reason: 'Receipt is not pending finalization' };
-      const trigger = hasSpendTriggerConsumers('destiny') ? { state: 'pending', recordedAt: Date.now() } : undefined;
-      const updated = records.map((r, i) => i === index ? { ...r, state: 'finalized', ...(trigger ? { trigger } : {}) } : r);
-      await this.updateActor(actor, { 'flags.swse.destinyPointLedger': { ...ledger, receipts: updated } });
-      firstFinalization = Boolean(trigger);
-      return { finalized: true, receiptId: spentReceipt.receiptId };
-    });
-    if (firstFinalization) {
-      try { await this.dispatchDestinyPointTriggers(actor, { receiptId: outcome.receiptId }); }
-      catch (error) { SWSELogger.error('[ActorEngine] Destiny Point trigger delivery failed; receipt stays final, trigger stays pending for reconcile', error); }
-    }
-    return outcome;
+    return finalizeDestinyPointSpendImpl(this, ...arguments);
   },
 
   /** Deliver pending Destiny triggers built from the actor's OWN Destiny ledger (never from a caller payload). */
   async dispatchDestinyPointTriggers(actor, { receiptId = null } = {}) {
-    if (!actor?.id) throw new Error('dispatchDestinyPointTriggers requires an identified actor');
-    const consumers = spendTriggerConsumers('destiny');
-    const report = { delivered: 0, pending: 0, invalid: 0 };
-    if (!consumers.length) return report;
-    const rows = (Array.isArray(destinyLedgerOf(actor).receipts) ? destinyLedgerOf(actor).receipts : []).filter(r =>
-      r.actorId === actor.id && r.state === 'finalized' && r.trigger?.state === 'pending'
-      && (receiptId === null || r.receiptId === receiptId));
-    for (const r of rows) {
-      const key = `${actor.id}:${r.receiptId}`;
-      if (_destinyTriggersInFlight.has(key)) continue;
-      _destinyTriggersInFlight.add(key);
-      try {
-        if (!Number.isSafeInteger(r.spent) || r.spent < 1) { await this.ackDestinyPointTrigger(actor, r.receiptId, 'invalid'); report.invalid++; continue; }
-        const event = {
-          actor, actorId: String(actor.uuid || actor.id), resource: 'destiny', spent: r.spent, committed: true,
-          receiptId: r.receiptId, source: 'ActorEngine.finalizeDestinyPointSpend'
-        };
-        let allOk = true;
-        for (const consume of consumers) {
-          try { await consume(event); }
-          catch (error) { allOk = false; SWSELogger.error(`[ActorEngine] Destiny Point trigger consumer failed for receipt ${r.receiptId}; stays pending`, error); }
-        }
-        if (allOk) { await this.ackDestinyPointTrigger(actor, r.receiptId, 'delivered'); report.delivered++; } else report.pending++;
-      } finally { _destinyTriggersInFlight.delete(key); }
-    }
-    return report;
+    return dispatchDestinyPointTriggersImpl(this, ...arguments);
   },
 
   /** Mark a Destiny trigger settled. Only the trigger sub-record changes; spend/finality is never touched. */
   async ackDestinyPointTrigger(actor, receiptId, outcome = 'delivered') {
-    if (!actor?.id || !receiptId) throw new Error('ackDestinyPointTrigger requires an actor and receiptId');
-    return withDestinyPointQueue(actor, async () => {
-      const ledger = destinyLedgerOf(actor);
-      const records = Array.isArray(ledger.receipts) ? ledger.receipts : [];
-      const index = records.findIndex(r => r.receiptId === receiptId && r.actorId === actor.id);
-      if (index < 0 || records[index].trigger?.state !== 'pending') return { acked: false };
-      const updated = records.map((r, i) => i === index ? { ...r, trigger: { ...r.trigger, state: outcome, ackedAt: Date.now() } } : r);
-      await this.updateActor(actor, { 'flags.swse.destinyPointLedger': { ...ledger, receipts: updated } });
-      return { acked: true, outcome };
-    });
+    return ackDestinyPointTriggerImpl(this, ...arguments);
   },
 
   /**
@@ -2620,126 +1374,7 @@ export const ActorEngine = {
    * @returns {Promise<{success, healed, newHP}>}
    */
   async applySecondWind(actor, options = {}) {
-    try {
-      if (!actor) {throw new Error('applySecondWind() requires actor');}
-
-      const secondWindFeatRules = MetaResourceFeatResolver.getSecondWindRules(actor);
-      const hasToughAsNails = actor.items?.some(i => i.type === 'talent' && i.name === 'Tough as Nails') === true;
-
-      // Eligibility check (pure calculation delegated to SecondWindRules)
-      const eligibility = SecondWindRules.canUseSecondWind(actor, options, secondWindFeatRules);
-      if (!eligibility.allowed) {
-        SWSELogger.warn(`Second Wind attempt blocked for ${actor.name}: ${eligibility.reason}`);
-        return { success: false, reason: eligibility.reason };
-      }
-
-      const currentHP = SchemaAdapters.getHP(actor);
-      const maxHP = SchemaAdapters.getMaxHP(actor);
-      const activeCombatId = game.combat?.started ? game.combat.id : null;
-
-      const isDroidActor = actor.type === 'droid' || actor.system?.isDroid === true;
-      const conScore = isDroidActor ? 0 : Number(actor.system?.derived?.attributes?.con?.total ?? actor.system?.attributes?.con?.base ?? 10);
-      const conMod = isDroidActor ? 0 : this._getCanonicalAbilityMod(actor, 'con');
-      const fortClassBonus = Number(actor.system?.defenses?.fortitude?.classBonus ?? 0);
-
-      // Uses calculation delegated to SecondWindRules
-      const computedMaxUses = SecondWindRules.calculateMaxUses(conMod, fortClassBonus, secondWindFeatRules, hasToughAsNails);
-      const storedUses = Number(actor.system.secondWind?.uses ?? 0);
-      const uses = Math.max(0, Math.min(storedUses, computedMaxUses));
-      if (uses < 1) {
-        return { success: false, reason: 'No Second Wind uses remaining' };
-      }
-
-      // Healing amount delegated to SecondWindRules, then adjusted by explicit feat rules.
-      let heal = SecondWindRules.calculateHealingAmount(maxHP, conScore) + Number(secondWindFeatRules.extraHealing || 0);
-      const impetuousMoveSelected = options.impetuousMove === true || options.halfHealingForMovement === true;
-      if (secondWindFeatRules.halfHealingForMovement && impetuousMoveSelected) {
-        heal = Math.max(0, Math.floor(heal / 2));
-      }
-
-      const newHP = Math.min(currentHP + heal, maxHP);
-      const actualHealing = newHP - currentHP;
-
-      // ========================================
-      // PHASE B FIX 6: Improved Second Wind houserule
-      // ========================================
-      const improvements = {
-        ...SchemaAdapters.setHPUpdate(newHP),
-        'system.secondWind.max': computedMaxUses,
-        'system.secondWind.uses': Math.max(0, uses - 1)
-      };
-
-      const improvedSecondWind = HouseRuleService.isEnabled('secondWindImproved');
-      // Condition recovery steps delegated to SecondWindRules
-      const recoverySteps = SecondWindRules.calculateConditionRecovery(secondWindFeatRules, improvedSecondWind);
-      if (recoverySteps > 0) {
-        // Also move up condition track (+1 improvement = -1 on numeric scale)
-        const currentCT = actor.system.conditionTrack?.current ?? 0;
-        improvements['system.conditionTrack.current'] = Math.max(0, currentCT - recoverySteps);
-
-        SWSELogger.debug(`Second Wind condition recovery: moving condition track from ${currentCT} to ${Math.max(0, currentCT - recoverySteps)}`);
-      }
-
-      // Add action grants to improvements BEFORE actor update
-      if (secondWindFeatRules.grantMoveActionOnUse) {
-        improvements['system.actions.moveAction'] = (actor.system.actions?.moveAction ?? 0) + 1;
-      }
-
-      if (secondWindFeatRules.grantMovementOnUse && (!secondWindFeatRules.halfHealingForMovement || impetuousMoveSelected)) {
-        improvements['system.actions.movement'] = (actor.system.actions?.movement ?? 0) + 1;
-      }
-
-      // Batch update: HP restoration + use consumption + optional condition improvement + action grants
-      await this.updateActor(actor, improvements);
-      if (activeCombatId) {
-        await actor.setFlag?.('foundryvtt-swse', 'secondWindEncounterUsed', activeCombatId);
-      }
-      if (secondWindFeatRules.regainForcePowerOnUse) {
-        await actor.setFlag?.('foundryvtt-swse', 'forcefulRecoveryPending', {
-          source: 'Forceful Recovery',
-          note: 'Regain one expended Force power after catching a Second Wind.',
-          timestamp: Date.now()
-        });
-      }
-      if (secondWindFeatRules.delayedHealing) {
-        await actor.setFlag?.('foundryvtt-swse', 'delayedSecondWindHealing', {
-          ...secondWindFeatRules.delayedHealing,
-          timestamp: Date.now()
-        });
-      }
-
-      const resultLog = {
-        healed: actualHealing,
-        newHP,
-        maxHP,
-        usesRemaining: Math.max(0, uses - 1)
-      };
-
-      if (improvedSecondWind) {
-        resultLog.conditionImproved = true;
-        resultLog.newCondition = Math.max(0, (actor.system.conditionTrack?.current ?? 0) - 1);
-      }
-
-      SWSELogger.log(`Second wind used by ${actor.name}`, resultLog);
-
-      return {
-        success: true,
-        healed: actualHealing,
-        newHP,
-        usesRemaining: Math.max(0, uses - 1),
-        conditionImproved: improvedSecondWind ? true : false,
-        newCondition: improvedSecondWind ? Math.max(0, (actor.system.conditionTrack?.current ?? 0) - 1) : undefined,
-        grantedMoveAction: secondWindFeatRules.grantMoveActionOnUse ? true : undefined,
-        grantedMovement: (secondWindFeatRules.grantMovementOnUse && (!secondWindFeatRules.halfHealingForMovement || impetuousMoveSelected)) ? true : undefined,
-        delayedHealing: secondWindFeatRules.delayedHealing ?? undefined
-      };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.applySecondWind failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err
-      });
-      throw err;
-    }
+    return applySecondWindImpl(this, ...arguments);
   },
 
   /**
@@ -2752,38 +1387,7 @@ export const ActorEngine = {
    * @returns {Promise<{reset, restoredUses, max}>}
    */
   async resetSecondWind(actor) {
-    try {
-      if (!actor) {throw new Error('resetSecondWind() called with no actor');}
-
-      const isDroidActor = actor.type === 'droid' || actor.system?.isDroid === true;
-      const conMod = isDroidActor ? 0 : this._getCanonicalAbilityMod(actor, 'con');
-      const fortClassBonus = Number(actor.system?.defenses?.fortitude?.classBonus ?? 0);
-      const secondWindFeatRules = MetaResourceFeatResolver.getSecondWindRules(actor);
-      const hasToughAsNails = actor.items?.some(i => i.type === 'talent' && i.name === 'Tough as Nails') === true;
-      // Max uses calculation delegated to SecondWindRules
-      const maxUses = SecondWindRules.calculateMaxUses(conMod, fortClassBonus, secondWindFeatRules, hasToughAsNails);
-
-      await this.updateActor(actor, {
-        'system.secondWind.max': maxUses,
-        'system.secondWind.uses': maxUses
-      });
-      await actor.unsetFlag?.('foundryvtt-swse', 'secondWindEncounterUsed');
-
-      SWSELogger.log(`Second wind reset for ${actor.name}`, {
-        restoredUses: maxUses,
-        max: maxUses
-      });
-
-      return {
-        reset: true,
-        restoredUses: maxUses,
-        max: maxUses
-      };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.resetSecondWind failed for ${actor?.name ?? 'unknown actor'}`, { error: err });
-      throw err;
-    }
+    return resetSecondWindImpl(this, ...arguments);
   },
 
   /**
@@ -2803,46 +1407,7 @@ export const ActorEngine = {
    * @returns {Promise<{success, reason, condition, newCondition}>}
    */
   async applySecondWindEdgeOfExhaustion(actor) {
-    try {
-      if (!actor) {throw new Error('applySecondWindEdgeOfExhaustion() requires actor');}
-
-      // Eligibility check delegated to SecondWindRules
-      const eligibility = SecondWindRules.canUseEdgeOfExhaustion(actor);
-      if (!eligibility.allowed) {
-        return { success: false, reason: eligibility.reason };
-      }
-
-      // Trade: Worsen condition by 1, gain 1 Second Wind use
-      const currentCT = Number(actor.system.conditionTrack?.current ?? 0);
-      const conditionStepCap = ConditionTrackRules.getConditionStepCap();
-      const newCT = Math.min(conditionStepCap, currentCT + 1);
-
-      await this.updateActor(actor, {
-        'system.secondWind.uses': 1,
-        'system.conditionTrack.current': newCT,
-        'system.conditionTrack.persistent': true
-      });
-
-      SWSELogger.log(`${actor.name} accepts Edge of Exhaustion`, {
-        trade: 'condition for Second Wind',
-        conditionBefore: currentCT,
-        conditionAfter: newCT,
-        secondWindRestored: 1
-      });
-
-      return {
-        success: true,
-        reason: 'Edge of Exhaustion accepted',
-        condition: currentCT,
-        newCondition: newCT
-      };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.applySecondWindEdgeOfExhaustion failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err
-      });
-      throw err;
-    }
+    return applySecondWindEdgeOfExhaustionImpl(this, ...arguments);
   },
 
   /**
@@ -3197,34 +1762,7 @@ export const ActorEngine = {
   ============================================================ */
 
   buildDerivedState(actor) {
-
-    const abilityKeys = ["str","dex","con","int","wis","cha"];
-
-    const abilities = abilityKeys.map(key => {
-      // Canonical total: derived (pre-computed) → attributes base → abilities mirror fallback
-      const total = actor.system?.derived?.attributes?.[key]?.total
-        ?? actor.system?.attributes?.[key]?.base
-        ?? actor.system?.abilities?.[key]?.total
-        ?? 10;
-      return {
-        key,
-        label: key.toUpperCase(),
-        total,
-        mod: Math.floor((total - 10) / 2)
-      };
-    });
-
-    const currentStep = actor.system?.conditionTrack?.current ?? 0;
-
-    const conditionSteps = Array.from({ length: 5 }).map((_, i) => ({
-      index: i,
-      active: i <= currentStep
-    }));
-
-    return {
-      abilities,
-      conditionSteps
-    };
+    return buildDerivedStateViewModel(actor);
   },
 
   /* ============================================================
@@ -3404,19 +1942,7 @@ export const ActorEngine = {
    * @returns {{complete: boolean, problems: string[]}}
    */
   _validateRecoverySnapshot(snapshot) {
-    const problems = [];
-    if (snapshot === null || typeof snapshot !== 'object') return { complete: false, problems: ['snapshot is not an object'] };
-    const scope = snapshot.scope ?? 'full-actor';
-    const needs = { items: scope !== 'system-and-flags', effects: scope === 'full-actor' || scope === 'transaction-rollback' };
-    for (const key of ['items', 'effects']) {
-      const docs = snapshot[key];
-      if (docs === undefined && !needs[key]) continue;
-      if (!Array.isArray(docs)) { problems.push(`${key} is ${docs === undefined ? 'missing' : 'not an array'}`); continue; }
-      const ids = docs.map((d) => d?._id);
-      if (!ids.every((id) => typeof id === 'string' && id !== '')) problems.push(`${key} has a document without a valid _id`);
-      else if (new Set(ids).size !== ids.length) problems.push(`${key} has duplicate _id values`);
-    }
-    return { complete: problems.length === 0, problems };
+    return validateRecoverySnapshot(snapshot);
   },
 
   /**
@@ -3433,50 +1959,7 @@ export const ActorEngine = {
    * @returns {Promise<object>} target evidence
    */
   async restoreSnapshotVerified(actor, snapshot, source = 'ActorEngine.restoreSnapshotVerified') {
-    // Recovery-evidence check BEFORE any restoration: SnapshotService defaults a missing `items`/`effects` array to [] and would DELETE the
-    // actor's existing embedded documents, and skips id-less ones. An incomplete snapshot is therefore never handed to the restore.
-    const recovery = this._validateRecoverySnapshot(snapshot);
-    const identityComplete = recovery.complete;
-
-    const target = { attempted: true, verdict: null, success: null, exact: null, code: null, failedStep: null, partialMutation: null,
-      compensationAttempted: null, compensationSucceeded: null, requiresManualReview: null, contentVerified: null, error: null, restoreError: null };
-    let result;
-    if (!recovery.complete) {
-      target.attempted = false;
-      target.verdict = 'INVALID_SNAPSHOT';
-      target.invalidSnapshot = recovery.problems;
-    } else {
-      try {
-        result = await this.restoreFromSnapshot(actor, snapshot, { source });
-      } catch (restoreErr) {
-        target.verdict = 'THREW';
-        target.restoreError = restoreErr?.message ?? String(restoreErr);
-      }
-    }
-    if (target.verdict === null) {
-      if (result === null || typeof result !== 'object' || Array.isArray(result) || typeof result.success !== 'boolean') {
-        target.verdict = 'MALFORMED';
-      } else {
-        target.success = result.success;
-        target.exact = result.exact === true;
-        target.code = result.code ?? null;
-        target.failedStep = result.failedStep ?? null;
-        target.partialMutation = result.partialMutation ?? null;
-        target.compensationAttempted = result.compensationAttempted ?? null;
-        target.compensationSucceeded = result.compensationSucceeded ?? null;
-        target.requiresManualReview = result.requiresManualReview ?? null;
-        target.error = result.error ?? null;
-        const v = result.verification;
-        // Positive evidence only: root, Items and Effects must each be affirmed `=== true`. A missing, malformed or partial verification object is not verification.
-        target.contentVerified = (v && typeof v === 'object' && !Array.isArray(v)) ? (v.rootMatched === true && v.itemsMatched === true && v.effectsMatched === true) : null;
-        target.verdict = result.success !== true ? 'FAILED' : (result.exact === true ? 'EXACT' : 'INEXACT');
-        if (target.verdict === 'EXACT' && (target.contentVerified !== true || !identityComplete)) {
-          target.verdict = 'INEXACT';
-          target.exactDowngraded = true;
-        }
-      }
-    }
-    return target;
+    return restoreSnapshotVerifiedImpl(this, ...arguments);
   },
 
   /**
@@ -3487,13 +1970,7 @@ export const ActorEngine = {
    * @returns {Promise<object>} schema-v2 snapshot
    */
   async captureRecoverySnapshot(actor) {
-    const { SnapshotService } = await import('/systems/foundryvtt-swse/scripts/governance/snapshot/snapshot-service.js');
-    const snapshot = SnapshotService.captureExactSnapshot(actor);
-    const recovery = this._validateRecoverySnapshot(snapshot);
-    if (!recovery.complete) {
-      throw new Error(`the recovery snapshot is unusable (${recovery.problems.join('; ')})`);
-    }
-    return snapshot;
+    return captureRecoverySnapshotImpl(this, ...arguments);
   },
 
   /**
@@ -3518,79 +1995,7 @@ export const ActorEngine = {
    * @returns {Promise<object>} rollback evidence: { outcome, compensation, level, legacySnapshot, reasons[], target{}, created{} }
    */
   async _rollbackTransactionalPlan(actor, snapshot, tempIdMap = {}, source = 'ActorEngine.applyMutationPlan') {
-    const reasons = [];
-    const legacySnapshot = !snapshot?.schemaVersion;
-
-    /* ---- target actor ---- */
-    const target = await this.restoreSnapshotVerified(actor, snapshot, `${source}:rollback`);
-    const identityComplete = target.verdict !== 'INVALID_SNAPSHOT';
-    if (!identityComplete) reasons.push('snapshot-identity-incomplete');
-    const targetOk = target.verdict === 'EXACT';
-    if (!targetOk) reasons.push(`target-restore-${target.verdict.toLowerCase()}`);
-
-    /* ---- CREATE-bucket world actors ---- */
-    const ids = [...new Set(Object.values(tempIdMap).filter(Boolean))];
-    const created = { ids, attempted: ids.length > 0, deleteCallReturned: null, returnedIds: null, registryAvailable: null,
-      absentIds: [], stillPresent: [], unverifiable: [], registryErrors: [], verifiedAbsent: null, error: null };
-    if (ids.length) {
-      try {
-        const deleted = await Actor.deleteDocuments(ids);
-        created.deleteCallReturned = true;
-        // DIAGNOSTIC evidence only: the ids the delete API returned are NOT proof that the actors are gone.
-        created.returnedIds = Array.isArray(deleted) ? deleted.map((d) => d?.id ?? d?._id).filter(Boolean) : null;
-      } catch (createRollbackErr) {
-        created.deleteCallReturned = false;
-        created.error = createRollbackErr?.message ?? String(createRollbackErr);
-      }
-      // Verification requires an OBSERVATION of the world after the delete, id by id. Neither the resolved call nor the ids it returned
-      // establishes absence. No readable registry ⇒ the cleanup is unverified. A failing registry read is recorded as secondary evidence and
-      // never replaces the original mutation error (each lookup is guarded; nothing is re-run).
-      let getActor = null;
-      try {
-        const registry = globalThis.game?.actors;
-        if (registry && typeof registry.get === 'function') getActor = (id) => registry.get(id);
-      } catch (registryAccessErr) {
-        created.registryErrors.push({ id: null, error: registryAccessErr?.message ?? String(registryAccessErr) });
-      }
-      created.registryAvailable = getActor !== null;
-      if (getActor === null) {
-        created.unverifiable = [...ids];
-      } else {
-        for (const id of ids) {
-          try {
-            if (getActor(id)) created.stillPresent.push(id); else created.absentIds.push(id);
-          } catch (lookupErr) {
-            created.unverifiable.push(id);
-            created.registryErrors.push({ id, error: lookupErr?.message ?? String(lookupErr) });
-          }
-        }
-      }
-      created.verifiedAbsent = created.registryAvailable === true && created.stillPresent.length === 0 && created.unverifiable.length === 0;
-      if (created.verifiedAbsent !== true) reasons.push(created.error ? 'created-cleanup-failed' : 'created-cleanup-unverified');
-    }
-    const createdOk = ids.length === 0 || created.verifiedAbsent === true;
-
-    /* ---- verdict over the WHOLE scope ---- */
-    const outcome = (targetOk && createdOk) ? 'FAILED_COMPENSATED' : 'INDETERMINATE';
-    let compensation;
-    if (outcome === 'FAILED_COMPENSATED') compensation = 'EXACT';
-    else if (reasons.length === 1 && reasons[0] === 'target-restore-inexact' && ids.length === 0) compensation = 'INEXACT';
-    else if ((targetOk && !createdOk) || (!targetOk && ids.length > 0 && createdOk) || target.verdict === 'INEXACT') compensation = 'PARTIAL';
-    else compensation = 'FAILED';
-
-    const rollback = { outcome, compensation, level: 'L1', legacySnapshot, reasons, target, created };
-
-    if (outcome === 'FAILED_COMPENSATED') {
-      SWSELogger.warn('ActorEngine.applyMutationPlan: rolled back to pre-plan snapshot after failure (verified exact; created actors verified removed)', {
-        actor: actor?.id, source, createdActorIds: ids
-      });
-    } else {
-      SWSELogger.error('ActorEngine.applyMutationPlan: rollback NOT verified — outcome INDETERMINATE; the actor and/or created actors may be partially changed', {
-        actor: actor?.id, source, compensation, reasons, targetVerdict: target.verdict, targetCode: target.code, legacySnapshot,
-        createdActorIds: ids, createdStillPresent: created.stillPresent, createdUnverifiable: created.unverifiable, registryErrors: created.registryErrors
-      });
-    }
-    return rollback;
+    return rollbackTransactionalPlan(this, ...arguments);
   },
 
   /**
@@ -3598,96 +2003,7 @@ export const ActorEngine = {
    * @private
    */
   _validateMutationPlan(plan) {
-    // Validate create bucket (PHASE 2)
-    if (plan.create && typeof plan.create !== 'object') {
-      throw new MutationApplicationError('create bucket must be an object', { operation: 'create' });
-    }
-    if (plan.create && plan.create.actors) {
-      if (!Array.isArray(plan.create.actors)) {
-        throw new MutationApplicationError(
-          'create.actors must be an array',
-          { operation: 'create' }
-        );
-      }
-      for (const spec of plan.create.actors) {
-        if (!spec.temporaryId || typeof spec.temporaryId !== 'string') {
-          throw new MutationApplicationError(
-            'create actor spec must have temporaryId (string)',
-            { operation: 'create' }
-          );
-        }
-        if (!spec.data || typeof spec.data !== 'object') {
-          throw new MutationApplicationError(
-            'create actor spec must have data (object)',
-            { operation: 'create', temporaryId: spec.temporaryId }
-          );
-        }
-      }
-    }
-
-    // Validate set bucket
-    if (plan.set && typeof plan.set !== 'object') {
-      throw new MutationApplicationError('set bucket must be an object', { operation: 'set' });
-    }
-
-    // Validate update bucket
-    if (plan.update && typeof plan.update !== 'object') {
-      throw new MutationApplicationError('update bucket must be an object', { operation: 'update' });
-    }
-    if (plan.update) {
-      for (const [collection, updates] of Object.entries(plan.update)) {
-        if (!Array.isArray(updates)) {
-          throw new MutationApplicationError(
-            `update bucket "${collection}" must be an array`,
-            { operation: 'update', collection }
-          );
-        }
-        for (const update of updates) {
-          if (!update || typeof update !== 'object') {
-            throw new MutationApplicationError(
-              `update bucket "${collection}" entries must be objects`,
-              { operation: 'update', collection }
-            );
-          }
-          if (!update._id && !update.id) {
-            throw new MutationApplicationError(
-              `update bucket "${collection}" entries must include _id or id`,
-              { operation: 'update', collection }
-            );
-          }
-        }
-      }
-    }
-
-    // Validate add bucket
-    if (plan.add && typeof plan.add !== 'object') {
-      throw new MutationApplicationError('add bucket must be an object', { operation: 'add' });
-    }
-    if (plan.add) {
-      for (const [collection, ids] of Object.entries(plan.add)) {
-        if (!Array.isArray(ids)) {
-          throw new MutationApplicationError(
-            `add bucket "${collection}" must be an array`,
-            { operation: 'add', collection }
-          );
-        }
-      }
-    }
-
-    // Validate delete bucket
-    if (plan.delete && typeof plan.delete !== 'object') {
-      throw new MutationApplicationError('delete bucket must be an object', { operation: 'delete' });
-    }
-    if (plan.delete) {
-      for (const [collection, ids] of Object.entries(plan.delete)) {
-        if (!Array.isArray(ids)) {
-          throw new MutationApplicationError(
-            `delete bucket "${collection}" must be an array`,
-            { operation: 'delete', collection }
-          );
-        }
-      }
-    }
+    return validateMutationPlan(plan);
   },
 
   /**
@@ -3696,48 +2012,7 @@ export const ActorEngine = {
    * @private
    */
   async _applyCreateOps(actorSpecs, tempIdMap, source) {
-    if (!Array.isArray(actorSpecs) || actorSpecs.length === 0) {
-      return;
-    }
-
-    try {
-      for (const spec of actorSpecs) {
-        if (!spec || !spec.temporaryId || !spec.data) {
-          continue;
-        }
-
-        SWSELogger.debug('ActorEngine._applyCreateOps', {
-          temporaryId: spec.temporaryId,
-          type: spec.type || 'unknown'
-        });
-
-        // Create actor from spec data
-        try {
-          const created = await Actor.create(spec.data);
-          if (created) {
-            // Map temporary ID to real ID
-            tempIdMap[spec.temporaryId] = created.id;
-            SWSELogger.info('ActorEngine: Created actor', {
-              temporaryId: spec.temporaryId,
-              realId: created.id,
-              type: spec.type
-            });
-          }
-        } catch (createErr) {
-          const { MutationApplicationError } = await import("/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js");
-          throw new MutationApplicationError(
-            `Failed to create actor ${spec.temporaryId}: ${createErr.message}`,
-            { temporaryId: spec.temporaryId, type: spec.type }
-          );
-        }
-      }
-    } catch (error) {
-      const { MutationApplicationError } = await import("/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js");
-      throw new MutationApplicationError(
-        `Failed to apply CREATE operations: ${error.message}`,
-        { specCount: actorSpecs.length }
-      );
-    }
+    return applyCreateOps(this, ...arguments);
   },
 
   /**
@@ -3746,55 +2021,7 @@ export const ActorEngine = {
    * @private
    */
   _rewriteTemporaryIds(targetBucket, tempIdMap) {
-    if (!targetBucket || typeof targetBucket !== 'object') {
-      return;
-    }
-
-    const rewriteValue = (value) => {
-      if (typeof value === 'string') {
-        if (tempIdMap[value]) {
-          const realId = tempIdMap[value];
-          SWSELogger.debug('ActorEngine: Rewrote temp ID', {
-            temporaryId: value,
-            realId
-          });
-          return realId;
-        }
-
-        // Support UUID-like references staged before CREATE, such as
-        // Actor.temp_vehicle_x. This is needed for store-acquired assets that
-        // are linked into relationship panels in the same atomic mutation.
-        for (const [tempId, realId] of Object.entries(tempIdMap)) {
-          const tempUuid = `Actor.${tempId}`;
-          if (value === tempUuid) return `Actor.${realId}`;
-        }
-        return value;
-      }
-
-      if (Array.isArray(value)) {
-        return value.map(entry => rewriteValue(entry));
-      }
-
-      if (value && typeof value === 'object') {
-        for (const [key, nested] of Object.entries(value)) {
-          value[key] = rewriteValue(nested);
-        }
-        return value;
-      }
-
-      return value;
-    };
-
-    try {
-      for (const [key, value] of Object.entries(targetBucket)) {
-        targetBucket[key] = rewriteValue(value);
-      }
-    } catch (error) {
-      throw new MutationApplicationError(
-        `Failed to rewrite temporary IDs: ${error.message}`,
-        {}
-      );
-    }
+    return rewriteTemporaryIds(targetBucket, tempIdMap);
   },
 
   /**
@@ -3802,42 +2029,7 @@ export const ActorEngine = {
    * @private
    */
   async _applyDeleteOps(actor, deleteOps, source) {
-    if (!deleteOps || Object.keys(deleteOps).length === 0) {
-      return;
-    }
-
-    try {
-      for (const [collection, ids] of Object.entries(deleteOps)) {
-        if (!Array.isArray(ids) || ids.length === 0) {
-          continue;
-        }
-
-        const embeddedName = collection === 'items' || collection === 'item' || collection === 'Item'
-          ? 'Item'
-          : collection === 'effects' || collection === 'activeEffects' || collection === 'ActiveEffect'
-            ? 'ActiveEffect'
-            : collection;
-
-        SWSELogger.debug('ActorEngine._applyDeleteOps', {
-          actor: actor.id,
-          collection,
-          embeddedName,
-          count: ids.length
-        });
-
-        await this.deleteEmbeddedDocuments(actor, embeddedName, ids, { source });
-      }
-    } catch (error) {
-      const { MutationApplicationError } = await import("/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js");
-      throw new MutationApplicationError(
-        `Failed to delete from ${Object.keys(deleteOps)[0]}: ${error.message}`,
-        {
-          operation: 'delete',
-          collection: Object.keys(deleteOps)[0],
-          underlyingError: error
-        }
-      );
-    }
+    return applyDeleteOps(this, ...arguments);
   },
 
   /**
@@ -3845,35 +2037,7 @@ export const ActorEngine = {
    * @private
    */
   async _applySetOps(actor, setOps, source) {
-    if (!setOps || Object.keys(setOps).length === 0) {
-      return;
-    }
-
-    try {
-      SWSELogger.debug('ActorEngine._applySetOps', {
-        actor: actor.id,
-        paths: Object.keys(setOps)
-      });
-
-      // Batch all set operations into a single actor.update() call.
-      // Progression/chargen finalization is the authoritative source for level-1
-      // HP initialization, so allow system.hp.max when it appears in a validated
-      // mutation plan instead of tripping the recompute-only guard.
-      const flatSetOps = foundry.utils.flattenObject(setOps || {});
-      const writesHpMax = Object.prototype.hasOwnProperty.call(flatSetOps, 'system.hp.max');
-      await this.updateActor(actor, setOps, { source, isRecomputeHPCall: writesHpMax });
-
-    } catch (error) {
-      const { MutationApplicationError } = await import("/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js");
-      throw new MutationApplicationError(
-        `Failed to apply set operations: ${error.message}`,
-        {
-          operation: 'set',
-          paths: Object.keys(setOps),
-          underlyingError: error
-        }
-      );
-    }
+    return applySetOps(this, ...arguments);
   },
 
   /**
@@ -3881,52 +2045,7 @@ export const ActorEngine = {
    * @private
    */
   async _applyUpdateOps(actor, updateOps, source) {
-    if (!updateOps || Object.keys(updateOps).length === 0) {
-      return;
-    }
-
-    try {
-      for (const [collection, updates] of Object.entries(updateOps)) {
-        if (!Array.isArray(updates) || updates.length === 0) continue;
-
-        const embeddedName = collection === 'items'
-          ? 'Item'
-          : collection === 'effects'
-            ? 'ActiveEffect'
-            : collection.charAt(0).toUpperCase() + collection.slice(1, -1);
-
-        const normalizedUpdates = updates.map(update => {
-          const clone = foundry.utils.deepClone(update);
-          if (!clone._id && clone.id) {
-            clone._id = clone.id;
-            delete clone.id;
-          }
-          return clone;
-        });
-
-        SWSELogger.debug('ActorEngine._applyUpdateOps', {
-          actor: actor.id,
-          collection,
-          embeddedName,
-          count: normalizedUpdates.length
-        });
-
-        await this.updateEmbeddedDocuments(actor, embeddedName, normalizedUpdates, {
-          source,
-          skipRecalc: true
-        });
-      }
-    } catch (error) {
-      const { MutationApplicationError } = await import("/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js");
-      throw new MutationApplicationError(
-        `Failed to apply update operations: ${error.message}`,
-        {
-          operation: 'update',
-          collections: Object.keys(updateOps),
-          underlyingError: error
-        }
-      );
-    }
+    return applyUpdateOps(this, ...arguments);
   },
 
   /**
@@ -3934,44 +2053,7 @@ export const ActorEngine = {
    * @private
    */
   async _applyAddOps(actor, addOps, source) {
-    if (!addOps || Object.keys(addOps).length === 0) {
-      return;
-    }
-
-    try {
-      for (const [collection, documents] of Object.entries(addOps)) {
-        if (!Array.isArray(documents) || documents.length === 0) {
-          continue;
-        }
-
-        SWSELogger.debug('ActorEngine._applyAddOps', {
-          actor: actor.id,
-          collection,
-          count: documents.length
-        });
-
-        try {
-          const embeddedName =
-            collection.charAt(0).toUpperCase() + collection.slice(1, -1);
-
-          await this.createEmbeddedDocuments(actor, embeddedName, documents, { source });
-        } catch (err) {
-          throw new MutationApplicationError(
-            `Failed to add documents to ${collection}: ${err.message}`,
-            { operation: 'add', collection }
-          );
-        }
-      }
-    } catch (error) {
-      throw new MutationApplicationError(
-        `Failed to add items: ${error.message}`,
-        {
-          operation: 'add',
-          collections: Object.keys(addOps),
-          underlyingError: error
-        }
-      );
-    }
+    return applyAddOps(this, ...arguments);
   },
 
   /**
@@ -4109,7 +2191,7 @@ export const ActorEngine = {
    * @param {string} scope - Flag scope (e.g. 'foundryvtt-swse')
    * @param {string} key - Flag key name
    * @param {*} value - Flag value (any serializable type)
-   * @param {object} [options={}] - Additional options
+   * @param {object} [options={}] - Additional options; `recalc:false` skips the derived recalculation (bookkeeping flags only)
    */
   async updateActorFlags(actor, scope, key, value, options = {}) {
     try {
@@ -4131,7 +2213,9 @@ export const ActorEngine = {
       try {
         // Route through setFlag with mutation context active
         const result = await actor.setFlag(scope, key, value);
-        await this.recalcAll(actor);
+        // `options.recalc === false`: bookkeeping flags (encounter-use markers, state notes) that do not feed derived values use the governed
+        // gate without a derived recalculation. Default is unchanged: every existing caller still recalculates.
+        if (options.recalc !== false) await this.recalcAll(actor);
         return result;
       } finally {
         MutationInterceptor.clearContext();
@@ -4176,7 +2260,7 @@ export const ActorEngine = {
       try {
         // Route through unsetFlag with mutation context active
         const result = await actor.unsetFlag(scope, key);
-        await this.recalcAll(actor);
+        if (options.recalc !== false) await this.recalcAll(actor);   // see updateActorFlags: `recalc:false` for bookkeeping flags
         return result;
       } finally {
         MutationInterceptor.clearContext();
@@ -4226,6 +2310,29 @@ export const ActorEngine = {
     } catch (err) {
       SWSELogger.error(`ActorEngine.updateActiveEffects failed for ${actor?.name ?? 'unknown actor'}`, err);
       throw err;
+    }
+  },
+
+  /**
+   * Update ActiveEffects embedded on an item owned by `actor` (F-ABL-001). Same governed context and recalculation as updateActiveEffects();
+   * the item's effects are part of the actor's effective modifier set, so the actor is recalculated afterwards.
+   */
+  async updateOwnedItemEffects(actor, item, updates, options = {}) {
+    if (!actor) {throw new Error('updateOwnedItemEffects() called with no actor');}
+    if (!item?.updateEmbeddedDocuments) {throw new Error('updateOwnedItemEffects() requires an owned item');}
+    if (!Array.isArray(updates)) {throw new Error('updateOwnedItemEffects() requires updates array');}
+    MutationInterceptor.setContext({
+      operation: 'updateOwnedItemEffects',
+      source: options.source || 'ActorEngine',
+      suppressRecalc: options.suppressRecalc ?? false
+    });
+    try {
+      const normalizedUpdates = normalizeActiveEffectDataForRuntime(updates);
+      const result = await item.updateEmbeddedDocuments('ActiveEffect', normalizedUpdates, options);
+      await this.recalcAll(actor);
+      return result;
+    } finally {
+      MutationInterceptor.clearContext();
     }
   },
 
@@ -4604,11 +2711,7 @@ export const ActorEngine = {
    * @returns {number}
    */
   _getCanonicalAbilityBase(actor, key, fallback = 10) {
-    return Number(
-      actor.system?.attributes?.[key]?.base ??
-      actor.system?.abilities?.[key]?.base ??
-      fallback
-    );
+    return getCanonicalAbilityBase(actor, key, fallback);
   },
 
   /**
@@ -4621,14 +2724,7 @@ export const ActorEngine = {
    * @returns {number}
    */
   _getCanonicalAbilityMod(actor, key) {
-    const derivedMod = actor.system?.derived?.attributes?.[key]?.mod;
-    if (derivedMod !== undefined) return Number(derivedMod);
-    const src = actor.system?.attributes?.[key] ?? actor.system?.abilities?.[key] ?? {};
-    const total = (Number(src.base ?? 10))
-      + (Number(src.racial ?? 0))
-      + (Number(src.enhancement ?? 0))
-      + (Number(src.temp ?? 0));
-    return Math.floor((total - 10) / 2);
+    return getCanonicalAbilityMod(actor, key);
   },
 
   // ========================================
@@ -4650,57 +2746,7 @@ export const ActorEngine = {
    * @private
    */
   _ensureCanonicalAbilityShapes(actor) {
-    if (!actor.system) actor.system = {};
-
-    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-
-    // 1. Canonical persisted storage: system.attributes
-    //    Character-type actors own this namespace. Initialize it for newly-created or
-    //    partially-migrated characters so ability edits and progression writes never
-    //    fall back to the read-only system.abilities mirror.
-    const shouldOwnAttributes = actor.type === 'character' || actor.system.attributes !== undefined;
-    if (shouldOwnAttributes) {
-      if (typeof actor.system.attributes !== 'object' || Array.isArray(actor.system.attributes)) {
-        actor.system.attributes = {};
-      }
-      for (const key of abilityKeys) {
-        if (!actor.system.attributes[key] || typeof actor.system.attributes[key] !== 'object') {
-          actor.system.attributes[key] = { base: 10, racial: 0, enhancement: 0, temp: 0 };
-        } else {
-          actor.system.attributes[key].base        ??= 10;
-          actor.system.attributes[key].racial      ??= 0;
-          actor.system.attributes[key].enhancement ??= 0;
-          actor.system.attributes[key].temp        ??= 0;
-        }
-      }
-    }
-
-    // 2. Compatibility mirror: system.abilities
-    //    Phase 2 authority normalization correction: this function (called
-    //    from ActorEngine's own update pipeline on every ActorEngine-mediated
-    //    mutation that touches system.attributes/system.abilities — see
-    //    _initializeCanonicalShapesForTouchedDomains above) is the ONLY code
-    //    anywhere that populates/repairs system.abilities. DerivedCalculator
-    //    does NOT rebuild it (verified: derived-calculator.js only ever
-    //    *reads* `actor.system.attributes || actor.system.abilities`, it
-    //    never writes system.abilities). This backfill only fills missing
-    //    base/racial/temp shape defaults — it is not an independent value
-    //    authority, and no live code writes real ability *values* here.
-    //    Treat system.abilities strictly as a read-only compatibility mirror;
-    //    system.attributes is canonical (system.derived.attributes is the
-    //    canonical computed output — see DerivedCalculator.computeAll()).
-    if (!actor.system.abilities) actor.system.abilities = {};
-    for (const key of abilityKeys) {
-      if (!actor.system.abilities[key]) {
-        actor.system.abilities[key] = { base: 10, racial: 0, temp: 0, total: 10, mod: 0 };
-      } else {
-        if (actor.system.abilities[key].base === undefined) {
-          actor.system.abilities[key].base = actor.system.abilities[key].value || 10;
-        }
-        actor.system.abilities[key].racial ??= 0;
-        actor.system.abilities[key].temp   ??= 0;
-      }
-    }
+    return ensureCanonicalAbilityShapes(actor);
   },
 
   /**
@@ -4715,29 +2761,7 @@ export const ActorEngine = {
    * @private
    */
   _ensureCanonicalSkillShapes(actor, flatUpdateData) {
-    if (!actor.system) actor.system = {};
-    if (!actor.system.skills || typeof actor.system.skills !== 'object') actor.system.skills = {};
-
-    const skillKeys = new Set();
-    for (const key of Object.keys(flatUpdateData)) {
-      const match = key.match(/^system\.skills\.([^.]+)\./);
-      if (match) {
-        skillKeys.add(match[1]);
-      }
-    }
-
-    for (const skillKey of skillKeys) {
-      const current = actor.system.skills[skillKey];
-      if (current && typeof current === 'object' && !Array.isArray(current)) continue;
-
-      actor.system.skills[skillKey] = {
-        trained: false,
-        miscMod: 0,
-        focused: false,
-        selectedAbility: '',
-        favorite: false
-      };
-    }
+    return ensureCanonicalSkillShapes(actor, flatUpdateData);
   },
 
 
@@ -4746,33 +2770,7 @@ export const ActorEngine = {
    * @private
    */
   _ensureCanonicalDefenseShapes(actor) {
-    if (!actor.system) actor.system = {};
-    if (!actor.system.defenses || typeof actor.system.defenses !== 'object') actor.system.defenses = {};
-
-    const defaults = {
-      reflex: { classBonus: 0, armor: 0, ability: 'dex', misc: { auto: {}, user: { extra: 0 } } },
-      fortitude: { classBonus: 0, ability: (actor.type === 'droid' || actor.system?.isDroid === true) ? 'str' : 'con', misc: { auto: {}, user: { extra: 0 } } },
-      will: { classBonus: 0, ability: 'wis', misc: { auto: {}, user: { extra: 0 } } }
-    };
-
-    for (const [key, seed] of Object.entries(defaults)) {
-      if (!actor.system.defenses[key] || typeof actor.system.defenses[key] !== 'object') {
-        actor.system.defenses[key] = foundry.utils.deepClone(seed);
-        continue;
-      }
-      const defense = actor.system.defenses[key];
-      defense.classBonus ??= Number(defense.class ?? seed.classBonus) || seed.classBonus;
-      if (key === 'reflex') defense.armor ??= seed.armor;
-      if (!defense.ability || typeof defense.ability !== 'string') defense.ability = seed.ability;
-
-      const legacyMisc = (defense.misc !== undefined && (!defense.misc || typeof defense.misc !== 'object' || Array.isArray(defense.misc)))
-        ? (Number(defense.misc) || 0)
-        : null;
-      if (!defense.misc || typeof defense.misc !== 'object' || Array.isArray(defense.misc)) defense.misc = {};
-      if (!defense.misc.auto || typeof defense.misc.auto !== 'object' || Array.isArray(defense.misc.auto)) defense.misc.auto = {};
-      if (!defense.misc.user || typeof defense.misc.user !== 'object' || Array.isArray(defense.misc.user)) defense.misc.user = {};
-      defense.misc.user.extra ??= legacyMisc ?? 0;
-    }
+    return ensureCanonicalDefenseShapes(actor);
   },
 
   /**
@@ -4780,13 +2778,7 @@ export const ActorEngine = {
    * @private
    */
   _ensureCanonicalXpShape(actor) {
-    if (!actor.system) actor.system = {};
-    if (!actor.system.xp) {
-      actor.system.xp = { total: 0 };
-    }
-    if (actor.system.xp.total === undefined) {
-      actor.system.xp.total = 0;
-    }
+    return ensureCanonicalXpShape(actor);
   },
 
   /**
@@ -4794,97 +2786,8 @@ export const ActorEngine = {
    * @private
    */
   _ensureCanonicalHpShape(actor) {
-    if (!actor.system) actor.system = {};
-    if (!actor.system.hp) {
-      actor.system.hp = {
-        value: 1,
-        max: 1,
-        temp: 0
-      };
-    }
-    if (actor.system.hp.value === undefined) actor.system.hp.value = 1;
-    if (actor.system.hp.max === undefined) actor.system.hp.max = 1;
-  },
-
-  /**
-   * PHASE 3A: Normalize legacy ability paths to canonical schema.
-   * Converts deprecated system.abilities.<key>.value → system.abilities.<key>.base
-   * This allows old progression/saved data to work with new schema without immediate migration.
-   *
-   * @param {Object} updateData - The update data object (may be nested)
-   * @private
-   */
-  _normalizeAbilityPaths(updateData) {
-    if (!updateData || typeof updateData !== 'object') return;
-
-    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-    const flat = foundry.utils.flattenObject(updateData);
-    const toDelete = [];
-
-    for (const key of Object.keys(flat)) {
-      // Match system.abilities.<key>.value
-      const match = key.match(/^system\.abilities\.([a-z]+)\.value$/);
-      if (match && abilityKeys.includes(match[1])) {
-        const abilityKey = match[1];
-        const newPath = `system.abilities.${abilityKey}.base`;
-
-        // Only normalize if the canonical .base path isn't already being set
-        if (!(newPath in flat)) {
-          flat[newPath] = flat[key];
-          SWSELogger.warn(`[ABILITY NORMALIZATION] Converted legacy path ${key} → ${newPath}`, {
-            abilityKey,
-            value: flat[key]
-          });
-        }
-
-        toDelete.push(key);
-      }
-    }
-
-    // Remove legacy paths from update
-    for (const path of toDelete) {
-      delete flat[path];
-    }
-
-    // Unflatten back to nested form if we made changes
-    if (toDelete.length > 0) {
-      const updated = foundry.utils.expandObject(flat);
-      Object.assign(updateData, updated);
-    }
-  },
-
-  /**
-   * PHASE 3D: Normalize legacy XP/experience paths to canonical schema.
-   * Converts deprecated system.experience → system.xp.total
-   * This allows old progression/saved data to work with new naming without immediate migration.
-   *
-   * @param {Object} updateData - The update data object (may be nested)
-   * @private
-   */
-  _normalizeXpPaths(updateData) {
-    if (!updateData || typeof updateData !== 'object') return;
-
-    const flat = foundry.utils.flattenObject(updateData);
-    const toDelete = [];
-
-    // Check for legacy system.experience path
-    if ('system.experience' in flat && !('system.xp.total' in flat)) {
-      flat['system.xp.total'] = flat['system.experience'];
-      SWSELogger.warn(`[XP NORMALIZATION] Converted legacy path system.experience → system.xp.total`, {
-        value: flat['system.experience']
-      });
-      toDelete.push('system.experience');
-    }
-
-    // Remove legacy paths from update
-    for (const path of toDelete) {
-      delete flat[path];
-    }
-
-    // Unflatten back to nested form if we made changes
-    if (toDelete.length > 0) {
-      const updated = foundry.utils.expandObject(flat);
-      Object.assign(updateData, updated);
-    }
+    return ensureCanonicalHpShape(actor);
   }
+  // F-ACT-013 / AE.2: ActorEngine._normalizeAbilityPaths and ._normalizeXpPaths (payload-shaped duplicates of
+  // MutationNormalizationService._normalizeAbilityPaths/_normalizeXpPaths, with no callers) were removed; the service is the single authority.
 };

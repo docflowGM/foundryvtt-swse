@@ -92,7 +92,7 @@ function buildDefaultShim() {
     },
     Actor: class FakeActorBase {},
     Item: class FakeItemBase {},
-    CONST: {},
+    CONST: { CHAT_MESSAGE_STYLES: { OTHER: 0, OOC: 1, IC: 2, EMOTE: 3, WHISPER: 4 } },
     Hooks: { on: () => {}, once: () => {}, call: () => {}, callAll: () => {} }
   };
 }

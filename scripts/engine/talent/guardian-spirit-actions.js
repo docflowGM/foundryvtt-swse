@@ -1,9 +1,10 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
+import { readBonusPool, bonusPoolUpdate, normalizeBonusEntries } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 const NS = 'swse';
-const BONUS_PATH = 'bonusForcePoints';
 const GUARDIAN_PATH = 'guardianSpirit';
 
 function esc(value) {
@@ -26,45 +27,7 @@ export class GuardianSpiritActions {
     return game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
   }
 
-  static _normalizeEntries(pool = {}) {
-    const entries = Array.isArray(pool.entries) ? pool.entries.map((entry, index) => ({
-      id: String(entry?.id ?? `bonus-${index}`),
-      source: String(entry?.source ?? 'Bonus Force Point'),
-      value: Math.max(0, Number(entry?.value ?? 0) || 0),
-      max: Math.max(0, Number(entry?.max ?? entry?.value ?? 0) || 0),
-      restrictions: entry?.restrictions ?? entry?.restriction ?? '',
-      expires: entry?.expires ?? '',
-      encounterId: entry?.encounterId ?? null,
-      createdAt: entry?.createdAt ?? null
-    })).filter(entry => entry.value > 0) : [];
-
-    const legacyValue = Math.max(0, Number(pool.value ?? 0) || 0);
-    const entryTotal = entries.reduce((sum, entry) => sum + entry.value, 0);
-    if (!entries.length && legacyValue > 0) {
-      entries.push({
-        id: 'legacy-bonus-force-points',
-        source: Array.isArray(pool.sources) && pool.sources.length ? pool.sources.join(', ') : 'Bonus Force Point',
-        value: legacyValue,
-        max: Math.max(legacyValue, Number(pool.max ?? legacyValue) || legacyValue),
-        restrictions: pool.note ?? '',
-        expires: '',
-        encounterId: null,
-        createdAt: null
-      });
-    } else if (legacyValue > entryTotal) {
-      entries.push({
-        id: 'legacy-bonus-force-points',
-        source: 'Bonus Force Point',
-        value: legacyValue - entryTotal,
-        max: legacyValue - entryTotal,
-        restrictions: pool.note ?? '',
-        expires: '',
-        encounterId: null,
-        createdAt: null
-      });
-    }
-    return entries;
-  }
+  
 
   static _buildPool(entries = [], note = '') {
     const clean = entries.filter(entry => Math.max(0, Number(entry.value) || 0) > 0);
@@ -81,14 +44,16 @@ export class GuardianSpiritActions {
   }
 
   static getBonusForcePoints(actor) {
-    const pool = actor?.getFlag?.(NS, BONUS_PATH) ?? {};
-    const entries = this._normalizeEntries(pool);
+    const pool = readBonusPool(actor);
+    const entries = normalizeBonusEntries(pool);
     return this._buildPool(entries, pool.note ?? '');
   }
 
   static async setBonusForcePointEntries(actor, entries, note = '') {
     const pool = this._buildPool(entries, note);
-    await actor.setFlag(NS, BONUS_PATH, pool);
+    // Single governed location (see bonus-force-point-pool.js): writes flags.swse.bonusForcePoints and clears any canonical
+    // shadow copy in one ActorEngine update. The previous actor.setFlag('swse', ...) wrote a second, unread-by-debits copy.
+    await ActorEngine.updateActor(actor, bonusPoolUpdate(actor, pool), { source: 'guardian-spirit-bonus-force-points' });
     return pool;
   }
 
@@ -179,12 +144,12 @@ export class GuardianSpiritActions {
       return null;
     }
     const fpReceipt = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'guardian-spirit:manifest' });
-    await actor.setFlag(NS, GUARDIAN_PATH, {
+    await ActorEngine.updateActorFlags(actor, NS, GUARDIAN_PATH, {
       manifested: true,
       manifestedAt: Date.now(),
       source: 'Manifest Guardian Spirit',
       note: 'Guardian Spirit is manifested for this encounter. GM/player adjudicates location and morale bonuses.'
-    });
+    }, { recalc: false });
     // The paid effect (manifestation) now exists: settle the receipt exactly.
     try { await ActorEngine.finalizeForcePointSpend(actor, fpReceipt); } catch (error) { console.error('[SWSE] Force Point paid effect applied but finality was not persisted; receipt stays committed for audit.', error); }
     await this._post(actor, 'Manifest Guardian Spirit', 'Guardian Spirit manifested for the encounter. Position and aura bonuses are GM/player adjudicated.');
@@ -205,7 +170,7 @@ export class GuardianSpiritActions {
     const currentTemp = Number(actor?.system?.hp?.temp ?? actor?.system?.health?.temp ?? 0) || 0;
     const update = { 'system.hp.temp': Math.max(currentTemp, amount) };
     await ActorEngine.updateActor(actor, update, { source: 'vital-encouragement' });
-    await actor.setFlag(NS, 'encounterUses.guardianSpirit.vitalEncouragement', true);
+    await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.guardianSpirit.vitalEncouragement', true, { recalc: false });
     await this._post(actor, 'Vital Encouragement', `Gained ${amount} Bonus Hit Points. Bonus Hit Points from multiple sources do not stack and expire at encounter end.`);
     return { bonusHitPoints: amount };
   }
@@ -237,7 +202,7 @@ export class GuardianSpiritActions {
       </select></div>
       <p class="notes">For multi-result skill checks, failure means achieving less than the minimum DC.</p>
     </form>`;
-    const result = await SWSEDialogV2.prompt({
+    const result = await DialogPort.prompt({
       title: 'Crucial Advice — Skill Reroll',
       content,
       label: 'Reroll Skill',
@@ -269,22 +234,18 @@ export class GuardianSpiritActions {
       showRollCompanion: true
     });
     if (result) {
-      await actor.setFlag(NS, 'encounterUses.guardianSpirit.crucialAdvice', {
+      await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.guardianSpirit.crucialAdvice', {
         encounterId: state.encounterId,
         used: true,
         skillKey,
         usedAt: Date.now()
-      });
+      }, { recalc: false });
     }
     return result;
   }
 
   static async _post(actor, title, body) {
-    return ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<section class="swse-chat-card"><header><strong>${esc(title)}</strong></header><p>${esc(body)}</p></section>`,
-      flags: { swse: { guardianSpirit: true } }
-    });
+    return SWSEChat.postHTML({ actor, content: `<section class="swse-chat-card"><header><strong>${esc(title)}</strong></header><p>${esc(body)}</p></section>`, flags: { swse: { guardianSpirit: true } } });
   }
 }
 

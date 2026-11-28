@@ -49,8 +49,8 @@ async function normalizeSniper(item, options = {}) {
 }
 
 export function registerSniperNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeSniper(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeSniper(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeSniper(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeSniper(item, options) : false);
   SWSELogger.log('[SniperNormalization] Hooks registered');
 }
 

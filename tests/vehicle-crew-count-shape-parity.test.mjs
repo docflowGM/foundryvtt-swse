@@ -23,7 +23,7 @@ registerFoundryPathLoader();
 installFoundryShimGlobals();
 
 const { resolveVehicleCrewStations } = await import(
-  '/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-resolver.js'
+  '/systems/foundryvtt-swse/scripts/actors/vehicle/crew-resolver.js'
 );
 
 function factsFor(crew) {

@@ -201,8 +201,8 @@ async function normalizeWeaponArmorRiderFeat(item, options = {}) {
 }
 
 export function registerWeaponArmorRiderNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeWeaponArmorRiderFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeWeaponArmorRiderFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeWeaponArmorRiderFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeWeaponArmorRiderFeat(item, options) : false);
   SWSELogger.log('[WeaponArmorRider] Normalization hooks registered');
 }
 

@@ -33,16 +33,11 @@
  * duplicate copy of the same logic.
  */
 
-import { PanelContextBuilder } from '/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js';
-import { RowTransformers } from '/systems/foundryvtt-swse/scripts/sheets/v2/context/RowTransformers.js';
-import { isEnergyShieldItem, isArmorItemEquipped } from '/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js';
 
 const EFFECT_BUILDER_PARTIAL = 'systems/foundryvtt-swse/templates/dialogs/entity/parts/effect-builder-wizard.hbs';
 
 let registered = false;
 let partialRegistrationStarted = false;
-let originalBuildArmorSummaryPanel = null;
-let originalBuildInventoryPanel = null;
 let effectBuilderFallbackRegistered = false;
 let effectBuilderFullTemplateRegistered = false;
 
@@ -60,50 +55,6 @@ function getHandlebarsRuntime() {
 
 function getLoadTemplatesFunction() {
   return foundry?.applications?.handlebars?.loadTemplates ?? null;
-}
-
-function isWornArmor(item = {}) {
-  return item?.type === 'armor' && isArmorItemEquipped(item) && !isEnergyShieldItem(item);
-}
-
-function findEquippedWornArmor(actorOrItems) {
-  const items = actorOrItems?.items ? asArray(actorOrItems.items) : asArray(actorOrItems);
-  return items.find(isWornArmor) ?? null;
-}
-
-function installPanelArmorPatches() {
-  const proto = PanelContextBuilder?.prototype;
-  if (!proto) return;
-
-  if (!originalBuildArmorSummaryPanel && typeof proto.buildArmorSummaryPanel === 'function') {
-    originalBuildArmorSummaryPanel = proto.buildArmorSummaryPanel;
-    proto.buildArmorSummaryPanel = function patchedBuildArmorSummaryPanel(...args) {
-      const armor = findEquippedWornArmor(this.actor);
-      if (!armor) return originalBuildArmorSummaryPanel.call(this, ...args);
-      const panel = {
-        equippedArmor: RowTransformers.toArmorSummaryRow(armor),
-        canEdit: this.sheet?.isEditable === true,
-      };
-      try { this._validatePanelContext?.('armorSummaryPanel', panel); } catch (_err) { /* preserve sheet safety */ }
-      return panel;
-    };
-  }
-
-  if (!originalBuildInventoryPanel && typeof proto.buildInventoryPanel === 'function') {
-    originalBuildInventoryPanel = proto.buildInventoryPanel;
-    proto.buildInventoryPanel = function patchedBuildInventoryPanel(...args) {
-      const panel = originalBuildInventoryPanel.call(this, ...args);
-      const armor = findEquippedWornArmor(this.actor);
-      panel.equippedArmor = armor ? RowTransformers.toArmorSummaryRow(armor) : null;
-      return panel;
-    };
-  }
-
-  // No buildDefensePanel patch, and no DefenseCalculator.calculate() patch
-  // at all: DefenseCalculator's own equippedArmor lookup now calls
-  // isArmorItemEquipped() directly, so it (and the panel, which already
-  // reads DefenseCalculator's persisted system.derived.defenses.* output)
-  // needs no external correction of any kind.
 }
 
 function installSynchronousEffectBuilderFallback() {
@@ -185,7 +136,6 @@ function scheduleEffectBuilderPartialRegistration() {
 export function registerArmorHydrationDefenseHotfix() {
   if (registered) return false;
   registered = true;
-  installPanelArmorPatches();
   scheduleEffectBuilderPartialRegistration();
   return true;
 }

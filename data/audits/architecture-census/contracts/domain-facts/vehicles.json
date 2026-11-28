@@ -1,0 +1,1336 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "vehicles",
+ "name": "Vehicles, starships, crew, garage and shipyard",
+ "kind": "mechanical",
+ "files": 764,
+ "runtimeSloc": 19968,
+ "runtimeFiles": 119,
+ "counts": {
+  "files": 764,
+  "runtimeModules": 119,
+  "runtimeSloc": 19968,
+  "reachability": {
+   "orphan-unreferenced": 6,
+   "reachable-dynamic": 6,
+   "reachable-static": 103,
+   "test-only-import": 4
+  },
+  "nonRuntimeByRole": {
+   "asset": 3,
+   "tool": 63,
+   "evidence-data": 209,
+   "data": 22,
+   "evidence-or-doc": 144,
+   "presentation-style": 6,
+   "presentation-template": 43,
+   "test": 155
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/domain/vehicles/vehicle-installation-ledger.js",
+   "consumers": 41,
+   "sloc": 224,
+   "role": "engine-or-service",
+   "exports": [
+    "VEHICLE_INSTALLATION_FLAG",
+    "VEHICLE_INSTALLATION_FLAG_PATH",
+    "evaluateSizeRestriction",
+    "DEFAULT_VEHICLE_INSTALLATION_RULES",
+    "sealLedgerEntry",
+    "isValidLedgerEntry",
+    "readCertifiedInstallations",
+    "summarizeInstallations",
+    "WEAPON_OPERATOR_ROLES",
+    "weaponMountBasis",
+    "resolveWeaponOption",
+    "planVehicleInstallation"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 381
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-weapon-damage.js",
+   "consumers": 41,
+   "sloc": 135,
+   "role": "module",
+   "exports": [
+    "AUTOFIRE_SWITCH_BOTH_WAYS",
+    "INSTALLED_WEAPON_FLAG",
+    "STOCK_WEAPON_FLAG",
+    "isInstalledVehicleWeaponItem",
+    "isShipyardManagedWeaponItem",
+    "isStockVehicleWeaponItem",
+    "isVehicleManagedWeaponItem",
+    "hasManagedWeaponFlag",
+    "resolveCertifiedInstalledWeapon",
+    "resolveStockWeapon",
+    "resolveVehicleWeaponAuthority",
+    "resolveVehicleWeaponDamage"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 366
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "consumers": 28,
+   "sloc": 275,
+   "role": "module",
+   "exports": [
+    "POINT_DEFENSE_BASE_WEAPONS",
+    "composeWeaponDamage",
+    "effectiveWeaponDamage",
+    "EFFECTS",
+    "IMPLEMENTED_EFFECT_IDS",
+    "hasEffect",
+    "effectInstallability",
+    "computeEffectiveStatistics"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 381
+  },
+  {
+   "path": "scripts/engine/vehicles/vehicle-installation-service.js",
+   "consumers": 26,
+   "sloc": 332,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "VehicleInstallationService"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 3,
+   "ciTests": 100
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-runtime-contract.js",
+   "consumers": 25,
+   "sloc": 278,
+   "role": "module",
+   "exports": [
+    "classifyVehicleActorSource",
+    "getVehiclePublishedFieldState",
+    "classifyVehicleActorRuntime",
+    "getVehicleRuntimeProjection"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 381
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-stock-weapon-groups.js",
+   "consumers": 25,
+   "sloc": 235,
+   "role": "module",
+   "exports": [
+    "stockItemName",
+    "stockMountKey",
+    "extractOrdinaryArea",
+    "evidenceReasons",
+    "parseOperatorText",
+    "parseStockFiringGroup",
+    "determineStockArc",
+    "explainPrintedAttackTotal",
+    "checkSizeDependentAdjustments",
+    "assessStockWeaponGroups"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-ammunition-ledger.js",
+   "consumers": 16,
+   "sloc": 163,
+   "role": "engine-or-service",
+   "exports": [
+    "LEDGER_SCHEMA",
+    "LEDGER_FLAG",
+    "LAUNCHER_DESIGNATIONS",
+    "AMMO_REASONS",
+    "launcherDesignationOf",
+    "matchPrintedPayload",
+    "resolveLauncherFamily",
+    "initialLedger",
+    "INITIAL_AMMUNITION",
+    "purchasedInitialLedger",
+    "initialStockLedger",
+    "planStockPurchase"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 383
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-published-derived.js",
+   "consumers": 16,
+   "sloc": 107,
+   "role": "module",
+   "exports": [
+    "getVerifiedPublishedRecord",
+    "claimsPublishedSource",
+    "getPublishedDerivedBase",
+    "getPublishedVehicleInitiative",
+    "summarizeMovement",
+    "getEffectiveVehicleSource",
+    "getEffectiveVehicleDerived",
+    "getEffectiveVehicleInitiative",
+    "getEffectiveRechargeShieldsAmount"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 357
+  },
+  {
+   "path": "scripts/engine/vehicles/vehicle-ammunition-service.js",
+   "consumers": 16,
+   "sloc": 100,
+   "role": "engine-or-service",
+   "exports": [
+    "readAftermarketLedgers",
+    "VehicleAmmunitionService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 2,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js",
+   "consumers": 16,
+   "sloc": 309,
+   "role": "presentation",
+   "exports": [
+    "VEHICLE_ORIGIN",
+    "loadUnusedEpTable",
+    "buildVehicleSchemaViewModel",
+    "buildVehicleAssetSummary"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 29
+  },
+  {
+   "path": "scripts/domain/vehicles/universal-vehicle-pack-registry.js",
+   "consumers": 15,
+   "sloc": 28,
+   "role": "registry",
+   "exports": [
+    "UNIVERSAL_VEHICLE_PACKS",
+    "UNIVERSAL_VEHICLE_PACK_NAMES",
+    "VEHICLE_PACK_CATEGORIES",
+    "getUniversalVehiclePack",
+    "getUniversalVehiclePackForCategory",
+    "isUniversalVehiclePack",
+    "getUniversalVehicleCategoryCount"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 392
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-stock-attack-authority.js",
+   "consumers": 15,
+   "sloc": 16,
+   "role": "engine-or-service",
+   "exports": [
+    "TRUSTED_STOCK_WEAPON_GROUP_COUNT",
+    "resolveTrustedStockAttackGroup"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 365
+  },
+  {
+   "path": "scripts/engine/crew/follower-talent-config.js",
+   "consumers": 15,
+   "sloc": 139,
+   "role": "module",
+   "exports": [
+    "FOLLOWER_TALENT_CONFIG",
+    "getFollowerTalentConfig",
+    "getFollowerFixedProfile"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 69
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-source-digest.js",
+   "consumers": 14,
+   "sloc": 55,
+   "role": "module",
+   "exports": [
+    "sha256Utf8",
+    "digestUniversalVehicleSource"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 381
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-source-identity.js",
+   "consumers": 13,
+   "sloc": 107,
+   "role": "module",
+   "exports": [
+    "SOURCE_SCHEMA",
+    "claimsPublishedSource",
+    "collectSourceIdentityErrors",
+    "getVerifiedPublishedRecord",
+    "authorizeProvenanceMigration",
+    "clearProvenanceMigration",
+    "checkProvenanceUpdate"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 381
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-attack-provenance.js",
+   "consumers": 12,
+   "sloc": 74,
+   "role": "module",
+   "exports": [
+    "classifyInstalledVehicleWeapon"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 356
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-modification-rules.js",
+   "consumers": 12,
+   "sloc": 130,
+   "role": "engine-or-service",
+   "exports": [
+    "SIZE_COST_MODIFIER",
+    "MIN_WORK_FORCE",
+    "SHORTFALL_PER_POINT",
+    "BASE_INSTALL_DC",
+    "CREW_QUALITY",
+    "costModifierForSize",
+    "minimumWorkForce",
+    "systemCost",
+    "nonstandardAssessment",
+    "quoteInstallation",
+    "installationCheckOutcome",
+    "quoteRemoval"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 381
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-stock-weapon-items.js",
+   "consumers": 10,
+   "sloc": 60,
+   "role": "module",
+   "exports": [
+    "INITIAL_AMMO_ISSUED_FLAG",
+    "issuedKeyOf",
+    "buildStockWeaponItemData",
+    "managedStockItemMatches",
+    "executableModesOf",
+    "planStockWeaponItemSync"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 101
+  },
+  {
+   "path": "scripts/domain/vehicles/custom-vehicle-construction.js",
+   "consumers": 9,
+   "sloc": 187,
+   "role": "module",
+   "exports": [
+    "CONSTRUCTION_SCHEMA",
+    "REFLEX_SIZE_MODIFIER",
+    "DAMAGE_THRESHOLD_SIZE_MODIFIER",
+    "abilityModifier",
+    "CERTIFIED_FRAME_STATUSES",
+    "isCertifiedFrame",
+    "previewFrame",
+    "designTime",
+    "DEFAULT_CONSTRUCTION_RULES",
+    "verifyConstructionRecord",
+    "DESIGN_STATUS",
+    "verifyConstructionAuthority"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 358
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-cp22-source-catalog.generated.js",
+   "consumers": 9,
+   "sloc": 3684,
+   "role": "registry",
+   "exports": [
+    "CP22_SOTG_REFERENCE_CATALOG"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 361
+  },
+  {
+   "path": "scripts/engine/vehicles/vehicle-ammunition-shop.js",
+   "consumers": 9,
+   "sloc": 34,
+   "role": "module",
+   "exports": [
+    "SHOP_REASONS",
+    "stockUnitPrice",
+    "launcherKeyOf",
+    "ammunitionOffers",
+    "offerFor"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 100
+  },
+  {
+   "path": "scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js",
+   "consumers": 9,
+   "sloc": 1064,
+   "role": "presentation",
+   "exports": [
+    "parseCargoString",
+    "parseVehicleSpeed",
+    "resolveVehicleShieldState",
+    "buildVehicleHeaderSummaryPanel",
+    "buildVehicleDefensesPanel",
+    "buildVehicleHpConditionPanel",
+    "buildVehicleWeaponMountPanel",
+    "buildVehicleCrewSummaryPanel",
+    "buildVehicleCrewAssignmentPanel",
+    "buildVehicleCustomStationEditorPanel",
+    "buildVehicleSubsystemDetailPanel",
+    "buildVehicleShieldManagementPanel"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 8
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-installation-jobs.js",
+   "consumers": 8,
+   "sloc": 152,
+   "role": "module",
+   "exports": [
+    "VEHICLE_INSTALLATION_JOBS_FLAG",
+    "VEHICLE_INSTALLATION_JOBS_FLAG_PATH",
+    "JOB_SCHEMA",
+    "ACTIVE_JOB_STATUSES",
+    "sealJob",
+    "isValidJob",
+    "readJobs",
+    "reservedEpFromJobs",
+    "describeJob",
+    "planJobStart",
+    "planLogWorkDays",
+    "planJobCheck"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 101
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-operating-context.js",
+   "consumers": 8,
+   "sloc": 102,
+   "role": "module",
+   "exports": [
+    "VEHICLE_ENVIRONMENT",
+    "VEHICLE_ENVIRONMENT_FLAG_PATH",
+    "readVehicleEnvironment",
+    "planEnvironmentChange",
+    "vehicleSizeModifier",
+    "vehicleSkillEquipmentBonus",
+    "vehiclePilotCheck",
+    "assignedPilotEntry",
+    "decidePilotRoller"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 40
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-weapon-battery.js",
+   "consumers": 8,
+   "sloc": 80,
+   "role": "module",
+   "exports": [
+    "BATTERY_MAX_WEAPONS",
+    "BATTERY_ASSIST_PER_ADDITIONAL_GUNNER",
+    "BATTERY_MARGIN_STEP",
+    "BATTERY_AID_DEFENSE",
+    "BATTERY_AID_BONUS_PER_TWO_WEAPONS",
+    "BATTERY_REASONS",
+    "batteryAssistanceBonus",
+    "batteryMarginHits",
+    "expandBatteryDamage",
+    "batteryAidsBattery",
+    "resolveBatteryAttackTotal",
+    "resolveBatteryWeapons"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 383
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/domain/vehicles/vehicle-cp22-source-catalog.generated.js",
+   "sloc": 3684,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js",
+   "sloc": 1064,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-cp23c4b-source-anchors.generated.js",
+   "sloc": 890,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/crew/ally-assignment-service.js",
+   "sloc": 813,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/sheets/v2/vehicle-actor-sheet.js",
+   "sloc": 769,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/import/vehicle-import-normalizer.js",
+   "sloc": 477,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/engine/crew/vehicle-crew-assignment-service.js",
+   "sloc": 401,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/vehicles/vehicle-factory.js",
+   "sloc": 390,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/vehicles/vehicle-installation-service.js",
+   "sloc": 332,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/import/vehicle-weapon-import-normalizer.js",
+   "sloc": 328,
+   "reach": "orphan-unreferenced"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/engine/import/vehicle-import-normalizer.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 477,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/import/vehicle-weapon-import-normalizer.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 328,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/vehicle-import-wizard.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 314,
+   "tests": 0
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-modification-factory.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 183,
+   "tests": 0
+  },
+  {
+   "path": "scripts/data/vehicle-category-registry.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 108,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/crew/crew-interaction-engine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 75,
+   "tests": 0
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-cp9c-actor-provenance-probe.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 58,
+   "tests": 1
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-cp23-pack-provenance-probe.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 57,
+   "tests": 1
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-cp9b-runtime-pack-verifier.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 46,
+   "tests": 2
+  },
+  {
+   "path": "scripts/domain/vehicles/vehicle-evidence-import.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 33,
+   "tests": 1
+  }
+ ],
+ "dependsOnDomains": {
+  "combat": 35,
+  "actor-core": 32,
+  "infrastructure": 15,
+  "store-economy": 10,
+  "ui-shell": 9,
+  "rolls": 7,
+  "npc-followers": 3,
+  "progression": 3,
+  "chat": 2,
+  "droids": 2,
+  "houserules": 2,
+  "abilities-effects": 2,
+  "settings-config": 2,
+  "skills": 2,
+  "force": 1,
+  "equipment": 1,
+  "holonet": 1
+ },
+ "dependedOnByDomains": {
+  "combat": 36,
+  "store-economy": 13,
+  "actor-core": 11,
+  "ui-shell": 11,
+  "progression": 7,
+  "infrastructure": 6,
+  "customization": 5,
+  "npc-followers": 4,
+  "compat-patches": 3,
+  "abilities-effects": 2,
+  "dev-tooling": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/domain/vehicles/vehicle-phase4d-scratch-import.js",
+     "domain": "vehicles",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      75
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A07-engine-imports-ui",
+   "invariant": "A-07",
+   "count": 6,
+   "sites": [
+    {
+     "path": "scripts/engine/crew/ally-assignment-service.js",
+     "target": "scripts/apps/progression-framework/adapters/follower-mutation-transaction.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/crew/ally-assignment-service.js",
+     "target": "scripts/apps/follower-creator.js",
+     "kind": "dynamic"
+    },
+    {
+     "path": "scripts/engine/crew/vehicle-crew-assignment-service.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/crew/vehicle-crew-assignment-service.js",
+     "target": "scripts/sheets/v2/vehicle-sheet/crew-resolver.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/crew/vehicle-weapon-station-service.js",
+     "target": "scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/vehicles/vehicle-interdiction-service.js",
+     "target": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "kind": "static"
+    }
+   ]
+  },
+  {
+   "probe": "P-A10-credit-writes-outside-transaction-engine",
+   "invariant": "A-10",
+   "count": 3,
+   "sites": [
+    {
+     "path": "scripts/domain/vehicles/vehicle-modification-rules.js",
+     "line": 121,
+     "text": "credits: Math.round(credits0 * (1 + SHORTFALL_PER_POINT.cost"
+    },
+    {
+     "path": "scripts/engine/vehicles/vehicle-logistics-service.js",
+     "line": 9,
+     "text": "credits: ONE TransactionEngine transaction (credits + resour"
+    },
+    {
+     "path": "scripts/engine/vehicles/vehicle-logistics-service.js",
+     "line": 120,
+     "text": "credits: credits + resource in ONE transaction; a failed wri"
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "ability-modifier",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "feats",
+    "force",
+    "infrastructure",
+    "mentor-suggestion",
+    "npc-followers",
+    "progression",
+    "rolls",
+    "species",
+    "talents"
+   ],
+   "sites": [
+    "scripts/utils/starship-maneuver-manager.js:241 getManeuverAbilityModifier"
+   ]
+  },
+  {
+   "responsibility": "damage-formula",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "droids",
+    "equipment",
+    "species"
+   ],
+   "sites": [
+    "scripts/domain/vehicles/vehicle-weapon-damage.js:179 resolveVehicleWeaponDamage"
+   ]
+  },
+  {
+   "responsibility": "damage-application",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "equipment"
+   ],
+   "sites": [
+    "scripts/domain/vehicles/vehicle-weapon-damage.js:179 resolveVehicleWeaponDamage"
+   ]
+  },
+  {
+   "responsibility": "attack-bonus",
+   "otherDomains": [
+    "combat",
+    "data-registries",
+    "equipment",
+    "rolls"
+   ],
+   "sites": [
+    "scripts/domain/vehicles/vehicle-weapon-battery.js:100 resolveBatteryAttackTotal"
+   ]
+  },
+  {
+   "responsibility": "initiative",
+   "otherDomains": [
+    "combat",
+    "infrastructure"
+   ],
+   "sites": [
+    "scripts/domain/vehicles/vehicle-published-derived.js:39 getPublishedVehicleInitiative",
+    "scripts/domain/vehicles/vehicle-published-derived.js:147 getEffectiveVehicleInitiative"
+   ]
+  },
+  {
+   "responsibility": "upgrade-slots",
+   "otherDomains": [
+    "compat-patches",
+    "customization",
+    "droids",
+    "npc-followers",
+    "progression",
+    "store-economy",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/domain/vehicles/vehicle-slot-governance.js:128 getCompatibleSystemsForSlot",
+    "scripts/domain/vehicles/vehicle-system-definitions.js:169 getVehicleSystemsBySlot"
+   ]
+  },
+  {
+   "responsibility": "skill-roll",
+   "otherDomains": [
+    "combat",
+    "rolls"
+   ],
+   "sites": [
+    "scripts/sheets/v2/vehicle-sheet/crew-skill-router.js:138 rollVehicleCrewSkill"
+   ]
+  }
+ ],
+ "exactClones": [
+  {
+   "tokens": 696,
+   "sites": [
+    "scripts/sheets/v2/character-like-sheet.js:156 buildSheetActionEconomyContext",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:73 buildSheetActionEconomyContext"
+   ]
+  },
+  {
+   "tokens": 559,
+   "sites": [
+    "scripts/sheets/v2/character-like-sheet.js:508 sanitizeSheetRenderContext",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:211 sanitizeSheetRenderContext"
+   ]
+  },
+  {
+   "tokens": 520,
+   "sites": [
+    "scripts/sheets/v2/character-like-sheet.js:512",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:215"
+   ]
+  },
+  {
+   "tokens": 302,
+   "sites": [
+    "scripts/sheets/v2/character-like-sheet.js:467 documentToTemplateData",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:170 documentToTemplateData"
+   ]
+  },
+  {
+   "tokens": 145,
+   "sites": [
+    "scripts/sheets/v2/character-like-sheet.js:184",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:101"
+   ]
+  }
+ ],
+ "duplicateSymbolNames": [
+  {
+   "name": "bandForDistance",
+   "files": [
+    "scripts/domain/vehicles/vehicle-weapon-range.js",
+    "scripts/items/weapon-runtime/canonical-range.js"
+   ]
+  },
+  {
+   "name": "canonicalize",
+   "files": [
+    "scripts/domain/vehicles/vehicle-postcondition.js",
+    "scripts/engine/equipment/intent-fingerprint.js"
+   ]
+  },
+  {
+   "name": "claimsPublishedSource",
+   "files": [
+    "scripts/domain/vehicles/vehicle-published-derived.js",
+    "scripts/domain/vehicles/vehicle-source-identity.js"
+   ]
+  },
+  {
+   "name": "composeWeaponDamage",
+   "files": [
+    "scripts/combat/rolls/damage.js",
+    "scripts/domain/vehicles/vehicle-modification-effects.js"
+   ]
+  },
+  {
+   "name": "describeProject",
+   "files": [
+    "scripts/domain/vehicles/custom-vehicle-construction-project.js",
+    "scripts/engine/vehicles/custom-vehicle-construction-service.js"
+   ]
+  },
+  {
+   "name": "getVerifiedPublishedRecord",
+   "files": [
+    "scripts/domain/vehicles/vehicle-published-derived.js",
+    "scripts/domain/vehicles/vehicle-source-identity.js"
+   ]
+  },
+  {
+   "name": "INSTALLED_WEAPON_FLAG",
+   "files": [
+    "scripts/domain/vehicles/vehicle-installed-weapon-items.js",
+    "scripts/domain/vehicles/vehicle-weapon-damage.js"
+   ]
+  },
+  {
+   "name": "INTERDICTED_FLAG",
+   "files": [
+    "scripts/domain/vehicles/vehicle-interdiction-field.js",
+    "scripts/engine/vehicles/vehicle-interdiction-service.js"
+   ]
+  },
+  {
+   "name": "isHyperdriveInterdicted",
+   "files": [
+    "scripts/domain/vehicles/vehicle-interdiction-field.js",
+    "scripts/engine/vehicles/vehicle-interdiction-service.js"
+   ]
+  },
+  {
+   "name": "PROJECT_STATUS",
+   "files": [
+    "scripts/domain/vehicles/custom-vehicle-construction-project.js",
+    "scripts/engine/vehicles/custom-vehicle-construction-service.js"
+   ]
+  },
+  {
+   "name": "RANGE_BANDS",
+   "files": [
+    "scripts/domain/vehicles/vehicle-weapon-range.js",
+    "scripts/items/weapon-runtime/canonical-range.js"
+   ]
+  },
+  {
+   "name": "resolveVehicleCrewActor",
+   "files": [
+    "scripts/engine/crew/vehicle-crew-actor-authority.js",
+    "scripts/sheets/v2/vehicle-sheet/crew-skill-router.js"
+   ]
+  },
+  {
+   "name": "UNIVERSAL_VEHICLE_PACKS",
+   "files": [
+    "scripts/domain/vehicles/universal-vehicle-pack-registry.js",
+    "scripts/engine/store/store-taxonomy.js"
+   ]
+  },
+  {
+   "name": "VEHICLE_INSTALLATION_JOBS_FLAG",
+   "files": [
+    "scripts/domain/vehicles/vehicle-installation-jobs.js",
+    "scripts/domain/vehicles/vehicle-installation-ledger.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "ready",
+   "sites": [
+    "scripts/core/vehicle-pack-data-loader.js:104",
+    "scripts/engine/vehicles/vehicle-errata-migration-service.js:183"
+   ]
+  },
+  {
+   "name": "createItem",
+   "sites": [
+    "scripts/infrastructure/hooks/starship-maneuver-hooks.js:17"
+   ]
+  },
+  {
+   "name": "updateActor",
+   "sites": [
+    "scripts/infrastructure/hooks/starship-maneuver-hooks.js:56"
+   ]
+  },
+  {
+   "name": "preUpdateActor",
+   "sites": [
+    "scripts/infrastructure/hooks/starship-maneuver-hooks.js:45"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "data/audits/talent-phase-2-starships-of-the-galaxy-content.json",
+  "data/audits/talent-phase-2-starships-of-the-galaxy-discrepancy-manifest.json",
+  "data/audits/talent-phase-3b-starships-of-the-galaxy-manifest.json",
+  "data/audits/vehicles/errata/errata-inventory.json",
+  "data/audits/vehicles/errata/sotg-errata-1.0-publication-proposals.json",
+  "data/audits/vehicles/errata/sotg-errata-1.0.json",
+  "data/audits/vehicles/p6a/census-sources.json",
+  "data/audits/vehicles/p6a/certification-ledger.json",
+  "data/audits/vehicles/p6a/owner-rulings.json",
+  "data/audits/vehicles/p6a/pdf-reconciliation.json",
+  "data/audits/vehicles/p6a/pdf-review-worksheet.json",
+  "data/audits/vehicles/p6a/print-verified-components-v2.json",
+  "data/audits/vehicles/p6a/readiness-manifest.json",
+  "data/audits/vehicles/p6a/reconciliation.json",
+  "data/audits/vehicles/p6a/registry.json",
+  "data/audits/vehicles/p6b-deferred-work.json",
+  "data/audits/vehicles/p6b-readiness-manifest.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000001.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000002.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000003.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000004.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000005.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000006.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000007.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000008.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000009.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000010.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000011.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000012.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000013.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000014.json",
+  "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000015.json",
+  "data/audits/vehicles/stock-weapon-coverage.json",
+  "data/audits/vehicles/swse-p2-pdf-review.json",
+  "data/audits/vehicles/swse-p2-sotg-modification-evidence.json",
+  "data/audits/vehicles/swse-phase0-ship-census.json",
+  "data/audits/vehicles/swse-phase0b-additional-vehicle-fixtures.json",
+  "data/audits/vehicles/swse-phase0b-dryrun-fixtures.json",
+  "data/audits/vehicles/swse-phase0b-dryrun-report.json",
+  "data/audits/vehicles/swse-phase0b-global-rules-registry.json",
+  "data/audits/vehicles/swse-phase0b-null-semantics-examples.json",
+  "data/audits/vehicles/swse-phase0b-semantic-contract-report.json",
+  "data/audits/vehicles/swse-phase0b-variant-fixtures.json",
+  "data/audits/vehicles/swse-phase0b-vehicle-weapon.schema.json",
+  "data/audits/vehicles/swse-phase0b-vehicle.blank.json",
+  "data/audits/vehicles/swse-phase0b-vehicle.schema.json",
+  "data/audits/vehicles/swse-phase0b-weapon-stress-fixtures.json",
+  "data/audits/vehicles/swse-phase0b-weapon-stress-report.json",
+  "data/audits/vehicles/swse-phase1-completion-report.json",
+  "data/audits/vehicles/swse-phase1-rebellion-checkpoint.json",
+  "data/audits/vehicles/swse-phase1-vehicle-provenance.json",
+  "data/audits/vehicles/swse-phase2b-clone-wars-cp1-per-entry-source-review-ledger.json",
+  "data/audits/vehicles/swse-phase2b-clone-wars-cp1-weapon-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-clone-wars-cp2-per-entry-source-review-ledger.json",
+  "data/audits/vehicles/swse-phase2b-clone-wars-cp2-weapon-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-clone-wars-cp3-per-entry-source-review-ledger.json",
+  "data/audits/vehicles/swse-phase2b-clone-wars-cp3-weapon-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-clone-wars-cp4-per-entry-source-review-ledger.json",
+  "data/audits/vehicles/swse-phase2b-clone-wars-cp4-weapon-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+  "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-core-rulebook-book-source-closure-ledger.json",
+  "data/audits/vehicles/swse-phase2b-core-rulebook-book-source-closure-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-core-rulebook-cp1-source-review-ledger.json",
+  "data/audits/vehicles/swse-phase2b-core-rulebook-cp1-source-review-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-final17-book-counts.json",
+  "data/audits/vehicles/swse-phase2b-galaxy-at-war-book-source-closure-ledger.json",
+  "data/audits/vehicles/swse-phase2b-galaxy-at-war-book-source-closure-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-galaxy-of-intrigue-book-source-closure-ledger.json",
+  "data/audits/vehicles/swse-phase2b-galaxy-of-intrigue-book-source-closure-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-jedi-academy-training-manual-book-source-closure-ledger.json",
+  "data/audits/vehicles/swse-phase2b-jedi-academy-training-manual-book-source-closure-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-kotor-cp1-per-entry-source-review-ledger.json",
+  "data/audits/vehicles/swse-phase2b-kotor-cp1-weapon-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+  "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-legacy-era-cp1-per-entry-source-review-ledger.json",
+  "data/audits/vehicles/swse-phase2b-legacy-era-cp1-weapon-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-legacy-era-cp2-per-entry-source-review-ledger.json",
+  "data/audits/vehicles/swse-phase2b-legacy-era-cp2-weapon-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-legacy-era-cp3-per-entry-source-review-ledger.json",
+  "data/audits/vehicles/swse-phase2b-legacy-era-cp3-weapon-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+  "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-rebellion-era-cp1-per-entry-source-review-ledger.json",
+  "data/audits/vehicles/swse-phase2b-rebellion-era-cp1-weapon-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-rebellion-era-cp2-per-entry-source-review-ledger.json",
+  "data/audits/vehicles/swse-phase2b-rebellion-era-cp2-weapon-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+  "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-ledger.json",
+  "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-sotg-cp16-book-source-closure-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+  "data/audits/vehicles/swse-phase2b-sotg-cp17-independent-baseline.json",
+  "data/audits/vehicles/swse-phase2b-sotg-cp17-strict-certification-work-queue.json",
+  "data/audits/vehicles/swse-phase2b-sotg-cp19-full-100-ship-source-review-closeout.json",
+  "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche01-primary-source-review.json",
+  "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche02-primary-source-review.json",
+  "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche03-primary-source-review.json",
+  "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche04-primary-source-review.json",
+  "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche05-primary-source-review.json",
+  "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche06-primary-source-review.json",
+  "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche07-primary-source-review.json",
+  "data/audits/vehicles/swse-phase2b-threats-of-the-galaxy-book-source-closure-ledger.json",
+  "data/audits/vehicles/swse-phase2b-threats-of-the-galaxy-book-source-closure-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+  "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2c-clone-wars-cp1-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-clone-wars-cp2-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-clone-wars-cp3-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-clone-wars-cp4-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-clone-wars-cp5-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-core-rulebook-book-source-closure-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-core-rulebook-cp1-source-review-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-cp1-evidence-semantics-pressure.json",
+  "data/audits/vehicles/swse-phase2c-cp1-identity-candidates.json",
+  "data/audits/vehicles/swse-phase2c-cp18-approved-two-layer-policy.json",
+  "data/audits/vehicles/swse-phase2c-cp18-evidence-envelope.schema.json",
+  "data/audits/vehicles/swse-phase2c-cp18-evidence-normalization-contract.json",
+  "data/audits/vehicles/swse-phase2c-cp2-crossbook-research.json",
+  "data/audits/vehicles/swse-phase2c-cp3-318-census-overlay.json",
+  "data/audits/vehicles/swse-phase2c-cp3-approved-decisions.json",
+  "data/audits/vehicles/swse-phase2c-cp3-authority-contract.json",
+  "data/audits/vehicles/swse-phase2c-cp4-runtime-integration-status.json",
+  "data/audits/vehicles/swse-phase2c-cp5-gunnery-integrity-status.json",
+  "data/audits/vehicles/swse-phase2c-cp6-immediate-stock-enforcement-status.json",
+  "data/audits/vehicles/swse-phase2c-cp7-first-four-stock-binding-discrepancies.json",
+  "data/audits/vehicles/swse-phase2c-cp8-stock-pack-remediation-manifest.json",
+  "data/audits/vehicles/swse-phase2c-cp8b-derived-metadata-remediation.json",
+  "data/audits/vehicles/swse-phase2c-galaxy-at-war-book-source-closure-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-galaxy-of-intrigue-book-source-closure-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-jedi-academy-training-manual-book-source-closure-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-kotor-cp1-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-kotor-cp3-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-legacy-era-cp1-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-legacy-era-cp2-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-legacy-era-cp3-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-legacy-era-cp4-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-rebellion-era-cp1-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-rebellion-era-cp2-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-rebellion-era-cp3-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-scum-and-villainy-book-source-closure-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-sotg-cp18-evidence-observation-overlay.json",
+  "data/audits/vehicles/swse-phase2c-threats-of-the-galaxy-book-source-closure-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-unknown-regions-book-schema-discovery.json",
+  "data/audits/vehicles/swse-phase2c-vehicle-v06-pressure-cases-cp16.json",
+  "data/audits/vehicles/swse-sotg-cp20-controlled-source-corrections.json",
+  "data/audits/vehicles/swse-sotg-cp20-source-fidelity-certificate.schema.json",
+  "data/audits/vehicles/swse-sotg-cp20-source-fidelity-tranche02.schema.json",
+  "data/audits/vehicles/swse-sotg-cp20-source-fidelity-tranche03.schema.json",
+  "data/audits/vehicles/swse-sotg-cp20-source-fidelity-tranche04.schema.json",
+  "data/audits/vehicles/swse-sotg-cp20-source-fidelity-tranche05.schema.json",
+  "data/audits/vehicles/swse-sotg-cp20-source-fidelity-tranche06.schema.json",
+  "data/audits/vehicles/swse-sotg-cp20-source-fidelity-tranche07-conflict-priority.schema.json",
+  "data/audits/vehicles/swse-sotg-cp20-tranche01-source-fidelity-certificates.json",
+  "data/audits/vehicles/swse-sotg-cp20-tranche02-source-fidelity-certificates.json",
+  "data/audits/vehicles/swse-sotg-cp20-tranche03-source-fidelity-certificates.json",
+  "data/audits/vehicles/swse-sotg-cp20-tranche04-source-fidelity-certificates.json",
+  "data/audits/vehicles/swse-sotg-cp20-tranche05-source-fidelity-certificates.json",
+  "data/audits/vehicles/swse-sotg-cp20-tranche06-source-fidelity-certificates.json",
+  "data/audits/vehicles/swse-sotg-cp20-tranche07-conflict-priority-source-fidelity-certificates.json",
+  "data/audits/vehicles/swse-sotg-cp21-owner-approved-adjudications.json",
+  "data/audits/vehicles/swse-sotg-cp21-owner-approved-adjudications.schema.json",
+  "data/audits/vehicles/swse-sotg-cp23-source-pack-reconciliation.json",
+  "data/audits/vehicles/swse-sotg-cp23b-isolated-source-actor-proposals.json",
+  "data/audits/vehicles/swse-sotg-cp23c-source-draft-parity-anchors.json",
+  "data/audits/vehicles/swse-sotg-cp23c2-native-install-readiness.json",
+  "data/audits/vehicles/swse-sotg-cp23c3-unregistered-native-stage.json",
+  "data/audits/vehicles/swse-sotg-cp23c4-registration-and-observation-plan.json",
+  "data/audits/vehicles/swse-universal-p6a-sotg-errata-amendment.json",
+  "data/audits/vehicles/swse-universal-phase1-closeout.json",
+  "data/audits/vehicles/swse-universal-phase1-publication-census.ndjson",
+  "data/audits/vehicles/swse-universal-phase1a-core-rulebook.json",
+  "data/audits/vehicles/swse-universal-phase1b-starships-of-the-galaxy.json",
+  "data/audits/vehicles/swse-universal-phase1c-clone-wars.json",
+  "data/audits/vehicles/swse-universal-phase1d-knights-of-the-old-republic.json",
+  "data/audits/vehicles/swse-universal-phase1f-scum-and-villainy.json",
+  "data/audits/vehicles/swse-universal-phase1g-galaxy-at-war.json",
+  "data/audits/vehicles/swse-universal-phase1h-galaxy-of-intrigue.json",
+  "data/audits/vehicles/swse-universal-phase1i-jedi-academy-training-manual.json",
+  "data/audits/vehicles/swse-universal-phase1j-legacy-era-campaign-guide.json",
+  "data/audits/vehicles/swse-universal-phase1k-rebellion-era-campaign-guide.json",
+  "data/audits/vehicles/swse-universal-phase1l-threats-of-the-galaxy.json",
+  "data/audits/vehicles/swse-universal-phase1m-unknown-regions.json",
+  "data/audits/vehicles/swse-universal-phase2a-core-rulebook-staged.json",
+  "data/audits/vehicles/swse-universal-phase2b-starships-of-the-galaxy-staged.json",
+  "data/audits/vehicles/swse-universal-phase2c-clone-wars-new-fixtures.json",
+  "data/audits/vehicles/swse-universal-phase2c-clone-wars-staged.json",
+  "data/audits/vehicles/swse-universal-phase2d-kotor-new-fixtures.json",
+  "data/audits/vehicles/swse-universal-phase2d-kotor-staged.json",
+  "data/audits/vehicles/swse-universal-phase2f-scum-and-villainy-fixtures.json",
+  "data/audits/vehicles/swse-universal-phase2f-scum-and-villainy-staged.json",
+  "data/audits/vehicles/swse-universal-phase2g-galaxy-at-war-fixtures.json",
+  "data/audits/vehicles/swse-universal-phase2g-galaxy-at-war-staged.json",
+  "data/audits/vehicles/swse-universal-phase2h-galaxy-of-intrigue-staged.json",
+  "data/audits/vehicles/swse-universal-phase2i-jedi-academy-training-manual-staged.json",
+  "data/audits/vehicles/swse-universal-phase2j-legacy-era-campaign-guide-staged.json",
+  "data/audits/vehicles/swse-universal-phase2k-rebellion-era-campaign-guide-staged.json",
+  "data/audits/vehicles/swse-universal-phase2l-threats-of-the-galaxy-staged.json"
+ ],
+ "tests": [
+  "tests/ally-assignment-rollback-exactness.test.mjs",
+  "tests/architecture-combat-authority.test.mjs",
+  "tests/follower-conversion-reservation-race.test.mjs",
+  "tests/follower-slot-occupancy-alignment.test.mjs",
+  "tests/gm-existing-npc-allies-assignment.test.mjs",
+  "tests/gm-manual-follower-slot.test.mjs",
+  "tests/gm-npc-assignment-modal.test.mjs",
+  "tests/helpers/vehicle-weapon-world.mjs",
+  "tests/phase2c-vehicle-authority-policy.test.mjs",
+  "tests/phase2c-vehicle-gunnery-source-contract.test.mjs",
+  "tests/phase2c-vehicle-live-roll-guard.test.mjs",
+  "tests/phase2c-vehicle-runtime-integration.test.mjs",
+  "tests/phase2c-vehicle-source-integrity-guards.test.mjs",
+  "tests/phase2c-vehicle-stock-vs-custom-gate.test.mjs",
+  "tests/phase2c_cp22_source_view_readonly.test.mjs",
+  "tests/phase2c_cp23_pack_reconciliation.test.mjs",
+  "tests/phase2c_cp23b_isolated_proposals.test.mjs",
+  "tests/phase2c_cp23c2_install_readiness.test.mjs",
+  "tests/phase2c_cp23c3_native_source_stage.test.mjs",
+  "tests/phase2c_cp23c4_gm_observation_ledger.test.mjs",
+  "tests/phase2c_cp23c4b_world_identity.test.mjs",
+  "tests/phase2c_cp23c4c_import_boundary.test.mjs",
+  "tests/phase2c_cp23c_source_draft_integrity.test.mjs",
+  "tests/phase2c_cp8_crew_station_evidence.test.mjs",
+  "tests/phase2c_cp8_vehicle_import_source_fields.test.mjs",
+  "tests/phase2c_cp8_vehicle_weapon_import_roundtrip.test.mjs",
+  "tests/phase2c_cp9a_vehicle_import_boundaries.test.mjs",
+  "tests/phase2c_cp9b_runtime_pack_probe.test.mjs",
+  "tests/phase2c_cp9c_actor_provenance_probe.test.mjs",
+  "tests/phase3-vehicle-attack-formula.test.mjs",
+  "tests/phase3-vehicle-operator-resolution.test.mjs",
+  "tests/phase4-abstract-crew-and-routing.test.mjs",
+  "tests/phase4-vehicle-size-fire-control-regression.test.mjs",
+  "tests/phase6-vehicle-crew-assignment.test.mjs",
+  "tests/phase7-vehicle-crew-runtime-ux.test.mjs",
+  "tests/release-package-manifest.test.mjs",
+  "tests/ship-combat-action-recharge-shields-data-authority.test.mjs",
+  "tests/vehicle-attack-routing-guard-check.test.mjs",
+  "tests/vehicle-crew-assignment-guard-check.test.mjs",
+  "tests/vehicle-crew-count-shape-parity.test.mjs",
+  "tests/vehicle-crew-runtime-ux-guard-check.test.mjs",
+  "tests/vehicle-legacy-modifier-gate.test.mjs",
+  "tests/vehicle-postcondition.test.mjs",
+  "tests/vehicle-systems-browser.test.mjs",
+  "tests/vehicle-universal-phase1-closeout.test.mjs",
+  "tests/vehicle-universal-phase1a.test.mjs",
+  "tests/vehicle-universal-phase1b.test.mjs",
+  "tests/vehicle-universal-phase1c.test.mjs",
+  "tests/vehicle-universal-phase1d.test.mjs",
+  "tests/vehicle-universal-phase1e.test.mjs",
+  "tests/vehicle-universal-phase1f.test.mjs",
+  "tests/vehicle-universal-phase1g.test.mjs",
+  "tests/vehicle-universal-phase1h.test.mjs",
+  "tests/vehicle-universal-phase1i.test.mjs",
+  "tests/vehicle-universal-phase1j.test.mjs",
+  "tests/vehicle-universal-phase1k.test.mjs",
+  "tests/vehicle-universal-phase1l.test.mjs",
+  "tests/vehicle-universal-phase1m.test.mjs",
+  "tests/vehicle-universal-phase1n.test.mjs",
+  "tests/vehicle-universal-phase2a-core-staged.test.mjs",
+  "tests/vehicle-universal-phase2b-sotg.test.mjs",
+  "tests/vehicle-universal-phase2c-clone-wars.test.mjs",
+  "tests/vehicle-universal-phase2d-kotor.test.mjs",
+  "tests/vehicle-universal-phase2f-scum-and-villainy.test.mjs",
+  "tests/vehicle-universal-phase2g-galaxy-at-war.test.mjs",
+  "tests/vehicle-universal-phase2h-through-2n-complete.test.mjs",
+  "tests/vehicle-universal-phase3-clone-variants.test.mjs",
+  "tests/vehicle-universal-phase3-final-acceptance.test.mjs",
+  "tests/vehicle-universal-phase3-focused-48-closeout.test.mjs",
+  "tests/vehicle-universal-phase3-gaw-exceptions.test.mjs",
+  "tests/vehicle-universal-phase3-kotor-basilisk.test.mjs",
+  "tests/vehicle-universal-phase3-scum-risk.test.mjs",
+  "tests/vehicle-universal-phase3-source-acceptance-gate.test.mjs",
+  "tests/vehicle-universal-phase3-tx130-crossbook.test.mjs",
+  "tests/vehicle-universal-phase3-vulture-provenance-amendment.test.mjs",
+  "tests/vehicle-universal-phase3-vulture-source.test.mjs",
+  "tests/vehicle-universal-phase3h-galaxy-of-intrigue.test.mjs",
+  "tests/vehicle-universal-phase3i-jedi-academy.test.mjs",
+  "tests/vehicle-universal-phase3j-legacy-era.test.mjs",
+  "tests/vehicle-universal-phase3k-rebellion-era.test.mjs",
+  "tests/vehicle-universal-phase3l-threats-of-the-galaxy.test.mjs",
+  "tests/vehicle-universal-phase3m-unknown-regions.test.mjs",
+  "tests/vehicle-universal-phase4a-canonical.test.mjs",
+  "tests/vehicle-universal-phase4b-native-sources.test.mjs",
+  "tests/vehicle-universal-phase4c-import-source.test.mjs",
+  "tests/vehicle-universal-phase4c-runtime-consumers.test.mjs",
+  "tests/vehicle-universal-phase4d-runtime-audit.test.mjs",
+  "tests/vehicle-universal-phase4d-scratch-import.test.mjs",
+  "tests/vehicle-universal-phase4e-p0-consumers.test.mjs",
+  "tests/vehicle-universal-phase4e-p0-lifecycle.test.mjs",
+  "tests/vehicle-universal-phase4e-p0-source-digest.test.mjs",
+  "tests/vehicle-universal-phase4e-p1-sheet-view-model.test.mjs",
+  "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
+  "tests/vehicle-universal-phase4e-p11-shipyard-ui.test.mjs",
+  "tests/vehicle-universal-phase4e-p12-construction-service.test.mjs",
+  "tests/vehicle-universal-phase4e-p14-operational-effects.test.mjs",
+  "tests/vehicle-universal-phase4e-p15-component-census.test.mjs",
+  "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs",
+  "tests/vehicle-universal-phase4e-p17-operating-context.test.mjs",
+  "tests/vehicle-universal-phase4e-p18-p6b1-effects.test.mjs",
+  "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+  "tests/vehicle-universal-phase4e-p2-installation-ledger.test.mjs",
+  "tests/vehicle-universal-phase4e-p20-p6b3-custom-and-weapons.test.mjs",
+  "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+  "tests/vehicle-universal-phase4e-p22-launcher-capacity.test.mjs",
+  "tests/vehicle-universal-phase4e-p23-weapon-integrity.test.mjs",
+  "tests/vehicle-universal-phase4e-p24-capital-and-pilot.test.mjs",
+  "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+  "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+  "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs",
+  "tests/vehicle-universal-phase4e-p29-starship-scale-area.test.mjs",
+  "tests/vehicle-universal-phase4e-p3-store-eligibility.test.mjs",
+  "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+  "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+  "tests/vehicle-universal-phase4e-p32-weapon-ecosystem-readiness.test.mjs",
+  "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+  "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+  "tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs",
+  "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+  "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs",
+  "tests/vehicle-universal-phase4e-p39-operator-model.test.mjs",
+  "tests/vehicle-universal-phase4e-p40-tractor-beam.test.mjs",
+  "tests/vehicle-universal-phase4e-p42-startup-and-operator.test.mjs",
+  "tests/vehicle-universal-phase4e-p43-gm-configured-launchers.test.mjs",
+  "tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs",
+  "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs",
+  "tests/vehicle-universal-phase4e-p46-gm-certified-batteries.test.mjs",
+  "tests/vehicle-universal-phase4e-p47-scene-state-corrections.test.mjs",
+  "tests/vehicle-universal-phase4e-p48-mine-detection.test.mjs",
+  "tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs",
+  "tests/vehicle-universal-phase4e-p4a-derived.test.mjs",
+  "tests/vehicle-universal-phase4e-p4c-crew.test.mjs",
+  "tests/vehicle-universal-phase4e-p4d-attack-gate.test.mjs",
+  "tests/vehicle-universal-phase4e-p4e-operations.test.mjs",
+  "tests/vehicle-universal-phase4e-p5-acquisition-assetbay.test.mjs",
+  "tests/vehicle-universal-phase4e-p5-installation-transaction.test.mjs",
+  "tests/vehicle-universal-phase4e-p5-sheet-integration.test.mjs",
+  "tests/vehicle-universal-phase4e-p5-source-authority.test.mjs",
+  "tests/vehicle-universal-phase4e-p5-store-transaction.test.mjs",
+  "tests/vehicle-universal-phase4e-p50-initial-ammunition-policy.test.mjs",
+  "tests/vehicle-universal-phase4e-p51-party-fund-ammunition.test.mjs",
+  "tests/vehicle-universal-phase4e-p52-ammunition-shortcuts.test.mjs",
+  "tests/vehicle-universal-phase4e-p53-aftermarket-ammunition-shortcuts.test.mjs",
+  "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs",
+  "tests/vehicle-universal-phase4e-p55-stock-payload-reconciliation.test.mjs",
+  "tests/vehicle-universal-phase4e-p56-gap-analysis.test.mjs",
+  "tests/vehicle-universal-phase4e-p57-evidence-verification.test.mjs",
+  "tests/vehicle-universal-phase4e-p58-tractor-notation.test.mjs",
+  "tests/vehicle-universal-phase4e-p6-modification-rules.test.mjs",
+  "tests/vehicle-universal-phase4e-p6-update-guard.test.mjs",
+  "tests/vehicle-universal-phase4e-p7-custom-construction.test.mjs",
+  "tests/vehicle-universal-phase4e-p8-install-procedure.test.mjs",
+  "tests/vehicle-universal-phase4e-p9-installation-jobs.test.mjs",
+  "tests/vehicle-universal-phase4e-v2-rendering.test.mjs",
+  "tests/vehicle-universal-phase4e-v2-schema-integration.test.mjs"
+ ]
+}

@@ -8,7 +8,7 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { VehicleCrewAssignmentService } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-assignment-service.js";
-import { resolveWeaponOperatorStation } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js";
+import { resolveWeaponOperatorStation } from "/systems/foundryvtt-swse/scripts/actors/vehicle/weapon-station-mapping.js";
 import { recordMutationReceipt } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-diagnostics-log.js";
 
 function structuredResult({ ok, stationKey = null, mutationReceipt = null, error = null }) {

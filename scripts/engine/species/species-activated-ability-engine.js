@@ -5,6 +5,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { PoisonEngine } from "/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js";
 import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 const SIZE_ORDER = ['Fine', 'Diminutive', 'Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan', 'Colossal'];
@@ -90,9 +91,7 @@ export class SpeciesActivatedAbilityEngine {
       targetLines.push(`<li>${escapeHtml(targetActor.name)}: Fortitude ${fortitude}; ${hit ? 'hit' : 'miss'} (${hit ? damageRoll.total : Math.floor(damageRoll.total / 2)} sonic damage${hit ? '' : ', half on miss'}).</li>`);
     }
 
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: [
+    await SWSEChat.postHTML({ actor, content: [
         `<h2>${escapeHtml(actor.name)} uses Bellow</h2>`,
         `<p><strong>Attack:</strong> ${attackRoll.total} vs Fortitude in a 6-square cone.</p>`,
         `<p><strong>Damage:</strong> ${damageFormula} sonic = ${damageRoll.total}; half damage on miss.</p>`,
@@ -100,8 +99,7 @@ export class SpeciesActivatedAbilityEngine {
         hasDevastating ? `<p><em>Devastating Bellow:</em> base damage is 4d6.</p>` : '',
         hasStrong ? `<p><em>Strong Bellow:</em> first condition step is negated.</p>` : '',
         targetLines.length ? `<ul>${targetLines.join('')}</ul>` : `<p>No targets selected; compare the attack result to each target's Fortitude Defense.</p>`
-      ].join('')
-    });
+      ].join('') });
 
     if (conditionCost > 0) {
       await applyConditionSteps(actor, conditionCost, { source: 'Ithorian Bellow', persistent: true });
@@ -139,14 +137,11 @@ export class SpeciesActivatedAbilityEngine {
       results.push(`<li>${escapeHtml(targetActor.name)}: Will ${will}; ${immune ? 'immune (Indomitable)' : success ? '<strong>confused</strong>' : 'resists'}.</li>`);
     }
 
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: [
+    await SWSEChat.postHTML({ actor, content: [
         `<h2>${escapeHtml(actor.name)} uses Confusion</h2>`,
         `<p><strong>Deception:</strong> ${roll.total} vs Will Defense of targets within 6 squares.</p>`,
         results.length ? `<ul>${results.join('')}</ul>` : `<p>No targets selected; compare ${roll.total} to each target's Will Defense.</p>`
-      ].join('')
-    });
+      ].join('') });
 
     return { success: true, abilityId: 'confusion', total: roll.total, targetCount: targets.length };
   }
@@ -180,10 +175,7 @@ export class SpeciesActivatedAbilityEngine {
         flags: { swse: { speciesAbility: 'pacifism', mindAffecting: true, languageDependent: true, nonPhysicalCondition: true } }
       });
     }
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<h2>${escapeHtml(actor.name)} uses Pacifism</h2><p>Persuasion ${roll.total} vs ${escapeHtml(targetActor.name)}'s Will ${will}: ${immune ? 'immune (Indomitable); no Condition Track movement.' : success ? '<strong>success</strong>; target moves -1 step on the Condition Track.' : 'no effect'}.</p>`
-    });
+    await SWSEChat.postHTML({ actor, content: `<h2>${escapeHtml(actor.name)} uses Pacifism</h2><p>Persuasion ${roll.total} vs ${escapeHtml(targetActor.name)}'s Will ${will}: ${immune ? 'immune (Indomitable); no Condition Track movement.' : success ? '<strong>success</strong>; target moves -1 step on the Condition Track.' : 'no effect'}.</p>` });
     return { success, immune: !!immune, abilityId: 'pacifism', total: roll.total, target: targetActor.id };
   }
 
@@ -220,10 +212,7 @@ export class SpeciesActivatedAbilityEngine {
         flags: { swse: { speciesAbility: 'pheromones', immuneToSourceActor: actor.id } }
       });
     }
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<h2>${escapeHtml(actor.name)} uses Pheromones</h2><p>Special attack ${roll.total} vs ${escapeHtml(targetActor.name)}'s Fortitude ${fortitude}: ${success ? '<strong>success</strong>; target moves -1 step on the Condition Track.' : 'resisted; target is immune to this Falleen\'s Pheromones for 24 hours'}.</p>`
-    });
+    await SWSEChat.postHTML({ actor, content: `<h2>${escapeHtml(actor.name)} uses Pheromones</h2><p>Special attack ${roll.total} vs ${escapeHtml(targetActor.name)}'s Fortitude ${fortitude}: ${success ? '<strong>success</strong>; target moves -1 step on the Condition Track.' : 'resisted; target is immune to this Falleen\'s Pheromones for 24 hours'}.</p>` });
     return { success, abilityId: 'pheromones', total: roll.total, target: targetActor.id };
   }
 
@@ -250,10 +239,7 @@ export class SpeciesActivatedAbilityEngine {
         flags: { swse: { speciesAbility: 'startle', reactionTrigger: 'attacked', attackPenalty: -5, expiresAfterAttack: true } }
       });
     }
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<h2>${escapeHtml(actor.name)} uses Startle</h2><p>Reaction: Deception ${roll.total} vs ${escapeHtml(targetActor.name)}'s Will ${will}: ${success ? '<strong>success</strong>; triggering attack takes -5.' : 'no effect'}.</p>`
-    });
+    await SWSEChat.postHTML({ actor, content: `<h2>${escapeHtml(actor.name)} uses Startle</h2><p>Reaction: Deception ${roll.total} vs ${escapeHtml(targetActor.name)}'s Will ${will}: ${success ? '<strong>success</strong>; triggering attack takes -5.' : 'no effect'}.</p>` });
     return { success, abilityId: 'startle', total: roll.total, target: targetActor.id };
   }
 
@@ -267,17 +253,14 @@ export class SpeciesActivatedAbilityEngine {
       return { success: false, abilityId: 'rage', ...result };
     }
 
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: [
+    await SWSEChat.postHTML({ actor, content: [
         `<h2>${escapeHtml(actor.name)} enters Rage</h2>`,
         `<p><strong>Duration:</strong> ${result.duration} round${result.duration === 1 ? '' : 's'}.</p>`,
         `<p><strong>Bonus:</strong> +${RageEngine.getRageAttackDamageBonus(actor)} Rage bonus to melee attack rolls and melee damage rolls.</p>`,
         `<p><strong>Uses:</strong> ${result.usesSpent}/${result.usesPerDay} spent today.</p>`,
         `<p><strong>Aftereffect:</strong> When Rage ends, the actor moves -1 persistent step on the Condition Track.</p>`,
         action?.canEndAtWill ? `<p><em>Controlled Rage:</em> Rage may be ended at will.</p>` : ''
-      ].join('')
-    });
+      ].join('') });
     return { success: true, abilityId: 'rage', ...result };
   }
 
@@ -286,14 +269,11 @@ export class SpeciesActivatedAbilityEngine {
     const naturalBonus = Number(ability?.checkBonus || 0) || 0;
     const check = getForceLikeCheck(actor, { bonus: naturalBonus });
     const roll = await rollFormula(`1d20 + ${check.bonus}`);
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: [
+    await SWSEChat.postHTML({ actor, content: [
         `<h2>${escapeHtml(actor.name)} uses ${escapeHtml(item?.name || 'Species Telepathy')}</h2>`,
         `<p><strong>Check:</strong> ${roll.total} (${escapeHtml(check.label)}${naturalBonus ? `, +${naturalBonus} species bonus` : ''}).</p>`,
         `<p>${escapeHtml(ability?.description || item?.system?.description || 'This is a species-granted Force-like communication ability. The GM adjudicates range, willingness, and target limits from the trait text.')}</p>`
-      ].join('')
-    });
+      ].join('') });
     return { success: true, abilityId: 'telepathy', total: roll.total, checkMode: check.mode };
   }
 
@@ -341,10 +321,7 @@ export class SpeciesActivatedAbilityEngine {
       'flags.swse.shapeshift.hasMetamorph': hasMetamorph
     });
 
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<h2>${escapeHtml(actor.name)} shapeshifts</h2><p>Gains +10 Species bonus to Deception checks made to disguise appearance for ${rounds} round${rounds === 1 ? '' : 's'}.</p>${sizeEffect ? `<p><strong>Metamorph:</strong> ${escapeHtml(sizeEffect.description)}</p>` : ''}`
-    });
+    await SWSEChat.postHTML({ actor, content: `<h2>${escapeHtml(actor.name)} shapeshifts</h2><p>Gains +10 Species bonus to Deception checks made to disguise appearance for ${rounds} round${rounds === 1 ? '' : 's'}.</p>${sizeEffect ? `<p><strong>Metamorph:</strong> ${escapeHtml(sizeEffect.description)}</p>` : ''}` });
 
     return { success: true, abilityId: 'shapeshift', rounds, mode: sizeMode };
   }
@@ -380,10 +357,7 @@ export class SpeciesActivatedAbilityEngine {
       // (a wall-clock `expiresAt` was removed: it had no reader, and a combat-round duration is tracked by the effect's durationRounds)
     });
 
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<h2>${escapeHtml(actor.name)} uses Energy Surge</h2><p>For ${rounds} round${rounds === 1 ? '' : 's'}, gains +2 to Dexterity-based checks and attacks and base speed rises to 8 squares. When it expires, apply a -1 persistent step on the Condition Track.</p>`
-    });
+    await SWSEChat.postHTML({ actor, content: `<h2>${escapeHtml(actor.name)} uses Energy Surge</h2><p>For ${rounds} round${rounds === 1 ? '' : 's'}, gains +2 to Dexterity-based checks and attacks and base speed rises to 8 squares. When it expires, apply a -1 persistent step on the Condition Track.</p>` });
 
     return { success: true, abilityId: 'energy-surge', rounds, speedBonus };
   }
@@ -412,10 +386,7 @@ export class SpeciesActivatedAbilityEngine {
       await ActorEngine.updateActor(actor, {
         'flags.swse.roller.active': false
       });
-      await ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: `<h2>${escapeHtml(actor.name)} stops rolling</h2><p>Roller movement mode ends. Remove the Roller ActiveEffect if it remains on the actor.</p>`
-      });
+      await SWSEChat.postHTML({ actor, content: `<h2>${escapeHtml(actor.name)} stops rolling</h2><p>Roller movement mode ends. Remove the Roller ActiveEffect if it remains on the actor.</p>` });
       return { success: true, abilityId: 'roller', active: false };
     }
     await createStatusEffect(actor, {
@@ -430,10 +401,7 @@ export class SpeciesActivatedAbilityEngine {
       flags: { swse: { speciesAbility: 'roller', toggle: true } }
     });
     await ActorEngine.updateActor(actor, { 'flags.swse.roller.active': true });
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<h2>${escapeHtml(actor.name)} uses Roller</h2><p>Base speed increases by 4 squares while rolled up; actions are restricted by the trait text.</p>`
-    });
+    await SWSEChat.postHTML({ actor, content: `<h2>${escapeHtml(actor.name)} uses Roller</h2><p>Base speed increases by 4 squares while rolled up; actions are restricted by the trait text.</p>` });
     return { success: true, abilityId: 'roller', active: true };
   }
 
@@ -452,16 +420,13 @@ export class SpeciesActivatedAbilityEngine {
       const hit = dcDamage > 0 && roll.total >= reflex;
       targetLine = `<p>${escapeHtml(targetActor.name)} Reflex ${reflex}; ${hit ? `<strong>hit</strong> for ${damageRoll.total} damage.` : 'no damage.'}</p>`;
     }
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: [
+    await SWSEChat.postHTML({ actor, content: [
         `<h2>${escapeHtml(actor.name)} uses Force Blast</h2>`,
         `<p>Racial Force Blast check: ${roll.total} (${escapeHtml(forceCheck.label)}). ${dcDamage > 0 ? `Damage tier ${dcDamage}d6.` : 'Below DC 15; no effect and use is spent.'}</p>`,
         spendFp ? `<p>Force Point damage bonus: +${fpBonus}.</p>` : '',
         damageRoll ? `<p><strong>Damage:</strong> ${damageFormula} = ${damageRoll.total}</p>` : '',
         targetLine
-      ].join('')
-    });
+      ].join('') });
     return { success: dcDamage > 0, abilityId: 'force-blast', total: roll.total, checkMode: forceCheck.mode, damageFormula, damageTotal: damageRoll?.total ?? 0 };
   }
 }

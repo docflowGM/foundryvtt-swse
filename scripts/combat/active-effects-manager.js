@@ -10,6 +10,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { normalizeActiveEffectChangeForRuntime } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
+import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/utils/responsible-gm.js";
 
 export class SWSEActiveEffectsManager {
 
@@ -364,12 +365,14 @@ export class SWSEActiveEffectsManager {
 
     this._registerStatusEffects();
 
-    Hooks.on('updateActor', (actor, changes) => {
+    Hooks.on('updateActor', (actor, changes, _options, userId) => {
+      if (userId !== undefined && userId !== game.user?.id) return; // originating client only (hook fires on every client)
       const ct = changes?.system?.conditionTrack?.current;
       if (ct !== undefined) this.applyConditionEffect(actor, ct);
     });
 
     Hooks.on('combatTurn', async combat => {
+      if (!isResponsibleGM()) return; // fires on every client; expire effects once
       const actor = combat.combatant?.actor;
       if (!actor) return;
 

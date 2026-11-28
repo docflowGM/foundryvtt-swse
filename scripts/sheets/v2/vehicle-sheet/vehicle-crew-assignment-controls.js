@@ -44,12 +44,76 @@ function withPendingButton(button, handler) {
   };
 }
 
+function htmlEscape(value) {
+  const div = document.createElement('div');
+  div.textContent = value == null ? '' : String(value);
+  return div.innerHTML;
+}
+
+/**
+ * Crew picker dialog. Moved here from VehicleCrewAssignmentService (F-VEH-004): the engine service must not build HTML or open dialogs; it keeps the
+ * permission/eligibility/assignment logic this picker calls.
+ */
+async function openCrewPicker(vehicle, station, options = {}) {
+  const V = VehicleCrewAssignmentService;
+  if (!V.canEdit(vehicle)) {
+    ui?.notifications?.warn?.(`You do not have permission to modify ${vehicle?.name || 'this vehicle'}'s crew.`);
+    return null;
+  }
+
+  const targetStation = V.canonicalStationKey(vehicle, station);
+  if (!targetStation) {
+    ui?.notifications?.error?.(`"${station}" is not a valid crew station on ${vehicle?.name || 'this vehicle'}.`);
+    return null;
+  }
+
+  const actors = V.listEligibleCrewActors(vehicle);
+  if (!actors.length) {
+    ui?.notifications?.warn?.('No character, NPC, or droid actors are available to assign as crew.');
+    return null;
+  }
+
+  const current = vehicle?.system?.crewPositions?.[targetStation];
+  const currentUuid = typeof current === 'string' ? current : current?.uuid;
+  const optionsHtml = actors.map((actor) => {
+    const selected = actor.uuid === currentUuid ? ' selected' : '';
+    return `<option value="${htmlEscape(actor.uuid)}"${selected}>${htmlEscape(actor.name)} (${htmlEscape(actor.type)})</option>`;
+  }).join('');
+
+  const content = `
+    <form class="swse-vehicle-crew-picker">
+      <p>Assign a character, NPC, or droid to <strong>${htmlEscape(V.labelForStation(vehicle, targetStation))}</strong> aboard <strong>${htmlEscape(vehicle?.name || 'this vehicle')}</strong>.</p>
+      <label class="swse-vehicle-crew-picker-row">
+        <span>Crew actor</span>
+        <select name="crewUuid">${optionsHtml}</select>
+      </label>
+    </form>
+  `;
+
+  const chosenUuid = await SWSEDialogV2.prompt({
+    title: `Assign ${V.labelForStation(vehicle, targetStation)}`,
+    content,
+    label: 'Assign Crew',
+    callback: (html) => html?.find?.('[name="crewUuid"]')?.val?.() || html?.[0]?.querySelector?.('[name="crewUuid"]')?.value || null,
+    options: { width: options.width || 420 }
+  });
+
+  if (!chosenUuid) return null;
+  const crewActor = await fromUuid(chosenUuid);
+  if (!V.canBeCrew(crewActor)) {
+    ui?.notifications?.warn?.('Selected document is not a valid crew actor.');
+    return null;
+  }
+  const result = await V.assignCrew(vehicle, targetStation, crewActor, { source: 'vehicle-crew-picker' });
+  return result.ok ? crewActor : null;
+}
+
 function bindAssignmentButtons(vehicle, root, signal) {
   root.querySelectorAll('[data-action="vehicle-assign-crew"]').forEach((button) => {
     button.addEventListener('click', withPendingButton(button, async () => {
       const station = button.dataset.station;
       if (!station) return;
-      await VehicleCrewAssignmentService.openCrewPicker(vehicle, station);
+      await openCrewPicker(vehicle, station);
     }), { signal });
   });
 

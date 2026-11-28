@@ -6,6 +6,7 @@
 // Legacy/custom weapons and canonical forms with no temporal constraint pass straight through: nothing is read or written.
 import { evaluateReadiness, stateAfterFire, stateAfterReload, evaluatePrime, statePrimed, evaluateBrace } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/fire-state.js";
 import { resolveAttackShapeFor, resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { readFireState, ownedConfigurationSelection } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-read.js";
 import { isWeaponReadied } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { hostEligibility } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/host-mount.js";
 import { resolveEffectiveWieldingSize, resolveHeldGroup, sizeStateOf, sizeIndexOf } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js";
@@ -23,7 +24,7 @@ export function currentClock(actor, combat = globalThis.game?.combat) {
   return inCombat ? { combatId: combat.id, round: Number(combat.round) } : null;
 }
 
-export const readFireState = (weapon) => weapon?.flags?.swse?.fireState ?? weapon?.getFlag?.('swse', 'fireState') ?? null;
+export { readFireState, ownedConfigurationSelection };
 
 /** Abilities active on this attack, normalized (option ids and the feats that provide them), for ability-triggered resets. */
 function triggeredAbilities(actor, rollOptions = {}) {
@@ -417,15 +418,6 @@ export function planWielding(weapon, hands) {
   const stored = readFireState(weapon);
   if (!stored || typeof stored !== 'object') patch[`${FLAG_PATH}.v`] = 1;
   return { ok: true, patch };
-}
-
-/** The owned configuration selection that decides the weapon's SHAPE (and so its required hands); nothing else, so it cannot recurse into readiness. */
-export function ownedConfigurationSelection(weapon) {
-  const state = readFireState(weapon);
-  if (!state || typeof state.configurationId !== 'string') return {};
-  let shape;
-  try { shape = shapeOfWeapon(weapon, {}); } catch { return {}; }
-  return shape.source === 'canonical' && shape.configuration?.ids?.includes(state.configurationId) ? { configurationId: state.configurationId } : {};
 }
 
 /**

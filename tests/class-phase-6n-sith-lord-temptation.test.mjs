@@ -76,21 +76,22 @@ test('Force and Destiny triggers originate only from their own finalized receipt
  // deferResourceEvent are replaced by durable outboxes recorded in ActorEngine.finalize{Force,Destiny}PointSpend. Behavior is
  // proven in class-force-v2-temptation-trigger.test.mjs; these are structural guards on the same design.
  const ae=read('scripts/governance/actor-engine/actor-engine.js');
+ const pl=read('scripts/governance/actor-engine/point-ledgers.js'); // 3N-AE.4: ledger operations live here (delegates remain in ActorEngine)
  assert.doesNotMatch(ae,/swse\.resourceSpent/,'no ad-hoc spend event exists anywhere in ActorEngine');
  assert.doesNotMatch(ae,/deferResourceEvent/);
- const fp=ae.slice(ae.indexOf('async spendForcePoints('),ae.indexOf('async rollbackForcePointSpend('));
+ const fp=pl.slice(pl.indexOf('async function spendForcePoints('),pl.indexOf('async function rollbackForcePointSpend('));
  assert.match(fp,/spendEvidence: captureSpendEvidence\(actor, 'force'\)/,'spend-time evidence is captured on the receipt');
- const fin=ae.slice(ae.indexOf('async finalizeForcePointSpend('),ae.indexOf('async dispatchForcePointTriggers('));
+ const fin=pl.slice(pl.indexOf('async function finalizeForcePointSpend('),pl.indexOf('async function dispatchForcePointTriggers('));
  assert.match(fin,/state: 'finalized', \.\.\.\(trigger/,'the trigger is recorded in the same write that finalizes the receipt');
- assert.ok(fin.indexOf("await this.updateActor(actor, { 'flags.swse.forcePointLedger'")<fin.indexOf('this.dispatchForcePointTriggers('),
+ assert.ok(fin.indexOf("await engine.updateActor(actor, { 'flags.swse.forcePointLedger'")<fin.indexOf('engine.dispatchForcePointTriggers('),
    'finality is persisted before any delivery');
  assert.match(fin,/firstFinalization/,'only the first committed->finalized transition delivers');
  // Destiny: its OWN ledger, atomic with the debit, its own finalize/outbox; never the Force Point ledger.
- const dp=ae.slice(ae.indexOf('async spendDestinyPoints('),ae.indexOf('async rollbackDestinyPointSpend('));
+ const dp=pl.slice(pl.indexOf('async function spendDestinyPoints('),pl.indexOf('async function rollbackDestinyPointSpend('));
  assert.match(dp,/'system\.destinyPoints\.value': newDP,\s*'flags\.swse\.destinyPointLedger'/,'pool debit and Destiny receipt are ONE write');
  assert.doesNotMatch(dp,/forcePointLedger/,'a Destiny spend never touches the Force Point ledger');
  assert.match(dp,/spendEvidence: captureSpendEvidence\(actor, 'destiny'\)/);
- const dfin=ae.slice(ae.indexOf('async finalizeDestinyPointSpend('),ae.indexOf('async dispatchDestinyPointTriggers('));
+ const dfin=pl.slice(pl.indexOf('async function finalizeDestinyPointSpend('),pl.indexOf('async function dispatchDestinyPointTriggers('));
  assert.match(dfin,/state: 'finalized', \.\.\.\(trigger/);
  assert.doesNotMatch(dfin,/forcePointLedger/);
  const base=read('scripts/actors/base/swse-actor-base.js');

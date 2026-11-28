@@ -1,0 +1,1407 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "feats",
+ "name": "Feats",
+ "kind": "mechanical",
+ "files": 720,
+ "runtimeSloc": 22888,
+ "runtimeFiles": 105,
+ "counts": {
+  "files": 720,
+  "runtimeModules": 105,
+  "runtimeSloc": 22888,
+  "reachability": {
+   "reachable-static": 55,
+   "orphan-unreferenced": 49,
+   "reachable-dynamic": 1
+  },
+  "nonRuntimeByRole": {
+   "asset": 335,
+   "evidence-data": 14,
+   "data": 49,
+   "evidence-or-doc": 177,
+   "presentation-style": 2,
+   "presentation-template": 7,
+   "test": 15,
+   "tool": 16
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/registries/feat-registry.js",
+   "consumers": 32,
+   "sloc": 618,
+   "role": "registry",
+   "exports": [
+    "AmbiguousCanonicalFeatNameError",
+    "FeatRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 369
+  },
+  {
+   "path": "scripts/engine/feats/meta-resource-feat-resolver.js",
+   "consumers": 21,
+   "sloc": 857,
+   "role": "normalizer",
+   "exports": [
+    "MetaResourceFeatResolver",
+    "default"
+   ],
+   "writes": 4,
+   "actorEngineCalls": 9,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/feats/encounter-use-tracker.js",
+   "consumers": 9,
+   "sloc": 67,
+   "role": "module-with-writes",
+   "exports": [
+    "EncounterUseTracker",
+    "default"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/apps/choices/feat-choice-dialog.js",
+   "consumers": 8,
+   "sloc": 290,
+   "role": "presentation-with-writes",
+   "exports": [
+    "FeatChoiceDialog"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 1,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/feats/core-attack-option-action-economy.js",
+   "consumers": 5,
+   "sloc": 337,
+   "role": "module",
+   "exports": [
+    "getCoreAttackOptionEconomy",
+    "auditCoreAttackOptionEconomy",
+    "attackStandardCoveredByCharge",
+    "prepareCoreAttackOptionRollContext",
+    "spendCoreAttackOptionCosts",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/data/authority/feat-prerequisite-authority.js",
+   "consumers": 5,
+   "sloc": 2131,
+   "role": "engine-or-service",
+   "exports": [
+    "FEAT_PREREQUISITE_AUTHORITY",
+    "normalizeAuthorityKey"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 372
+  },
+  {
+   "path": "scripts/data/feat-domain-guard.js",
+   "consumers": 5,
+   "sloc": 40,
+   "role": "module",
+   "exports": [
+    "normalizeContentName",
+    "TALENT_ONLY_FEAT_CONTAMINANTS",
+    "CANONICAL_FEATS_SHARING_TALENT_NAMES",
+    "isTalentOnlyFeatContaminant",
+    "filterFeatDomainDocuments"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 369
+  },
+  {
+   "path": "scripts/engine/feats/condition-track-feat-actions.js",
+   "consumers": 4,
+   "sloc": 287,
+   "role": "module-with-writes",
+   "exports": [
+    "ConditionTrackFeatActions",
+    "default"
+   ],
+   "writes": 3,
+   "actorEngineCalls": 4,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/feats/force-point-feat-rules.js",
+   "consumers": 4,
+   "sloc": 211,
+   "role": "engine-or-service",
+   "exports": [
+    "ForcePointFeatRules",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/registries/feat-pack-seeder.js",
+   "consumers": 4,
+   "sloc": 309,
+   "role": "module-with-writes",
+   "exports": [
+    "FeatPackSeeder",
+    "seedFeatPackIfEmpty",
+    "loadFeatCatalogDocuments"
+   ],
+   "writes": 3,
+   "actorEngineCalls": 0,
+   "ciTests": 369
+  },
+  {
+   "path": "scripts/engine/feats/action-speed-runtime-patches.js",
+   "consumers": 3,
+   "sloc": 175,
+   "role": "module",
+   "exports": [
+    "registerActionSpeedRuntimePatches",
+    "resolveActionCost",
+    "resolveActionComposition",
+    "getActionSpeedMutations",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/feats/grapple-feat-normalization-hooks.js",
+   "consumers": 2,
+   "sloc": 248,
+   "role": "normalizer",
+   "exports": [
+    "rulesForFeat",
+    "registerGrappleFeatNormalizationHooks",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 1,
+   "ciTests": 1
+  },
+  {
+   "path": "scripts/engine/feats/grapple-rules-reader.js",
+   "consumers": 2,
+   "sloc": 29,
+   "role": "engine-or-service",
+   "exports": [
+    "normalizeFeatName",
+    "actorHasFeat",
+    "actorGrappleRules",
+    "findGrappleRule"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 356
+  },
+  {
+   "path": "scripts/engine/feats/skill-feat-runtime-patches.js",
+   "consumers": 2,
+   "sloc": 427,
+   "role": "module-with-writes",
+   "exports": [
+    "SkillFeatRuntime",
+    "registerSkillFeatRuntimePatches",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/feat/scoped-combat-feat-resolver.js",
+   "consumers": 2,
+   "sloc": 117,
+   "role": "normalizer",
+   "exports": [
+    "ScopedCombatFeatResolver",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/engine/features/feat-effect-registry.js",
+   "consumers": 2,
+   "sloc": 81,
+   "role": "registry",
+   "exports": [
+    "FeatEffectRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/utils/feat-actions-mapper.js",
+   "consumers": 2,
+   "sloc": 156,
+   "role": "normalizer",
+   "exports": [
+    "FeatActionsMapper"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 2,
+   "ciTests": 9
+  },
+  {
+   "path": "scripts/engine/feats/area-explosives-feat-normalization-hooks.js",
+   "consumers": 1,
+   "sloc": 283,
+   "role": "normalizer",
+   "exports": [
+    "registerAreaExplosivesFeatNormalizationHooks",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 1,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/feats/attack-options-feat-normalization-hooks.js",
+   "consumers": 1,
+   "sloc": 151,
+   "role": "normalizer",
+   "exports": [
+    "registerAttackOptionsFeatNormalizationHooks",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 1,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/feats/combat-feat-damage-rule-resolver.js",
+   "consumers": 1,
+   "sloc": 223,
+   "role": "normalizer",
+   "exports": [
+    "CombatFeatDamageRuleResolver",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 1,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/feats/combat-feat-damage-runtime-patches.js",
+   "consumers": 1,
+   "sloc": 98,
+   "role": "module",
+   "exports": [
+    "registerCombatFeatDamageRuntimePatches",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+   "consumers": 1,
+   "sloc": 356,
+   "role": "normalizer",
+   "exports": [
+    "registerCoreAttackOptionNormalizationHooks",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 1,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/feats/core-attack-option-runtime-patches.js",
+   "consumers": 1,
+   "sloc": 165,
+   "role": "module",
+   "exports": [
+    "registerCoreAttackOptionRuntimePatches",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/feats/core-combat-reaction-normalization-hooks.js",
+   "consumers": 1,
+   "sloc": 170,
+   "role": "normalizer",
+   "exports": [
+    "registerCoreCombatReactionNormalizationHooks",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 1,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/feats/core-combat-reaction-runtime-patches.js",
+   "consumers": 1,
+   "sloc": 401,
+   "role": "module",
+   "exports": [
+    "CoreCombatReactionFeatActions",
+    "registerCoreCombatReactionRuntimePatches",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/data/authority/feat-prerequisite-authority.js",
+   "sloc": 2131,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/feats/meta-resource-feat-resolver.js",
+   "sloc": 857,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/feats/skill-feat-expanded-normalization-hooks.js",
+   "sloc": 699,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/registries/feat-registry.js",
+   "sloc": 618,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/feats/droid-combat-runtime-patches.js",
+   "sloc": 507,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/feats/droid-combat-feat-normalization-hooks.js",
+   "sloc": 442,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/feats/skill-feat-runtime-patches.js",
+   "sloc": 427,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/feats/core-combat-reaction-runtime-patches.js",
+   "sloc": 401,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/feats/unarmed-style-feat-normalization-hooks.js",
+   "sloc": 372,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/engine/feats/rebellion-species-skill-feat-normalization-hooks.js",
+   "sloc": 357,
+   "reach": "orphan-unreferenced"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/engine/feats/skill-feat-expanded-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 699,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/unarmed-style-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 372,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/rebellion-species-skill-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 357,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/galaxy-intrigue-combat-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 347,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/mobility-positioning-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 346,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/skill-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 338,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 321,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/area-explosives-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 290,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/rebellion-combat-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 275,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/team-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 271,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/force-scoundrel-combat-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 259,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/remaining-weapon-armor-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 258,
+   "tests": 0
+  },
+  {
+   "path": "scripts/registries/feat-stub-pack.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 223,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/legacy-clone-combat-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 221,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/combat-feat-runtime-support.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 219,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/galaxy-intrigue-combat-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 219,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/defense-avoidance-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 215,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/weapon-leftover-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 215,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/skill-feat-expanded-addendum-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 210,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/force-scoundrel-combat-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 191,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/weapon-armor-rider-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 190,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/weapon-foundation-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 186,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/weapon-autofire-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 181,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/rebellion-combat-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 177,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/return-fire-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 175,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/second-wind-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 174,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/unknown-regions-weapon-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 171,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/return-fire-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 167,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/combat-mobility-power-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 166,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/legacy-clone-combat-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 165,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/starship-vehicle-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 161,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/condition-track-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 159,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/unknown-regions-combat-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 156,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/sport-hunter-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 146,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/weapon-armor-rider-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 130,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/attack-negation-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 127,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/combat-mobility-power-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 127,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/martial-arts-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 122,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/relentless-attack-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 121,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/starship-vehicle-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 119,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/weapon-autofire-rider-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 113,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/ability-meta-schema-default-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 111,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/weapon-critical-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 110,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/sport-hunter-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 104,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/action-speed-feat-resolver.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 103,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/attack-negation-feat-normalization-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 93,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/unknown-regions-combat-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 88,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/weapon-miss-rider-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 79,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/feats/force-point-service-runtime-patches.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 61,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 86,
+  "actor-core": 62,
+  "combat": 53,
+  "equipment": 5,
+  "abilities-effects": 4,
+  "skills": 4,
+  "progression": 3,
+  "force": 3,
+  "rolls": 3,
+  "data-registries": 2,
+  "ui-shell": 1,
+  "customization": 1,
+  "chat": 1
+ },
+ "dependedOnByDomains": {
+  "progression": 16,
+  "combat": 14,
+  "infrastructure": 11,
+  "ui-shell": 9,
+  "actor-core": 6,
+  "force": 4,
+  "npc-followers": 4,
+  "rolls": 4,
+  "mentor-suggestion": 3,
+  "equipment": 3,
+  "data-registries": 1,
+  "dev-tooling": 1,
+  "customization": 1,
+  "abilities-effects": 1,
+  "skills": 1,
+  "houserules": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 15,
+   "sites": [
+    {
+     "path": "scripts/engine/feats/condition-track-feat-actions.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      57,
+      193,
+      310
+     ]
+    },
+    {
+     "path": "scripts/registries/feat-pack-seeder.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      193,
+      203,
+      316
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/encounter-use-tracker.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      71,
+      133
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/force-point-feat-actions.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      186,
+      227
+     ]
+    },
+    {
+     "path": "scripts/apps/choices/feat-choice-dialog.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      317
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/combat-feat-damage-rule-resolver.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      146
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/feat-action-listeners.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      122
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/meta-resource-feat-resolver.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      1073
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/skill-feat-runtime-patches.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      116
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A04-presentation-direct-writes",
+   "invariant": "A-04",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/apps/choices/feat-choice-dialog.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      317
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A05-chat-outside-swse-chat",
+   "invariant": "A-05",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/engine/feats/grapple-runtime-patches.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      334
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A16-module-caches",
+   "invariant": "A-16",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/registries/feat-registry.js",
+     "maps": 6,
+     "cacheMentions": 7,
+     "hasInvalidate": true
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "damage-threshold",
+   "otherDomains": [
+    "combat",
+    "infrastructure"
+   ],
+   "sites": [
+    "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js:17 hasDamageThresholdRule",
+    "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js:133 normalizeDamageThresholdFeat",
+    "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js:165 registerDamageThresholdFeatNormalizationHooks",
+    "scripts/engine/feats/meta-resource-feat-resolver.js:189 getDamageThresholdRules"
+   ]
+  },
+  {
+   "responsibility": "ability-modifier",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "force",
+    "infrastructure",
+    "mentor-suggestion",
+    "npc-followers",
+    "progression",
+    "rolls",
+    "species",
+    "talents",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/engine/feats/core-combat-reaction-runtime-patches.js:32 abilityMod",
+    "scripts/engine/feats/droid-combat-runtime-patches.js:120 getAbilityModifier",
+    "scripts/engine/feats/force-training-entitlement-runtime-patches.js:76 getAbilityModifier",
+    "scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js:85 abilityMod",
+    "scripts/engine/feats/skill-feat-runtime-patches.js:180 actorAbilityMod"
+   ]
+  },
+  {
+   "responsibility": "grapple",
+   "otherDomains": [
+    "combat"
+   ],
+   "sites": [
+    "scripts/engine/feats/grapple-feat-actions.js:154 getGrappleRiders",
+    "scripts/engine/feats/meta-resource-feat-resolver.js:1020 getGrappleResistanceBonus"
+   ]
+  },
+  {
+   "responsibility": "price-computation",
+   "otherDomains": [
+    "combat",
+    "customization",
+    "droids",
+    "equipment",
+    "mentor-suggestion",
+    "skills",
+    "store-economy"
+   ],
+   "sites": [
+    "scripts/engine/feats/action-speed-runtime-patches.js:61 resolveActionCost"
+   ]
+  },
+  {
+   "responsibility": "modifier-aggregation",
+   "otherDomains": [
+    "abilities-effects",
+    "combat",
+    "equipment",
+    "rolls",
+    "skills",
+    "species"
+   ],
+   "sites": [
+    "scripts/engine/feats/defense-feat-runtime-patches.js:23 collectStaticDefenseFeatModifiers"
+   ]
+  },
+  {
+   "responsibility": "second-wind",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "holonet",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/engine/feats/meta-resource-feat-resolver.js:230 getSecondWindRules"
+   ]
+  }
+ ],
+ "exactClones": [
+  {
+   "tokens": 191,
+   "sites": [
+    "scripts/engine/feats/remaining-weapon-armor-feat-normalization-hooks.js:30 selectedChoiceFromItem",
+    "scripts/engine/feats/return-fire-feat-normalization-hooks.js:33 selectedChoiceFromItem",
+    "scripts/engine/feats/unknown-regions-weapon-feat-normalization-hooks.js:28 selectedChoiceFromItem",
+    "scripts/engine/feats/weapon-autofire-feat-normalization-hooks.js:27 selectedChoiceFromItem",
+    "scripts/engine/feats/weapon-critical-feat-normalization-hooks.js:28 selectedChoiceFromItem",
+    "scripts/engine/feats/weapon-foundation-feat-normalization-hooks.js:29 selectedChoiceFromItem",
+    "scripts/engine/feats/weapon-leftover-feat-normalization-hooks.js:30 selectedChoiceFromItem"
+   ]
+  },
+  {
+   "tokens": 126,
+   "sites": [
+    "scripts/engine/feats/droid-combat-runtime-patches.js:57 weaponText",
+    "scripts/engine/feats/legacy-clone-combat-runtime-patches.js:45 weaponText",
+    "scripts/engine/feats/rebellion-combat-runtime-patches.js:45 weaponText"
+   ]
+  },
+  {
+   "tokens": 158,
+   "sites": [
+    "scripts/engine/feats/force-point-feat-actions.js:62 buildBonusPool",
+    "scripts/engine/force/force-executor.js:681"
+   ]
+  },
+  {
+   "tokens": 156,
+   "sites": [
+    "scripts/engine/feats/combat-mobility-power-runtime-patches.js:30 abilityScore",
+    "scripts/engine/feats/core-attack-option-runtime-patches.js:36 abilityScore"
+   ]
+  }
+ ],
+ "duplicateSymbolNames": [
+  {
+   "name": "FeatRegistry",
+   "files": [
+    "scripts/engine/progression/feats/feat-registry-ui.js",
+    "scripts/engine/progression/feats/feat-registry.js",
+    "scripts/engine/registries/feat-registry.js",
+    "scripts/registries/feat-registry.js"
+   ]
+  },
+  {
+   "name": "normalizeAuthorityKey",
+   "files": [
+    "scripts/data/authority/authority-key-normalizer.js",
+    "scripts/data/authority/feat-prerequisite-authority.js",
+    "scripts/data/authority/talent-prerequisite-authority.js"
+   ]
+  },
+  {
+   "name": "getSelectableAttackAdvisories",
+   "files": [
+    "scripts/engine/feats/defense-avoidance-runtime-patches.js",
+    "scripts/engine/feats/mobility-positioning-runtime-patches.js"
+   ]
+  },
+  {
+   "name": "rulesForFeat",
+   "files": [
+    "scripts/engine/feats/grapple-feat-normalization-hooks.js",
+    "scripts/engine/feats/skill-feat-normalization-hooks.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "ready",
+   "sites": [
+    "scripts/engine/feats/core-combat-reaction-runtime-patches.js:439"
+   ]
+  },
+  {
+   "name": "createItem",
+   "sites": [
+    "scripts/engine/feats/area-explosives-feat-normalization-hooks.js:298",
+    "scripts/engine/feats/attack-options-feat-normalization-hooks.js:161",
+    "scripts/engine/feats/core-attack-option-normalization-hooks.js:377",
+    "scripts/engine/feats/core-combat-reaction-normalization-hooks.js:185",
+    "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js:166",
+    "scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js:314",
+    "scripts/engine/feats/droid-combat-feat-normalization-hooks.js:469",
+    "scripts/engine/feats/dual-weapon-mastery-normalization-hooks.js:81",
+    "scripts/engine/feats/force-point-feat-normalization-hooks.js:193",
+    "scripts/engine/feats/grapple-feat-normalization-hooks.js:290",
+    "scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js:92",
+    "scripts/engine/feats/mobility-positioning-feat-normalization-hooks.js:239",
+    "scripts/engine/feats/pistoleer-normalization-hooks.js:73",
+    "scripts/engine/feats/rage-feat-normalization-hooks.js:90",
+    "scripts/engine/feats/ranged-combat-feat-normalization-hooks.js:135",
+    "scripts/engine/feats/riflemaster-normalization-hooks.js:97",
+    "scripts/engine/feats/sniper-normalization-hooks.js:52",
+    "scripts/engine/feats/species-origin-feat-normalization-hooks.js:133",
+    "scripts/engine/features/feat-effect-applier.js:169"
+   ]
+  },
+  {
+   "name": "updateItem",
+   "sites": [
+    "scripts/engine/feats/area-explosives-feat-normalization-hooks.js:299",
+    "scripts/engine/feats/attack-options-feat-normalization-hooks.js:162",
+    "scripts/engine/feats/core-attack-option-normalization-hooks.js:378",
+    "scripts/engine/feats/core-combat-reaction-normalization-hooks.js:186",
+    "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js:167",
+    "scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js:315",
+    "scripts/engine/feats/droid-combat-feat-normalization-hooks.js:470",
+    "scripts/engine/feats/dual-weapon-mastery-normalization-hooks.js:82",
+    "scripts/engine/feats/force-point-feat-normalization-hooks.js:194",
+    "scripts/engine/feats/grapple-feat-normalization-hooks.js:291",
+    "scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js:93",
+    "scripts/engine/feats/mobility-positioning-feat-normalization-hooks.js:240",
+    "scripts/engine/feats/pistoleer-normalization-hooks.js:74",
+    "scripts/engine/feats/rage-feat-normalization-hooks.js:91",
+    "scripts/engine/feats/ranged-combat-feat-normalization-hooks.js:136",
+    "scripts/engine/feats/riflemaster-normalization-hooks.js:98",
+    "scripts/engine/feats/sniper-normalization-hooks.js:53",
+    "scripts/engine/feats/species-origin-feat-normalization-hooks.js:134"
+   ]
+  },
+  {
+   "name": "updateActor",
+   "sites": [
+    "scripts/engine/feats/core-combat-reaction-runtime-patches.js:396"
+   ]
+  },
+  {
+   "name": "deleteItem",
+   "sites": [
+    "scripts/engine/features/feat-effect-applier.js:175"
+   ]
+  },
+  {
+   "name": "createChatMessage",
+   "sites": [
+    "scripts/engine/feats/combat-feat-damage-runtime-patches.js:70"
+   ]
+  },
+  {
+   "name": "swse.damageApplied",
+   "sites": [
+    "scripts/engine/feats/core-combat-reaction-runtime-patches.js:417"
+   ]
+  },
+  {
+   "name": "swse.coupDeGrace",
+   "sites": [
+    "scripts/engine/feats/feat-action-listeners.js:149"
+   ]
+  },
+  {
+   "name": "swse.damage-before",
+   "sites": [
+    "scripts/engine/feats/feat-action-listeners.js:203"
+   ]
+  },
+  {
+   "name": "swse.grappleManeuver",
+   "sites": [
+    "scripts/engine/feats/feat-action-listeners.js:279"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "data/audits/feat-content-canonical-authority.json",
+  "data/audits/feat-phase-0-canonical-census.json",
+  "data/audits/feat-phase-1a-canonical-identity-manifest.json",
+  "data/audits/feat-phase-1b-repository-reconciliation.json",
+  "data/audits/feat-provenance-canonical-authority.json",
+  "data/audits/feat-tags-pass2-family-analysis-post-adjudication.json",
+  "data/audits/feat-tags-pass2-family-analysis.json",
+  "data/audits/feat-tags-pass2-owner-adjudication.json",
+  "data/audits/feat-tags-pass2-production-reconciliation.json",
+  "data/audits/feat-tags-pass2-semantic-authority.json",
+  "data/audits/feat-tags-pass2-skill-completeness-report.json",
+  "data/audits/feat-tags-production-reconciliation.json",
+  "data/audits/feat-tags-semantic-authority.json",
+  "data/audits/feat-tags-skill-completeness-report.json",
+  "docs/audits/area-explosives-feat-implementation-addendum-2026-07-03.json",
+  "docs/audits/attack-options-feat-implementation-addendum-2026-07-03.json",
+  "docs/audits/broad-combat-mechanics-feat-remaining-audit-2026-07-03.json",
+  "docs/audits/chat-feat-implementation-addendum-2026-07-06.json",
+  "docs/audits/class-phase-6c-starting-feats-bonus-feats-feature-unlocks.md",
+  "docs/audits/class-phase-6c-starting-feats-features-ledger.json",
+  "docs/audits/clone-wars-feat-runtime-addendum-2026-07-06.json",
+  "docs/audits/combat-feat-fully-implemented-note-2026-07-05.md",
+  "docs/audits/combat-feat-implementation-status-2026-07-06.json",
+  "docs/audits/combat-feat-implementation-status-addendum-2026-07-03.json",
+  "docs/audits/combat-feat-runtime-architecture.md",
+  "docs/audits/combat-mobility-power-feat-addendum-2026-07-06.json",
+  "docs/audits/damage-threshold-feat-implementation-addendum-2026-07-03.json",
+  "docs/audits/defense-avoidance-feat-implementation-addendum-2026-07-03.json",
+  "docs/audits/feat-bucket-taxonomy-skeleton.md",
+  "docs/audits/feat-choice-integrity-current-state.md",
+  "docs/audits/feat-content-authority-closeout.md",
+  "docs/audits/feat-content-canonical-authority.md",
+  "docs/audits/feat-effect-registry-migration.md",
+  "docs/audits/feat-implementation-audit.md",
+  "docs/audits/feat-implementation-readiness-clone-wars.md",
+  "docs/audits/feat-implementation-readiness-core-rulebook.md",
+  "docs/audits/feat-implementation-readiness-galaxy-at-war.md",
+  "docs/audits/feat-implementation-readiness-galaxy-intrigue.md",
+  "docs/audits/feat-implementation-readiness-jedi-academy.md",
+  "docs/audits/feat-implementation-readiness-kotor.md",
+  "docs/audits/feat-implementation-readiness-scum-and-villainy.md",
+  "docs/audits/feat-implementation-readiness-threats-of-the-galaxy.md",
+  "docs/audits/feat-implementation-readiness-unknown-regions.md",
+  "docs/audits/feat-implementation-readiness-web-enhancement.md",
+  "docs/audits/feat-implementation-status.json",
+  "docs/audits/feat-integrity-current-state.md",
+  "docs/audits/feat-inventory-history-reconciliation.md",
+  "docs/audits/feat-pack-registration-audit.md",
+  "docs/audits/feat-pack-sanitization-report.json",
+  "docs/audits/feat-pack-sanitization-report.md",
+  "docs/audits/feat-phase-0-canonical-census.md",
+  "docs/audits/feat-phase-0-phase-1-handoff.md",
+  "docs/audits/feat-phase-1a-canonical-identity-manifest.md",
+  "docs/audits/feat-phase-1b-repository-reconciliation.md",
+  "docs/audits/feat-provenance-closeout.md",
+  "docs/audits/feat-runtime-fallback-policy.md",
+  "docs/audits/feat-source-parity-phase-1-core-web.md",
+  "docs/audits/feat-source-parity-phase-1-implementation-prompt.md",
+  "docs/audits/feat-source-parity-phase-2-implementation-prompt.md",
+  "docs/audits/feat-source-parity-phase-3-galaxy-intrigue.md",
+  "docs/audits/feat-source-parity-phase-3-implementation-prompt.md",
+  "docs/audits/feat-source-parity-phase-5-implementation-prompt.md",
+  "docs/audits/feat-source-parity-phase-6-implementation-prompt.md",
+  "docs/audits/feat-source-parity-phase-7a-implementation-prompt.md",
+  "docs/audits/feat-source-parity-phase-7a-kotor-jedi-academy.md",
+  "docs/audits/feat-source-parity-phase-7b-clone-wars-galaxy-at-war.md",
+  "docs/audits/feat-source-parity-phase-7b-implementation-prompt.md",
+  "docs/audits/feat-source-parity-phase-7d-implementation-prompt.md",
+  "docs/audits/feat-source-parity-phase-7d-scum-threats-unknown.md",
+  "docs/audits/feat-sourcebook-metadata-verification.md",
+  "docs/audits/feat-species-class-implementation-audit.md",
+  "docs/audits/feat-tags-pass1-complete.md",
+  "docs/audits/feat-tags-pass2-family-analysis-post-adjudication.md",
+  "docs/audits/feat-tags-pass2-family-analysis.md",
+  "docs/audits/feat-tags-pass2-production-handoff.md",
+  "docs/audits/feat-tags-pass2-production-reconciliation.md",
+  "docs/audits/feat-tags-pass2-semantic-authority.md",
+  "docs/audits/feat-tags-pass2-skill-completeness-report.md",
+  "docs/audits/feat-tags-production-reconciliation.md",
+  "docs/audits/feat-tags-semantic-authority.md",
+  "docs/audits/feat-tags-skill-completeness-report.md",
+  "docs/audits/feat-taxonomy-application.md",
+  "docs/audits/galaxy-intrigue-combat-feat-addendum-2026-07-06.json",
+  "docs/audits/generated/clone-wars-feat-implementation-readiness-report.json",
+  "docs/audits/generated/clone-wars-feat-implementation-readiness-report.md",
+  "docs/audits/generated/clone-wars-galaxy-at-war-feat-parity-report.json",
+  "docs/audits/generated/clone-wars-galaxy-at-war-feat-parity-report.md",
+  "docs/audits/generated/combat-feat-runtime-status.json",
+  "docs/audits/generated/combat-feat-runtime-status.md",
+  "docs/audits/generated/core-rulebook-feat-implementation-readiness-report.json",
+  "docs/audits/generated/core-rulebook-feat-implementation-readiness-report.md",
+  "docs/audits/generated/core-web-feat-parity-report.json",
+  "docs/audits/generated/core-web-feat-parity-report.md",
+  "docs/audits/generated/feat-bucket-taxonomy-skeleton-report.json",
+  "docs/audits/generated/feat-bucket-taxonomy-skeleton-report.md",
+  "docs/audits/generated/feat-choice-runtime-consumers.md",
+  "docs/audits/generated/feat-inventory-report.json",
+  "docs/audits/generated/feat-inventory-report.md",
+  "docs/audits/generated/feat-prerequisite-input-report.json",
+  "docs/audits/generated/feat-prerequisite-input-report.md",
+  "docs/audits/generated/feat-primary-source-review-queue.md",
+  "docs/audits/generated/feat-taxonomy-application-report.json",
+  "docs/audits/generated/feat-taxonomy-application-report.md",
+  "docs/audits/generated/galaxy-at-war-feat-implementation-readiness-report.json",
+  "docs/audits/generated/galaxy-at-war-feat-implementation-readiness-report.md",
+  "docs/audits/generated/galaxy-intrigue-feat-implementation-readiness-report.json",
+  "docs/audits/generated/galaxy-intrigue-feat-implementation-readiness-report.md",
+  "docs/audits/generated/galaxy-intrigue-feat-parity-report.json",
+  "docs/audits/generated/galaxy-intrigue-feat-parity-report.md",
+  "docs/audits/generated/jedi-academy-feat-implementation-readiness-report.json",
+  "docs/audits/generated/jedi-academy-feat-implementation-readiness-report.md",
+  "docs/audits/generated/kotor-feat-implementation-readiness-report.json",
+  "docs/audits/generated/kotor-feat-implementation-readiness-report.md",
+  "docs/audits/generated/kotor-jedi-academy-feat-parity-report.json",
+  "docs/audits/generated/kotor-jedi-academy-feat-parity-report.md",
+  "docs/audits/generated/scum-and-villainy-feat-implementation-readiness-report.json",
+  "docs/audits/generated/scum-and-villainy-feat-implementation-readiness-report.md",
+  "docs/audits/generated/scum-threats-unknown-feat-parity-report.json",
+  "docs/audits/generated/scum-threats-unknown-feat-parity-report.md",
+  "docs/audits/generated/skill-challenge-feat-hooks-report.json",
+  "docs/audits/generated/skill-challenge-feat-hooks-report.md",
+  "docs/audits/generated/threats-of-the-galaxy-feat-implementation-readiness-report.json",
+  "docs/audits/generated/threats-of-the-galaxy-feat-implementation-readiness-report.md",
+  "docs/audits/generated/unknown-regions-feat-implementation-readiness-report.json",
+  "docs/audits/generated/unknown-regions-feat-implementation-readiness-report.md",
+  "docs/audits/generated/web-enhancement-feat-implementation-readiness-report.json",
+  "docs/audits/generated/web-enhancement-feat-implementation-readiness-report.md",
+  "docs/audits/grapple-feat-implementation-addendum-2026-07-03.json",
+  "docs/audits/legacy-clone-combat-feat-addendum-2026-07-06.json",
+  "docs/audits/melee-close-combat-feat-implementation-addendum-2026-07-03.json",
+  "docs/audits/mobility-positioning-feat-implementation-addendum-2026-07-03.json",
+  "docs/audits/rage-feat-implementation-addendum-2026-07-03.json",
+  "docs/audits/ranged-combat-feat-implementation-addendum-2026-07-03.json",
+  "docs/audits/rebellion-jatm-gaw-combat-feat-addendum-2026-07-06.json",
+  "docs/audits/skill-challenge-feat-hooks.md",
+  "docs/audits/skill-challenge-feat-readiness.md",
+  "docs/audits/skill-feat-batch-1-core-kotor-fu-2026-07-06.json",
+  "docs/audits/skill-feat-foundation-2026-07-06.json",
+  "docs/audits/species-origin-feat-implementation-addendum-2026-07-03.json",
+  "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json",
+  "docs/audits/unknown-regions-combat-feat-addendum-2026-07-06.json",
+  "docs/audits/weapon-armor-feat-leftovers-start-2026-07-05.md",
+  "docs/design/clone-wars-galaxy-at-war-feat-implementation-fit.md",
+  "docs/design/feat-bucket-taxonomy-expanded-skeleton.md",
+  "docs/design/feat-implementation-readiness-phase10a-runtime-overrides.md",
+  "docs/design/feat-implementation-readiness-phase10b-engine-fit.md",
+  "docs/design/feat-implementation-readiness-phase10c-adapter-contracts.md",
+  "docs/design/feat-implementation-readiness-phase10d-reaction-adapter.md",
+  "docs/design/feat-implementation-readiness-phase10e-target-effect-adapter.md",
+  "docs/design/feat-implementation-readiness-phase10f-damage-timing-rider-adapter.md",
+  "docs/design/feat-implementation-readiness-phase10g-damage-timing-wiring.md",
+  "docs/design/feat-implementation-readiness-phase10h-damage-context-callsites.md",
+  "docs/design/feat-implementation-readiness-phase9a-core-rulebook.md",
+  "docs/design/feat-implementation-readiness-phase9b-web-enhancement.md",
+  "docs/design/feat-implementation-readiness-phase9d-galaxy-intrigue.md",
+  "docs/design/feat-implementation-readiness-phase9g-kotor.md",
+  "docs/design/feat-implementation-readiness-phase9h-jedi-academy.md",
+  "docs/design/feat-implementation-readiness-phase9i-clone-wars.md",
+  "docs/design/feat-implementation-readiness-phase9j-galaxy-at-war.md",
+  "docs/design/feat-implementation-readiness-phase9k-scum-and-villainy.md",
+  "docs/design/feat-implementation-readiness-phase9l-threats-of-the-galaxy.md",
+  "docs/design/feat-implementation-readiness-phase9m-unknown-regions.md",
+  "docs/design/feat-taxonomy-application-phase8.md",
+  "docs/design/kotor-jedi-academy-feat-implementation-fit.md",
+  "docs/design/scum-threats-unknown-feat-implementation-fit.md",
+  "docs/design/skill-challenge-feat-hooks-phase35e.md",
+  "docs/feat-category-restick-fix.md",
+  "docs/feat-choice-required-audit-phase5.json",
+  "docs/feat-cleanup-survival-bellow-punts-phase23.json",
+  "docs/feat-description-and-choice-backfill-phase6.json",
+  "docs/feat-description-fill-gaps-phase1.json",
+  "docs/feat-description-metadata-reimplementation-phase7.json",
+  "docs/feat-diagnostics-phase5.json",
+  "docs/feat-high-confidence-fixes-phase4.json",
+  "docs/feat-implementation-continuation-phase10.json",
+  "docs/feat-implementation-continuation-phase11.json",
+  "docs/feat-implementation-continuation-phase12.json",
+  "docs/feat-implementation-continuation-phase13.json",
+  "docs/feat-implementation-continuation-phase14.json",
+  "docs/feat-implementation-continuation-phase15.json",
+  "docs/feat-implementation-continuation-phase16.json",
+  "docs/feat-implementation-continuation-phase17.json",
+  "docs/feat-implementation-continuation-phase8.json",
+  "docs/feat-implementation-continuation-phase9.json",
+  "docs/feat-metadata-implementation-audit-phase2.json",
+  "docs/feat-pack-recovery.md",
+  "docs/feat-passive-conditional-metadata-phase2-5.json",
+  "docs/feat-static-context-audit-phase3.json",
+  "docs/feat-suspect-cleanup-phase25.json",
+  "docs/feat-suspect-reevaluation-audit-phase24.json",
+  "docs/feat-tree-sort-scroll-preservation.md"
+ ],
+ "tests": [
+  "tests/attack-dialog-profile-context-convergence.test.mjs",
+  "tests/class-bonus-feat-wicked-strike-authority.test.mjs",
+  "tests/combat-feat-attack-modifier-regression.test.mjs",
+  "tests/feat-catalog-validity-regression.test.mjs",
+  "tests/feat-choice-persistence-and-scoped-prerequisites.test.mjs",
+  "tests/feat-registry-canonical-identity.test.mjs",
+  "tests/feat-tags-pass2-family-analysis.test.mjs",
+  "tests/feat-tags-pass2-owner-adjudication.test.mjs",
+  "tests/feat-tags-production-reconciliation.test.mjs",
+  "tests/feat-tags-semantic-authority.test.mjs",
+  "tests/feat-tags-skill-completeness.test.mjs",
+  "tests/grab-back-bare-item-normalization.test.mjs",
+  "tests/grab-grapple-resistance-channel-split.test.mjs",
+  "tests/npc-import-feat-choice-metadata.test.mjs",
+  "tests/opposed-grapple-tie-authority.test.mjs"
+ ]
+}

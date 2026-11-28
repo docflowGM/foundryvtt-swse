@@ -13,9 +13,9 @@ import {
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { TypingAnimation } from "/systems/foundryvtt-swse/scripts/utils/typing-animation.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { MentorTranslationIntegration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 export class MentorGuidanceUI {
 
@@ -43,10 +43,7 @@ export class MentorGuidanceUI {
         // Check if guidance popups are enabled
         if (!SettingsHelper.getBoolean('mentorGuidanceEnabled', true)) {
             // Fallback: send to chat if popups disabled
-            await createChatMessage({
-                speaker: ChatMessage.getSpeaker({ actor: actor }),
-                content: `<div class="swse-mentor-chat"><strong>${mentor.name}:</strong> ${guidance}</div>`
-            });
+            await SWSEChat.postHTML({ actor: actor, content: `<div class="swse-mentor-chat"><strong>${mentor.name}:</strong> ${guidance}</div>` });
             return;
         }
 

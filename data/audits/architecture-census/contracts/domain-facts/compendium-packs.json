@@ -1,0 +1,31 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "compendium-packs",
+ "name": "Compendium pack sources",
+ "kind": "data",
+ "files": 77,
+ "runtimeSloc": 0,
+ "runtimeFiles": 0,
+ "counts": {
+  "files": 77,
+  "runtimeModules": 0,
+  "runtimeSloc": 0,
+  "reachability": {},
+  "nonRuntimeByRole": {
+   "compendium-source": 77
+  }
+ },
+ "topModulesByConsumers": [],
+ "largestModules": [],
+ "unreachableModules": [],
+ "dependsOnDomains": {},
+ "dependedOnByDomains": {},
+ "probeHits": [],
+ "mechanicalResponsibilities": [],
+ "exactClones": [],
+ "duplicateSymbolNames": [],
+ "liveHooks": [],
+ "nonRuntimeEvidence": [],
+ "tests": []
+}

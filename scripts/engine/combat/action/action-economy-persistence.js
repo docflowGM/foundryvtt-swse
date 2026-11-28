@@ -11,6 +11,7 @@
  */
 
 import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const TRIGGER_LIMITED_REACTION_DISPLAY_MAX = 1;
 const LEGACY_TRIGGER_LIMITED_REACTION_SENTINEL = Number.MAX_SAFE_INTEGER;
@@ -149,11 +150,11 @@ export class ActionEconomyPersistence {
   static async setTurnState(actor, combatId, turnState) {
     if (!actor) return;
 
-    await actor.setFlag(this.SCOPE, this.FLAG_KEY, {
+    await ActorEngine.updateActorFlags(actor, this.SCOPE, this.FLAG_KEY, {
       combatId: combatId,
       turnState: this.normalizeTurnState(turnState, actor),
       timestamp: Date.now()
-    });
+    }, { recalc: false });
   }
 
   /**
@@ -177,7 +178,7 @@ export class ActionEconomyPersistence {
       const actor = combatant.actor;
       if (actor) {
         updates.push(
-          actor.unsetFlag(this.SCOPE, this.FLAG_KEY)
+          ActorEngine.unsetActorFlag(actor, this.SCOPE, this.FLAG_KEY, { recalc: false })
         );
       }
     }

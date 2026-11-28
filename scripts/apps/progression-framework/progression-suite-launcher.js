@@ -6,6 +6,7 @@
  * reselection, and replacement uses the V2 progression step contracts.
  */
 
+import { registerUiPort } from '/systems/foundryvtt-swse/scripts/utils/ui-ports.js';
 import { launchProgression } from './progression-entry.js';
 
 const STEP_MAP = Object.freeze({
@@ -130,3 +131,5 @@ export async function launchProgressionJob(actor, job, options = {}) {
 }
 
 export { normalizeSuiteStep, normalizeProgressionJobStep };
+
+registerUiPort('progressionSuiteLauncher', launchProgressionSuiteStep);

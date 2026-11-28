@@ -1,3 +1,4 @@
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 /**
  * Mentor Memory System
  * Persistent per-actor mentor state tracking
@@ -104,7 +105,7 @@ export async function setMentorMemory(actor, mentorId, memory) {
 
   // @mutation-exception: metadata
   // Store mentor dialogue history and relationship state (session-scoped)
-  await actor.setFlag('foundryvtt-swse', 'mentorMemories', mentorMemories);
+  await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'mentorMemories', mentorMemories, { recalc: false });
 }
 
 /**
@@ -294,7 +295,7 @@ export async function decayAllMentorCommitments(actor, decayRate = 0.15) {
   if (updated) {
     // @mutation-exception: metadata
     // Update mentor memories with decayed commitment (session state)
-    await actor.setFlag('foundryvtt-swse', 'mentorMemories', mentorMemories);
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'mentorMemories', mentorMemories, { recalc: false });
   }
 }
 
@@ -329,7 +330,7 @@ export async function updateAllMentorMemories(actor) {
   if (updated) {
     // @mutation-exception: metadata
     // Update mentor memories with inferred role changes (session state)
-    await actor.setFlag('foundryvtt-swse', 'mentorMemories', mentorMemories);
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'mentorMemories', mentorMemories, { recalc: false });
   }
 }
 

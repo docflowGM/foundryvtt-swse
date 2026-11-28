@@ -1,3 +1,4 @@
+import { conditionTrackPenaltyForStep } from '/systems/foundryvtt-swse/scripts/utils/condition-track-penalty.js';
 import { ResolutionContext } from '../../engine/resolution/resolution-context.js';
 import { RULES } from '../../engine/execution/rules/rule-enum.js';
 import { getHalfLevelDamageBonus, isMeleeWeapon as isRawMeleeWeapon, isRangedWeapon as isRawRangedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
@@ -27,8 +28,7 @@ import { resolveAttackBonus, resolveDamageBonus } from "/systems/foundryvtt-swse
  * @returns {number} Penalty value
  */
 export function getConditionPenalty(ctStep) {
-  const penalties = [0, -1, -2, -5, -10, 0];
-  return penalties[Math.clamp(ctStep, 0, 5)] ?? 0;
+  return conditionTrackPenaltyForStep(ctStep);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -96,21 +96,6 @@ export function getCriticalMultiplier(actor, weapon) {
     if (rule.proficiency === weaponProf && rule.multiplier) highestMultiplier = Math.max(highestMultiplier, rule.multiplier);
   }
   return highestMultiplier;
-}
-
-/**
- * Get critical confirmation bonus from CRITICAL_CONFIRM_BONUS rules.
- */
-export function getCriticalConfirmBonus(actor, weapon) {
-  if (!actor || !weapon) return 0;
-  const ctx = new ResolutionContext(actor);
-  const confirmRules = ctx.getRuleInstances(RULES.CRITICAL_CONFIRM_BONUS);
-  let bonus = 0;
-  const weaponProf = weapon.system?.proficiency;
-  for (const rule of confirmRules) {
-    if (rule.proficiency === weaponProf && rule.bonus) bonus += rule.bonus || 0;
-  }
-  return bonus;
 }
 
 /* -------------------------------------------------------------------------- */

@@ -1,0 +1,266 @@
+{
+ "schema": "swse.architecture-census.taxonomy/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "note": "Directory and vocabulary rules live in tools/architecture-census/taxonomy.mjs. Domain = intended (location/vocabulary) ownership; responsibility-level authority is assigned in Phase 1.",
+ "domains": {
+  "actor-core": {
+   "name": "V2 actor model, derived state and ActorEngine mutation gate",
+   "kind": "mechanical",
+   "files": 133,
+   "runtimeSloc": 13592,
+   "runtimeFiles": 37
+  },
+  "abilities-effects": {
+   "name": "AbilityEngine, ModifierEngine, active effects and rule collectors",
+   "kind": "mechanical",
+   "files": 129,
+   "runtimeSloc": 12801,
+   "runtimeFiles": 91
+  },
+  "progression": {
+   "name": "Character generation, level-up and the progression framework shell",
+   "kind": "mechanical",
+   "files": 571,
+   "runtimeSloc": 97737,
+   "runtimeFiles": 367
+  },
+  "classes": {
+   "name": "Classes and prestige classes",
+   "kind": "mechanical",
+   "files": 134,
+   "runtimeSloc": 3162,
+   "runtimeFiles": 11
+  },
+  "species": {
+   "name": "Species, traits and anatomy",
+   "kind": "mechanical",
+   "files": 267,
+   "runtimeSloc": 5578,
+   "runtimeFiles": 19
+  },
+  "skills": {
+   "name": "Skills, skill uses and skill challenges",
+   "kind": "mechanical",
+   "files": 87,
+   "runtimeSloc": 7059,
+   "runtimeFiles": 34
+  },
+  "feats": {
+   "name": "Feats",
+   "kind": "mechanical",
+   "files": 720,
+   "runtimeSloc": 22888,
+   "runtimeFiles": 105
+  },
+  "talents": {
+   "name": "Talents and talent trees",
+   "kind": "mechanical",
+   "files": 440,
+   "runtimeSloc": 16252,
+   "runtimeFiles": 36
+  },
+  "force": {
+   "name": "Force powers, Force points, Dark Side, traditions and alchemy",
+   "kind": "mechanical",
+   "files": 322,
+   "runtimeSloc": 13704,
+   "runtimeFiles": 55
+  },
+  "combat": {
+   "name": "Combat, actions, attacks, damage, conditions, hazards",
+   "kind": "mechanical",
+   "files": 431,
+   "runtimeSloc": 34726,
+   "runtimeFiles": 174
+  },
+  "rolls": {
+   "name": "Dice and roll execution",
+   "kind": "mechanical",
+   "files": 36,
+   "runtimeSloc": 5218,
+   "runtimeFiles": 24
+  },
+  "equipment": {
+   "name": "Weapons, armor, equipment, inventory and encumbrance",
+   "kind": "mechanical",
+   "files": 377,
+   "runtimeSloc": 15576,
+   "runtimeFiles": 92
+  },
+  "customization": {
+   "name": "Item customization, upgrades, modifications, crafting, implants",
+   "kind": "mechanical",
+   "files": 172,
+   "runtimeSloc": 14114,
+   "runtimeFiles": 59
+  },
+  "store-economy": {
+   "name": "Store, credits and transactions",
+   "kind": "mechanical",
+   "files": 162,
+   "runtimeSloc": 10897,
+   "runtimeFiles": 39
+  },
+  "vehicles": {
+   "name": "Vehicles, starships, crew, garage and shipyard",
+   "kind": "mechanical",
+   "files": 764,
+   "runtimeSloc": 19968,
+   "runtimeFiles": 119
+  },
+  "droids": {
+   "name": "Droid mechanics and construction",
+   "kind": "mechanical",
+   "files": 472,
+   "runtimeSloc": 10133,
+   "runtimeFiles": 47
+  },
+  "npc-followers": {
+   "name": "NPCs, nonheroic, followers, minions, allies, beasts",
+   "kind": "mechanical",
+   "files": 169,
+   "runtimeSloc": 9761,
+   "runtimeFiles": 28
+  },
+  "mentor-suggestion": {
+   "name": "Mentor, surveys, suggestion and build analysis",
+   "kind": "feature",
+   "files": 568,
+   "runtimeSloc": 51876,
+   "runtimeFiles": 240
+  },
+  "galactic-profiles": {
+   "name": "GM Datapad procedural world/NPC/location generator (scripts/generation; key kept for stability). Galactic Profiles v3 runtime is attributed to progression",
+   "kind": "feature",
+   "files": 211,
+   "runtimeSloc": 29047,
+   "runtimeFiles": 167
+  },
+  "holonet": {
+   "name": "Holonet messaging and notifications",
+   "kind": "feature",
+   "files": 94,
+   "runtimeSloc": 18683,
+   "runtimeFiles": 75
+  },
+  "games": {
+   "name": "Holopad games and wagers",
+   "kind": "feature",
+   "files": 115,
+   "runtimeSloc": 8157,
+   "runtimeFiles": 32
+  },
+  "houserules": {
+   "name": "House rules",
+   "kind": "feature",
+   "files": 43,
+   "runtimeSloc": 8356,
+   "runtimeFiles": 25
+  },
+  "chat": {
+   "name": "Chat output and chat cards",
+   "kind": "infrastructure",
+   "files": 15,
+   "runtimeSloc": 1365,
+   "runtimeFiles": 7
+  },
+  "ui-shell": {
+   "name": "Sheets, Holopad shell, apps, dialogs, UI framework, themes",
+   "kind": "presentation",
+   "files": 464,
+   "runtimeSloc": 55411,
+   "runtimeFiles": 179
+  },
+  "governance": {
+   "name": "Sentinel, enforcement gates, integrity and mutation governance",
+   "kind": "infrastructure",
+   "files": 100,
+   "runtimeSloc": 15296,
+   "runtimeFiles": 86
+  },
+  "settings-config": {
+   "name": "Settings, configuration, constants, feature flags",
+   "kind": "infrastructure",
+   "files": 11,
+   "runtimeSloc": 288,
+   "runtimeFiles": 4
+  },
+  "data-registries": {
+   "name": "Canonical data, registries, compendium loading and normalizers",
+   "kind": "infrastructure",
+   "files": 54,
+   "runtimeSloc": 3710,
+   "runtimeFiles": 12
+  },
+  "infrastructure": {
+   "name": "Bootstrap, hooks wiring, caching, generic utilities",
+   "kind": "infrastructure",
+   "files": 117,
+   "runtimeSloc": 14539,
+   "runtimeFiles": 110
+  },
+  "migration": {
+   "name": "Data migrations and world maintenance",
+   "kind": "infrastructure",
+   "files": 31,
+   "runtimeSloc": 4051,
+   "runtimeFiles": 24
+  },
+  "compat-patches": {
+   "name": "Runtime hotfix/compatibility patch layer",
+   "kind": "infrastructure",
+   "files": 19,
+   "runtimeSloc": 3939,
+   "runtimeFiles": 17
+  },
+  "dev-tooling": {
+   "name": "Dev tools, debug, build, validation and audit tooling",
+   "kind": "tooling",
+   "files": 280,
+   "runtimeSloc": 3404,
+   "runtimeFiles": 23
+  },
+  "testing": {
+   "name": "Test infrastructure (unattributed tests)",
+   "kind": "tooling",
+   "files": 44,
+   "runtimeSloc": 0,
+   "runtimeFiles": 0
+  },
+  "documentation": {
+   "name": "Documentation and audit evidence (unattributed)",
+   "kind": "evidence",
+   "files": 102,
+   "runtimeSloc": 157,
+   "runtimeFiles": 1
+  },
+  "compendium-packs": {
+   "name": "Compendium pack sources",
+   "kind": "data",
+   "files": 77,
+   "runtimeSloc": 0,
+   "runtimeFiles": 0
+  },
+  "localization": {
+   "name": "Localization",
+   "kind": "data",
+   "files": 25,
+   "runtimeSloc": 0,
+   "runtimeFiles": 0
+  },
+  "assets": {
+   "name": "Static assets (unattributed images, fonts, media)",
+   "kind": "asset",
+   "files": 109,
+   "runtimeSloc": 0,
+   "runtimeFiles": 0
+  },
+  "repo-config": {
+   "name": "Repository configuration, manifest and CI",
+   "kind": "configuration",
+   "files": 16,
+   "runtimeSloc": 0,
+   "runtimeFiles": 0
+  }
+ }
+}

@@ -1,0 +1,1131 @@
+{
+ "schema": "swse.v2-contract.contradictions/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "generator": "tools/architecture-census/assemble-contracts.mjs",
+ "global": [
+  {
+   "id": "CR-01",
+   "existingSource": "`docs/architecture/ARCHITECTURE.md` §II: \"All state mutation must pass through `scripts/actors/engine/actor-engine.js`\".",
+   "observed": "That path does not exist. The gatekeeper is `scripts/governance/actor-engine/actor-engine.js` (399 importers).",
+   "evidence": "`git ls-files scripts/actors` (no `engine/`); registry entry for `scripts/governance/actor-engine/actor-engine.js`",
+   "decisionNeeded": "Correct the path (documentation fix; no behavior change).",
+   "domain": "global",
+   "status": "CONFLICT"
+  },
+  {
+   "id": "CR-02",
+   "existingSource": "ARCHITECTURE.md cites `docs/EXECUTION_PIPELINE.md`, `docs/MODDING_GUIDE.md`, `docs/HOOK_CONTRACTS.md`, `docs/SUGGESTION_ENGINE_API.md`, `docs/MIGRATIONS_AND_COMPATIBILITY.md`, `docs/FOUNDRY_COMPAT.md`, and `docs/ENGINE-ARCHITECTURE.md`.",
+   "observed": "None of the six exist anywhere; ENGINE-ARCHITECTURE lives at `docs/architecture/ENGINE-ARCHITECTURE.md`.",
+   "evidence": "ARCHITECTURE.md §IV, §VII, §VIII",
+   "decisionNeeded": "Write, retarget or drop the references.",
+   "domain": "global",
+   "status": "CONFLICT"
+  },
+  {
+   "id": "CR-03",
+   "existingSource": "ARCHITECTURE.md §II: \"All gameplay rules live exclusively in `scripts/actors/v2/*` … No other layer may compute gameplay rules.\"",
+   "observed": "`scripts/actors/v2/` is 1,338 SLOC; rules engines under `scripts/engine/**` are 176,607 SLOC. ENGINE-ARCHITECTURE.md §1 assigns rules to named engines (CombatMechanicsEngine, ThresholdEngine, DamageResolutionEngine, ConditionEngine, ModifierEngine…), which contradicts ARCHITECTURE.md.",
+   "evidence": "census `slocByPrimarySystem`; ENGINE-ARCHITECTURE §1",
+   "decisionNeeded": "Choose one rules-authority model (engine-owned, per ENGINE-ARCHITECTURE and the observed code, is what exists).",
+   "domain": "global",
+   "status": "CONFLICT"
+  },
+  {
+   "id": "CR-04",
+   "existingSource": "ENGINE-ARCHITECTURE.md §1: ActorEngine \"Delegates To: None (only reads)\", \"Never Owns: Any calculation, any business logic\".",
+   "observed": "`actor-engine.js` (3,090 SLOC) imports `engine/combat/ConditionTrackRules.js`, `SecondWindRules.js`, `damage-resolution-engine.js` (dynamic), `canonical-damage-packet.js` (dynamic), `engine/force/force-points-service.js`, `force-point-trigger-registry.js`, `engine/progression/utils/force-class-effect-ingress.js`. `docs/architecture/combat-authority-map.md` names `ActorEngine.applyDamage` as an owner of damage application.",
+   "evidence": "registry imports of `actor-engine.js`; combat-authority-map \"Damage, shields, DR…\" row",
+   "decisionNeeded": "Is ActorEngine a pure gate (ENGINE-ARCHITECTURE) or the orchestrator of damage/condition/Force-point application (combat-authority-map, observed)?",
+   "domain": "global",
+   "status": "CONFLICT"
+  },
+  {
+   "id": "CR-05",
+   "existingSource": "ENGINE-ARCHITECTURE.md §4: ModifierEngine (Tier 3) may depend only on ActorEngine (Tier 4); no upward calls.",
+   "observed": "`scripts/engine/effects/modifiers/ModifierEngine.js` imports `scripts/engine/combat/weapons-engine.js` (combat, upper tier), plus droid, vehicle and equipment modules.",
+   "evidence": "registry imports of `ModifierEngine.js`",
+   "decisionNeeded": "Accept the observed dependency (and amend the tiers) or plan its removal.",
+   "domain": "global",
+   "status": "CONFLICT"
+  },
+  {
+   "id": "CR-06",
+   "existingSource": "ENGINE-ARCHITECTURE.md §3 Settings Rule: no `game.settings.get` in engines; use HouseRuleService.",
+   "observed": "8 live sites in 6 engine modules (probe `P-A06`).",
+   "evidence": "`invariant-probes.json` → `P-A06-settings-get-in-engines`",
+   "decisionNeeded": "Per site: reroute, or record as an exception (e.g. a non-house-rule client setting).",
+   "domain": "global",
+   "status": "CONFLICT"
+  },
+  {
+   "id": "CR-07",
+   "existingSource": "`docs/architecture/progression-architecture.md`: \"There is **no runtime patching**. Builders are imported and called directly.\"",
+   "observed": "`scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:102-155` and `scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:301-325` reassign `TalentStep.prototype` / `ForcePowerStep.prototype` methods at runtime.",
+   "evidence": "`P-A09-compat-and-monkeypatch.prototypePatches`",
+   "decisionNeeded": "Fold the behavior into the steps (clean cutover) or record a time-boxed exception.",
+   "domain": "global",
+   "status": "CONFLICT"
+  },
+  {
+   "id": "CR-08",
+   "existingSource": "ARCHITECTURE.md §V: Sentinel enforces invariants (shadow writes, unauthorized mutation, duplicate modifiers, engine cross-calls, mutation during render).",
+   "observed": "Of 48 modules under `scripts/governance/sentinel/`, 10 are reachable from `index.js`; 36 are unreachable (22 importers-only, 14 orphans). The layers that would monitor these invariants are mostly not loaded.",
+   "evidence": "registry, `scripts/governance/sentinel/**`",
+   "decisionNeeded": "Wire the intended layers, or retire them and stop citing Sentinel as enforcement.",
+   "domain": "global",
+   "status": "CONFLICT"
+  },
+  {
+   "id": "CR-09",
+   "existingSource": "ARCHITECTURE.md preamble: \"Legacy V1 … must not be reintroduced\"; `scripts/contracts/runtime-contract.js:64` flags `extends Application`.",
+   "observed": "`scripts/ui/framework/BaseAppV2.js:9` declares `class BaseAppV2 extends Application` (V1 base with `getData`). It is an orphan (no importers).",
+   "evidence": "registry",
+   "decisionNeeded": "Delete (legacy class C), after owner confirms no macro use.",
+   "domain": "global",
+   "status": "CONFLICT"
+  },
+  {
+   "id": "CR-10",
+   "existingSource": "OSI: all actor types use the unified V2 shell (`SWSEV2CharacterSheet` direction); no standalone droid/NPC/vehicle sheets.",
+   "observed": "`index.js:175-199` registers four separate actor sheet classes (`SWSEV2CharacterSheet`, `SWSEV2NpcSheet`, `SWSEV2DroidSheet`, `SWSEV2VehicleSheet`). Whether these are thin specialisations of one shell is assessed in `B-UIS`.",
+   "evidence": "`registrations.json` → sheets",
+   "decisionNeeded": "See `B-UIS` findings.",
+   "domain": "global",
+   "status": "CONFLICT"
+  },
+  {
+   "id": "CR-11",
+   "existingSource": "ARCHITECTURE.md §II \"Derived state is written exclusively to `actor.system.derived` … only v2 Actor classes may write\".",
+   "observed": "156 runtime assignment sites target `system.derived`; 4 live sites are outside `scripts/actors/**` (`xp-engine.js` ×2, `actor-engine.js` ×2).",
+   "evidence": "`P-A03`",
+   "decisionNeeded": "Confirm whether ActorEngine and XP engine are sanctioned derived writers.",
+   "domain": "global",
+   "status": "CONFLICT"
+  },
+  {
+   "id": "CR-12",
+   "existingSource": "`system.json` declares packs `packs/vehicles-ground-armor` and `packs/vehicles-hybrids`.",
+   "observed": "No source (`.db` or LevelDB directory) for either is tracked; several undeclared vehicle pack artefacts are tracked (`vehicles-canonical-ships*`, `vehicles-starships.db`, `vehicles-weapon-emplacements.db`, `vehicles.db`).",
+   "evidence": "`reachability.json` → `manifestPacksWithoutSource`, `packsUndeclared`",
+   "decisionNeeded": "See `B-VEH`.",
+   "domain": "global",
+   "status": "CONFLICT"
+  }
+ ],
+ "domain": [
+  {
+   "id": "CR-ABL-01",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md §4",
+   "claim": "ModifierEngine depends only on ActorEngine",
+   "observed": "Imports WeaponsEngine, EncumbranceEngine, droid/vehicle gates and dialogs/effect-intent-engine (global CR-05)",
+   "evidence": [
+    "scripts/engine/effects/modifiers/ModifierEngine.js:19",
+    "scripts/engine/effects/modifiers/ModifierEngine.js:31"
+   ],
+   "status": "CONFLICT",
+   "domain": "abilities-effects"
+  },
+  {
+   "id": "CR-ABL-03",
+   "existingSource": "A-18 / OSI",
+   "claim": "No D&D critical confirmation",
+   "observed": "RULES.CRITICAL_CONFIRM_BONUS is a live rule type with definition; unreachable rule module and unused roll-config rollCriticalConfirmation implement it",
+   "evidence": [
+    "scripts/engine/execution/rules/rule-enum.js:78",
+    "scripts/engine/rules/modules/core/critical-confirm-bonus-rule.js:26",
+    "scripts/rolls/roll-config.js:2168"
+   ],
+   "status": "CONFLICT",
+   "domain": "abilities-effects"
+  },
+  {
+   "id": "CR-ACT-01",
+   "existingSource": "docs/architecture/ARCHITECTURE.md §II",
+   "claim": "Mutation gatekeeper is scripts/actors/engine/actor-engine.js",
+   "observed": "Path does not exist; gate is scripts/governance/actor-engine/actor-engine.js (global CR-01)",
+   "evidence": [
+    "docs/architecture/ARCHITECTURE.md:113",
+    "scripts/governance/actor-engine/actor-engine.js:83"
+   ],
+   "status": "CONFLICT",
+   "domain": "actor-core"
+  },
+  {
+   "id": "CR-ACT-02",
+   "existingSource": "docs/architecture/ARCHITECTURE.md §II",
+   "claim": "Only v2 Actor classes may write system.derived",
+   "observed": "ActorEngine._applyDerivedUpdates and xp-engine computeXpDerived write it (global CR-11)",
+   "evidence": [
+    "scripts/governance/actor-engine/actor-engine.js:165",
+    "scripts/engine/progression/xp-engine.js:123"
+   ],
+   "status": "CONFLICT",
+   "domain": "actor-core"
+  },
+  {
+   "id": "CR-ACT-03",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md §1",
+   "claim": "ActorEngine delegates to none and owns no calculation",
+   "observed": "ActorEngine orchestrates damage/condition/FP/Second Wind and holds an ability-mod helper (global CR-04)",
+   "evidence": [
+    "docs/architecture/ENGINE-ARCHITECTURE.md:21",
+    "scripts/governance/actor-engine/actor-engine.js:4623"
+   ],
+   "status": "CONFLICT",
+   "domain": "actor-core"
+  },
+  {
+   "id": "CR-ACT-04",
+   "existingSource": "docs/architecture/ARCHITECTURE.md §IV",
+   "claim": "Ability and modifier systems re-register after derived recalculation",
+   "observed": "Passive abilities register before derived, and again in three hooks",
+   "evidence": [
+    "scripts/actors/v2/base-actor.js:79",
+    "scripts/infrastructure/hooks/actor-hooks.js:70"
+   ],
+   "status": "CONFLICT",
+   "domain": "actor-core"
+  },
+  {
+   "id": "CR-ACT-05",
+   "existingSource": "scripts/governance/actor-engine/actor-engine.js:1092 (JSDoc)",
+   "claim": "applyDelta is the ONLY legal way to apply ProgressionCompiler output",
+   "observed": "applyDelta has no runtime caller",
+   "evidence": [
+    "scripts/governance/actor-engine/actor-engine.js:1092"
+   ],
+   "status": "CONFLICT",
+   "domain": "actor-core"
+  },
+  {
+   "id": "CR-CHT-01",
+   "existingSource": "docs/architecture/ARCHITECTURE.md §II",
+   "claim": "Sheets and engines may not create ChatMessage directly",
+   "observed": "74 live bypass sites (43 ChatMessage.create, 31 createChatMessage)",
+   "evidence": [
+    "scripts/engine/species/species-activated-ability-engine.js:93",
+    "scripts/combat/systems/grappling-system.js:940"
+   ],
+   "status": "CONFLICT",
+   "domain": "chat"
+  },
+  {
+   "id": "CR-CLS-01",
+   "existingSource": "scripts/data/classes-db.js:6 header",
+   "claim": "ClassesDB is the only authorized access point for class data",
+   "observed": "class-data-loader reads the classes pack index directly and caches separately",
+   "evidence": [
+    "scripts/engine/progression/utils/class-data-loader.js:124",
+    "scripts/engine/progression/utils/class-data-loader.js:185"
+   ],
+   "status": "CONFLICT",
+   "domain": "classes"
+  },
+  {
+   "id": "CR-CLS-02",
+   "existingSource": "scripts/engine/progression/engine/class-normalizer.js:4 header",
+   "claim": "Only one file should think about class normalization",
+   "observed": "Two independent normalizers in use",
+   "evidence": [
+    "scripts/data/class-normalizer.js:153",
+    "scripts/engine/progression/utils/class-normalizer.js:15"
+   ],
+   "status": "CONFLICT",
+   "domain": "classes"
+  },
+  {
+   "id": "CR-CMB-01",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md engine table / tiers",
+   "claim": "CombatMechanicsEngine is a Tier-1 rule-variant authority",
+   "observed": "module is orphan-unreferenced",
+   "evidence": [
+    "docs/architecture/ENGINE-ARCHITECTURE.md:15",
+    "docs/architecture/ENGINE-ARCHITECTURE.md:74",
+    "scripts/engine/combat/CombatMechanicsEngine.js:1"
+   ],
+   "status": "CONFLICT",
+   "domain": "combat"
+  },
+  {
+   "id": "CR-CMB-02",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md engine table",
+   "claim": "ThresholdEngine/DamageResolutionEngine do not own condition mutations; mutations via ActorEngine",
+   "observed": "both write actor flags directly; ThresholdEngine also prices repairs",
+   "evidence": [
+    "docs/architecture/ENGINE-ARCHITECTURE.md:17",
+    "scripts/engine/combat/threshold-engine.js:53",
+    "scripts/engine/combat/threshold-engine.js:598",
+    "scripts/engine/combat/threshold-engine.js:640",
+    "scripts/engine/combat/damage-resolution-engine.js:137",
+    "scripts/engine/combat/damage-resolution-engine.js:346"
+   ],
+   "status": "CONFLICT",
+   "domain": "combat"
+  },
+  {
+   "id": "CR-CMB-03",
+   "existingSource": "scripts/engine/combat/ARCHITECTURE.md",
+   "claim": "CombatEngine.resolveAttack() is the ONLY attack entry point",
+   "observed": "live pipeline is attacks.js rollAttack; resolveAttack reachable only via SWSECombat.rollAttack from orphan combat-action-bar",
+   "evidence": [
+    "scripts/engine/combat/ARCHITECTURE.md:104",
+    "scripts/combat/systems/enhanced-combat-system.js:79",
+    "scripts/components/combat-action-bar.js:251"
+   ],
+   "status": "CONFLICT",
+   "domain": "combat"
+  },
+  {
+   "id": "CR-CMB-04",
+   "existingSource": "docs/architecture/combat-authority-map.md §Verified",
+   "claim": "combat-action-bar.js is a production entry point",
+   "observed": "orphan-unreferenced",
+   "evidence": [
+    "docs/architecture/combat-authority-map.md:35"
+   ],
+   "status": "CONFLICT",
+   "domain": "combat"
+  },
+  {
+   "id": "CR-CMB-05",
+   "existingSource": "scripts/engine/combat/reactions/reaction-registry.js header",
+   "claim": "No direct ChatMessage.create()",
+   "observed": "direct ChatMessage.create",
+   "evidence": [
+    "scripts/engine/combat/reactions/reaction-registry.js:8",
+    "scripts/engine/combat/reactions/reaction-registry.js:1024"
+   ],
+   "status": "CONFLICT",
+   "domain": "combat"
+  },
+  {
+   "id": "CR-PAT-01",
+   "existingSource": "docs/architecture/progression-architecture.md (global CR-07)",
+   "claim": "No runtime patching",
+   "observed": "~30 live sites patch progression steps/finalizer/resolvers",
+   "evidence": [
+    "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:102",
+    "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:90",
+    "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:260"
+   ],
+   "status": "CONFLICT",
+   "domain": "compat-patches"
+  },
+  {
+   "id": "CR-PAT-02",
+   "existingSource": "docs/architecture/v2-contracts/A-global-invariants.md A-09 observed column",
+   "claim": "20 prototype monkey-patches",
+   "observed": "Wider scan: 108 live sites in 41 live files (static-method reassignment, proto aliases, Document.prototype)",
+   "evidence": [
+    "scripts/engine/feats/dual-wield-runtime-patches.js:12"
+   ],
+   "status": "CONFLICT",
+   "domain": "compat-patches"
+  },
+  {
+   "id": "CR-PAT-03",
+   "existingSource": "scripts/governance/mutation/MutationInterceptor.js:99",
+   "claim": "No prototype patches",
+   "observed": "swse-flags patches foundry.abstract.Document.prototype getFlag/setFlag/unsetFlag",
+   "evidence": [
+    "scripts/utils/flags/swse-flags.js:48",
+    "index.js:101"
+   ],
+   "status": "CONFLICT",
+   "domain": "compat-patches"
+  },
+  {
+   "id": "CR-CUS-01",
+   "existingSource": "docs/audits/transaction-integrity/tx-remediation-ledger.md TX-01 item 9 (D3)",
+   "claim": "UpgradeService vehicle branch charges nothing",
+   "observed": "vehicle branch refuses install and removal",
+   "evidence": [
+    "scripts/engine/upgrades/UpgradeService.js:645",
+    "scripts/engine/upgrades/UpgradeService.js:744"
+   ],
+   "status": "CONFLICT",
+   "domain": "customization"
+  },
+  {
+   "id": "CR-CUS-02",
+   "existingSource": "scripts/engine/customization/PHASE-F-INTEGRATION-GUIDE.md",
+   "claim": "workflow.applyInstall/applyStrip/applyTemplate is the integration API",
+   "observed": "no production caller",
+   "evidence": [
+    "scripts/engine/customization/PHASE-F-INTEGRATION-GUIDE.md:155",
+    "scripts/engine/customization/customization-workflow.js:194"
+   ],
+   "status": "CONFLICT",
+   "domain": "customization"
+  },
+  {
+   "id": "CR-CUS-03",
+   "existingSource": "OSI customization authority",
+   "claim": "old per-item modification apps stay retired",
+   "observed": "SWSEUpgradeApp opened from item sheet fallback",
+   "evidence": [
+    "scripts/items/swse-item-sheet.js:2208",
+    "scripts/items/swse-item-sheet.js:2213",
+    "scripts/apps/upgrade-app.js:131"
+   ],
+   "status": "CONFLICT",
+   "domain": "customization"
+  },
+  {
+   "id": "CR-DAT-01",
+   "existingSource": "scripts/data/prerequisite-checker.js:3063 (comment)",
+   "claim": "Trust system.level as source of truth for total level",
+   "observed": "actor-core level-split.getTotalLevel derives level separately",
+   "evidence": [
+    "scripts/data/prerequisite-checker.js:3063",
+    "scripts/actors/derived/level-split.js:1"
+   ],
+   "status": "CONFLICT",
+   "domain": "data-registries"
+  },
+  {
+   "id": "CR-DRD-01",
+   "existingSource": "scripts/engine/droid-validation-engine.js header",
+   "claim": "used by DroidBuilderApp, Chargen, Store and Sheet",
+   "observed": "only the droid sheet context builder uses it; chargen builder validates without armor; Store construction path does not require armor",
+   "evidence": [
+    "scripts/engine/droid-validation-engine.js:9",
+    "scripts/apps/progression-framework/steps/droid-builder-step.js:623",
+    "scripts/apps/progression-framework/shell/reconciliation/domain-adapters.js:143"
+   ],
+   "status": "CONFLICT",
+   "domain": "droids"
+  },
+  {
+   "id": "CR-DRD-02",
+   "existingSource": "scripts/domain/droids/droid-part-schema.js header",
+   "claim": "prerequisite-only adapter; no cost/weapon logic here",
+   "observed": "still exports a getSelfDestructDamage that size-shifts and uses a pre-shifted miniaturized table, diverging from canonical; no consumer",
+   "evidence": [
+    "scripts/domain/droids/droid-part-schema.js:795",
+    "scripts/domain/droids/droid-part-schema.js:799",
+    "scripts/data/droid-part-schema.js:843"
+   ],
+   "status": "CONFLICT",
+   "domain": "droids"
+  },
+  {
+   "id": "CR-EQP-01",
+   "existingSource": "docs/architecture/equipment-ecosystem-e3a4-clean-break-posture-contract.md raw/legacy writers row",
+   "claim": "inventory-handlers.js (removed) (A9) and weapon-config-dialog.js (removed) (A10) are live legacy equip writers",
+   "observed": "files removed; setItemEquipped refuses weapons",
+   "evidence": [
+    "docs/architecture/equipment-ecosystem-e3a4-clean-break-posture-contract.md:70",
+    "scripts/actors/base/swse-actor-base.js:172"
+   ],
+   "status": "CONFLICT",
+   "domain": "equipment"
+  },
+  {
+   "id": "CR-EQP-02",
+   "existingSource": "scripts/items/swse-item-sheet.js header",
+   "claim": "No mutation outside ActorEngine-owned APIs",
+   "observed": "direct ActiveEffect and flag writes on items",
+   "evidence": [
+    "scripts/items/swse-item-sheet.js:7",
+    "scripts/items/swse-item-sheet.js:226",
+    "scripts/items/swse-item-sheet.js:1689"
+   ],
+   "status": "CONFLICT",
+   "domain": "equipment"
+  },
+  {
+   "id": "CR-FEA-01",
+   "existingSource": "docs/audits/chat-feat-implementation-addendum-2026-07-06.json (purpose, runtimeHomes)",
+   "claim": "Batch feats are implemented with a known consumer; runtime homes listed",
+   "observed": "skill-feat, expanded-skill, team, rebellion-species and second-wind normalization modules are orphan; registerSkillFeatRuntimePatches/registerTeamFeatRuntimePatches/rebellion-species register are never called",
+   "evidence": [
+    "docs/audits/chat-feat-implementation-addendum-2026-07-06.json:5",
+    "docs/audits/chat-feat-implementation-addendum-2026-07-06.json:17",
+    "scripts/engine/feats/team-feat-runtime-patches.js:172",
+    "scripts/engine/feats/register-feat-runtime.js:76"
+   ],
+   "status": "CONFLICT",
+   "domain": "feats"
+  },
+  {
+   "id": "CR-FEA-02",
+   "existingSource": "docs/audits/phase-5c-authority-classification.md §table",
+   "claim": "data/canonical/feats.json is the one operational authority",
+   "observed": "live runtime rule shapes are hard-coded in normalization hooks and differ from canonical abilityMeta (Confident Success: GRANT_FORCE_POINT_ON_SUCCESS in canonical vs GAIN_NORMAL_FP_ON_SKILL_APPLICATION_SUCCESS in hook, which runtime reads)",
+   "evidence": [
+    "docs/audits/phase-5c-authority-classification.md:46",
+    "data/canonical/feats.json:10331",
+    "scripts/engine/feats/force-point-feat-normalization-hooks.js:79",
+    "scripts/engine/feats/force-point-feat-actions.js:210"
+   ],
+   "status": "CONFLICT",
+   "domain": "feats"
+  },
+  {
+   "id": "CR-FEA-03",
+   "existingSource": "docs/audits/v2-math-integrity-authority-ledger.md §Second Wind",
+   "claim": "second-wind-rider-runtime-patches monkey-patch is a robustness note on a live path",
+   "observed": "module is orphan and never runs",
+   "evidence": [
+    "docs/audits/v2-math-integrity-authority-ledger.md:306"
+   ],
+   "status": "CONFLICT",
+   "domain": "feats"
+  },
+  {
+   "id": "CR-FRC-01",
+   "existingSource": "docs/audits/class-force-v2-integration-matrix-2026-11-22.md header and §status",
+   "claim": "branch not for main; main untouched; not authorized for merge",
+   "observed": "audited commit f734b4d is \"Merge integration/class-force-v2-20261122 into main\"",
+   "evidence": [
+    "docs/audits/class-force-v2-integration-matrix-2026-11-22.md:3",
+    "docs/audits/class-force-v2-integration-matrix-2026-11-22.md:14"
+   ],
+   "status": "CONFLICT",
+   "domain": "force"
+  },
+  {
+   "id": "CR-FRC-02",
+   "existingSource": "scripts/data/force-points.js header",
+   "claim": "prestige FP base never downgrades (persistent flag); recalculation in chargen-class.js / levelup-class.js",
+   "observed": "flag writers are in functions with no callers; named trigger files are retired; progression uses the build-plan variant which only reads the flags",
+   "evidence": [
+    "scripts/data/force-points.js:13",
+    "scripts/data/force-points.js:36",
+    "scripts/data/force-points.js:53",
+    "scripts/data/force-points.js:232"
+   ],
+   "status": "CONFLICT",
+   "domain": "force"
+  },
+  {
+   "id": "CR-FRC-03",
+   "existingSource": "tests/class-force-v2-direct-fp-writer-classification.test.mjs header",
+   "claim": "pins every direct Force Point writer",
+   "observed": "bonus pool writers are outside the scan patterns",
+   "evidence": [
+    "tests/class-force-v2-direct-fp-writer-classification.test.mjs:1",
+    "tests/class-force-v2-direct-fp-writer-classification.test.mjs:12"
+   ],
+   "status": "CONFLICT",
+   "domain": "force"
+  },
+  {
+   "id": "CR-GAL-01",
+   "existingSource": "docs/audits/architecture-census/phase-0-census-report.md:115 (and census domain name)",
+   "claim": "scripts/generation/** is the entire Galactic Profiles generator",
+   "observed": "scripts/generation is the GM Datapad procedural generator; Galactic Profiles v3 runtime is scripts/engine/progression/profile/** (progression domain, live via galactic-profile-step)",
+   "evidence": [
+    "data/galactic-profiles/v3/README.md:1",
+    "scripts/engine/progression/profile/galactic-profile-service.js:1",
+    "scripts/apps/progression-framework/steps/galactic-profile-step.js:1",
+    "docs/audits/gm-datapad-ecosystem-redesign.md:4948"
+   ],
+   "status": "CONFLICT",
+   "domain": "galactic-profiles"
+  },
+  {
+   "id": "CR-GAL-02",
+   "existingSource": "docs/repo-structure.md:164",
+   "claim": "All actor mutations route through ActorEngine or carry @mutation-exception",
+   "observed": "Five un-annotated actor.setFlag sites for Atlas state",
+   "evidence": [
+    "scripts/locations/location-registry-service.js:805",
+    "scripts/locations/location-registry-service.js:917"
+   ],
+   "status": "CONFLICT",
+   "domain": "galactic-profiles"
+  },
+  {
+   "id": "CR-GAM-01",
+   "existingSource": "OSI / A-10 (a trade is atomic; any failure fails the whole trade)",
+   "claim": "Atomic multi-party credit movement",
+   "observed": "Per-seat sequential adjustments with compensating refunds and rollback. Escrow state is persisted only after all debits, and in-flight guards are in memory, so a crash mid-sequence leaves partial debits recorded only in the TransactionEngine ledger.",
+   "evidence": [
+    "scripts/games/wagers/game-credit-escrow-service.js:765",
+    "scripts/games/wagers/game-credit-escrow-service.js:820",
+    "docs/audits/transaction-integrity/ti4-c0-closure-report.md:50"
+   ],
+   "status": "CONFLICT",
+   "domain": "games"
+  },
+  {
+   "id": "CR-GOV-01",
+   "existingSource": "docs/architecture/ARCHITECTURE.md §V (global CR-08)",
+   "claim": "Sentinel monitors unauthorized mutation, shadow writes, duplicate modifiers",
+   "observed": "Monitoring layers unreachable; mutation context never checked",
+   "evidence": [
+    "scripts/governance/mutation/MutationInterceptor.js:186"
+   ],
+   "status": "CONFLICT",
+   "domain": "governance"
+  },
+  {
+   "id": "CR-GOV-02",
+   "existingSource": "scripts/governance/mutation/MutationInterceptor.js:123 (comment)",
+   "claim": "Guards enforced through Sentinel/secureActorUpdate()",
+   "observed": "secureActorUpdate does not exist in scripts/",
+   "evidence": [
+    "scripts/governance/mutation/MutationInterceptor.js:123"
+   ],
+   "status": "CONFLICT",
+   "domain": "governance"
+  },
+  {
+   "id": "CR-GOV-03",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md §2",
+   "claim": "All mutations go through ActorEngine and only ActorEngine",
+   "observed": "Convention only; no runtime gate; P-A02 finds 331 direct sites",
+   "evidence": [
+    "docs/architecture/ENGINE-ARCHITECTURE.md:27"
+   ],
+   "status": "CONFLICT",
+   "domain": "governance"
+  },
+  {
+   "id": "CR-HOL-01",
+   "existingSource": "OSI / A-10 vs docs/audits/swse-rules-decisions-pending.md:2099 (V-P6C-19)",
+   "claim": "TransactionEngine is the single credit ledger with no parallel ledgers; separately, an owner-approved workflow debits the Holonet Party Fund and adds a ledger entry",
+   "observed": "Party Fund balance and a 100-entry ledger live in world settings written directly by the messenger",
+   "evidence": [
+    "scripts/holonet/subsystems/holonet-messenger-service.js:213",
+    "scripts/holonet/subsystems/holonet-messenger-service.js:222"
+   ],
+   "status": "CONFLICT",
+   "domain": "holonet"
+  },
+  {
+   "id": "CR-HOL-02",
+   "existingSource": "docs/audits/transaction-integrity/ti-4/ti4-authority-inventory.md:113 (P31)",
+   "claim": "Messenger has its own _trade* snapshot mechanism; _restoreTradeSnapshots returns true without an exactness check",
+   "observed": "Unchanged at HEAD",
+   "evidence": [
+    "scripts/holonet/subsystems/holonet-messenger-service.js:6300",
+    "scripts/holonet/subsystems/holonet-messenger-service.js:6316"
+   ],
+   "status": "CONFLICT",
+   "domain": "holonet"
+  },
+  {
+   "id": "CR-HOL-03",
+   "existingSource": "docs/repo-structure.md:164",
+   "claim": "Actor mutations go through ActorEngine or are annotated",
+   "observed": "intelLocker and holonetPresence actor flags are written directly with no annotation",
+   "evidence": [
+    "scripts/holonet/subsystems/holonet-intel-service.js:1010",
+    "scripts/holonet/subsystems/holonet-messenger-service.js:1675"
+   ],
+   "status": "CONFLICT",
+   "domain": "holonet"
+  },
+  {
+   "id": "CR-HRL-01",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md §3",
+   "claim": "API is getRule/isRuleEnabled/getRuleVariant",
+   "observed": "Methods are get/isEnabled/getString/getNumber/getBoolean/set",
+   "evidence": [
+    "docs/architecture/ENGINE-ARCHITECTURE.md:53",
+    "scripts/engine/system/HouseRuleService.js:115"
+   ],
+   "status": "CONFLICT",
+   "domain": "houserules"
+  },
+  {
+   "id": "CR-HRL-02",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md §3 (global CR-06)",
+   "claim": "No game.settings.get in engines",
+   "observed": "2 real house-rule reads; 6 of 8 probe hits are comments",
+   "evidence": [
+    "scripts/engine/progression/skills/skill-registry.js:85",
+    "scripts/engine/combat/ConditionEngine.js:13"
+   ],
+   "status": "CONFLICT",
+   "domain": "houserules"
+  },
+  {
+   "id": "CR-INF-01",
+   "existingSource": "index.js:216 comment / scripts/core/init.js",
+   "claim": "scripts/core/init.js is dead",
+   "observed": "Agreement on reachability; it and its orphan copy scripts/holonet/scripts/core/init.js still register maxTemplatesPerItem/enableEnhancedMassiveDamage; the copy imports a missing file",
+   "evidence": [
+    "scripts/core/init.js:32",
+    "scripts/holonet/scripts/core/init.js:30",
+    "scripts/holonet/scripts/core/init.js:10"
+   ],
+   "status": "CONFLICT",
+   "domain": "infrastructure"
+  },
+  {
+   "id": "CR-INF-02",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md §3",
+   "claim": "House-rule settings read through HouseRuleService (foundryvtt-swse)",
+   "observed": "index.js registers 5 settings in an unread swse namespace",
+   "evidence": [
+    "index.js:361"
+   ],
+   "status": "CONFLICT",
+   "domain": "infrastructure"
+  },
+  {
+   "id": "CR-INF-03",
+   "existingSource": "scripts/utils/flags/swse-flags.js:10",
+   "claim": "Actors do not need the helper; SWSEV2BaseActor bridges the swse scope",
+   "observed": "Both bridges active for actors",
+   "evidence": [
+    "scripts/utils/flags/swse-flags.js:48",
+    "scripts/actors/base/swse-actor-base.js:463"
+   ],
+   "status": "CONFLICT",
+   "domain": "infrastructure"
+  },
+  {
+   "id": "CR-MEN-01",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md §10 (line 322)",
+   "claim": "Assigning actor.system.suggestionEngine.* is forbidden",
+   "observed": "Four modules assign into live actor.system.suggestionEngine in memory",
+   "evidence": [
+    "scripts/engine/suggestion/PlayerHistoryTracker.js:149",
+    "scripts/engine/suggestion/AnchorRepository.js:36",
+    "scripts/engine/suggestion/PivotStateManager.js:36",
+    "scripts/engine/suggestion/MentorProfile.js:71"
+   ],
+   "status": "CONFLICT",
+   "domain": "mentor-suggestion"
+  },
+  {
+   "id": "CR-MEN-02",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md §10 (line 340)",
+   "claim": "Modifier math must not be replicated in suggestion engines",
+   "observed": "At least seven local Math.floor((score-10)/2) implementations",
+   "evidence": [
+    "scripts/engine/suggestion/SuggestionReasonEngine.js:43",
+    "scripts/engine/suggestion/force-rule-adapter.js:40",
+    "scripts/engine/suggestion/equipment/equipment-use-evaluator.js:123",
+    "scripts/engine/suggestion/equipment/armor-scoring-engine.js:280",
+    "scripts/engine/suggestion/attribute-planner.js:85",
+    "scripts/engine/suggestion/AttributeIncreaseSuggestionEngine.js:129",
+    "scripts/engine/suggestion/equipment/gear-suggestions.js:39"
+   ],
+   "status": "CONFLICT",
+   "domain": "mentor-suggestion"
+  },
+  {
+   "id": "CR-MEN-03",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md §10 (lines 343, 386, 427)",
+   "claim": "No analytics tracking in engines; persistence only via SuggestionStateService called by the UI layer",
+   "observed": "getSuggestions records history; SelectionRecorder, AnchorRepository and SuggestionService._setSuggestionState persist independently",
+   "evidence": [
+    "scripts/engine/suggestion/SuggestionService.js:469",
+    "scripts/engine/suggestion/SelectionRecorder.js:40",
+    "scripts/engine/suggestion/AnchorRepository.js:136",
+    "scripts/engine/suggestion/SuggestionService.js:621"
+   ],
+   "status": "CONFLICT",
+   "domain": "mentor-suggestion"
+  },
+  {
+   "id": "CR-MEN-04",
+   "existingSource": "docs/architecture/ENGINE-ARCHITECTURE.md §10 (line 429)",
+   "claim": "A PlayerAnalytics service is required",
+   "observed": "No PlayerAnalytics module exists; PlayerHistoryTracker/SelectionRecorder fill the role",
+   "evidence": [
+    "scripts/engine/suggestion/PlayerHistoryTracker.js:25"
+   ],
+   "status": "CONFLICT",
+   "domain": "mentor-suggestion"
+  },
+  {
+   "id": "CR-MEN-05",
+   "existingSource": "scripts/governance/PHASE-5A-SUGGESTION-MENTOR-AUDIT.md (line 85)",
+   "claim": "Suggestion merges survey biases from actor.system.swse.mentorBuildIntentBiases",
+   "observed": "Field retired by Survey V2 clean cutover; no runtime reader",
+   "evidence": [
+    "docs/design/mentor-survey-v2/01-SHARED-ARCHITECTURE-CONTRACT.md:9"
+   ],
+   "status": "CONFLICT",
+   "domain": "mentor-suggestion"
+  },
+  {
+   "id": "CR-MEN-06",
+   "existingSource": "docs/repo-structure.md (lines 164-167)",
+   "claim": "Mutation exceptions are legacy-disabled-* or world-item",
+   "observed": "15 live sites use '@mutation-exception: metadata', a class accepted only by tooling",
+   "evidence": [
+    "scripts/tools/mutation-lint.js:166",
+    "scripts/tools/mutation-lint.js:217",
+    "scripts/engine/mentor/mentor-memory.js:107"
+   ],
+   "status": "CONFLICT",
+   "domain": "mentor-suggestion"
+  },
+  {
+   "id": "CR-MIG-01",
+   "existingSource": "docs/migrations/readme.md Completed Migrations",
+   "claim": "Five scripts run automatically on world load",
+   "observed": "None of them exists",
+   "evidence": [
+    "docs/migrations/readme.md:28",
+    "docs/migrations/readme.md:56"
+   ],
+   "status": "CONFLICT",
+   "domain": "migration"
+  },
+  {
+   "id": "CR-MIG-02",
+   "existingSource": "docs/migrations/readme.md:125",
+   "claim": "ActorEngine at scripts/actors/engine/actor-engine.js",
+   "observed": "Path does not exist (global CR-01)",
+   "evidence": [
+    "docs/migrations/readme.md:125"
+   ],
+   "status": "CONFLICT",
+   "domain": "migration"
+  },
+  {
+   "id": "CR-NPC-01",
+   "existingSource": "docs/audits/follower-mutation-transaction-authority-phase-6-addendum.md check 19",
+   "claim": "No direct setFlag() remains in normal follower mutation paths",
+   "observed": "true only for the 7 scanned files; direct setFlag on followerSlots/minions remains in minion modules and two hotfixes; checker not in CI",
+   "evidence": [
+    "docs/audits/follower-mutation-transaction-authority-phase-6-addendum.md:282",
+    "tools/check-follower-mutation-authority.mjs:87",
+    "scripts/apps/minion-creator.js:419",
+    "scripts/patches/follower-repeatable-entitlement-hotfix.js:170",
+    "scripts/patches/follower-orphan-transfer-hotfix.js:99"
+   ],
+   "status": "CONFLICT",
+   "domain": "npc-followers"
+  },
+  {
+   "id": "CR-NPC-02",
+   "existingSource": "scripts/engine/crew/follower-slot-service.js header",
+   "claim": "single canonical followerSlots writer",
+   "observed": "six modules write the array",
+   "evidence": [
+    "scripts/engine/crew/follower-slot-service.js:4",
+    "scripts/infrastructure/hooks/follower-hooks.js:51",
+    "scripts/apps/follower-creator.js:1040"
+   ],
+   "status": "CONFLICT",
+   "domain": "npc-followers"
+  },
+  {
+   "id": "CR-PRG-01",
+   "existingSource": "docs/architecture/progression-architecture.md §ProgressionFinalizer",
+   "claim": "There is no runtime patching",
+   "observed": "Five live files reassign progression class methods (finalizer statics, step prototypes, PrerequisiteChecker/AbilityEngine statics)",
+   "evidence": [
+    "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js:90",
+    "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js:112",
+    "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js:102",
+    "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:260",
+    "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js:301"
+   ],
+   "status": "CONFLICT",
+   "domain": "progression"
+  },
+  {
+   "id": "CR-PRG-02",
+   "existingSource": "docs/architecture/progression-architecture.md §Enforcement",
+   "claim": "squad-actions-init.js no longer imports any finalizer patch file",
+   "observed": "It imports two finalizer patch files",
+   "evidence": [
+    "scripts/talents/squad-actions-init.js:7",
+    "scripts/talents/squad-actions-init.js:12"
+   ],
+   "status": "CONFLICT",
+   "domain": "progression"
+  },
+  {
+   "id": "CR-PRG-03",
+   "existingSource": "docs/architecture/progression-architecture.md §ProgressionFinalizer; A-15",
+   "claim": "Finalization commits once",
+   "observed": "One transactional plan plus post-commit updateActor writes (ability-increase verification, maneuver sync, certification)",
+   "evidence": [
+    "scripts/apps/progression-framework/shell/progression-finalizer.js:3991",
+    "scripts/apps/progression-framework/shell/progression-finalizer.js:3801",
+    "scripts/apps/progression-framework/shell/progression-finalizer.js:519"
+   ],
+   "status": "CONFLICT",
+   "domain": "progression"
+  },
+  {
+   "id": "CR-PRG-04",
+   "existingSource": "OSI (progression); A-15",
+   "claim": "Temporary choices live in session/draft state",
+   "observed": "Summary step writes system.credits and a flag mid-wizard; drafts persisted to actor flags on navigation",
+   "evidence": [
+    "scripts/apps/progression-framework/steps/summary-step.js:1786",
+    "scripts/apps/progression-framework/shell/session-storage.js:285"
+   ],
+   "status": "CONFLICT",
+   "domain": "progression"
+  },
+  {
+   "id": "CR-PRG-05",
+   "existingSource": "scripts/engine/progression/engine/progression-engine.js:1 header",
+   "claim": "Legacy API delegates to the live SWSEProgressionEngine",
+   "observed": "Neither is invoked by any runtime path",
+   "evidence": [
+    "scripts/engine/progression/engine/progression-engine.js:63",
+    "scripts/engine/progression.js:6"
+   ],
+   "status": "CONFLICT",
+   "domain": "progression"
+  },
+  {
+   "id": "CR-ROL-01",
+   "existingSource": "A-18 / OSI",
+   "claim": "No D&D critical confirmation",
+   "observed": "rollCriticalConfirmation and getCriticalConfirmBonus implement confirmation; no callers",
+   "evidence": [
+    "scripts/rolls/roll-config.js:2168",
+    "scripts/combat/utils/combat-utils.js:104"
+   ],
+   "status": "CONFLICT",
+   "domain": "rolls"
+  },
+  {
+   "id": "CR-SKL-01",
+   "existingSource": "docs/audits/class-phase-6f10-quick-sabotage.md:26; docs/audits/class-phase-6f11-saboteur-convergence.md:18; docs/audits/class-feature-contract-wave-a-matrix.md:13",
+   "claim": "Quick Sabotage implemented in MechanicsUses.disableDevice (skill-uses.js)",
+   "observed": "skill-uses.js has no importer; live path is SkillUseFilter / extra-skill-use-registry",
+   "evidence": [
+    "scripts/utils/skill-use-filter.js:348",
+    "scripts/utils/extra-skill-use-registry.js:152"
+   ],
+   "status": "CONFLICT",
+   "domain": "skills"
+  },
+  {
+   "id": "CR-SKL-02",
+   "existingSource": "docs/audits/ability-schema-authority-migration-phase3-ledger.md:155",
+   "claim": "Six skill-use ability sites FIXED",
+   "observed": "Fix is in a dead file",
+   "evidence": [
+    "scripts/skills/skill-uses.js:24"
+   ],
+   "status": "CONFLICT",
+   "domain": "skills"
+  },
+  {
+   "id": "CR-SPC-01",
+   "existingSource": "scripts/engine/systems/species/species-trait-engine.js:3",
+   "claim": "Central engine for species traits",
+   "observed": "Orphan; live path is grant ledger + passive adapter",
+   "evidence": [
+    "scripts/engine/abilities/passive/species-trait-passive-adapter.js:18"
+   ],
+   "status": "CONFLICT",
+   "domain": "species"
+  },
+  {
+   "id": "CR-SPC-02",
+   "existingSource": "scripts/species/index.js:3",
+   "claim": "Central export for species functionality",
+   "observed": "Orphan",
+   "evidence": [
+    "scripts/species/index.js:3"
+   ],
+   "status": "CONFLICT",
+   "domain": "species"
+  },
+  {
+   "id": "CR-SPC-03",
+   "existingSource": "census registry reachability",
+   "claim": "species-plan-transaction.js is test-only",
+   "observed": "Imported by orphan drop-handler.js; not live either way",
+   "evidence": [
+    "scripts/drag-drop/drop-handler.js:19"
+   ],
+   "status": "CONFLICT",
+   "domain": "species"
+  },
+  {
+   "id": "CR-STO-01",
+   "existingSource": "docs/audits/transaction-integrity/authority-and-call-path-map.md §2.2/§3; tx-remediation-ledger.md TX-10",
+   "claim": "StoreTransactionEngine, DroidTransactionService, VehicleTransactionService exist as INACTIVE legacy",
+   "observed": "None exist in the tree; only a comment mention remains",
+   "evidence": [
+    "scripts/holonet/emitters/store-emitter.js:1"
+   ],
+   "status": "CONFLICT",
+   "domain": "store-economy"
+  },
+  {
+   "id": "CR-STO-02",
+   "existingSource": "docs/audits/transaction-integrity/ti4-c0-closure-report.md §2; tx-remediation-ledger.md TI-N3",
+   "claim": "DarkSidePowers.js (removed talents module) writes credits outside TE",
+   "observed": "File removed; live successor is force-alchemy-mechanics-service",
+   "evidence": [
+    "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:441"
+   ],
+   "status": "CONFLICT",
+   "domain": "store-economy"
+  },
+  {
+   "id": "CR-STO-03",
+   "existingSource": "docs/audits/transaction-integrity/tx-remediation-ledger.md TX-01",
+   "claim": "UpgradeService writes the item before charging (open defect)",
+   "observed": "Routed through TE.executeMutationTransaction with verify",
+   "evidence": [
+    "scripts/engine/upgrades/UpgradeService.js:685"
+   ],
+   "status": "CONFLICT",
+   "domain": "store-economy"
+  },
+  {
+   "id": "CR-STO-04",
+   "existingSource": "docs/architecture/v2-contracts/A-global-invariants.md A-08 row",
+   "claim": "store-main.js:1437 is a mutation during render",
+   "observed": "Write is inside a click handler registered in _onRender (event time, not render time)",
+   "evidence": [
+    "scripts/apps/store/store-main.js:1152",
+    "scripts/apps/store/store-main.js:1437"
+   ],
+   "status": "CONFLICT",
+   "domain": "store-economy"
+  },
+  {
+   "id": "CR-TAL-01",
+   "existingSource": "docs/audits/class-force-v2-integration-matrix-2026-11-22.md Decision A; tests/class-force-v2-direct-fp-writer-classification.test.mjs",
+   "claim": "every direct Force Point writer is pinned and classified",
+   "observed": "the guard scans only the normal balance system.forcePoints.value; six modules write the bonus pool bonusForcePoints outside it",
+   "evidence": [
+    "docs/audits/class-force-v2-integration-matrix-2026-11-22.md:9",
+    "tests/class-force-v2-direct-fp-writer-classification.test.mjs:12",
+    "scripts/engine/talent/guardian-spirit-actions.js:91",
+    "scripts/engine/force/force-executor.js:732"
+   ],
+   "status": "CONFLICT",
+   "domain": "talents"
+  },
+  {
+   "id": "CR-TAL-02",
+   "existingSource": "scripts/data/talent-tree-db.js header",
+   "claim": "ALL engines MUST use this DB instead of string matching on names",
+   "observed": "talent action modules gate on talent names (tree access itself is compliant)",
+   "evidence": [
+    "scripts/data/talent-tree-db.js:18",
+    "scripts/engine/talent/guardian-spirit-actions.js:149"
+   ],
+   "status": "CONFLICT",
+   "domain": "talents"
+  },
+  {
+   "id": "CR-UIS-01",
+   "existingSource": "docs/architecture/v2-contracts/contradiction-register.md CR-10",
+   "claim": "four separately registered sheets may violate A-14",
+   "observed": "All four share SWSEV2ActorSheetBase and one template; vehicle is a base sibling with verbatim clones",
+   "evidence": [
+    "index.js:175",
+    "scripts/sheets/v2/actor-sheet-base.js:136",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:281",
+    "templates/actors/character/v2-concept/character-sheet.hbs:19"
+   ],
+   "status": "CONFLICT",
+   "domain": "ui-shell"
+  },
+  {
+   "id": "CR-UIS-02",
+   "existingSource": "scripts/sheets/v2/vehicle-actor-sheet.js:44 comment",
+   "claim": "helpers duplicated from character-sheet.js; import would create Vehicle->Character dependency",
+   "observed": "source is character-like-sheet.js; a neutral shared module avoids the dependency",
+   "evidence": [
+    "scripts/sheets/v2/vehicle-actor-sheet.js:46",
+    "scripts/sheets/v2/character-like-sheet.js:156"
+   ],
+   "status": "CONFLICT",
+   "domain": "ui-shell"
+  },
+  {
+   "id": "CR-UIS-03",
+   "existingSource": "docs/audits/droid-vehicle-ui-convergence.md §cleanup",
+   "claim": "36 of 38 templates/actors/droid/** unreferenced",
+   "observed": "35 tracked; census marks 11 unreferenced because it counts preload entries as references",
+   "evidence": [
+    "docs/audits/droid-vehicle-ui-convergence.md:72",
+    "scripts/load-templates.js:520"
+   ],
+   "status": "CONFLICT",
+   "domain": "ui-shell"
+  },
+  {
+   "id": "CR-UIS-04",
+   "existingSource": "OSI Action Palette retirement candidate",
+   "claim": "Action Palette still to be retired",
+   "observed": "module already removed; CSS selector and audit path remnants",
+   "evidence": [
+    "styles/system/scene-controls.css:34",
+    "scripts/governance/sentinel/v2-comprehensive-audit.js:242"
+   ],
+   "status": "CONFLICT",
+   "domain": "ui-shell"
+  },
+  {
+   "id": "CR-VEH-01",
+   "existingSource": "docs/audits/vehicles/universal-vehicle-phase4c-runtime-cutover-checkpoint.md §Browser/import",
+   "claim": "VehicleImportWizard is the browse/import wizard",
+   "observed": "Wizard has no importer; sheet import-vehicle button is force-disabled with a comment saying no implementation exists",
+   "evidence": [
+    "scripts/apps/vehicle-import-wizard.js:23",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:700",
+    "scripts/dev/sheet-action-registry.mjs:46"
+   ],
+   "status": "CONFLICT",
+   "domain": "vehicles"
+  },
+  {
+   "id": "CR-VEH-02",
+   "existingSource": "docs/architecture/v2-contracts/contradiction-register.md CR-12",
+   "claim": "vehicles-ground-armor/hybrids have no tracked source",
+   "observed": "All 11 declared vehicle packs are generated from data/canonical/vehicles/vehicles.json by the release builder; committed packs/vehicles-*.db are retired input for every vehicle pack; NeDB previews tracked in build/vehicle-phase4b/sources/",
+   "evidence": [
+    "tools/release/build-packs.mjs:71",
+    "tools/release/build-packs.mjs:80",
+    ".github/workflows/vehicle-universal-phase1.yml:86",
+    "system.json:881",
+    "system.json:894"
+   ],
+   "status": "CONFLICT",
+   "domain": "vehicles"
+  },
+  {
+   "id": "CR-VEH-03",
+   "existingSource": "docs/audits/vehicles/canonical-compendium.md §Cutover",
+   "claim": "system.json registers vehicles-canonical-ships",
+   "observed": "Not declared; test pins its absence",
+   "evidence": [
+    "docs/audits/vehicles/canonical-compendium.md:22",
+    "tests/vehicle-universal-phase4c-runtime-consumers.test.mjs:12"
+   ],
+   "status": "CONFLICT",
+   "domain": "vehicles"
+  },
+  {
+   "id": "CR-VEH-04",
+   "existingSource": "OSI A-10 vs docs/audits/swse-rules-decisions-pending.md V-P6C-19",
+   "claim": "TransactionEngine is single credit authority vs owner-approved Party Fund workflow",
+   "observed": "Party Fund debit via PartyFundAccess.setBalance/appendLedger, compensating restore on failure",
+   "evidence": [
+    "scripts/engine/vehicles/vehicle-ammunition-purchase-service.js:257",
+    "docs/audits/swse-rules-decisions-pending.md:2099"
+   ],
+   "status": "CONFLICT",
+   "domain": "vehicles"
+  },
+  {
+   "id": "CR-VEH-05",
+   "existingSource": "scripts/sheets/v2/vehicle-actor-sheet.js:44 comment",
+   "claim": "helpers duplicated from character-sheet.js",
+   "observed": "source now character-like-sheet.js",
+   "evidence": [
+    "scripts/sheets/v2/vehicle-actor-sheet.js:46",
+    "scripts/sheets/v2/character-like-sheet.js:156"
+   ],
+   "status": "CONFLICT",
+   "domain": "vehicles"
+  }
+ ]
+}

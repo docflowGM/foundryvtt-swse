@@ -27,9 +27,5 @@ export const sceneGridSize = scene => Number(scene?.grid?.size ?? globalThis.can
 /** The token an actor has on THIS scene (never a token on another scene: a position is only meaningful on its own scene). */
 export const tokenOnScene = (actor, scene) => Array.from(actor?.getActiveTokens?.() ?? []).find(t => (t?.document?.parent?.id ?? t?.scene?.id) === scene?.id) ?? null;
 
-/** Only the active GM client processes a scene event (every GM client receives the same Foundry hook; one must act). Unknown activeGM = this GM. */
-export function isResponsibleGM(user = globalThis.game?.user ?? null) {
-  if (user?.isGM !== true) return false;
-  const active = globalThis.game?.users?.activeGM;
-  return !active || active.id === user.id;
-}
+/** Only the active GM client processes a scene event — canonical implementation lives in utils/responsible-gm.js. */
+export { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/utils/responsible-gm.js";

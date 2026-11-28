@@ -1672,7 +1672,7 @@ export class HolonetMessengerService {
       updatedAt: nowIso(),
       updatedByUserId: game.user?.id ?? null
     };
-    await actor.setFlag('foundryvtt-swse', 'holonetPresence', presence);
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'holonetPresence', presence, { recalc: false });
     Hooks.callAll('swseHolonetUpdated', { type: 'presence-updated', actorId: actor.id });
     HolonetSocketService.emitSync({ type: 'state-updated', source: 'holonet-presence', actorId: actor.id });
     return true;

@@ -111,8 +111,9 @@ export class BABCalculator {
    * SystemInitHooks performs authoritative actor reconciliation after registries
    * initialize, at which point this method uses exact class progression data.
    */
-  static async calculate(classLevels, options = {}) {
-    if (!classLevels || classLevels.length === 0) return 0;
+  static async calculateDetailed(classLevels, options = {}) {
+    const exact = { certified: true, startupDeferred: false, estimated: [] };
+    if (!classLevels || classLevels.length === 0) return { total: 0, provenance: exact };
 
     const adjustment = Number(options?.adjustment || 0) || 0;
     const cacheKey = this._classLevelsSignature(classLevels, adjustment);
@@ -123,11 +124,13 @@ export class BABCalculator {
         this._startupDeferralLogged = true;
         swseLogger.debug('[BABCalculator] Deferring heroic BAB authority during initializeDocuments; authoritative recalculation will run after progression initialization.');
       }
-      return this._startupSafeBab(classLevels, adjustment);
+      // 3N-DC: during startup only nonheroic BAB is known; the heroic part is deferred, so this value is NOT a certified BAB.
+      return { total: this._startupSafeBab(classLevels, adjustment), provenance: { certified: false, startupDeferred: true, estimated: [] } };
     }
 
     const { getClassData } = await this._getClassDataLoader();
     let totalBAB = 0;
+    const estimated = [];
 
     for (const classLevel of classLevels) {
       const classData = await getClassData(classLevel.class);
@@ -161,6 +164,7 @@ export class BABCalculator {
           `[BABCalculator] Estimated BAB for "${classLevel.class}" level ${levelsInClass} because exact level_progression data was unavailable`
         );
         totalBAB += estimatedBab;
+        estimated.push({ class: classLevel.class, level: levelsInClass, bab: estimatedBab });
         continue;
       }
 
@@ -170,8 +174,13 @@ export class BABCalculator {
       );
     }
 
-    const result = totalBAB + adjustment;
+    const result = { total: totalBAB + adjustment, provenance: { certified: estimated.length === 0, startupDeferred: false, estimated } };
     if (cacheKey) this._rememberBab(cacheKey, result);
     return result;
+  }
+
+  /** Numeric BAB (compatibility API). Use calculateDetailed() when the caller must know whether the value is certified. */
+  static async calculate(classLevels, options = {}) {
+    return (await this.calculateDetailed(classLevels, options)).total;
   }
 }

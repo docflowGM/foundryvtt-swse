@@ -103,8 +103,8 @@ async function normalizeSportHunter(item, options = {}) {
 }
 
 export function registerSportHunterNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeSportHunter(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeSportHunter(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeSportHunter(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeSportHunter(item, options) : false);
   SWSELogger.log('[SportHunterNormalization] Hooks registered');
 }
 

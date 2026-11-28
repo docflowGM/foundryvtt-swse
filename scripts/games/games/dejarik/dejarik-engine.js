@@ -185,6 +185,38 @@ function endTurn(session, state, fromSeatId) {
   return state;
 }
 
+const DRAFT_ACTIONS = new Set(['select-monster', 'clear-draft', 'deploy-team']);
+
+// Draft-phase commands (select-monster / clear-draft / deploy-team). The play-phase dispatcher (applyAction) rejects everything
+// outside phase "playing", so these must be routed here first; the engine remains the only authority on legal selections.
+function applyDraftAction(session, state, seat, action, payload = {}) {
+  if (state.phase !== 'draft') {
+    return { ok: false, error: state.phase === 'playing' ? 'The Dejarik draft is closed; the match is in play.' : 'This Dejarik match is not in the draft phase.' };
+  }
+  if (state.draft?.playerSeatId && state.draft.playerSeatId !== seat.seatId) return { ok: false, error: 'Only the drafting seat can choose Dejarik holomonsters.' };
+  const allowed = allowedDejarikMonsterIds(session, state);
+  const current = normalizeMonsterSelection(state.draft?.selectedMonsterIds || [], allowed);
+  if (action === 'clear-draft') {
+    state.draft.selectedMonsterIds = [];
+    state.message = 'Draft cleared. Choose four holomonsters to deploy to the Dejarik board.';
+    return { ok: true };
+  }
+  if (action === 'select-monster') {
+    const monsterId = String(payload.monsterId || '').trim();
+    if (!allowed.includes(monsterId)) return { ok: false, error: 'That holomonster is not available for this table.' };
+    if (current.includes(monsterId)) {
+      state.draft.selectedMonsterIds = current.filter(id => id !== monsterId);
+    } else {
+      if (current.length >= (state.draft?.requiredCount || 4)) return { ok: false, error: 'Four holomonsters are already selected; remove one first.' };
+      state.draft.selectedMonsterIds = [...current, monsterId];
+    }
+    const n = state.draft.selectedMonsterIds.length;
+    state.message = n >= 4 ? 'Ready to deploy.' : `${n}/4 holomonsters selected.`;
+    return { ok: true };
+  }
+  return deployDraftTeam(session, state, seat, current);
+}
+
 function applyAction(session, state, seat, action, payload = {}) {
   if (state.phase !== 'playing') return { ok: false, error: 'This Dejarik match is not in play.' };
   if (state.activeSeatId !== seat.seatId) return { ok: false, error: 'It is not this seat\'s Dejarik turn.' };
@@ -306,7 +338,9 @@ export class DejarikEngine {
     }
     const seat = findSeat(session, seatId);
     if (!seat) return { ok: false, error: 'Dejarik seat not found.' };
-    const result = applyAction(session, state, seat, normalized, payload || {});
+    const result = DRAFT_ACTIONS.has(normalized)
+      ? applyDraftAction(session, state, seat, normalized, payload || {})
+      : (state.phase === 'draft' ? { ok: false, error: 'Deploy your Dejarik team before taking board actions.' } : applyAction(session, state, seat, normalized, payload || {}));
     if (!result.ok) return result;
     await processAi(session, state);
     const status = state.phase === 'complete' ? 'complete' : 'active';

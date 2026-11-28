@@ -22,6 +22,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const MAX_RECENT_SIZE = 15;
 
@@ -37,17 +38,18 @@ async function _persistHistory(actor) {
     // Persist to actor flags for durability across reloads
     // @mutation-exception: metadata
     // Store selection history for suggestion caching (session state)
-    await actor.setFlag(
-      'foundryvtt-swse',
-      'suggestionEngine.history.recent',
-      actor.system.suggestionEngine.history.recent
-    );
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'suggestionEngine.history.recent', actor.system.suggestionEngine.history.recent, { recalc: false });
   } catch (err) {
     SWSELogger.error('[SelectionRecorder] Failed to persist history:', err);
   }
 }
 
 export class SelectionRecorder {
+  /** Persist the in-memory history once (used after a batch of persist:false records). */
+  static persistHistory(actor) {
+    return _persistHistory(actor);
+  }
+
   /**
    * Record that a suggestion was shown to the player
    *
@@ -57,7 +59,7 @@ export class SelectionRecorder {
    * @param {Object} context - { mentorAlignment, classSynergy, buildCoherence, archetypeMatch }
    * @returns {Promise<string>} Suggestion ID (for later outcome tracking)
    */
-  static async recordSuggestionShown(actor, suggestion, confidence, context) {
+  static async recordSuggestionShown(actor, suggestion, confidence, context, { persist = true } = {}) {
     try {
       if (!actor?.system?.suggestionEngine?.history?.recent) {
         SWSELogger.warn('[SelectionRecorder] History not initialized, cannot record shown suggestion');
@@ -95,8 +97,8 @@ export class SelectionRecorder {
         actor.system.suggestionEngine.history.recent.shift();
       }
 
-      // Persist to flags
-      await _persistHistory(actor);
+      // Persist to flags (batch callers pass persist:false and call persistHistory once)
+      if (persist) await _persistHistory(actor);
 
       SWSELogger.log(`[SelectionRecorder] Suggestion shown: ${suggestion.itemName} (${suggestionId})`);
       return suggestionId;

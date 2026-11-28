@@ -1,0 +1,1647 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "mentor-suggestion",
+ "name": "Mentor, surveys, suggestion and build analysis",
+ "kind": "feature",
+ "files": 568,
+ "runtimeSloc": 51876,
+ "runtimeFiles": 240,
+ "counts": {
+  "files": 568,
+  "runtimeModules": 239,
+  "runtimeSloc": 51792,
+  "reachability": {
+   "reachable-static": 156,
+   "orphan-unreferenced": 38,
+   "unreachable-importers-only": 31,
+   "reachable-dynamic": 10,
+   "test-only-import": 2,
+   "string-referenced-only": 2
+  },
+  "nonRuntimeByRole": {
+   "asset": 33,
+   "data": 129,
+   "evidence-data": 11,
+   "evidence-or-doc": 72,
+   "module": 2,
+   "presentation": 1,
+   "presentation-style": 10,
+   "presentation-template": 16,
+   "test": 34,
+   "tool": 21
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/engine/suggestion/SuggestionService.js",
+   "consumers": 27,
+   "sloc": 839,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "SuggestionService"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/mentor/mentor-dialogues.js",
+   "consumers": 18,
+   "sloc": 340,
+   "role": "presentation-with-writes",
+   "exports": [
+    "MENTORS",
+    "resolveMentorPortraitPath",
+    "resolveMentorData",
+    "getMentorKey",
+    "getMentorIntroText",
+    "getMentorForClass",
+    "getMentorGreeting",
+    "getMentorGuidance",
+    "getLevel1Class",
+    "setLevel1Class",
+    "setMentorOverride",
+    "getActiveMentor"
+   ],
+   "writes": 3,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/mentor/mentor-survey-v2/contract.js",
+   "consumers": 17,
+   "sloc": 56,
+   "role": "module",
+   "exports": [
+    "SURVEY_KINDS",
+    "QUESTION_IDS",
+    "DEPTH_IDS",
+    "CALIBRATION_IDS",
+    "LANES",
+    "WRITABLE_LANES",
+    "EVENT_TYPES",
+    "EDITORIAL_STATUS",
+    "MECHANICS_STATUS",
+    "RELEASE_STATE",
+    "VIEW_OPTION_FIELDS",
+    "VIEW_QUESTION_FIELDS"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 62
+  },
+  {
+   "path": "scripts/engine/suggestion/equipment-loadout-profile.js",
+   "consumers": 12,
+   "sloc": 323,
+   "role": "module",
+   "exports": [
+    "buildEquipmentLoadoutProfile",
+    "getEquipmentLoadoutProfile",
+    "getLoadoutTagWeight",
+    "scoreCandidateLoadoutFit",
+    "hasLoadoutCommitment",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 56
+  },
+  {
+   "path": "scripts/engine/archetype/archetype-registry.js",
+   "consumers": 10,
+   "sloc": 619,
+   "role": "registry",
+   "exports": [
+    "ArchetypeRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 55
+  },
+  {
+   "path": "scripts/mentor/mentor-survey-v2/intent-ledger.js",
+   "consumers": 10,
+   "sloc": 97,
+   "role": "engine-or-service",
+   "exports": [
+    "GOAL_TARGET_TYPES",
+    "eventIdOf",
+    "readLedger",
+    "reduceLedger",
+    "buildCompletionEvents",
+    "mergeEvents",
+    "isAppendOnly",
+    "buildLedgerSetPatch"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 61
+  },
+  {
+   "path": "scripts/mentor/mentor-translation-integration.js",
+   "consumers": 10,
+   "sloc": 171,
+   "role": "module-with-writes",
+   "exports": [
+    "MentorTranslationIntegration"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 57
+  },
+  {
+   "path": "scripts/engine/suggestion/BuildIntent.js",
+   "consumers": 9,
+   "sloc": 524,
+   "role": "module",
+   "exports": [
+    "initializePrestigeSignals",
+    "PRESTIGE_SIGNALS",
+    "initializePrestigeSignalsData",
+    "BUILD_THEMES",
+    "FEAT_THEME_SIGNALS",
+    "BuildIntent",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 52
+  },
+  {
+   "path": "scripts/engine/suggestion/suggestion-unified-tiers.js",
+   "consumers": 8,
+   "sloc": 89,
+   "role": "module",
+   "exports": [
+    "UNIFIED_TIERS",
+    "validateUnifiedTiers",
+    "getTierBadge",
+    "getTierColor",
+    "compareTiers",
+    "getTierMetadata"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 52
+  },
+  {
+   "path": "scripts/mentor/mentor-survey-v2/content-store.js",
+   "consumers": 8,
+   "sloc": 78,
+   "role": "module",
+   "exports": [
+    "isFirstPerson",
+    "findLeaks",
+    "validateResponseRecord",
+    "validateMentorLine",
+    "evaluateScopeRelease",
+    "isRecordPlayable",
+    "toViewOption",
+    "scanViewForLeaks"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/suggestion/equipment/store-suggestion-context.js",
+   "consumers": 7,
+   "sloc": 360,
+   "role": "module",
+   "exports": [
+    "buildStoreSuggestionContextCacheKey",
+    "getStoreItemCost",
+    "extractStoreItemTags",
+    "buildStoreSuggestionContext",
+    "scoreStoreItemBudgetFit",
+    "scoreStoreItemContextFit",
+    "buildStoreContextExplanations",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 52
+  },
+  {
+   "path": "scripts/ui/dialogue/aurebesh-translator.js",
+   "consumers": 7,
+   "sloc": 152,
+   "role": "presentation",
+   "exports": [
+    "AurebeshTranslator"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 58
+  },
+  {
+   "path": "scripts/engine/analysis/build-analysis-engine.js",
+   "consumers": 6,
+   "sloc": 617,
+   "role": "engine-or-service",
+   "exports": [
+    "BuildAnalysisEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/suggestion/ReasonFactory.js",
+   "consumers": 6,
+   "sloc": 90,
+   "role": "module",
+   "exports": [
+    "ReasonFactory"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 52
+  },
+  {
+   "path": "scripts/engine/suggestion/build-route-confidence-profile.js",
+   "consumers": 6,
+   "sloc": 557,
+   "role": "module",
+   "exports": [
+    "buildRouteConfidenceProfile",
+    "scoreCandidateRouteFit",
+    "summarizeRouteConfidenceProfile",
+    "getOwnedRepeatableCount",
+    "isRepeatableCandidate"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 52
+  },
+  {
+   "path": "scripts/engine/suggestion/equipment/shared-scoring-utils.js",
+   "consumers": 6,
+   "sloc": 128,
+   "role": "module",
+   "exports": [
+    "clampScore",
+    "scaleNormalizedTo100",
+    "scale100ToNormalized",
+    "assignTier",
+    "getTierKey",
+    "buildPeerGroupIndex",
+    "getPeerGroup",
+    "computeCategoryAdjustment",
+    "extractDamageBands",
+    "computeDiceAverage",
+    "normalizeDamageScore",
+    "computeWeightedCombined"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/mentor/mentor-survey-v2/actor-evidence.js",
+   "consumers": 6,
+   "sloc": 58,
+   "role": "module",
+   "exports": [
+    "canonicalIdOf",
+    "canonicalSkillKey",
+    "skillFocusTarget",
+    "skillLabel",
+    "projectActorEvidence",
+    "selectObservations",
+    "allFactsGrounded"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 61
+  },
+  {
+   "path": "scripts/engine/mentor/mentor-intensity-atoms.js",
+   "consumers": 5,
+   "sloc": 51,
+   "role": "module",
+   "exports": [
+    "INTENSITY_ATOMS",
+    "INTENSITY_ATOM_LIST",
+    "INTENSITY_LEVELS",
+    "INTENSITY_SCALE",
+    "isValidIntensityAtom",
+    "getIntensityLevel",
+    "getIntensityScale",
+    "incrementIntensity",
+    "decrementIntensity"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/mentor/mentor-json-loader.js",
+   "consumers": 5,
+   "sloc": 173,
+   "role": "module",
+   "exports": [
+    "loadMentorsFromJSON",
+    "getMentors",
+    "getMentor",
+    "getReasons",
+    "getReasonText",
+    "selectBestReason",
+    "getMentorDialogueFromJSON",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 57
+  },
+  {
+   "path": "scripts/engine/mentor/mentor-reason-atoms.js",
+   "consumers": 5,
+   "sloc": 76,
+   "role": "module",
+   "exports": [
+    "REASON_ATOMS",
+    "REASON_ATOM_LIST",
+    "REASON_CATEGORIES",
+    "isValidReasonAtom",
+    "getReasonCategory",
+    "filterReasonsByCategory"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/suggestion/BuildIdentityAnchor.js",
+   "consumers": 5,
+   "sloc": 125,
+   "role": "module",
+   "exports": [
+    "BuildIdentityAnchor"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/suggestion/ClassSuggestionEngine.js",
+   "consumers": 5,
+   "sloc": 1359,
+   "role": "engine-or-service",
+   "exports": [
+    "CLASS_SUGGESTION_TIERS",
+    "PRESTIGE_BIAS",
+    "CLASS_SYNERGY_DATA",
+    "ClassSuggestionEngine",
+    "analyzeBuildDirection"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 52
+  },
+  {
+   "path": "scripts/engine/suggestion/SnapshotBuilder.js",
+   "consumers": 5,
+   "sloc": 237,
+   "role": "module",
+   "exports": [
+    "SnapshotBuilder",
+    "buildSuggestionSnapshot",
+    "hashSuggestionSnapshot"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 52
+  },
+  {
+   "path": "scripts/engine/suggestion/SuggestionEngine.js",
+   "consumers": 5,
+   "sloc": 2204,
+   "role": "engine-or-service",
+   "exports": [
+    "SUGGESTION_TIERS",
+    "TIER_REASON_CODES",
+    "TIER_CONFIDENCE",
+    "TIER3_SUBPRIORITY",
+    "TIER3_MAX_BONUS",
+    "SuggestionEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+   "consumers": 5,
+   "sloc": 599,
+   "role": "engine-or-service",
+   "exports": [
+    "SuggestionEngineCoordinator",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/mentor/mentor-suggestion-data.js",
+   "sloc": 2279,
+   "reach": "string-referenced-only"
+  },
+  {
+   "path": "scripts/engine/mentor/mentor-dialogues.data.js",
+   "sloc": 2246,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/suggestion/SuggestionEngine.js",
+   "sloc": 2204,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/suggestion/ClassSuggestionEngine.js",
+   "sloc": 1359,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/suggestion/SuggestionService.js",
+   "sloc": 839,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/suggestion/SuggestionScorer.js",
+   "sloc": 802,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/suggestion/attribute-planner.js",
+   "sloc": 665,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/mentor/mentor-chat-dialog.js",
+   "sloc": 662,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/mentor/mentor-dialogue-responses.js",
+   "sloc": 647,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/archetype/archetype-registry.js",
+   "sloc": 619,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/mentor/mentor-suggestion-data.js",
+   "reach": "string-referenced-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 2279,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/tier1-standalone-simulation.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 596,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/analysis/mentor-dialogue-audit.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 531,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/character-data-analysis.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 501,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/analysis/mentor-system-exploration.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 457,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/MentorSystem.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 452,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/ArchetypeAffinityEngine.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 445,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/analysis/phase-3-b-atom-vocabulary-plan.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 434,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/mentor/mentor-interaction-orchestrator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 434,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/analysis/phase-3-audit-report.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 400,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/scoring-walkthrough.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 359,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-personalities.js",
+   "reach": "test-only-import",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 298,
+   "tests": 1
+  },
+  {
+   "path": "scripts/mentor/mentor-voice-filter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 281,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/analysis/trajectory-planning-engine.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 274,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/ArchetypeSuggestionIntegration.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 266,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/equipment/asset-suggestions.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 260,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/equipment/tactical-evaluator.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 231,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/equipment/armor-gear-scoring-engine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 229,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/mentor/mentor-synthesis-config.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 221,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-suggestion-engine.js",
+   "reach": "string-referenced-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 218,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-translation-settings.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 209,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/mentor/mentor-reason-renderer.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 206,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/ArchetypeUIComponents.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 191,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/suggestions/presentation-map.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 171,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/MentorWishlistIntegration.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 164,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/analysis/phase-3-demo.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 162,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-suggestion-dialog.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 145,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/EvidenceCardFactory.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 140,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/MentorClarificationSystem.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 138,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/ArchetypeEngineHooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 137,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/mentor/mentor-decision-logger.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 135,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/ArchetypeEnhancedForceOptionSuggestionEngine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 123,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/mentor/mentor-suggestion-dialog.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 122,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-help-strings.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 118,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-conditional-variants.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 111,
+   "tests": 1
+  },
+  {
+   "path": "scripts/mentor/mentor-voice-synthesizer.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 106,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/mentor/mentor-selector.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 101,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/gm/gm-suggestion-panel.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 101,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/gm/tuning-advisor.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 99,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/ArchetypeShiftTracker.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 98,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-topic-atoms.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 98,
+   "tests": 0
+  },
+  {
+   "path": "scripts/infrastructure/hooks/suggestion-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 95,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/ArchetypeLoader.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 94,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-guidance.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 88,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-suggestion-json-loader.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 87,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/equipment/combat-engine.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 84,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/verify-suggestions.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 84,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/suggestion-advisory-formatter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 82,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/gm/pacing-monitor.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 80,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/validateClassArchetypes.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 78,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/mentor/address-profiles.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 66,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/equipment/report-schema.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 63,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/gm/insight-bus.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 58,
+   "tests": 0
+  },
+  {
+   "path": "scripts/dialogue/runtime/emotionalRoutingMatrix.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 58,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-decision-logger.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 58,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/equipment/combat-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 56,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/mentor/address-policy.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 54,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/gm/pressure-monitor.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 51,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/gm/spotlight-monitor.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 51,
+   "tests": 0
+  },
+  {
+   "path": "scripts/constants/archetype-bias-enums.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 50,
+   "tests": 0
+  },
+  {
+   "path": "scripts/dialogue/runtime/getJudgmentOverlay.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 40,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/gm/init.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 29,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/gm/insight-types.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 29,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/suggestion/suggestion-settings.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 26,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/mentor/index.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 25,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-reflective-dialog.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 25,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-transitions.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 23,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/mentor/address-engine.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 21,
+   "tests": 0
+  },
+  {
+   "path": "scripts/dialogue/runtime/getEncouragementLine.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 17,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-reflective-init.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 17,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/translation-presets.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 8,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/analysis/index.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 7,
+   "tests": 0
+  },
+  {
+   "path": "scripts/mentor/mentor-dialogue-variants.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 1,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 119,
+  "progression": 33,
+  "classes": 13,
+  "ui-shell": 11,
+  "force": 9,
+  "actor-core": 8,
+  "houserules": 6,
+  "abilities-effects": 5,
+  "equipment": 5,
+  "talents": 4,
+  "feats": 3,
+  "skills": 2,
+  "governance": 1,
+  "species": 1,
+  "store-economy": 1
+ },
+ "dependedOnByDomains": {
+  "progression": 66,
+  "infrastructure": 9,
+  "customization": 8,
+  "store-economy": 6,
+  "classes": 6,
+  "ui-shell": 4,
+  "governance": 2,
+  "holonet": 2,
+  "dev-tooling": 1,
+  "actor-core": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 24,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/SuggestionStateService.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      56,
+      90,
+      130,
+      198
+     ]
+    },
+    {
+     "path": "scripts/engine/mentor/mentor-dialogues.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      368,
+      394,
+      448
+     ]
+    },
+    {
+     "path": "scripts/engine/mentor/mentor-memory.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      107,
+      297,
+      332
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionExplainer.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      308,
+      326,
+      334
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionReasonEngine.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      49,
+      257,
+      630
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/AnchorRepository.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      136,
+      239
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/WishlistEngine.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      44,
+      71
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/ClassDomainReasonEngine.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      295
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/SelectionRecorder.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      40
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionService.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      621
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/attribute-planner.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      158
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A07-engine-imports-ui",
+   "invariant": "A-07",
+   "count": 3,
+   "sites": [
+    {
+     "path": "scripts/engine/mentor/aurebesh-translator.js",
+     "target": "scripts/ui/dialogue/aurebesh-translator.js",
+     "kind": "reexport"
+    },
+    {
+     "path": "scripts/engine/suggestion/BackgroundSuggestionEngine.js",
+     "target": "scripts/apps/progression-framework/utils/skill-display.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionService.js",
+     "target": "scripts/ui/shell/ShellMutationGuard.js",
+     "kind": "static"
+    }
+   ]
+  },
+  {
+   "probe": "P-A16-module-caches",
+   "invariant": "A-16",
+   "count": 4,
+   "sites": [
+    {
+     "path": "scripts/engine/suggestion/SuggestionService.js",
+     "maps": 3,
+     "cacheMentions": 11,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+     "maps": 1,
+     "cacheMentions": 7,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/engine/suggestion/CandidatePoolBuilder.js",
+     "maps": 1,
+     "cacheMentions": 5,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/engine/suggestion/SnapshotBuilder.js",
+     "maps": 2,
+     "cacheMentions": 3,
+     "hasInvalidate": true
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "skill-total",
+   "otherDomains": [
+    "combat",
+    "infrastructure",
+    "progression",
+    "rolls",
+    "skills"
+   ],
+   "sites": [
+    "scripts/engine/suggestion/shared-suggestion-utilities.js:128 getSkillModifier"
+   ]
+  },
+  {
+   "responsibility": "ability-modifier",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "feats",
+    "force",
+    "infrastructure",
+    "npc-followers",
+    "progression",
+    "rolls",
+    "species",
+    "talents",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/engine/suggestion/equipment/armor-scoring-engine.js:280 abilityMod",
+    "scripts/engine/suggestion/equipment/equipment-use-evaluator.js:123 readAbilityMod",
+    "scripts/engine/suggestion/force-rule-adapter.js:40 getAbilityMod",
+    "scripts/engine/suggestion/shared-suggestion-utilities.js:67 extractAbilityModifiers"
+   ]
+  },
+  {
+   "responsibility": "price-computation",
+   "otherDomains": [
+    "combat",
+    "customization",
+    "droids",
+    "equipment",
+    "feats",
+    "skills",
+    "store-economy"
+   ],
+   "sites": [
+    "scripts/engine/suggestion/equipment/store-suggestion-context.js:89 getStoreItemCost",
+    "scripts/engine/suggestion/OpportunityCostAnalyzer.js:44 computeCost"
+   ]
+  },
+  {
+   "responsibility": "xp-level",
+   "otherDomains": [
+    "infrastructure",
+    "progression"
+   ],
+   "sites": [
+    "scripts/mentor/mentor-suggestion-voice.js:414 getRandomExplanation"
+   ]
+  }
+ ],
+ "exactClones": [
+  {
+   "tokens": 150,
+   "sites": [
+    "scripts/engine/suggestion/BuildCoherenceAnalyzer.js:14 normalizeTextTokens",
+    "scripts/engine/suggestion/BuildIntent.js:80 normalizeTextTokens",
+    "scripts/engine/suggestion/OpportunityCostAnalyzer.js:16 normalizeTextTokens",
+    "scripts/engine/suggestion/PrestigeAffinityEngine.js:17 normalizeTextTokens",
+    "scripts/engine/suggestion/SuggestionEngine.js:72 normalizeTextTokens",
+    "scripts/engine/suggestion/SynergyEvaluator.js:15 normalizeTextTokens"
+   ]
+  },
+  {
+   "tokens": 150,
+   "sites": [
+    "scripts/apps/mentor/mentor-suggestion-dialog.js:44",
+    "scripts/mentor/mentor-suggestion-dialog.js:39"
+   ]
+  },
+  {
+   "tokens": 138,
+   "sites": [
+    "scripts/apps/mentor/mentor-suggestion-dialog.js:45",
+    "scripts/mentor/mentor-suggestion-dialog.js:40"
+   ]
+  }
+ ],
+ "duplicateSymbolNames": [
+  {
+   "name": "buildRecordIndex",
+   "files": [
+    "scripts/mentor/mentor-survey-v2/l1-controller.js",
+    "scripts/mentor/mentor-survey-v2/multiclass-controller.js",
+    "scripts/mentor/mentor-survey-v2/prestige-controller.js"
+   ]
+  },
+  {
+   "name": "calculateAbilityModifier",
+   "files": [
+    "scripts/engine/suggestion/shared-suggestion-utilities.js",
+    "scripts/rolls/skills-reference.js",
+    "scripts/utils/math-utils.js"
+   ]
+  },
+  {
+   "name": "CLASS_SYNERGY_DATA",
+   "files": [
+    "scripts/engine/progression/utils/class-suggestion-utilities.js",
+    "scripts/engine/suggestion/ClassSuggestionEngine.js",
+    "scripts/engine/suggestion/shared-suggestion-utilities.js"
+   ]
+  },
+  {
+   "name": "clearCache",
+   "files": [
+    "scripts/engine/progression/prerequisites/class-prerequisites-cache.js",
+    "scripts/engine/progression/talents/talent-tree-membership-authority.js",
+    "scripts/engine/suggestion/ArchetypeLoader.js"
+   ]
+  },
+  {
+   "name": "BuildIntent",
+   "files": [
+    "scripts/apps/progression-framework/shell/build-intent.js",
+    "scripts/engine/suggestion/BuildIntent.js"
+   ]
+  },
+  {
+   "name": "deepClone",
+   "files": [
+    "scripts/mentor/mentor-survey-v2/contract.js",
+    "scripts/utils/data-utils.js"
+   ]
+  },
+  {
+   "name": "DIALOGUE_PHASES",
+   "files": [
+    "scripts/engine/mentor/mentor-dialogues.js",
+    "scripts/mentor/mentor-suggestion-engine.js"
+   ]
+  },
+  {
+   "name": "evaluateCondition",
+   "files": [
+    "scripts/items/weapon-runtime/condition-policy.js",
+    "scripts/mentor/mentor-conditional-variants.js"
+   ]
+  },
+  {
+   "name": "getArchetypeRoleBias",
+   "files": [
+    "scripts/engine/suggestion/ArchetypeDefinitions.js",
+    "scripts/mentor/mentor-archetype-paths.js"
+   ]
+  },
+  {
+   "name": "getDialoguePhase",
+   "files": [
+    "scripts/engine/mentor/mentor-dialogues.js",
+    "scripts/mentor/mentor-suggestion-engine.js"
+   ]
+  },
+  {
+   "name": "getIconClass",
+   "files": [
+    "scripts/ui/suggestions/presentation-map.js",
+    "scripts/utils/icon-constants.js"
+   ]
+  },
+  {
+   "name": "getReasonText",
+   "files": [
+    "scripts/engine/mentor/mentor-json-loader.js",
+    "scripts/ui/suggestions/presentation-map.js"
+   ]
+  },
+  {
+   "name": "getSkillAbility",
+   "files": [
+    "scripts/apps/progression-framework/utils/skill-display.js",
+    "scripts/engine/suggestion/attribute-planner.js"
+   ]
+  },
+  {
+   "name": "getSkillModifier",
+   "files": [
+    "scripts/engine/suggestion/shared-suggestion-utilities.js",
+    "scripts/rolls/skills-reference.js"
+   ]
+  },
+  {
+   "name": "inferenceClaims",
+   "files": [
+    "scripts/mentor/mentor-survey-v2/reflection.js",
+    "scripts/mentor/mentor-survey-v2/resolvers/reflection-q6.js"
+   ]
+  },
+  {
+   "name": "initializePrestigeSignals",
+   "files": [
+    "scripts/engine/suggestion/BuildIntent.js",
+    "scripts/engine/suggestion/PrestigeAffinityEngine.js"
+   ]
+  },
+  {
+   "name": "MENTORS",
+   "files": [
+    "scripts/engine/mentor/mentor-dialogues.data.js",
+    "scripts/engine/mentor/mentor-dialogues.js"
+   ]
+  },
+  {
+   "name": "MentorSuggestionDialog",
+   "files": [
+    "scripts/apps/mentor/mentor-suggestion-dialog.js",
+    "scripts/mentor/mentor-suggestion-dialog.js"
+   ]
+  },
+  {
+   "name": "NOT_CAPS",
+   "files": [
+    "scripts/mentor/mentor-survey-v2/reflection.js",
+    "scripts/mentor/mentor-survey-v2/resolvers/reflection-q6.js"
+   ]
+  },
+  {
+   "name": "q6Reflection",
+   "files": [
+    "scripts/mentor/mentor-survey-v2/resolvers/multiclass.js",
+    "scripts/mentor/mentor-survey-v2/resolvers/reflection-q6.js"
+   ]
+  },
+  {
+   "name": "q6SelectionMetaMany",
+   "files": [
+    "scripts/mentor/mentor-survey-v2/resolvers/multiclass.js",
+    "scripts/mentor/mentor-survey-v2/resolvers/reflection-q6.js"
+   ]
+  },
+  {
+   "name": "ReasonType",
+   "files": [
+    "scripts/engine/progression/forecast/suggestion-result-contract.js",
+    "scripts/engine/suggestion/SuggestionV2Contract.js"
+   ]
+  },
+  {
+   "name": "revisionOf",
+   "files": [
+    "scripts/mentor/mentor-survey-v2/contract.js",
+    "scripts/mentor/mentor-survey-v2/reflection.js"
+   ]
+  },
+  {
+   "name": "SESSION_SELECTION_KEY",
+   "files": [
+    "scripts/mentor/mentor-survey-v2/contract.js",
+    "scripts/mentor/mentor-survey-v2/finalization.js"
+   ]
+  },
+  {
+   "name": "stableStringify",
+   "files": [
+    "scripts/domain/droids/droid-revision-hash.js",
+    "scripts/mentor/mentor-survey-v2/contract.js"
+   ]
+  },
+  {
+   "name": "SUGGESTION_CONTEXTS",
+   "files": [
+    "scripts/engine/mentor/mentor-dialogues.js",
+    "scripts/mentor/mentor-suggestion-engine.js"
+   ]
+  },
+  {
+   "name": "SUGGESTION_TIERS",
+   "files": [
+    "scripts/engine/suggestion/SuggestionEngine.js",
+    "scripts/engine/suggestion/equipment/suggestion-tiers-canonical.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "swse:level-up-complete",
+   "sites": [
+    "scripts/engine/suggestion/SuggestionEngineHooks.js:33"
+   ]
+  },
+  {
+   "name": "swse:feat-selected",
+   "sites": [
+    "scripts/engine/suggestion/SuggestionEngineHooks.js:31"
+   ]
+  },
+  {
+   "name": "swse:talent-selected",
+   "sites": [
+    "scripts/engine/suggestion/SuggestionEngineHooks.js:32"
+   ]
+  },
+  {
+   "name": "swse:mentor-dialog-complete",
+   "sites": [
+    "scripts/engine/suggestion/SuggestionEngineHooks.js:34"
+   ]
+  },
+  {
+   "name": "swse:suggestion-ignored",
+   "sites": [
+    "scripts/engine/suggestion/SuggestionEngineHooks.js:35"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "data/audits/archetype-phase-11-2/alias-normalization-set-1.json",
+  "data/audits/archetype-phase-11-2/bespoke-adjudication.json",
+  "data/audits/archetype-phase-11-2/category-decomposition.json",
+  "data/audits/archetype-phase-11-2/conceptual-adjudication.json",
+  "data/audits/archetype-phase-11-2/final-reconsider-resolution.json",
+  "data/audits/archetype-phase-11-2/role-class-adjudication.json",
+  "data/audits/archetype-phase-11-2/structural-adjudication.json",
+  "data/audits/archetype-phase-11-2/tag-pruning-pass-1.json",
+  "data/audits/archetype-phase-12a-convergence-audit.json",
+  "data/audits/archetype-phase-12a-runtime-ssot.json",
+  "data/audits/archetype-phase-12b-semantic-curation.json",
+  "docs/audits/archetype-phase-11-2-alias-normalization-set-1.md",
+  "docs/audits/archetype-phase-11-2-category-decomposition.md",
+  "docs/audits/archetype-phase-11-2-conceptual-adjudication.md",
+  "docs/audits/archetype-phase-11-2-docs-recovery-provenance.md",
+  "docs/audits/archetype-phase-11-2-final-reconsider-resolution.md",
+  "docs/audits/archetype-phase-11-2-role-class-adjudication.md",
+  "docs/audits/archetype-phase-11-2-structural-adjudication.md",
+  "docs/audits/archetype-phase-11-2-tag-pruning-pass-1.md",
+  "docs/audits/archetype-phase-12a-convergence-audit.md",
+  "docs/audits/archetype-phase-12a-runtime-ssot.md",
+  "docs/audits/archetype-phase-12b-closeout.md",
+  "docs/audits/archetype-phase-12b-semantic-curation.md",
+  "docs/design/SURVEY_DESIGN_SOURCE_INDEX.md",
+  "docs/design/SWSE_Mentor_Surveys_Master_Answer_Tag_Mapping_2026-11-15.md",
+  "docs/design/SWSE_Multiclass_Prestige_Survey_Rolling_Design.md",
+  "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+  "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+  "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Mentor_Dialogue_Reuse_Audit_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Mentor_Dialogue_Working_Draft_v0.3_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Player_Response_Display_Contract_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Jedi_Approved_Working_Design_v0.3_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Jedi_Canonical_Class_Audit_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Noble_Review_Draft_v0.1_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Scoundrel_Review_Draft_v0.1_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Scout_Review_Draft_v0.1_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Soldier_Review_Draft_v0.1_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q2_Canonical_Parent_Answer_Bank_97_v0.4_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q2_Class_Specific_Career_Responses_Combined_97x5_v0.4_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q3_Class_Specific_Situation_Answer_Bank_v0.3_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q3_Class_Specific_Situation_Question_Bank_v0.2_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q4_Parent_Specialization_Tag_Answer_Bank_v0.2_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q5_Long_Term_Ambition_Class_Bank_v0.1_2026-11-13.md",
+  "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Survey_Fresh_Chat_Handoff_2026-11-13(1).md",
+  "docs/design/mentor-survey-v2/00-AUTHORITY-INDEX.md",
+  "docs/design/mentor-survey-v2/01-SHARED-ARCHITECTURE-CONTRACT.md",
+  "docs/design/mentor-survey-v2/02-L1-SPEC.md",
+  "docs/design/mentor-survey-v2/03-MULTICLASS-SPEC.md",
+  "docs/design/mentor-survey-v2/04-PRESTIGE-SPEC.md",
+  "docs/design/mentor-survey-v2/05-TRACEABILITY-MATRIX.md",
+  "docs/design/mentor-survey-v2/06-CONTENT-STATUS-AND-BLOCKERS.md",
+  "docs/design/mentor-survey-v2/07-SURVEY-INFLUENCE-CALIBRATION.md",
+  "docs/design/mentor-survey-v2/08-ANSWER-ID-RECONCILIATION.md",
+  "docs/design/mentor-survey-v2/08-l1-id-crosswalk.json",
+  "docs/design/mentor-survey-v2/09-FINAL-CUTOVER-REPORT.md",
+  "docs/design/mentor-survey-v2/10-PRESTIGE-Q1-Q3-IMPORT-REPORT.md",
+  "docs/design/mentor-survey-v2/10-prestige-q1q3-recovery.json",
+  "docs/design/mentor-survey-v2/11-PRESTIGE-Q2-AUDIT.md",
+  "docs/design/mentor-survey-v2/11-prestige-q2-audit.json",
+  "docs/design/mentor-survey-v2/12-CLEAN-BREAK-CONSUMER-REPORT.md",
+  "docs/design/mentor-survey-v2/13-SOURCE-RECOVERY-COMPLETION-REPORT.md",
+  "docs/design/mentor-survey-v2/14-PRESTIGE-Q1-OPENING-SELECTION-REVIEW.md",
+  "docs/design/mentor-survey-v2/14-prestige-q1-opening-selection.json",
+  "docs/design/mentor-survey-v2/15-ANSWER-ID-LEDGER.md",
+  "docs/design/mentor-survey-v2/15-answer-id-ledger.json",
+  "docs/design/mentor-survey-v2/16-PRESTIGE-ANOTHER-CAREER-PROPOSAL.md",
+  "docs/design/mentor-survey-v2/17-Q6-IDENTITY-INFERENCE-AUDIT-AND-PROPOSAL.md",
+  "docs/design/mentor-survey-v2/18-Q6-METHOD-KEY-LEDGER.md",
+  "docs/design/mentor-survey-v2/19-Q6-METHOD-REVIEW-REPORT.md",
+  "docs/design/mentor-survey-v2/20-FOUNDRY-ACCEPTANCE-CHECKLIST.md",
+  "docs/feat-prereq-indent-mentor-fix.md",
+  "docs/systems/MENTOR_CONTRACT.md"
+ ],
+ "tests": [
+  "tests/archetype-phase-12a-runtime-ssot.test.mjs",
+  "tests/archetype-phase-12b-overlay.test.mjs",
+  "tests/archetype-registry-ssot-lane.test.mjs",
+  "tests/armor-axis-b-shield-authority.test.mjs",
+  "tests/attribute-mentor-accordion.test.mjs",
+  "tests/attribute-mentor-dialog-scroll-containment.test.mjs",
+  "tests/candidate-pool-builder-derived-coherency.test.mjs",
+  "tests/consumer-batch-ability-authority.test.mjs",
+  "tests/mentor-hologram-contract.test.mjs",
+  "tests/mentor-suggestion-picker-reasons.test.mjs",
+  "tests/mentor-survey-canonical-authority.test.mjs",
+  "tests/mentor-survey-clean-break.test.mjs",
+  "tests/mentor-survey-contract.test.mjs",
+  "tests/mentor-survey-id-ledger.test.mjs",
+  "tests/mentor-survey-id-reconciliation.test.mjs",
+  "tests/mentor-survey-influence-integration.test.mjs",
+  "tests/mentor-survey-influence.test.mjs",
+  "tests/mentor-survey-l1.test.mjs",
+  "tests/mentor-survey-ledger.test.mjs",
+  "tests/mentor-survey-multiclass-fallbacks.test.mjs",
+  "tests/mentor-survey-multiclass-q6.test.mjs",
+  "tests/mentor-survey-multiclass.test.mjs",
+  "tests/mentor-survey-prestige-q1q3.test.mjs",
+  "tests/mentor-survey-prestige-q2.test.mjs",
+  "tests/mentor-survey-prestige.test.mjs",
+  "tests/mentor-survey-q6-evidence-identity.test.mjs",
+  "tests/mentor-survey-q6-method-inference.test.mjs",
+  "tests/mentor-survey-reflection.test.mjs",
+  "tests/mentor-survey-session.test.mjs",
+  "tests/mentor-survey-shared-q6.test.mjs",
+  "tests/mentor-survey-traceability.test.mjs",
+  "tests/mentor-translator-cancellation.test.mjs",
+  "tests/progression-mentor-portrait-fit.test.mjs",
+  "tests/snapshot-builder-ability-authority.test.mjs"
+ ]
+}

@@ -2,7 +2,7 @@ import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 const NS = 'swse';
@@ -179,7 +179,7 @@ export class LightsaberFormEngine {
 
   static async clearActiveForm(actor) {
     await this._clearStanceEffects(actor);
-    await actor?.unsetFlag?.(NS, ACTIVE_FORM_FLAG);
+    await ActorEngine.unsetActorFlag(actor, NS, ACTIVE_FORM_FLAG, { recalc: false });
     await postCard(actor, 'Lightsaber Form Cleared', `<p>${esc(actor?.name ?? 'The character')} leaves their active Lightsaber Form.</p>`, { action: 'clear-active-form' });
     return { success: true, activeForm: null };
   }
@@ -191,7 +191,7 @@ export class LightsaberFormEngine {
     if (!actorHasTalent(actor, form.name)) return { success: false, error: `${actor?.name ?? 'Actor'} does not know ${form.name}.` };
 
     await this._clearStanceEffects(actor);
-    await actor?.setFlag?.(NS, ACTIVE_FORM_FLAG, { slug: form.slug, name: form.name, activatedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, ACTIVE_FORM_FLAG, { slug: form.slug, name: form.name, activatedAt: Date.now() }, { recalc: false });
 
     if (form.slug === 'niman') {
       await createEffectOnActor(actor, {
@@ -285,7 +285,7 @@ export class LightsaberFormEngine {
     const fp = await beginContractedForcePoint(actor, "lightsaber-form:djem-so", { reaction }, { label: "djem-so" });
     if (!fp.ok) return null;
     return fp.settle(async () => {
-      await actor?.setFlag?.(NS, 'djemSoReaction', { roundKey: key, used: true, usedAt: Date.now() });
+      await ActorEngine.updateActorFlags(actor, NS, 'djemSoReaction', { roundKey: key, used: true, usedAt: Date.now() }, { recalc: false });
       await postCard(actor, 'Djem So', `<p>${esc(actor.name)} spends 1 Force Point as a Reaction after being hit by a melee attack and may make an immediate attack against that opponent.</p>`, { talentName: 'Djem So', forcePointSpent: true });
       return { success: true, forcePointSpent: true };
     });
@@ -303,7 +303,7 @@ export class LightsaberFormEngine {
       return null;
     }
     const content = `<form class="swse-dialog"><p>Spend 1 Force Point as a Swift Action to designate one opponent in line of sight for the remainder of the encounter.</p><div class="form-group"><label>Designated opponent</label><input name="targetName" type="text" placeholder="Target name" /></div><p class="notes">Against this target, reroll your first attack roll each round and keep the better result.</p></form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Juyo', content, label: 'Designate', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Juyo', content, label: 'Designate', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const formEl = root?.querySelector?.('form') ?? root;
       const fd = new FormData(formEl);
@@ -314,7 +314,7 @@ export class LightsaberFormEngine {
     const fp = await beginContractedForcePoint(actor, "lightsaber-form:promptJuyo", {}, { label: "promptJuyo" });
     if (!fp.ok) return null;
     return fp.settle(async () => {
-      await actor?.setFlag?.(NS, 'juyoDesignatedTarget', { encounterId: encounterId(), used: true, targetName, usedAt: Date.now() });
+      await ActorEngine.updateActorFlags(actor, NS, 'juyoDesignatedTarget', { encounterId: encounterId(), used: true, targetName, usedAt: Date.now() }, { recalc: false });
       await postCard(actor, 'Juyo', `<p>${esc(actor.name)} designates <strong>${esc(targetName)}</strong> as their Juyo target for this encounter.</p><p>Reroll your first attack roll each round against that opponent, keeping the better result.</p>`, { talentName: 'Juyo', forcePointSpent: true, targetName });
       return { success: true, forcePointSpent: true, targetName };
     });

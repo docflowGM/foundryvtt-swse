@@ -1,0 +1,929 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "actor-core",
+ "name": "V2 actor model, derived state and ActorEngine mutation gate",
+ "kind": "mechanical",
+ "files": 133,
+ "runtimeSloc": 13592,
+ "runtimeFiles": 37,
+ "counts": {
+  "files": 133,
+  "runtimeModules": 37,
+  "runtimeSloc": 13592,
+  "reachability": {
+   "orphan-unreferenced": 4,
+   "reachable-static": 32,
+   "test-only-import": 1
+  },
+  "nonRuntimeByRole": {
+   "asset": 1,
+   "evidence-or-doc": 6,
+   "presentation-style": 3,
+   "presentation-template": 52,
+   "test": 34
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/governance/actor-engine/actor-engine.js",
+   "consumers": 399,
+   "sloc": 3090,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "ActorEngine"
+   ],
+   "writes": 41,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/actors/derived/level-split.js",
+   "consumers": 37,
+   "sloc": 58,
+   "role": "module",
+   "exports": [
+    "getLevelSplit",
+    "getHeroicLevel",
+    "getNonheroicLevel",
+    "getTotalLevel",
+    "getClassLevel",
+    "isEpicActor",
+    "getHeroicHalfLevel",
+    "getEffectiveHalfLevel",
+    "getPlannedHeroicLevel",
+    "isEpicOverrideEnabled"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/actors/derived/derived-calculator.js",
+   "consumers": 22,
+   "sloc": 877,
+   "role": "engine-or-service",
+   "exports": [
+    "DerivedCalculator"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/actors/droid/droid-mode-adapter.js",
+   "consumers": 21,
+   "sloc": 101,
+   "role": "adapter",
+   "exports": [
+    "DROID_CALCULATION_MODE",
+    "resolveDroidCalculationMode",
+    "isDroidStatblockMode",
+    "isStockImportedDroid",
+    "buildRepairLegacyCalculationModeUpdate",
+    "computeStatblockDerivedOverrides",
+    "getStockAttackFlatBonus",
+    "getStockDamageFormula",
+    "shouldSuppressComponentModifiers",
+    "evaluateProgressionGuard"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 360
+  },
+  {
+   "path": "scripts/actors/vehicle/vehicle-precreate-hooks.js",
+   "consumers": 20,
+   "sloc": 153,
+   "role": "composition-wiring",
+   "exports": [
+    "validateVehicleCreation",
+    "guardVehicleInstallationLedger",
+    "applyChangesToCopy",
+    "updateTouchesVehicleEnvironment",
+    "guardVehicleEnvironment",
+    "guardVehicleProvenance",
+    "updateTouchesShipyardWeaponItem",
+    "guardShipyardWeaponItem",
+    "armStockWeaponsOnCreate",
+    "registerVehiclePreCreateHooks",
+    "getVehicleCategoryMapping",
+    "getCanonicalCategories"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 17
+  },
+  {
+   "path": "scripts/actors/npc/npc-mode-adapter.js",
+   "consumers": 14,
+   "sloc": 409,
+   "role": "adapter",
+   "exports": [
+    "classKindFromEntries",
+    "getNpcIdentityConflicts",
+    "getNpcProfileState",
+    "getNpcMode",
+    "getNpcKind",
+    "isNpcStatblockMode",
+    "isNpcProgressionMode",
+    "setNpcModeUpdate",
+    "buildNpcProfileUpdate",
+    "resolveNpcCalculationMode",
+    "isNpcCalculationMode",
+    "usesFlatStatblockAttacks"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 355
+  },
+  {
+   "path": "scripts/actors/derived/defense-calculator.js",
+   "consumers": 13,
+   "sloc": 898,
+   "role": "engine-or-service",
+   "exports": [
+    "DefenseCalculator"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/actors/derived/derived-generation.js",
+   "consumers": 9,
+   "sloc": 18,
+   "role": "module",
+   "exports": [
+    "stampDerivedGeneration",
+    "getDerivedGeneration",
+    "getDerivedAppliedSignature",
+    "announceDerivedApplied"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 358
+  },
+  {
+   "path": "scripts/actors/v2/character-actor.js",
+   "consumers": 9,
+   "sloc": 893,
+   "role": "module",
+   "exports": [
+    "computeCharacterDerived",
+    "mirrorRacialAbilities"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 9
+  },
+  {
+   "path": "scripts/theme/actor-sheet-theme-registry.js",
+   "consumers": 9,
+   "sloc": 394,
+   "role": "registry",
+   "exports": [
+    "ACTOR_SHEET_THEME_REGISTRY",
+    "getActorSheetThemeKeys",
+    "isValidActorSheetTheme",
+    "getActorSheetThemeEntry",
+    "getActorSheetTheme",
+    "getActorSheetThemeOptions",
+    "buildActorSheetThemeStyle",
+    "getActorSheetThemeLabel",
+    "getActorSheetThemeDescription",
+    "getActorSheetThemesBySource",
+    "getActorSheetThemeGroups"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 59
+  },
+  {
+   "path": "scripts/utils/actor-perf-diagnostics.js",
+   "consumers": 9,
+   "sloc": 180,
+   "role": "module",
+   "exports": [
+    "ActorPerfDiagnostics",
+    "registerActorPerfDiagnostics"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/HP/HPGeneratorEngine.js",
+   "consumers": 6,
+   "sloc": 109,
+   "role": "engine-or-service",
+   "exports": [
+    "HPGeneratorEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 52
+  },
+  {
+   "path": "scripts/theme/actor-sheet-motion-registry.js",
+   "consumers": 6,
+   "sloc": 142,
+   "role": "registry",
+   "exports": [
+    "ACTOR_SHEET_MOTION_REGISTRY",
+    "getActorSheetMotionStyleKeys",
+    "isValidActorSheetMotionStyle",
+    "getActorSheetMotionStyleEntry",
+    "getActorSheetMotionStyle",
+    "getActorSheetMotionStyleOptions",
+    "buildActorSheetMotionStyle",
+    "getActorSheetMotionStyleLabel",
+    "getActorSheetMotionStyleDescription"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 59
+  },
+  {
+   "path": "scripts/engine/HP/hp-accounting.js",
+   "consumers": 5,
+   "sloc": 72,
+   "role": "module",
+   "exports": [
+    "HP_LEDGER_PATH",
+    "conModifierFor",
+    "readHpContributions",
+    "readHpLedger",
+    "buildChargenLedger",
+    "buildLevelUpLedger",
+    "hasRecordedClassHistory",
+    "planHpRecompute",
+    "auditHp",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/actors/v2/base-actor.js",
+   "consumers": 5,
+   "sloc": 247,
+   "role": "module",
+   "exports": [
+    "SWSEV2BaseActor"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 2,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/actors/v2/vehicle-derived-builder.js",
+   "consumers": 4,
+   "sloc": 133,
+   "role": "module",
+   "exports": [
+    "buildVehicleDerived",
+    "buildDefenseValue",
+    "coerceVehicleHp",
+    "calculateHpState",
+    "buildVehicleIdentity"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 7
+  },
+  {
+   "path": "scripts/engine/core/CommandBus.js",
+   "consumers": 3,
+   "sloc": 117,
+   "role": "module",
+   "exports": [
+    "CommandBus"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/utils/actor-utils.js",
+   "consumers": 3,
+   "sloc": 280,
+   "role": "module-with-writes",
+   "exports": [
+    "applyActorUpdateAtomic",
+    "prepareUpdatePayload",
+    "batchActorUpdates",
+    "safeActorUpdate",
+    "validateActorFields"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 1,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/sheets/v2/actor-sheet-base.js",
+   "consumers": 3,
+   "sloc": 1834,
+   "role": "presentation-with-writes",
+   "exports": [
+    "setStoredSheetMode",
+    "canUseActorSheetEditControls",
+    "applySheetInteractionMode",
+    "SWSEV2ActorSheetBase"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 3,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/actors/base/swse-actor-base.js",
+   "consumers": 2,
+   "sloc": 204,
+   "role": "module-with-writes",
+   "exports": [
+    "SWSEActorBase"
+   ],
+   "writes": 3,
+   "actorEngineCalls": 8,
+   "ciTests": 5
+  },
+  {
+   "path": "scripts/actors/v2/actor-item-index.js",
+   "consumers": 2,
+   "sloc": 13,
+   "role": "composition-wiring",
+   "exports": [
+    "buildActorItemIndex"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 10
+  },
+  {
+   "path": "scripts/actors/vehicle/vehicle-crew-positions.js",
+   "consumers": 2,
+   "sloc": 224,
+   "role": "module",
+   "exports": [
+    "VehicleCrewPositions",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 10
+  },
+  {
+   "path": "scripts/infrastructure/hooks/actor-hooks.js",
+   "consumers": 2,
+   "sloc": 502,
+   "role": "composition-wiring",
+   "exports": [
+    "registerActorHooks"
+   ],
+   "writes": 6,
+   "actorEngineCalls": 12,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/character-sheet/actor-sheet-mode.js",
+   "consumers": 2,
+   "sloc": 199,
+   "role": "presentation",
+   "exports": [
+    "isPromotedHeroicNpcActor",
+    "getActorSheetModeId",
+    "isDroidActor",
+    "isNpcActor",
+    "isVehicleActor",
+    "buildActorSheetModeContext",
+    "applyActorSheetModeClasses"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/governance/actor-engine/plan-builders.js",
+   "consumers": 1,
+   "sloc": 190,
+   "role": "module",
+   "exports": [
+    "buildEmbeddedCreatePlan",
+    "buildEmbeddedDeletePlan",
+    "buildEmbeddedReplacePlan",
+    "buildCloneActorPlan"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/governance/actor-engine/actor-engine.js",
+   "sloc": 3090,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/sheets/v2/actor-sheet-base.js",
+   "sloc": 1834,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/actors/npc/npc-profile-builder.js",
+   "sloc": 1069,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/actors/derived/defense-calculator.js",
+   "sloc": 898,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/actors/v2/character-actor.js",
+   "sloc": 893,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/actors/derived/derived-calculator.js",
+   "sloc": 877,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/infrastructure/hooks/actor-hooks.js",
+   "sloc": 502,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/actors/npc/npc-mode-adapter.js",
+   "sloc": 409,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/theme/actor-sheet-theme-registry.js",
+   "sloc": 394,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/infrastructure/hooks/actor-sidebar-controls.js",
+   "sloc": 376,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/governance/actor-engine/hp-recompute-hooks.js",
+   "reach": "test-only-import",
+   "confidence": "unverified-self-registering",
+   "sloc": 263,
+   "tests": 1
+  },
+  {
+   "path": "scripts/actors/vehicle/swse-vehicle-handler.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 160,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/core/HydrationGuarantee.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 73,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/actor-creation-entry-dialog.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 58,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/hp-utils.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 23,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 39,
+  "ui-shell": 25,
+  "combat": 21,
+  "progression": 19,
+  "governance": 18,
+  "customization": 11,
+  "vehicles": 11,
+  "abilities-effects": 9,
+  "force": 7,
+  "species": 6,
+  "feats": 6,
+  "equipment": 4,
+  "skills": 4,
+  "npc-followers": 4,
+  "houserules": 2,
+  "classes": 2,
+  "store-economy": 2,
+  "galactic-profiles": 1,
+  "rolls": 1,
+  "mentor-suggestion": 1
+ },
+ "dependedOnByDomains": {
+  "feats": 62,
+  "progression": 60,
+  "combat": 57,
+  "ui-shell": 32,
+  "vehicles": 32,
+  "force": 26,
+  "infrastructure": 22,
+  "npc-followers": 20,
+  "customization": 17,
+  "droids": 17,
+  "talents": 15,
+  "abilities-effects": 12,
+  "equipment": 11,
+  "governance": 11,
+  "compat-patches": 10,
+  "mentor-suggestion": 8,
+  "houserules": 7,
+  "migration": 7,
+  "store-economy": 6,
+  "rolls": 6,
+  "holonet": 5,
+  "skills": 3,
+  "species": 3,
+  "dev-tooling": 2
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 4,
+   "sites": [
+    {
+     "path": "scripts/utils/actor-utils.js",
+     "domain": "actor-core",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      281,
+      319
+     ]
+    },
+    {
+     "path": "scripts/actors/base/swse-actor-base.js",
+     "domain": "actor-core",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      145
+     ]
+    },
+    {
+     "path": "scripts/infrastructure/hooks/actor-sidebar-controls.js",
+     "domain": "actor-core",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      125
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A03-derived-writes-outside-actor-classes",
+   "invariant": "A-03",
+   "count": 2,
+   "sites": [
+    {
+     "path": "scripts/governance/actor-engine/actor-engine.js",
+     "domain": "actor-core",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      157,
+      165
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A10-credit-writes-outside-transaction-engine",
+   "invariant": "A-10",
+   "count": 2,
+   "sites": [
+    {
+     "path": "scripts/utils/actor-utils.js",
+     "line": 397,
+     "text": "'system.credits': 1000 },"
+    },
+    {
+     "path": "scripts/sheets/v2/actor-sheet-base.js",
+     "line": 1958,
+     "text": "'system.credits': 0,"
+    }
+   ]
+  },
+  {
+   "probe": "P-A16-module-caches",
+   "invariant": "A-16",
+   "count": 4,
+   "sites": [
+    {
+     "path": "scripts/sheets/v2/actor-sheet-base.js",
+     "maps": 2,
+     "cacheMentions": 12,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/actors/derived/derived-calculator.js",
+     "maps": 2,
+     "cacheMentions": 6,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/utils/actor-perf-diagnostics.js",
+     "maps": 2,
+     "cacheMentions": 4,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/actors/derived/defense-calculator.js",
+     "maps": 3,
+     "cacheMentions": 3,
+     "hasInvalidate": true
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "defense-totals",
+   "otherDomains": [
+    "combat",
+    "force",
+    "infrastructure",
+    "npc-followers",
+    "progression",
+    "talents",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/actors/v2/vehicle-derived-builder.js:26 buildDefenseValue"
+   ]
+  },
+  {
+   "responsibility": "condition-track-penalty",
+   "otherDomains": [
+    "abilities-effects",
+    "combat",
+    "force",
+    "infrastructure",
+    "species"
+   ],
+   "sites": [
+    "scripts/actors/derived/defense-calculator.js:760 getConditionPenalty",
+    "scripts/actors/v2/base-actor.js:331 getConditionPenalty"
+   ]
+  },
+  {
+   "responsibility": "ability-modifier",
+   "otherDomains": [
+    "abilities-effects",
+    "combat",
+    "feats",
+    "force",
+    "infrastructure",
+    "mentor-suggestion",
+    "npc-followers",
+    "progression",
+    "rolls",
+    "species",
+    "talents",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/actors/derived/defense-calculator.js:743 getAbilityMod",
+    "scripts/governance/actor-engine/actor-engine.js:4623 _getCanonicalAbilityMod"
+   ]
+  },
+  {
+   "responsibility": "half-heroic-level",
+   "otherDomains": [
+    "abilities-effects",
+    "combat"
+   ],
+   "sites": [
+    "scripts/actors/derived/level-split.js:68 getHeroicHalfLevel",
+    "scripts/actors/derived/level-split.js:79 getEffectiveHalfLevel"
+   ]
+  },
+  {
+   "responsibility": "heroic-level",
+   "otherDomains": [
+    "data-registries",
+    "force",
+    "progression"
+   ],
+   "sites": [
+    "scripts/actors/derived/level-split.js:99 getPlannedHeroicLevel"
+   ]
+  },
+  {
+   "responsibility": "damage-formula",
+   "otherDomains": [
+    "combat",
+    "droids",
+    "equipment",
+    "species",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/actors/droid/droid-mode-adapter.js:272 getStockDamageFormula"
+   ]
+  },
+  {
+   "responsibility": "damage-application",
+   "otherDomains": [
+    "combat",
+    "equipment",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/actors/base/swse-actor-base.js:64 applyDamage",
+    "scripts/governance/actor-engine/actor-engine.js:1421 applyDamage"
+   ]
+  },
+  {
+   "responsibility": "force-point-spend",
+   "otherDomains": [
+    "force",
+    "talents"
+   ],
+   "sites": [
+    "scripts/actors/base/swse-actor-base.js:276 spendForcePoint",
+    "scripts/actors/base/swse-actor-base.js:337 regainForcePoints",
+    "scripts/governance/actor-engine/actor-engine.js:2116 spendForcePoints"
+   ]
+  },
+  {
+   "responsibility": "destiny-points",
+   "otherDomains": [],
+   "sites": [
+    "scripts/actors/base/swse-actor-base.js:384 spendDestinyPoint",
+    "scripts/governance/actor-engine/actor-engine.js:2466 spendDestinyPoints"
+   ]
+  },
+  {
+   "responsibility": "encumbrance",
+   "otherDomains": [
+    "abilities-effects",
+    "equipment",
+    "infrastructure",
+    "progression"
+   ],
+   "sites": [
+    "scripts/actors/v2/character-actor.js:967 mirrorEncumbrance"
+   ]
+  },
+  {
+   "responsibility": "second-wind",
+   "otherDomains": [
+    "combat",
+    "feats",
+    "holonet",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/governance/actor-engine/actor-engine.js:2622 applySecondWind",
+    "scripts/governance/actor-engine/actor-engine.js:2754 resetSecondWind",
+    "scripts/governance/actor-engine/actor-engine.js:2805 applySecondWindEdgeOfExhaustion"
+   ]
+  }
+ ],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "getClassLevel",
+   "files": [
+    "scripts/actors/derived/level-split.js",
+    "scripts/apps/levelup/levelup-shared.js"
+   ]
+  },
+  {
+   "name": "isEpicOverrideEnabled",
+   "files": [
+    "scripts/actors/derived/level-split.js",
+    "scripts/settings/epic-override.js"
+   ]
+  },
+  {
+   "name": "safeActorUpdate",
+   "files": [
+    "scripts/core/runtime-safety.js",
+    "scripts/utils/actor-utils.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "ready",
+   "sites": [
+    "scripts/infrastructure/hooks/actor-hooks.js:179",
+    "scripts/infrastructure/hooks/actor-sidebar-controls.js:356"
+   ]
+  },
+  {
+   "name": "createItem",
+   "sites": [
+    "scripts/infrastructure/hooks/actor-hooks.js:122"
+   ]
+  },
+  {
+   "name": "updateActor",
+   "sites": [
+    "scripts/infrastructure/hooks/actor-hooks.js:70",
+    "scripts/infrastructure/hooks/actor-hooks.js:85"
+   ]
+  },
+  {
+   "name": "preUpdateActor",
+   "sites": [
+    "scripts/actors/vehicle/vehicle-precreate-hooks.js:185",
+    "scripts/actors/vehicle/vehicle-precreate-hooks.js:186",
+    "scripts/actors/vehicle/vehicle-precreate-hooks.js:187"
+   ]
+  },
+  {
+   "name": "createActor",
+   "sites": [
+    "scripts/actors/vehicle/vehicle-precreate-hooks.js:191"
+   ]
+  },
+  {
+   "name": "deleteItem",
+   "sites": [
+    "scripts/infrastructure/hooks/actor-hooks.js:146"
+   ]
+  },
+  {
+   "name": "preUpdateItem",
+   "sites": [
+    "scripts/actors/vehicle/vehicle-precreate-hooks.js:188"
+   ]
+  },
+  {
+   "name": "preCreateActor",
+   "sites": [
+    "scripts/actors/vehicle/vehicle-precreate-hooks.js:184",
+    "scripts/infrastructure/hooks/actor-hooks.js:64"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "docs/audits/actor-engine-extraction-plan.md",
+  "docs/audits/actor-engine-responsibility-audit.md",
+  "docs/audits/v2-actor-authority-performance-phase-1.md",
+  "docs/audits/v2-derived-panel-cache-coherency.md",
+  "docs/audits/v2-phase-2-actor-authority-normalization.md",
+  "docs/audits/v2-phase-3-derived-performance.md"
+ ],
+ "tests": [
+  "tests/actor-item-index.test.mjs",
+  "tests/actor-perf-diagnostics-shim.test.mjs",
+  "tests/armor-hydration-hotfix-shadow-authority-removal.test.mjs",
+  "tests/canonical-ship-pack.test.mjs",
+  "tests/character-actor-identity-ability-authority.test.mjs",
+  "tests/character-actor-inventory-index-and-vehicle-skip.test.mjs",
+  "tests/defense-calculator-species-bonus-hoist.test.mjs",
+  "tests/derived-calculator-signature-reuse.test.mjs",
+  "tests/derived-calculator-vehicle-dt-skip.test.mjs",
+  "tests/droid-mode-adapter.test.mjs",
+  "tests/droid-phase4-foundry-shim.test.mjs",
+  "tests/droid-synthetic-token-mutation-targeting.test.mjs",
+  "tests/energy-shield-defense-and-activation-authority.test.mjs",
+  "tests/flat-footed-dodge-bonus-authority.test.mjs",
+  "tests/force-v2-03b-consumer-cutover.test.mjs",
+  "tests/garee-full-skill-derivation-parity.test.mjs",
+  "tests/gm-job-assign-actor-persistence-audit.test.mjs",
+  "tests/grapple-state-defense-effects.test.mjs",
+  "tests/helpers/derived-lifecycle-fixture.mjs",
+  "tests/helpers/foundry-shim/fakes/actor-engine.fake.mjs",
+  "tests/helpers/foundry-shim/fakes/actor-factory.mjs",
+  "tests/helpers/real-force-point-engine.mjs",
+  "tests/hp-preservation-authority.test.mjs",
+  "tests/legacy-equip-state-single-pass-authority.test.mjs",
+  "tests/npc-mode-adapter.test.mjs",
+  "tests/reconciliation-async-lifecycle-paths.test.mjs",
+  "tests/snapshot-service-restoration.test.mjs",
+  "tests/species-snapshot-positive-application.test.mjs",
+  "tests/ti4c0-g06-rollback-verification.test.mjs",
+  "tests/ti4c0-g06s1-exact-snapshot.test.mjs",
+  "tests/ti4c0-g11-follower-rollback.test.mjs",
+  "tests/v2-derived-async-applied-signature-coherency.test.mjs",
+  "tests/v2-golden-defense-lifecycle.test.mjs",
+  "tests/vehicle-hp-hull-dt-authority.test.mjs"
+ ]
+}

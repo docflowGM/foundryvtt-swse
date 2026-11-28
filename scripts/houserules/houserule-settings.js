@@ -87,6 +87,19 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  register('wealthPayoutMode', {
+    name: 'Wealth Talent Payout',
+    hint: 'How many class levels the Wealth talent multiplies by 5,000 credits. RAW (Core p.44): Noble class levels only. Expanded Wealth (house rule): every Lineage-eligible class level, e.g. Corporate Agent. Changing this never rewrites credits already awarded.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      'noble-levels': 'RAW — Noble class levels only (default)',
+      'lineage-levels': 'Expanded Wealth — Lineage-eligible class levels (house rule)'
+    },
+    default: 'noble-levels'
+  });
+
   register('characterCreation', {
     name: 'Character Creation Settings',
     hint: 'Internal structured config object.',
@@ -1893,7 +1906,7 @@ export function registerHouseruleSettings() {
 
   register('disableHalfLevelSkillBonus', {
     name: 'Disable Half-Level Skill Bonus',
-    hint: 'When enabled, removes the universal +1/2 heroic level contribution from all skill checks. Orthogonal to progression mode.',
+    hint: 'When enabled, removes the universal +1/2 character level contribution from all skill checks. Orthogonal to progression mode.',
     scope: 'world',
     config: true,
     type: Boolean,

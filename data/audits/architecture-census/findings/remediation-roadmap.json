@@ -1,0 +1,3147 @@
+{
+ "schema": "swse.v2-audit.roadmap/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "generator": "tools/architecture-census/assemble-findings.mjs",
+ "waves": [
+  {
+   "wave": 0,
+   "title": "Guardrails: census/probe gates in CI (ratchet), no behaviour change",
+   "findings": 1,
+   "bySeverity": {
+    "high": 1
+   },
+   "ownerBlocked": 1,
+   "items": [
+    {
+     "id": "F-X-001",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "cross-cutting",
+     "title": "No architectural ratchet: nothing stops new bypasses, patches or dead modules while cleanup proceeds",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    }
+   ]
+  },
+  {
+   "wave": 1,
+   "title": "Owner decisions and documentation/contract corrections",
+   "findings": 31,
+   "bySeverity": {
+    "medium": 6,
+    "low": 7,
+    "info": 18
+   },
+   "ownerBlocked": 15,
+   "items": [
+    {
+     "id": "F-GAM-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "games",
+     "title": "Wager atomicity is a compensating saga, not one transaction",
+     "scope": "M",
+     "dependencies": [
+      "F-HOL-002"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-HOL-003",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "holonet",
+     "title": "Party Fund is a credit pool and ledger outside TransactionEngine",
+     "scope": "M",
+     "dependencies": [
+      "F-HOL-002"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-VEH-006",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "vehicles",
+     "title": "Party Fund ammunition debit outside TransactionEngine (owner workflow vs A-10); notification via raw ChatMessage",
+     "scope": "M",
+     "dependencies": [
+      "B-STO store-economy",
+      "holonet domain"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-X-003",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "cross-cutting",
+     "title": "Constitutional architecture documents are stale or contradict each other (CR-01..CR-09)",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-X-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "cross-cutting",
+     "title": "Owner standing instructions are not committed; several APPROVED invariants have no versioned source",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-X-005",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "cross-cutting",
+     "title": "31 rules questions surfaced by the audit are not yet in the rules decision register (90 total; 59 already referenced)",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-ACT-004",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "actor-core",
+     "title": "A-03 probe hits are sanctioned in-memory derived writers (path conflict only)",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-GAL-002",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "galactic-profiles",
+     "title": "Census and phase-0 report mislabel the generator as Galactic Profiles",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-GAL-009",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "galactic-profiles",
+     "title": "A 9,854-line rolling redesign log is the only generator contract",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-MEN-014",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "mentor-suggestion",
+     "title": "Stale suggestion governance docs",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-PAT-006",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "compat-patches",
+     "title": "Probe false positives and an exact clone",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-010",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Finalization is one transactional plan plus non-atomic post-commit writes",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-PRG-022",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "progression-architecture.md is stale on patching and squad-actions-init",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ABL-007",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "abilities-effects",
+     "title": "Probe false positives and non-duplicate leads",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ABL-009",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "abilities-effects",
+     "title": "Documentation consolidation candidates",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ACT-014",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "actor-core",
+     "title": "Documentation consolidation candidates for actor-core",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-CLS-006",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "classes",
+     "title": "No invariant probe hits in classes",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CMB-012",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "combat",
+     "title": "Combat architecture docs partly superseded",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-DAT-004",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "data-registries",
+     "title": "normalizeAuthorityKey duplicate is a re-export",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-DRD-006",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "droids",
+     "title": "A-18 droid organic-rest exclusion conforms in the paths read",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FEA-014",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "feats",
+     "title": "Feat documentation consolidation candidates",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-FRC-012",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "force",
+     "title": "Force documentation consolidation candidates",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-GOV-007",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "governance",
+     "title": "Documentation candidates",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-HRL-005",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "houserules",
+     "title": "ENGINE-ARCHITECTURE §3 documents a non-existent HouseRuleService API",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-MEN-013",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "mentor-suggestion",
+     "title": "Survey V2 ledger conforms to A-02/A-15 (no action)",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-MIG-004",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "migration",
+     "title": "docs/migrations/readme.md describes non-existent migrations",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-016",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "A-03 xp-engine derived writes are a legitimate delegated calculator",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-SET-002",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "settings-config",
+     "title": "Domain otherwise conformant",
+     "scope": "S",
+     "dependencies": [
+      "B-INF",
+      "B-HRL"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-SKL-007",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "skills",
+     "title": "Probe hits are false positives / legitimate",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-STO-009",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "store-economy",
+     "title": "Transaction-integrity evidence partly stale",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-TAL-013",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "talents",
+     "title": "Talent documentation consolidation candidates",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    }
+   ]
+  },
+  {
+   "wave": 2,
+   "title": "Remove proven-dead and retired code (static proof; class C/D)",
+   "findings": 63,
+   "bySeverity": {
+    "high": 3,
+    "medium": 25,
+    "low": 35
+   },
+   "ownerBlocked": 29,
+   "items": [
+    {
+     "id": "F-ACT-015",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "actor-core",
+     "title": "DerivedCalculator.computeAll is monkey-patched at init by the force domain (Skill Focus non-stacking post-filter)",
+     "scope": "S",
+     "dependencies": [
+      "B-PAT F-PAT-001",
+      "force domain contract"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PAT-001",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "compat-patches",
+     "title": "109 live runtime monkey-patch sites in live modules across 8 owner domains",
+     "scope": "L",
+     "dependencies": [
+      "B-ACT F-ACT-015",
+      "feats/combat/progression/force/talents contracts"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-PRG-001",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Runtime prototype/static monkey-patches of progression steps and prerequisite authorities",
+     "scope": "M",
+     "dependencies": [
+      "F-PRG-009",
+      "talents domain (custom trees)",
+      "houserules domain"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ABL-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "abilities-effects",
+     "title": "Dead legacy rule framework including a D&D critical-confirmation rule",
+     "scope": "S",
+     "dependencies": [
+      "B-ROL F-ROL-002"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-ACT-007",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "actor-core",
+     "title": "ActorEngine monkey-patches actor.items (filter/some/map/find) on every update, unconditionally",
+     "scope": "S",
+     "dependencies": [
+      "B-GOV"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CHT-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "chat",
+     "title": "SWSEChat.postRoll wrapped by combat-ui-behavior-hotfix",
+     "scope": "S",
+     "dependencies": [
+      "B-PAT F-PAT-001"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CMB-007",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "combat",
+     "title": "combat-ui-behavior-hotfix is a parallel action-execution path (legacy D/F)",
+     "scope": "M",
+     "dependencies": [
+      "combat features reform phases"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CUS-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "customization",
+     "title": "Old per-item SWSEUpgradeApp revived as item-sheet fallback (legacy B)",
+     "scope": "M",
+     "dependencies": [
+      "F-CUS-002"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-FEA-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "feats",
+     "title": "Live runtime monkey-patch chain on combat, grapple, modifier and progression resolvers",
+     "scope": "L",
+     "dependencies": [
+      "combat domain contract (seam owner)"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FEA-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "feats",
+     "title": "49 orphan feat modules (~9.8k SLOC), many documented as implemented",
+     "scope": "L",
+     "dependencies": [
+      "F-FEA-001",
+      "F-FEA-003"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-FRC-008",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "force",
+     "title": "force-suite-runtime-repairs: runtime patches of executor and DerivedCalculator, DOM repairs on every AppV2 render",
+     "scope": "M",
+     "dependencies": [
+      "skills domain (Skill Focus)",
+      "ui-shell"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FRC-009",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "force",
+     "title": "scripts/data/force-points.js: write-in-calculation functions with no callers; stale header",
+     "scope": "S",
+     "dependencies": [
+      "F-FRC-002"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-GOV-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "governance",
+     "title": "55 unreachable governance modules",
+     "scope": "M",
+     "dependencies": [
+      "B-INF"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-GOV-003",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "governance",
+     "title": "Unreachable enforcement-core.js patches Application.prototype.render and Element.prototype",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-HRL-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "houserules",
+     "title": "14 unreachable house-rule modules: superseded V1 initializer, menus, presets and app",
+     "scope": "M",
+     "dependencies": [
+      "combat/skills/force contracts"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-INF-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "infrastructure",
+     "title": "55 unreachable infrastructure modules plus the stale scripts/holonet/scripts/core duplicate",
+     "scope": "M",
+     "dependencies": [
+      "B-ACT F-ACT-002 (drop-service)"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-INF-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "infrastructure",
+     "title": "Dead actor writers in live utility modules; hardening.js imports ActorEngine only for them",
+     "scope": "S",
+     "dependencies": [
+      "B-ACT F-ACT-001"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-INF-005",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "infrastructure",
+     "title": "Global Document.prototype flag-scope patch",
+     "scope": "M",
+     "dependencies": [
+      "B-PAT F-PAT-005"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-MEN-009",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "mentor-suggestion",
+     "title": "69 unreachable modules (~10.7k SLOC) in seven clusters",
+     "scope": "M",
+     "dependencies": [
+      "F-MEN-010",
+      "F-MEN-011"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-NPC-007",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "npc-followers",
+     "title": "Six live follower hotfix modules with prototype patches and global render listeners",
+     "scope": "L",
+     "dependencies": [
+      "compat-patches domain",
+      "B-PRG"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PAT-005",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "compat-patches",
+     "title": "Document.prototype flag-scope patch affects every document type",
+     "scope": "M",
+     "dependencies": [
+      "B-ACT F-ACT-009",
+      "B-MIG"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-PRG-005",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Legacy static ProgressionEngine stack is loaded by unused imports and never invoked",
+     "scope": "S",
+     "dependencies": [
+      "F-PRG-006"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-018",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Unreachable module clusters (75 census-unreachable modules, ~12k SLOC)",
+     "scope": "M",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-ROL-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "rolls",
+     "title": "Dead D&D critical-confirmation path contrary to A-18",
+     "scope": "S",
+     "dependencies": [
+      "B-ABL F-ABL-004"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-SKL-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "skills",
+     "title": "Dead skill-uses.js (2,617 SLOC) is still cited as the implementation and guarded by tests",
+     "scope": "M",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-TAL-006",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "talents",
+     "title": "Runtime monkey-patches of progression and GM-shell classes from the workbench",
+     "scope": "M",
+     "dependencies": [
+      "progression contract (B-PRG)",
+      "ui-shell contract"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-UIS-007",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "ui-shell",
+     "title": "Legacy floating apps beside Holopad/GM Datapad",
+     "scope": "M",
+     "dependencies": [
+      "B-STO store-economy",
+      "B-CMB combat"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-X-007",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "cross-cutting",
+     "title": "1.98 MB of unreferenced assets, 43 unreferenced templates and 67 unreferenced stylesheets",
+     "scope": "M",
+     "dependencies": [
+      "F-X-001"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ABL-006",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "abilities-effects",
+     "title": "Unreachable abilities-effects modules",
+     "scope": "S",
+     "dependencies": [
+      "B-INF"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-ACT-012",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "actor-core",
+     "title": "Unreachable actor-core modules",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-CHT-003",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "chat",
+     "title": "chat-commands.js orphan",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-CLS-005",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "classes",
+     "title": "Unreachable sidebar-icon-class-audit is a UI diagnostic, misattributed to classes",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CMB-010",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "combat",
+     "title": "21 unreachable combat modules",
+     "scope": "M",
+     "dependencies": [
+      "CR-CMB-01 doc update"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-CUS-003",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "customization",
+     "title": "CustomizationWorkflow write engines dormant",
+     "scope": "S",
+     "dependencies": [
+      "TX-14"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CUS-006",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "customization",
+     "title": "13 unreachable customization modules",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-DAT-002",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "data-registries",
+     "title": "Unreachable data-registries modules",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-DRD-004",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "droids",
+     "title": "Orphan stock-droid import cluster and legacy droid utilities",
+     "scope": "S",
+     "dependencies": [
+      "B-GAL galactic-profiles (galactic-records-browser)"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-EQP-003",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "equipment",
+     "title": "Orphan equipment modules",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-EQP-004",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "equipment",
+     "title": "GearTemplatesEngine write methods unused; engine located in scripts/apps",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FEA-012",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "feats",
+     "title": "Runtime compendium seeding and icon repair fallback (legacy F)",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-FRC-010",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "force",
+     "title": "Unreachable Force cluster",
+     "scope": "S",
+     "dependencies": [
+      "F-FEA-004"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-GAL-005",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "galactic-profiles",
+     "title": "galactic-records-browser.js and category registry reached only through an orphan dialog",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-HOL-006",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "holonet",
+     "title": "scripts/holonet/scripts/** is a stale, broken copy of core init",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-HOL-007",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "holonet",
+     "title": "Unreachable badge service/renderer, delivery-state and barrels",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-INF-004",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "infrastructure",
+     "title": "index.js registers 5 settings under the unread \"swse\" namespace",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-MEN-010",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "mentor-suggestion",
+     "title": "Survey routing test locks against an unreachable module",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-MEN-012",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "mentor-suggestion",
+     "title": "Dead mutators inside live mentor-dialogues.js",
+     "scope": "S",
+     "dependencies": [
+      "F-MEN-001"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-MIG-001",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "migration",
+     "title": "Unreachable runtime migrations",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-NPC-008",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "npc-followers",
+     "title": "Orphan NPC panel modules and nonheroic units browser",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-PAT-007",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "compat-patches",
+     "title": "50 unreachable monkey-patch sites in unreachable modules",
+     "scope": "S",
+     "dependencies": [
+      "feats contract"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-PRG-020",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "SWSELanguageModule hooks are dormant (init never called)",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-023",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Retired chargen/level-up app directories still host live helpers",
+     "scope": "S",
+     "dependencies": [
+      "F-PRG-008"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ROL-003",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "rolls",
+     "title": "Unreachable roll modules",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-SKL-006",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "skills",
+     "title": "Other unreachable skill modules",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-SPC-003",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "species",
+     "title": "Dead SpeciesTraitEngine (715 SLOC) and species index module",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-STO-007",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "store-economy",
+     "title": "Legacy TransactionEngine.execute cart API and PlacementRouter have no callers (legacy C)",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-TAL-011",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "talents",
+     "title": "Unreachable legacy talent-effects cluster",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-UIS-009",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "ui-shell",
+     "title": "Unreferenced templates and stylesheets; two live apps' CSS never loaded",
+     "scope": "M",
+     "dependencies": [
+      "F-UIS-007"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-UIS-011",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "ui-shell",
+     "title": "Unreachable UI modules",
+     "scope": "M",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-VEH-007",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "vehicles",
+     "title": "Undeclared tracked vehicle pack artefacts and a stale branch-pinned workflow",
+     "scope": "S",
+     "dependencies": [
+      "CR-12 owner decision"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-VEH-008",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "vehicles",
+     "title": "Orphan vehicle modules",
+     "scope": "S",
+     "dependencies": [
+      "F-VEH-001 decision (wizard)"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-X-006",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "cross-cutting",
+     "title": "Committed scratch scripts under tests/",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-MEN-015",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "mentor-suggestion",
+     "title": "Legacy-named stylesheet l1-survey-step.css still loaded",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    }
+   ]
+  },
+  {
+   "wave": 3,
+   "title": "Reroute bypasses to existing authorities (ActorEngine, swse-chat, HouseRuleService, TransactionEngine)",
+   "findings": 78,
+   "bySeverity": {
+    "high": 14,
+    "medium": 23,
+    "low": 34,
+    "info": 7
+   },
+   "ownerBlocked": 15,
+   "items": [
+    {
+     "id": "F-ABL-001",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "abilities-effects",
+     "title": "Managed-effect expiry writes owned ActiveEffects directly",
+     "scope": "S",
+     "dependencies": [
+      "B-ACT"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ABL-002",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "abilities-effects",
+     "title": "Lineage credit awards bypass TransactionEngine and SWSEChat",
+     "scope": "S",
+     "dependencies": [
+      "B-store-economy",
+      "B-CHT"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CHT-001",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "chat",
+     "title": "A-05 bypassed at 74 live sites; probe misses the createChatMessage wrapper route",
+     "scope": "M",
+     "dependencies": [
+      "species/combat/feats/ui-shell contracts"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FRC-005",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "force",
+     "title": "Force Alchemy debits credits outside TransactionEngine (A-10)",
+     "scope": "S",
+     "dependencies": [
+      "B-STO contract"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-NPC-001",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "npc-followers",
+     "title": "Six writers of followerSlots; two hotfixes write via direct setFlag; createItem reactions unordered",
+     "scope": "M",
+     "dependencies": [
+      "compat-patches domain"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PAT-002",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "compat-patches",
+     "title": "Follower hotfixes write owner-actor flags directly and non-atomically",
+     "scope": "S",
+     "dependencies": [
+      "npc-followers contract"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PAT-004",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "compat-patches",
+     "title": "Wrapper chains on combat and Force execution entry points",
+     "scope": "M",
+     "dependencies": [
+      "combat contract",
+      "force contract"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-003",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Chargen Summary stages credits and a store flag on the actor before finalization, outside TransactionEngine",
+     "scope": "M",
+     "dependencies": [
+      "store-economy domain (TransactionEngine)"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-STO-001",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "store-economy",
+     "title": "Store purchase rollback leaves CREATE-bucket droid/vehicle actors and reports rolledBack:true",
+     "scope": "M",
+     "dependencies": [
+      "ActorEngine._rollbackTransactionalPlan"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-TAL-001",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "talents",
+     "title": "72 direct actor/owned-item writes across 11 live talent files (all violations)",
+     "scope": "L",
+     "dependencies": [
+      "F-TAL-002 (cross-actor writes need a relay first)"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-TAL-005",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "talents",
+     "title": "Effect-wizard _onRender patch writes item flags during render",
+     "scope": "S",
+     "dependencies": [
+      "F-TAL-006"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-UIS-001",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "ui-shell",
+     "title": "Sheet credit edits bypass TransactionEngine",
+     "scope": "M",
+     "dependencies": [
+      "B-STO store-economy"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-VEH-002",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "vehicles",
+     "title": "createItem hook grants Starship Tactics maneuvers outside the progression shell; recursion guard key never set",
+     "scope": "M",
+     "dependencies": [
+      "B-PRG owner of starship-maneuver-step"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-TAL-002",
+     "severity": "high",
+     "status": "suspected",
+     "domain": "talents",
+     "title": "Cross-actor flag writes from the acting client without a GM relay",
+     "scope": "M",
+     "dependencies": [
+      "governance (relay)"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ACT-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "actor-core",
+     "title": "moveEmbeddedDocuments deletes from source before creating on target with no compensation",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CMB-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "combat",
+     "title": "Combat bookkeeping flags written with raw setFlag/unsetFlag, incl. mid-resolution in DamageResolutionEngine",
+     "scope": "M",
+     "dependencies": [
+      "ActorEngine.applyDamage"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-EQP-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "equipment",
+     "title": "Item sheet writes ActiveEffects and effect-wizard draft flags directly on items",
+     "scope": "M",
+     "dependencies": [
+      "ActorEngine API"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FEA-005",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "feats",
+     "title": "Direct actor.setFlag/unsetFlag usage flags in 7 live feat modules",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FRC-006",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "force",
+     "title": "force-executor.js: 16 direct flag writes incl. ungated deleteCombat cleanup",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-MEN-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "mentor-suggestion",
+     "title": "Advisory analytics and Mentor memory written directly to actor flags",
+     "scope": "M",
+     "dependencies": [
+      "F-MEN-002",
+      "F-MEN-003"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-MEN-003",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "mentor-suggestion",
+     "title": "SuggestionStateService uses flag scope 'swse' instead of the system id",
+     "scope": "S",
+     "dependencies": [
+      "F-MEN-002"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-MEN-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "mentor-suggestion",
+     "title": "Mentor commitment decay runs on every client from an updateActor hook",
+     "scope": "S",
+     "dependencies": [
+      "F-MEN-001"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-NPC-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "npc-followers",
+     "title": "Minion modules write owner/minion flags directly from a createItem hook; minion talent flags are write-only uncited rule text",
+     "scope": "S",
+     "dependencies": [
+      "B-TAL talents"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-NPC-005",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "npc-followers",
+     "title": "NPC damage hydration mutates owned items from createActor/ready hooks without ActorEngine",
+     "scope": "S",
+     "dependencies": [
+      "B-MIG migration"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Draft persistence via raw setFlag in two parallel stores, including UI step position",
+     "scope": "M",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-009",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Telekinetic Savant/Prodigy text and slot rule hard-coded in a runtime patch, diverging from canonical reference text",
+     "scope": "S",
+     "dependencies": [
+      "F-PRG-001",
+      "RECON-006"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-SKL-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "skills",
+     "title": "About fourteen independent skill-key normalizers",
+     "scope": "M",
+     "dependencies": [
+      "feats",
+      "species",
+      "equipment",
+      "progression"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-SPC-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "species",
+     "title": "Activated species abilities post gameplay chat directly (12 sites)",
+     "scope": "S",
+     "dependencies": [
+      "chat domain"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-STO-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "store-economy",
+     "title": "LedgerService credit-delta plans applied outside TransactionEngine",
+     "scope": "S",
+     "dependencies": [
+      "F-STO-001 (create/add rollback semantics)"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-STO-003",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "store-economy",
+     "title": "Force Alchemy charges credits through ActorEngine with its own compensation",
+     "scope": "M",
+     "dependencies": [
+      "force domain contract"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-STO-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "store-economy",
+     "title": "Progression credit grants outside TE; GRANT_CREDITS writes credits before its idempotency record",
+     "scope": "S",
+     "dependencies": [
+      "progression domain contract"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-STO-005",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "store-economy",
+     "title": "Sheet credit add/subtract and raw system.credits form fields bypass the TE ledger",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-TAL-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "talents",
+     "title": "Ungated deleteCombat cleanup and writes inside preUpdateActor",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-UIS-003",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "ui-shell",
+     "title": "UI preferences persisted as actor flags by direct setFlag from two writers",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-UIS-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "ui-shell",
+     "title": "Gameplay chat cards via raw ChatMessage.create in sheet/shell",
+     "scope": "S",
+     "dependencies": [
+      "B-CHT chat"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-VEH-010",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "vehicles",
+     "title": "Starship maneuver manager recomputes the Wisdom modifier from raw base when derived is absent",
+     "scope": "S",
+     "dependencies": [
+      "B-ACT actor-core ability authority"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-MIG-002",
+     "severity": "medium",
+     "status": "suspected",
+     "domain": "migration",
+     "title": "Startup migrations gated on isGM, not the active GM",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ACT-005",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "actor-core",
+     "title": "A-02/A-10 probe hits in actor-core: legitimate, false positive, or owner exception (character reset credits)",
+     "scope": "S",
+     "dependencies": [
+      "B-store-economy"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-ACT-008",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "actor-core",
+     "title": "Deprecated write wrappers in actor-utils.js and a second safeActorUpdate",
+     "scope": "S",
+     "dependencies": [
+      "B-INF"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ACT-010",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "actor-core",
+     "title": "regainForcePoints writes untyped system.forcePoints.value, bypassing the typed Force Point ledger",
+     "scope": "S",
+     "dependencies": [
+      "force domain contract"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CLS-003",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "classes",
+     "title": "Two class normalizers plus a compatibility wrapper",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CLS-004",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "classes",
+     "title": "Prestige identity weighting lives in the classes domain",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CMB-006",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "combat",
+     "title": "Condition penalty table duplicated 6x; ConditionEngine diverges at step 5",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CMB-009",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "combat",
+     "title": "Direct ChatMessage.create in 7 combat engines (11 sites)",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CUS-004",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "customization",
+     "title": "Lightsaber prompt/construction flags written with raw setFlag/unsetFlag",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CUS-008",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "customization",
+     "title": "Tech Specialist service posts chat directly",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-DRD-003",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "droids",
+     "title": "Droid part use card via raw ChatMessage.create",
+     "scope": "S",
+     "dependencies": [
+      "B-CHT chat"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FEA-011",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "feats",
+     "title": "Four FeatRegistry symbols",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FEA-013",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "feats",
+     "title": "Direct ChatMessage.create in grapple tie message",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FRC-011",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "force",
+     "title": "Force Alchemy: direct ChatMessage.create and state setFlag from apps/ services",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-GAL-003",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "galactic-profiles",
+     "title": "Atlas actor-state flags written directly without exception comment",
+     "scope": "S",
+     "dependencies": [
+      "F-MEN-001"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-GOV-006",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "governance",
+     "title": "mutation-adapter.js is an orphan wrapper over ActorEngine",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-HOL-005",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "holonet",
+     "title": "Direct actor flag writes for intel locker and presence",
+     "scope": "S",
+     "dependencies": [
+      "F-MEN-001"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-HRL-002",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "houserules",
+     "title": "A-06: two live house-rule reads bypass HouseRuleService; six probe hits are comments",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-MEN-008",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "mentor-suggestion",
+     "title": "normalizeTextTokens copied into six analyzers",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-NPC-006",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "npc-followers",
+     "title": "Faction registry writes actor flags directly",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-011",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Finalizer resolves ActorEngine through a global fallback chain",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-012",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "AttributeIncreaseHandler.clearPendingGains mixes ActorEngine and raw unsetFlag",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-013",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Per-user onboarding-prompt preference stored on the actor",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-014",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Chat output outside swse-chat",
+     "scope": "S",
+     "dependencies": [
+      "F-PRG-005"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-015",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Direct game.settings.get in engine registries (A-06); ProgressionEngineV2 hits are false positives",
+     "scope": "S",
+     "dependencies": [
+      "B-SKL"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-SKL-004",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "skills",
+     "title": "Direct game.settings.get for Athletics consolidation",
+     "scope": "S",
+     "dependencies": [
+      "F-PRG-015"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-SKL-005",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "skills",
+     "title": "Skill challenge roll card created outside swse-chat",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-SPC-004",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "species",
+     "title": "Annotated raw flag fallback in reroll handler",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-STO-006",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "store-economy",
+     "title": "Store cart and saved-for-later persisted by direct actor.setFlag from UI (A-08 hit is a false positive)",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-TAL-010",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "talents",
+     "title": "3 direct ChatMessage.create in talent modules",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-VEH-009",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "vehicles",
+     "title": "Deprecated VehicleInstallationService.install wrapper with no callers",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CUS-005",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "customization",
+     "title": "Light-sync hook writes token light on every client without gating",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-EQP-005",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "equipment",
+     "title": "Lightsaber activation written outside the coordinator",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-GAL-007",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "galactic-profiles",
+     "title": "Location registry is a whole-array read-modify-write of one world setting",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-GAM-004",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "games",
+     "title": "Settlement idempotency depends on the caller's session snapshot",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-DRD-005",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "droids",
+     "title": "Self-destruct MeasuredTemplate creation is a world-document exception",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-GAL-004",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "galactic-profiles",
+     "title": "Scene create/update in LocationSceneBridgeService is a legitimate world-document exception",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-HRL-004",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "houserules",
+     "title": "Direct effect.setFlag inside an uninstalled hook (latent)",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-INF-007",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "infrastructure",
+     "title": "A-02/A-05 probe hits in infrastructure: legitimate exceptions",
+     "scope": "S",
+     "dependencies": [
+      "B-CHT"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-NPC-009",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "npc-followers",
+     "title": "NPC template import and world actor creation are legitimate world-document exceptions",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-UIS-012",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "ui-shell",
+     "title": "World-document creates in UI (legitimate exceptions lacking comments)",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-VEH-012",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "vehicles",
+     "title": "Probe hits classified as legitimate exceptions or false positives",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    }
+   ]
+  },
+  {
+   "wave": 4,
+   "title": "Consolidate duplicate authorities and state (rules-sensitive; Foundry acceptance)",
+   "findings": 40,
+   "bySeverity": {
+    "critical": 2,
+    "high": 6,
+    "medium": 21,
+    "low": 9,
+    "info": 2
+   },
+   "ownerBlocked": 14,
+   "items": [
+    {
+     "id": "F-FRC-003",
+     "severity": "critical",
+     "status": "confirmed",
+     "domain": "force",
+     "title": "Bonus Force Point pool: six builders, two flag scopes, outside the writer guard",
+     "scope": "M",
+     "dependencies": [
+      "F-TAL-007"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-TAL-007",
+     "severity": "critical",
+     "status": "confirmed",
+     "domain": "talents",
+     "title": "Guardian Spirit bonus FP pool in a different flag scope than the pool ActorEngine debits",
+     "scope": "S",
+     "dependencies": [
+      "F-FRC-003"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CMB-003",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "combat",
+     "title": "House-rule damage threshold computed independently by DerivedCalculator and ThresholdEngine with different formulas",
+     "scope": "S",
+     "dependencies": [
+      "owner ruling on house-rule formula"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-CMB-004",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "combat",
+     "title": "Live Combat Action Browser executes SWSECombat.runCombatAction, which does not exist",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-FRC-002",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "force",
+     "title": "Force Point maximum computed by two formulas; dailyForcePoints house rule never applied",
+     "scope": "S",
+     "dependencies": [
+      "B-PRG finalizer"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-HOL-002",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "holonet",
+     "title": "Trade/payout rollback is a parallel atomicity engine using whole-actor overwrite and item delete-and-recreate",
+     "scope": "L",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-NPC-003",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "npc-followers",
+     "title": "Three follower defense computations disagree; one installed by monkey-patching DefenseCalculator",
+     "scope": "M",
+     "dependencies": [
+      "B-ACT actor-core"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-TAL-003",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "talents",
+     "title": "combatTurn arguments read three different ways; Master Advisor reads a field the hook does not carry",
+     "scope": "S",
+     "dependencies": [
+      "combat domain turn event"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ACT-003",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "actor-core",
+     "title": "Five parallel plan-application entry points with different plan shapes",
+     "scope": "M",
+     "dependencies": [
+      "progression domain contract (finalize-integration.js)"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-CLS-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "classes",
+     "title": "Nonheroic class defined twice with divergent class skills",
+     "scope": "S",
+     "dependencies": [
+      "SWSE-NPC-RD-002"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CLS-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "classes",
+     "title": "Parallel class loader and cache bypassing ClassesDB",
+     "scope": "M",
+     "dependencies": [
+      "actor-core boot order"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CMB-005",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "combat",
+     "title": "SWSERoll.rollAutofire / rollFullAttack keep independent defense, crit-range and crit-multiplier math; no in-repo caller",
+     "scope": "S",
+     "dependencies": [
+      "owner confirmation on macro use"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CUS-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "customization",
+     "title": "Two live installed-upgrade representations; inconsistent removal refunds",
+     "scope": "L",
+     "dependencies": [
+      "TX-14 gate"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-DAT-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "data-registries",
+     "title": "PrerequisiteChecker computes total level and BAB locally",
+     "scope": "M",
+     "dependencies": [
+      "B-ACT",
+      "progression contract"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-DRD-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "droids",
+     "title": "Two droid readiness validators disagree on armor",
+     "scope": "S",
+     "dependencies": [
+      "B-PRG progression",
+      "B-STO store-economy"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-DRD-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "droids",
+     "title": "Second droid part overlay with hand-synced aliases and a divergent dead self-destruct export",
+     "scope": "M",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FEA-003",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "feats",
+     "title": "Normalization hooks hard-code a second copy of feat rules diverging from canonical abilityMeta",
+     "scope": "L",
+     "dependencies": [
+      "F-FEA-001"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-FEA-007",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "feats",
+     "title": "Skill-feat daily uses keyed on real-world UTC date",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-FRC-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "force",
+     "title": "Dark Side Score mutation has no owner (7 live writer modules)",
+     "scope": "M",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-GAM-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "games",
+     "title": "Holonet invites use wagerProfile.mode 'credit-buy-in', which escrow does not recognize, so PvP wagers are never escrowed",
+     "scope": "M",
+     "dependencies": [
+      "F-GAM-002"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-MEN-005",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "mentor-suggestion",
+     "title": "Ability modifier and skill reading reimplemented across suggestion modules",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-008",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Three independent BAB calculations in progression with divergent behavior on sparse class tables",
+     "scope": "S",
+     "dependencies": [
+      "B-CLS"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ROL-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "rolls",
+     "title": "Local skill-total formulas in the rolls domain",
+     "scope": "M",
+     "dependencies": [
+      "B-ACT F-ACT-015"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-TAL-012",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "talents",
+     "title": "Local Dark Side Score increment helpers in force-adept and sith actions",
+     "scope": "S",
+     "dependencies": [
+      "F-FRC-004"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-UIS-005",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "ui-shell",
+     "title": "Presentation recomputes Second Wind and defense values",
+     "scope": "S",
+     "dependencies": [
+      "B-CMB combat",
+      "B-ACT actor-core"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-UIS-006",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "ui-shell",
+     "title": "Second prerequisite evaluator in the item dialog",
+     "scope": "M",
+     "dependencies": [
+      "B-PRG progression"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-VEH-003",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "vehicles",
+     "title": "Two spend paths for starship maneuvers with different semantics",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-ACT-009",
+     "severity": "medium",
+     "status": "suspected",
+     "domain": "actor-core",
+     "title": "Dual flag scope: setFlag(\"swse\") is remapped to \"foundryvtt-swse\" while most reads use flags.swse",
+     "scope": "M",
+     "dependencies": [
+      "B-MIG (data migration of flags)"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-INF-006",
+     "severity": "medium",
+     "status": "suspected",
+     "domain": "infrastructure",
+     "title": "Generic utilities compute game rules",
+     "scope": "M",
+     "dependencies": [
+      "B-ACT"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ABL-005",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "abilities-effects",
+     "title": "DerivedOverrideEngine computes HALF_LEVEL and ability mod independently of actor-core helpers",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ACT-006",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "actor-core",
+     "title": "Condition-track penalty table duplicated in four modules",
+     "scope": "S",
+     "dependencies": [
+      "combat domain contract"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CMB-002",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "combat",
+     "title": "CombatEngine.applyDamage is a second, incomplete damage writer with no caller",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-EQP-008",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "equipment",
+     "title": "Dead carrying-capacity rule in progression EquipmentEngine",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-GAL-008",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "galactic-profiles",
+     "title": "Duplicate exported symbol rerollPlanetName with different signatures",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-INF-003",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "infrastructure",
+     "title": "Settings defined twice with divergent definitions",
+     "scope": "S",
+     "dependencies": [
+      "B-HRL",
+      "B-SET"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-SET-001",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "settings-config",
+     "title": "Second isEpicOverrideEnabled reads game.settings directly",
+     "scope": "S",
+     "dependencies": [
+      "B-ACT"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-SKL-003",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "skills",
+     "title": "Two different classes named ExtraSkillUseRegistry",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-HRL-003",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "houserules",
+     "title": "House-rule defaults declared in three places",
+     "scope": "M",
+     "dependencies": [
+      "B-INF F-INF-003"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FRC-001",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "force",
+     "title": "Normal Force Point balance spend/regain: single authority confirmed; lead not a duplicate",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-SPC-006",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "species",
+     "title": "Mechanical-responsibility leads are delegations, not duplicates",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    }
+   ]
+  },
+  {
+   "wave": 5,
+   "title": "Structural simplification: cycles, layering, oversized modules, performance",
+   "findings": 51,
+   "bySeverity": {
+    "high": 2,
+    "medium": 25,
+    "low": 23,
+    "info": 1
+   },
+   "ownerBlocked": 2,
+   "items": [
+    {
+     "id": "F-FEA-001",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "feats",
+     "title": "36 ungated createItem/updateItem write listeners run on every client and on every item update",
+     "scope": "M",
+     "dependencies": [
+      "F-FEA-003"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-002",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "ProgressionFinalizer method exists only through a side-effect import in the talents domain",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ABL-003",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "abilities-effects",
+     "title": "EffectIntentEngine is an engine filed under scripts/dialogs/ (A-07 hits are a filing error)",
+     "scope": "M",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ABL-008",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "abilities-effects",
+     "title": "ModifierEngine (2,085 lines) holds source collectors for every domain",
+     "scope": "L",
+     "dependencies": [
+      "B-ACT F-ACT-001"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ACT-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "actor-core",
+     "title": "18-file static import cycle between derived calculators, combat-roll-math/combat-stat-rules, ModifierEngine and ActorEngine",
+     "scope": "M",
+     "dependencies": [
+      "B-ABL F-ABL-002",
+      "combat domain contract"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ACT-013",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "actor-core",
+     "title": "actor-engine.js (4,890 lines) mixes the mutation gate, resource ledgers, canonical-shape normalizers and plan engines",
+     "scope": "L",
+     "dependencies": [
+      "docs/audits/actor-engine-extraction-plan.md"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CHT-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "chat",
+     "title": "6-file chat <-> roll <-> damage-packet cycle through a feat patch module",
+     "scope": "M",
+     "dependencies": [
+      "B-ROL",
+      "B-PAT"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CUS-007",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "customization",
+     "title": "ItemCustomizationWorkbench is a 3.8k-line class",
+     "scope": "L",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-DAT-003",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "data-registries",
+     "title": "prerequisite-checker.js is 4,029 lines and is live-patched by two modules",
+     "scope": "L",
+     "dependencies": [
+      "B-PAT F-PAT-001"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-EQP-007",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "equipment",
+     "title": "swse-item-sheet.js mixes effect wizard, activation, token lighting and form handling; prototype-patched",
+     "scope": "L",
+     "dependencies": [
+      "F-EQP-001"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FRC-007",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "force",
+     "title": "ForceExecutor mixes power execution with ~15 Force talent actions",
+     "scope": "M",
+     "dependencies": [
+      "F-FRC-008"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-HOL-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "holonet",
+     "title": "holonet-messenger-service.js mixes seven responsibilities in 7,055 SLOC",
+     "scope": "L",
+     "dependencies": [
+      "F-HOL-002",
+      "F-HOL-003"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-INF-008",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "infrastructure",
+     "title": "Composition outside the root and two hook-registration mechanisms",
+     "scope": "M",
+     "dependencies": [
+      "B-PAT F-PAT-003"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-MEN-006",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "mentor-suggestion",
+     "title": "getSuggestions (read path) performs sequential actor flag writes",
+     "scope": "S",
+     "dependencies": [
+      "F-MEN-001"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-NPC-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "npc-followers",
+     "title": "Follower domain authority lives in an app module; engine imports it",
+     "scope": "M",
+     "dependencies": [
+      "B-PRG follower adapters"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PAT-003",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "compat-patches",
+     "title": "Hotfix layer composed by a hidden side-effect import chain",
+     "scope": "S",
+     "dependencies": [
+      "B-INF"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-006",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "11-file import cycle progression engine <-> mentor dialogues <-> suggestion is closed by one unused import",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-007",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "ProgressionFinalizer computes each wired domain inline and then replaces it with builder output",
+     "scope": "L",
+     "dependencies": [
+      "F-PRG-002"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ROL-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "rolls",
+     "title": "roll-config.js mixes dialog UI, rule fallbacks, history, hooks and dead mechanics",
+     "scope": "M",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-TAL-008",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "talents",
+     "title": "11 engine->UI imports in talent action modules",
+     "scope": "M",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-UIS-008",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "ui-shell",
+     "title": "character-like-sheet.js mixes ~123 listeners, context assembly and rule dispatch",
+     "scope": "L",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-VEH-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "vehicles",
+     "title": "Engine to UI: crew assignment service opens a dialog; pure modules misplaced under UI directories",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-X-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "cross-cutting",
+     "title": "All 31 code-bearing domains form one dependency cycle; no domain can be tested or reasoned about in isolation",
+     "scope": "L",
+     "dependencies": [
+      "F-X-001"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-ACT-011",
+     "severity": "medium",
+     "status": "suspected",
+     "domain": "actor-core",
+     "title": "Passive ability re-registration runs 2-3 times per mutation",
+     "scope": "S",
+     "dependencies": [
+      "B-ABL"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FEA-006",
+     "severity": "medium",
+     "status": "suspected",
+     "domain": "feats",
+     "title": "Cleave target-dropped emitted from ungated updateActor watcher and swse.damageApplied",
+     "scope": "S",
+     "dependencies": [
+      "combat domain (damage event payload)"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-GOV-004",
+     "severity": "medium",
+     "status": "suspected",
+     "domain": "governance",
+     "title": "Prerequisite integrity evaluation runs on every recalcAll",
+     "scope": "S",
+     "dependencies": [
+      "B-ACT"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-UIS-010",
+     "severity": "medium",
+     "status": "suspected",
+     "domain": "ui-shell",
+     "title": "Global render listeners: V1 hook names on V2 apps and post-render DOM repair",
+     "scope": "M",
+     "dependencies": [
+      "compat-patches domain",
+      "B-FRC force"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CMB-008",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "combat",
+     "title": "Six engine->UI imports in combat engines",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-EQP-002",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "equipment",
+     "title": "weapon-runtime 5-file static import cycle via canonicalFeatSlug re-export",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FEA-009",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "feats",
+     "title": "selectedChoiceFromItem cloned in 7 files, all orphan",
+     "scope": "S",
+     "dependencies": [
+      "F-FEA-004"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-FEA-010",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "feats",
+     "title": "MetaResourceFeatResolver mixes 8 responsibilities including Force power recovery",
+     "scope": "M",
+     "dependencies": [
+      "tools/check-reroll-supersession-guard.mjs path update"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-GAM-005",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "games",
+     "title": "Mutual games<->holonet dependency; Holonet is a second session creator",
+     "scope": "S",
+     "dependencies": [
+      "F-GAM-001"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-GOV-005",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "governance",
+     "title": "Unbounded SentinelSourceMapper cache; duplicated CSS auditor",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-HOL-009",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "holonet",
+     "title": "HolonetStorage imports ShellMutationGuard (UI)",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-MEN-007",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "mentor-suggestion",
+     "title": "Engine-to-UI imports",
+     "scope": "S",
+     "dependencies": [
+      "F-MEN-006"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-021",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Engine-layer progression modules import progression UI (15 edges)",
+     "scope": "M",
+     "dependencies": [
+      "F-PRG-001"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-UIS-002",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "ui-shell",
+     "title": "Vehicle sheet duplicates three shell helpers verbatim",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-VEH-005",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "vehicles",
+     "title": "Three-file static import cycle in the Shipyard ledger",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-VEH-011",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "vehicles",
+     "title": "Verbatim sheet helper clones between vehicle and character-like sheets",
+     "scope": "S",
+     "dependencies": [
+      "F-UIS-002"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-CMB-011",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "combat",
+     "title": "Hotfix DOM repair runs on every renderApplicationV2",
+     "scope": "S",
+     "dependencies": [
+      "F-CMB-007"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-EQP-006",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "equipment",
+     "title": "Encumbrance computed twice per actor prepare",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-GAL-006",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "galactic-profiles",
+     "title": "5.2k-SLOC JS seed catalog loaded at init through settings registration",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-GAM-006",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "games",
+     "title": "All game sessions in one world-setting array rewritten on every move",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-HOL-008",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "holonet",
+     "title": "All records and threads stored as two world-setting arrays rewritten per message",
+     "scope": "M",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-MEN-011",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "mentor-suggestion",
+     "title": "_buildIntentCache grows without bound",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-ROL-005",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "rolls",
+     "title": "Global hooks invalidate TalentBonusCache on every actor/item change",
+     "scope": "S",
+     "dependencies": [
+      "B-ACT"
+     ],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-SPC-005",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "species",
+     "title": "Conditional-grant listeners schedule reconciliation on item and actor changes",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-STO-008",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "store-economy",
+     "title": "Store view switches re-render the whole app; Holopad caches live SWSEStore instances",
+     "scope": "M",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-TAL-009",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "talents",
+     "title": "Tree membership is an additive 3-source union owned by a progression-path module",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-UIS-013",
+     "severity": "low",
+     "status": "suspected",
+     "domain": "ui-shell",
+     "title": "Explicit full render after actor mutations (double render hypothesis)",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-PRG-017",
+     "severity": "info",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Probe false positives and legitimate caches",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    }
+   ]
+  },
+  {
+   "wave": 6,
+   "title": "Unimplemented integrations and deferred mechanics (owner/rules decisions first)",
+   "findings": 10,
+   "bySeverity": {
+    "high": 3,
+    "medium": 5,
+    "low": 2
+   },
+   "ownerBlocked": 8,
+   "items": [
+    {
+     "id": "F-GOV-001",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "governance",
+     "title": "A-02 has no runtime enforcement: MutationInterceptor context is write-only",
+     "scope": "M",
+     "dependencies": [
+      "B-ACT",
+      "A-P3"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-MEN-002",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "mentor-suggestion",
+     "title": "SuggestionEngineCoordinator.initialize() is never called",
+     "scope": "M",
+     "dependencies": [
+      "F-MEN-001",
+      "F-MEN-003"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-VEH-001",
+     "severity": "high",
+     "status": "confirmed",
+     "domain": "vehicles",
+     "title": "Vehicle import wizard and engine exist but are unwired; sheet button disabled with a false 'no implementation' claim",
+     "scope": "S",
+     "dependencies": [
+      "FOUNDRY_ACCEPTANCE vehicle import"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-FEA-008",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "feats",
+     "title": "Confident Success: second published cap not enforced; counter write not atomic",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-GAL-001",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "galactic-profiles",
+     "title": "150 test-only generator modules are an intended-but-unimplemented integration, not dead code",
+     "scope": "L",
+     "dependencies": [],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-HOL-004",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "holonet",
+     "title": "Droid/ship/follower HP emitters test flattened keys and never fire",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-SPC-002",
+     "severity": "medium",
+     "status": "confirmed",
+     "domain": "species",
+     "title": "Atomic species replacement transaction is not wired to any live entry point",
+     "scope": "M",
+     "dependencies": [
+      "ui-shell (sheet drop)",
+      "progression"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-GAM-003",
+     "severity": "medium",
+     "status": "suspected",
+     "domain": "games",
+     "title": "No sum-to-pot conservation check for player-pool cashouts",
+     "scope": "S",
+     "dependencies": [],
+     "ownerDecisionRequired": false
+    },
+    {
+     "id": "F-MIG-003",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "migration",
+     "title": "No migration registry; flag-namespace migration has no home",
+     "scope": "M",
+     "dependencies": [
+      "B-ACT F-ACT-009"
+     ],
+     "ownerDecisionRequired": true
+    },
+    {
+     "id": "F-PRG-019",
+     "severity": "low",
+     "status": "confirmed",
+     "domain": "progression",
+     "title": "Hard-coded fallback starting credits by class",
+     "scope": "S",
+     "dependencies": [
+      "B-CLS"
+     ],
+     "ownerDecisionRequired": true
+    }
+   ]
+  }
+ ]
+}

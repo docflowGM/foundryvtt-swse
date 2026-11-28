@@ -5,6 +5,8 @@
  * Level-up: delta review surface showing only what changed.
  */
 
+import { ProgressionEconomyPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js';
+import { getMannequinProjection } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mannequin/mannequin-builder.js';
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ProjectionEngine } from '../shell/projection-engine.js';
 import { getStepGuidance } from './mentor-step-integration.js';
@@ -15,8 +17,7 @@ import { ActorAbilityBridge } from '/systems/foundryvtt-swse/scripts/adapters/Ac
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 import { ProgressionFinalizer } from '../shell/progression-finalizer.js';
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
-import { buildClassSkillKeySet, buildSkillDisplay, normalizeSkillKey } from '../utils/skill-display.js';
-import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { buildClassSkillKeySet, buildSkillDisplay, normalizeSkillKey } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-display.js';
 import { HPGeneratorEngine } from '/systems/foundryvtt-swse/scripts/engine/HP/HPGeneratorEngine.js';
 import { RollEngine } from '/systems/foundryvtt-swse/scripts/engine/roll-engine.js';
 import { resolveLevelUpHitDie } from '/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js';
@@ -554,36 +555,30 @@ export class SummaryStep extends ProgressionStepPlugin {
 
     const beforeAttributes = this._getCurrentAttributeScores(actor);
     const afterAttributes = this._getProjectedAttributeScores(projection, beforeAttributes);
+    // 3N-PRG Stage D: every "after" value comes from the progression mannequin (the real compiled plan applied non-persistently, derived through
+    // BABCalculator / DefenseCalculator / DerivedCalculator / hp-accounting / SecondWindRules). No formula lives here; an unresolved value is PENDING.
+    const mannequin = await this._projectMannequin(shell, actor, session);
+    const afterBAB = mannequin?.bab ?? null;
+    const afterReflex = mannequin?.defenses?.reflex ?? null;
+    const afterFort = mannequin?.defenses?.fortitude ?? null;
+    const afterWill = mannequin?.defenses?.will ?? null;
+    const afterHP = mannequin?.maxHp ?? null;
+    const afterGrapple = mannequin?.grapple ?? null;
+    const afterSecondWind = mannequin?.secondWind?.healing ?? null;
+    const afterDT = mannequin?.damageThreshold ?? null;
+
     const beforeBAB = this._getCurrentBAB(actor);
-    const afterBAB = await this._computeProjectedBAB(actor, selectedClass);
-    const currentStrMod = this._abilityMod(beforeAttributes.str);
-    const afterStrMod = this._abilityMod(afterAttributes.str);
-    const currentDexMod = this._abilityMod(beforeAttributes.dex);
-    const afterDexMod = this._abilityMod(afterAttributes.dex);
-    const currentWisMod = this._abilityMod(beforeAttributes.wis);
-    const afterWisMod = this._abilityMod(afterAttributes.wis);
-
-    const currentClassBonuses = await this._getMaxDefenseBonuses(currentClasses);
-    const afterClassBonuses = await this._getProjectedDefenseBonuses(currentClasses, selectedClass);
-
     const beforeReflex = this._getDefenseTotal(actor, 'reflex');
     const beforeFort = this._getDefenseTotal(actor, 'fortitude');
     const beforeWill = this._getDefenseTotal(actor, 'will');
-    const afterReflex = beforeReflex - currentDexMod - (currentClassBonuses.reflex || 0) + afterDexMod + (afterClassBonuses.reflex || 0);
-    const afterFort = beforeFort - currentStrMod - (currentClassBonuses.fortitude || 0) + afterStrMod + (afterClassBonuses.fortitude || 0);
-    const afterWill = beforeWill - currentWisMod - (currentClassBonuses.will || 0) + afterWisMod + (afterClassBonuses.will || 0);
-
     const beforeHP = this._getCurrentHPMax(actor);
-    const afterHP = beforeHP + (Number(this._hpGainState.gain) || 0);
     const beforeGrapple = this._getCurrentGrapple(actor);
-    const afterGrapple = beforeGrapple - beforeBAB - currentStrMod + afterBAB + afterStrMod;
-    const beforeSecondWind = Number(actor.system?.secondWind?.healing || (5 + Math.floor(currentLevel / 4) * 5));
-    const afterSecondWind = Number(actor.system?.secondWind?.misc || 0) + (5 + Math.floor(newLevel / 4) * 5);
+    const beforeSecondWind = Number(actor.system?.secondWind?.healing || 0);
     const beforeDT = this._getCurrentDamageThreshold(actor, beforeFort);
-    const afterDT = afterFort;
 
     const statChanges = [];
     const pushStat = (label, before, after, opts = {}) => {
+      if (after === null || after === undefined) { statChanges.push({ label, before, after: null, pending: true }); return; }
       if (before === after && !opts.force) return;
       statChanges.push({ label, before, after, pending: !!opts.pending });
     };
@@ -850,35 +845,6 @@ export class SummaryStep extends ProgressionStepPlugin {
     return Math.floor((Number(score || 10) - 10) / 2);
   }
 
-  async _computeProjectedBAB(actor, selectedClass) {
-    const { calculateTotalBAB } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
-    const clone = globalThis.foundry?.utils?.deepClone || ((value) => JSON.parse(JSON.stringify(value || {})));
-    const synthetic = {
-      system: clone(actor?.system || {}),
-      items: Array.from(actor?.items || []).map(i => ({ type: i.type, name: i.name, id: i.id, system: clone(i.system || {}) }))
-    };
-    const className = selectedClass?.name || selectedClass?.className || selectedClass?.id;
-    if (className) {
-      const selectedKey = this._normalizeSummaryKey(className);
-      const existing = synthetic.items.find(i => i.type === 'class' && (this._normalizeSummaryKey(i.name) === selectedKey || this._normalizeSummaryKey(i.system?.classId) === selectedKey));
-      if (existing) {
-        existing.system.level = Number(existing.system.level || existing.system.levels || existing.system.rank || 0) + 1;
-      } else {
-        synthetic.items.push({
-          type: 'class',
-          name: className,
-          system: {
-            ...clone(selectedClass?.system || {}),
-            level: 1,
-            classId: selectedClass?.id || selectedClass?.classId || selectedClass?.sourceId || className,
-          }
-        });
-      }
-    }
-    const projected = Number(calculateTotalBAB(synthetic));
-    return Number.isFinite(projected) ? projected : this._getCurrentBAB(actor);
-  }
-
   _normalizeSummaryKey(value) {
     return String(value || '')
       .trim()
@@ -888,41 +854,23 @@ export class SummaryStep extends ProgressionStepPlugin {
       .replace(/^_+|_+$/g, '');
   }
 
-  async _getMaxDefenseBonuses(classEntries) {
-    const { getClassDefenseBonuses } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
-    const maxes = { fortitude: 0, reflex: 0, will: 0 };
-    for (const entry of classEntries || []) {
-      let defenses = entry?.system?.defenses;
-      if (!defenses || (defenses.fortitude == null && defenses.reflex == null && defenses.will == null)) {
-        try {
-          defenses = await getClassDefenseBonuses(entry.name);
-        } catch (err) {
-          defenses = { fortitude: 0, reflex: 0, will: 0 };
-        }
-      }
-      maxes.fortitude = Math.max(maxes.fortitude, Number(defenses?.fortitude || 0));
-      maxes.reflex = Math.max(maxes.reflex, Number(defenses?.reflex || 0));
-      maxes.will = Math.max(maxes.will, Number(defenses?.will || 0));
+  /** Progression mannequin projection for the level-up review (null when it cannot be built; values it cannot resolve stay null/pending). */
+  async _projectMannequin(shell, actor, session) {
+    try {
+      const projection = await getMannequinProjection(actor, {
+        mode: 'levelup',
+        actor,
+        progressionSession: session,
+        steps: shell.steps || [],
+        stepData: shell.stepData || {},
+        mentor: shell.mentor || {},
+        sessionId: shell.element?.dataset?.sessionId || 'levelup-review',
+      }, { previewKey: `levelup-summary:${actor.id}` });
+      return projection?.stale ? null : projection;
+    } catch (err) {
+      swseLogger.warn?.('[SummaryStep] mannequin projection unavailable; level-up stats stay pending', err);
+      return null;
     }
-    return maxes;
-  }
-
-  async _getProjectedDefenseBonuses(currentClasses, selectedClass) {
-    const current = await this._getMaxDefenseBonuses(currentClasses);
-    const className = selectedClass?.name || selectedClass?.id;
-    if (!className) return current;
-    const existing = (currentClasses || []).find(c => c.name === className);
-    if (existing) return current;
-    const { getClassDefenseBonuses } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
-    let defenses = selectedClass?.system?.defenses;
-    if (!defenses || (defenses.fortitude == null && defenses.reflex == null && defenses.will == null)) {
-      defenses = await getClassDefenseBonuses(className);
-    }
-    return {
-      fortitude: Math.max(current.fortitude, Number(defenses?.fortitude || 0)),
-      reflex: Math.max(current.reflex, Number(defenses?.reflex || 0)),
-      will: Math.max(current.will, Number(defenses?.will || 0)),
-    };
   }
 
   _getAddedNames(actor, projectedList, itemType) {
@@ -1531,7 +1479,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       ...(selections || {}),
       class: selectedClass || selections?.class || session?.getSelection?.('class') || session?.draftSelections?.class || null,
     };
-    return ProgressionFinalizer._computeLevelupWealthCreditGrant(actor, effectiveSelections, {
+    return ProgressionEconomyPlanBuilder.computeLevelupWealthGrant(actor, effectiveSelections, {
       mode: 'levelup',
       progressionSession: session || globalThis.game?.swse?.currentProgressionShell?.progressionSession || null,
       targetLevel: session?.targetLevel,
@@ -1570,18 +1518,9 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   _computeWealthCreditGrant(classModel, selections = {}) {
-    const talents = [
-      ...(Array.isArray(selections?.talents) ? selections.talents : []),
-      ...this._collectSelectionEntries(selections, ['talent']),
-    ];
-    const hasWealth = talents.some(talent => String(talent?.name || talent?.label || talent?.id || talent || '').toLowerCase().replace(/[^a-z0-9]+/g, '') === 'wealth');
-    if (!hasWealth) return 0;
-    const classKey = String(classModel?.name || classModel?.label || classModel?.id || selections?.class?.name || selections?.class || '')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '');
-    if (classKey !== 'noble' && classKey !== 'corporateagent') return 0;
-    const level = Math.max(1, Number(selections?.survey?.startingLevel ?? this._startingLevel ?? 1) || 1);
-    return level * 5000;
+    // Canonical calculation: ProgressionEconomyPlanBuilder (the compiler that writes the credits at finalization).
+    const effective = { ...(selections || {}), class: selections?.class || classModel || null };
+    return ProgressionEconomyPlanBuilder.computeChargenWealthGrant(effective, null, { targetLevel: this._startingLevel });
   }
 
   _parseMaxCredits(value) {
@@ -1765,62 +1704,15 @@ export class SummaryStep extends ProgressionStepPlugin {
     return 'RX-44';
   }
 
-  async _stageStartingCreditsForStore(actor, shell = null) {
-    const expectedBudget = Math.max(0, Number(this._summary?.startingCredits || 0));
-    if (!actor || expectedBudget <= 0) return;
-
-    const existingState = actor.getFlag?.('swse', 'chargenStore') || actor.flags?.swse?.chargenStore || {};
-    const previousBudget = Math.max(0, Number(existingState.startingCredits || 0));
-    const currentCredits = Math.max(0, Number(actor.system?.credits ?? 0) || 0);
-
-    let nextCredits = currentCredits;
-    if (!existingState.initialized) {
-      nextCredits = Math.max(currentCredits, expectedBudget);
-    } else if (expectedBudget > previousBudget) {
-      nextCredits = currentCredits + (expectedBudget - previousBudget);
-    }
-
-    if (nextCredits === currentCredits && existingState.initialized && previousBudget === expectedBudget) return;
-
-    await ActorEngine.updateActor(actor, {
-      'system.credits': nextCredits,
-      'flags.swse.chargenStore': {
-        initialized: true,
-        startingCredits: expectedBudget,
-        lastStagedCredits: nextCredits,
-        sessionId: shell?.sessionId || shell?.progressionSession?.sessionId || null,
-        updatedAt: new Date().toISOString(),
-      },
-    }, {
-      source: 'SummaryStep.enterStore.stageStartingCredits',
-      meta: { guardKey: 'chargen-store-starting-credits' },
-    });
-  }
-
+  /**
+   * Chargen shopping is DEFERRED until the character exists. Progression is draft-only until final confirmation: the store buys against a real actor's
+   * wallet and items, so opening it here would require writing starting credits and a staging flag onto the actor before confirmation (the retired
+   * staging path), which also left a cancelled creation with a changed wallet. Starting credits are compiled once, at finalization, by
+   * ProgressionEconomyPlanBuilder; shopping then uses the ordinary store. Nothing is written here.
+   */
   async enterStore(actor, shell = null) {
-    // A Galactic Profile session carries its equipment and exact final balance as DRAFT-ONLY economy state in the
-    // single MutationPlan. The chargen store stages credits and a flag on the actor before confirmation, which would
-    // violate "no actor mutation before final confirmation" and could double-charge, so it is not opened here.
-    if (shell?.progressionSession?.draftSelections?.profileApplication?.economy) {
-      globalThis.ui?.notifications?.info?.('This Galactic Profile already includes its starting equipment and credits. Shopping opens after the character is created.');
-      return null;
-    }
-    const { SWSEStore } = await import('../../../apps/store/store-main.js');
-    await this._stageStartingCreditsForStore(actor, shell);
-    return SWSEStore.open(actor, {
-      closeAfterCheckout: true,
-      entryOrigin: 'chargen-summary',
-      onCheckoutComplete: async () => {
-        await this._aggregateSummary(shell);
-        shell?.requestRender?.({ preserveScroll: true, reason: 'chargen-store-checkout' });
-      },
-      onClose: async () => {
-        await this._aggregateSummary(shell);
-        shell?.requestRender?.({ preserveScroll: true, reason: 'chargen-store-close' });
-      },
-    }).catch(err => {
-      swseLogger.error('[SummaryStep.enterStore] Failed to open store', err);
-    });
+    globalThis.ui?.notifications?.info?.('Shopping opens after the character is created. Your starting credits are granted when you finish.');
+    return null;
   }
 
   async handleAction(action, event, target, shell) {

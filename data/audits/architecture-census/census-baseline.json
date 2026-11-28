@@ -1,0 +1,733 @@
+{
+ "schema": "swse.architecture-census.baseline/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "generator": "tools/architecture-census/build-census.mjs",
+ "parser": "acorn 8.18.0",
+ "trackedFilesAtHead": 7881,
+ "censusExcludedSelfFiles": 0,
+ "filesInventoried": 7881,
+ "filesByTopDirectory": {
+  "scripts": 2423,
+  "docs": 1315,
+  "data": 953,
+  "assets": 922,
+  "tests": 834,
+  "templates": 523,
+  "tools": 512,
+  "styles": 233,
+  "packs": 77,
+  "lang": 25,
+  "reference": 15,
+  "(root)": 13,
+  "build": 12,
+  "helpers": 11,
+  ".github": 6,
+  "schemas": 4,
+  "Config": 2,
+  "design-docs": 1
+ },
+ "filesByExtension": {
+  "js": 2390,
+  "json": 1245,
+  "mjs": 1205,
+  "md": 1092,
+  "hbs": 518,
+  "png": 518,
+  "webp": 243,
+  "css": 233,
+  "py": 124,
+  "db": 82,
+  "svg": 81,
+  "ttf": 51,
+  "txt": 28,
+  "jpg": 17,
+  "(none)": 14,
+  "otf": 8,
+  "yml": 6,
+  "csv": 4,
+  "sh": 4,
+  "html": 3,
+  "ini": 2,
+  "ndjson": 2,
+  "ts": 2,
+  "gitattributes": 1,
+  "gitignore": 1,
+  "gitkeep": 1,
+  "ldb": 1,
+  "log": 1,
+  "pdf": 1,
+  "prettierignore": 1,
+  "sha256": 1,
+  "tmp": 1
+ },
+ "filesByRole": {
+  "evidence-or-doc": 1363,
+  "module": 988,
+  "asset": 921,
+  "test": 834,
+  "tool": 599,
+  "evidence-data": 546,
+  "presentation-template": 527,
+  "presentation": 440,
+  "data": 418,
+  "engine-or-service": 288,
+  "presentation-style": 233,
+  "normalizer": 148,
+  "module-with-writes": 90,
+  "compendium-source": 77,
+  "registry": 74,
+  "composition-wiring": 65,
+  "adapter": 62,
+  "authority-or-orchestrator": 51,
+  "presentation-with-writes": 51,
+  "migration": 28,
+  "localization": 25,
+  "compat-patch": 24,
+  "diagnostic": 12,
+  "configuration": 9,
+  "other": 8
+ },
+ "filesByPrimarySystem": {
+  "vehicles": 764,
+  "feats": 720,
+  "progression": 571,
+  "mentor-suggestion": 568,
+  "droids": 472,
+  "ui-shell": 464,
+  "talents": 440,
+  "combat": 431,
+  "equipment": 377,
+  "force": 322,
+  "dev-tooling": 280,
+  "species": 267,
+  "galactic-profiles": 211,
+  "customization": 172,
+  "npc-followers": 169,
+  "store-economy": 162,
+  "classes": 134,
+  "actor-core": 133,
+  "abilities-effects": 129,
+  "infrastructure": 117,
+  "games": 115,
+  "assets": 109,
+  "documentation": 102,
+  "governance": 100,
+  "holonet": 94,
+  "skills": 87,
+  "compendium-packs": 77,
+  "data-registries": 54,
+  "testing": 44,
+  "houserules": 43,
+  "rolls": 36,
+  "migration": 31,
+  "localization": 25,
+  "compat-patches": 19,
+  "repo-config": 16,
+  "chat": 15,
+  "settings-config": 11
+ },
+ "domainAssignmentBasis": {
+  "keyword": 4429,
+  "path-rule": 2307,
+  "import-majority": 609,
+  "fallback": 536
+ },
+ "bytesTotal": 370386344,
+ "js": {
+  "filesAnalysed": 3595,
+  "parseErrors": [],
+  "runtimeModulesUnderScriptsOrIndex": 2379,
+  "runtimeReachability": {
+   "reachable-static": 1483,
+   "orphan-unreferenced": 332,
+   "test-only-import": 178,
+   "unreachable-importers-only": 156,
+   "reachable-dynamic": 117,
+   "node-tool": 70,
+   "node-script": 23,
+   "string-referenced-only": 12,
+   "tool-only-import": 8
+  },
+  "slocRuntime": 525153,
+  "slocAllJs": 706825,
+  "slocByPrimarySystem": {
+   "progression": {
+    "runtime": 97737,
+    "tool": 382,
+    "test": 15902,
+    "runtimeFiles": 367
+   },
+   "ui-shell": {
+    "runtime": 55411,
+    "tool": 848,
+    "test": 5159,
+    "runtimeFiles": 179
+   },
+   "mentor-suggestion": {
+    "runtime": 51876,
+    "tool": 2073,
+    "test": 3805,
+    "runtimeFiles": 240
+   },
+   "combat": {
+    "runtime": 34726,
+    "tool": 1109,
+    "test": 17453,
+    "runtimeFiles": 174
+   },
+   "galactic-profiles": {
+    "runtime": 29047,
+    "tool": 218,
+    "test": 6615,
+    "runtimeFiles": 167
+   },
+   "feats": {
+    "runtime": 22888,
+    "tool": 3231,
+    "test": 1225,
+    "runtimeFiles": 105
+   },
+   "vehicles": {
+    "runtime": 19968,
+    "tool": 5635,
+    "test": 19246,
+    "runtimeFiles": 119
+   },
+   "holonet": {
+    "runtime": 18683,
+    "tool": 83,
+    "test": 1424,
+    "runtimeFiles": 75
+   },
+   "talents": {
+    "runtime": 16252,
+    "tool": 9951,
+    "test": 4053,
+    "runtimeFiles": 36
+   },
+   "equipment": {
+    "runtime": 15576,
+    "tool": 12655,
+    "test": 6514,
+    "runtimeFiles": 92
+   },
+   "governance": {
+    "runtime": 15296,
+    "tool": 0,
+    "test": 488,
+    "runtimeFiles": 86
+   },
+   "infrastructure": {
+    "runtime": 14539,
+    "tool": 144,
+    "test": 312,
+    "runtimeFiles": 110
+   },
+   "customization": {
+    "runtime": 14114,
+    "tool": 1116,
+    "test": 5732,
+    "runtimeFiles": 59
+   },
+   "force": {
+    "runtime": 13704,
+    "tool": 1184,
+    "test": 3356,
+    "runtimeFiles": 55
+   },
+   "actor-core": {
+    "runtime": 13592,
+    "tool": 0,
+    "test": 4969,
+    "runtimeFiles": 37
+   },
+   "abilities-effects": {
+    "runtime": 12801,
+    "tool": 153,
+    "test": 1032,
+    "runtimeFiles": 91
+   },
+   "store-economy": {
+    "runtime": 10897,
+    "tool": 891,
+    "test": 2937,
+    "runtimeFiles": 39
+   },
+   "droids": {
+    "runtime": 10133,
+    "tool": 1963,
+    "test": 4400,
+    "runtimeFiles": 47
+   },
+   "npc-followers": {
+    "runtime": 9761,
+    "tool": 4286,
+    "test": 1732,
+    "runtimeFiles": 28
+   },
+   "houserules": {
+    "runtime": 8356,
+    "tool": 0,
+    "test": 174,
+    "runtimeFiles": 25
+   },
+   "games": {
+    "runtime": 8157,
+    "tool": 76,
+    "test": 728,
+    "runtimeFiles": 32
+   },
+   "skills": {
+    "runtime": 7059,
+    "tool": 223,
+    "test": 472,
+    "runtimeFiles": 34
+   },
+   "species": {
+    "runtime": 5578,
+    "tool": 2046,
+    "test": 2329,
+    "runtimeFiles": 19
+   },
+   "rolls": {
+    "runtime": 5218,
+    "tool": 68,
+    "test": 855,
+    "runtimeFiles": 24
+   },
+   "migration": {
+    "runtime": 4051,
+    "tool": 87,
+    "test": 340,
+    "runtimeFiles": 24
+   },
+   "compat-patches": {
+    "runtime": 3939,
+    "tool": 0,
+    "test": 385,
+    "runtimeFiles": 17
+   },
+   "data-registries": {
+    "runtime": 3710,
+    "tool": 1421,
+    "test": 123,
+    "runtimeFiles": 12
+   },
+   "dev-tooling": {
+    "runtime": 3404,
+    "tool": 10764,
+    "test": 116,
+    "runtimeFiles": 23
+   },
+   "classes": {
+    "runtime": 3162,
+    "tool": 125,
+    "test": 830,
+    "runtimeFiles": 11
+   },
+   "chat": {
+    "runtime": 1365,
+    "tool": 0,
+    "test": 10,
+    "runtimeFiles": 7
+   },
+   "settings-config": {
+    "runtime": 288,
+    "tool": 0,
+    "test": 0,
+    "runtimeFiles": 4
+   },
+   "documentation": {
+    "runtime": 157,
+    "tool": 0,
+    "test": 0,
+    "runtimeFiles": 1
+   },
+   "testing": {
+    "runtime": 0,
+    "tool": 0,
+    "test": 1932,
+    "runtimeFiles": 0
+   }
+  },
+  "importEdges": {
+   "static": 8521,
+   "dynamic": 3167,
+   "reexport": 135
+  },
+  "unresolvedImportSpecifiers": 5,
+  "unresolvedDynamicImportExpressions": 116,
+  "dynamicImportPatterns": 10,
+  "externalImports": {
+   "node:assert/strict": 829,
+   "node:fs": 799,
+   "node:path": 433,
+   "node:url": 357,
+   "node:test": 271,
+   "node:fs/promises": 110,
+   "node:child_process": 79,
+   "node:crypto": 66,
+   "fs": 48,
+   "path": 38,
+   "url": 30,
+   "node:process": 25,
+   "node:vm": 22,
+   "node:os": 22,
+   "readline": 9,
+   "node:module": 9,
+   "better-sqlite3": 3,
+   "fs/promises": 3,
+   "ajv/dist/2020.js": 2,
+   "pdf-lib": 2,
+   "glob": 1,
+   "fs'": 1,
+   "path'": 1,
+   "url'": 1
+  },
+  "staticImportCycles": 9,
+  "filesInStaticCycles": 52,
+  "largestCycle": 18,
+  "domainCycles": 1,
+  "workers": 0
+ },
+ "tests": {
+  "testFiles": 828,
+  "ciRunTestFiles": 794,
+  "nonCiTestFiles": 34,
+  "runtimeModulesWithAnyTest": 1566,
+  "runtimeModulesWithCiTest": 1566
+ },
+ "templates": {
+  "hbs": 518,
+  "reachability": {
+   "runtime-referenced": 429,
+   "doc-or-data-referenced-only": 44,
+   "unreferenced": 43,
+   "test-referenced": 1,
+   "tool-referenced": 1
+  }
+ },
+ "styles": {
+  "css": 233,
+  "manifestStyles": 127,
+  "reachability": {
+   "manifest-style": 127,
+   "unreferenced": 67,
+   "runtime-referenced": 34,
+   "doc-or-data-referenced-only": 4,
+   "test-referenced": 1
+  }
+ },
+ "assets": {
+  "files": 921,
+  "reachability": {
+   "runtime-referenced": 412,
+   "doc-or-data-referenced-only": 362,
+   "unreferenced": 139,
+   "runtime-pattern-referenced": 5,
+   "manifest-media": 3
+  },
+  "bytesUnreferenced": 1977366
+ },
+ "data": {
+  "files": 953,
+  "auditEvidence": 546,
+  "reachability": {
+   "generic-loader-possible-only": 316,
+   "tool-referenced+generic-loader-possible": 265,
+   "runtime-referenced": 159,
+   "test-referenced+generic-loader-possible": 109,
+   "runtime-pattern-referenced": 104
+  }
+ },
+ "packs": {
+  "files": 77,
+  "manifestPacks": 68,
+  "reachability": {
+   "manifest-pack-source": 66,
+   "pack-undeclared": 11
+  }
+ },
+ "docs": {
+  "files": 1363,
+  "withUncheckedItems": 40,
+  "mentioningFoundryAcceptanceOrDeferral": 215
+ },
+ "registrations": {
+  "hooksDistinct": 116,
+  "hookListenerSites": 472,
+  "settingsDistinct": 124,
+  "settingsRegisteredMoreThanOnce": 4,
+  "sheetRegistrationCalls": 5,
+  "handlebarsHelperRegistrations": 25,
+  "globalsAssignedDistinct": 213
+ },
+ "stateWrites": {
+  "runtimeDirectDocumentWriteSites": 357,
+  "runtimeDirectDocumentWriteFiles": 123,
+  "sitesInsideActorEngineHome": 21,
+  "sitesInReachableFiles": 316,
+  "byDomain": {
+   "talents": {
+    "sites": 74,
+    "files": 13
+   },
+   "mentor-suggestion": {
+    "sites": 27,
+    "files": 14
+   },
+   "actor-core": {
+    "sites": 25,
+    "files": 4
+   },
+   "combat": {
+    "sites": 25,
+    "files": 12
+   },
+   "force": {
+    "sites": 24,
+    "files": 4
+   },
+   "equipment": {
+    "sites": 24,
+    "files": 3
+   },
+   "npc-followers": {
+    "sites": 23,
+    "files": 8
+   },
+   "feats": {
+    "sites": 20,
+    "files": 13
+   },
+   "infrastructure": {
+    "sites": 18,
+    "files": 6
+   },
+   "ui-shell": {
+    "sites": 17,
+    "files": 8
+   },
+   "customization": {
+    "sites": 15,
+    "files": 4
+   },
+   "progression": {
+    "sites": 15,
+    "files": 8
+   },
+   "abilities-effects": {
+    "sites": 11,
+    "files": 3
+   },
+   "migration": {
+    "sites": 9,
+    "files": 6
+   },
+   "compat-patches": {
+    "sites": 8,
+    "files": 3
+   },
+   "galactic-profiles": {
+    "sites": 6,
+    "files": 2
+   },
+   "houserules": {
+    "sites": 6,
+    "files": 4
+   },
+   "store-economy": {
+    "sites": 3,
+    "files": 2
+   },
+   "holonet": {
+    "sites": 2,
+    "files": 2
+   },
+   "species": {
+    "sites": 2,
+    "files": 1
+   },
+   "vehicles": {
+    "sites": 1,
+    "files": 1
+   },
+   "skills": {
+    "sites": 1,
+    "files": 1
+   },
+   "governance": {
+    "sites": 1,
+    "files": 1
+   }
+  },
+  "actorEngineCallSitesRuntime": 938,
+  "systemDerivedAssignmentSites": 156,
+  "chatMessageCreateOutsideSwseChat": 42
+ },
+ "complexity": {
+  "duplicateExportedSymbolNames": 138,
+  "exactFunctionCloneGroups": {
+   "runtime": 33,
+   "all": 46
+  },
+  "structuralFunctionCloneGroups": {
+   "runtime": 34,
+   "all": 42
+  },
+  "reachableModulesWithUnusedNamedExports": 555,
+  "unusedNamedExports": 1700,
+  "compatPatchModules": 24,
+  "migrationModules": 28,
+  "runtimeFilesWithDeprecatedMarkers": 64,
+  "runtimeFilesWithLegacyMarkers": 424,
+  "runtimeFilesWithCompatMarkers": 244,
+  "runtimeFilesOver1500Sloc": [
+   {
+    "path": "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "sloc": 7055
+   },
+   {
+    "path": "scripts/sheets/v2/character-like-sheet.js",
+    "sloc": 6764
+   },
+   {
+    "path": "scripts/data/authority/talent-prerequisite-authority.js",
+    "sloc": 5985
+   },
+   {
+    "path": "scripts/locations/location-library-seeds.js",
+    "sloc": 5227
+   },
+   {
+    "path": "scripts/domain/vehicles/vehicle-cp22-source-catalog.generated.js",
+    "sloc": 3684
+   },
+   {
+    "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+    "sloc": 3436
+   },
+   {
+    "path": "scripts/apps/customization/item-customization-workbench.js",
+    "sloc": 3416
+   },
+   {
+    "path": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+    "sloc": 3301
+   },
+   {
+    "path": "scripts/governance/actor-engine/actor-engine.js",
+    "sloc": 3090
+   },
+   {
+    "path": "scripts/generation/objective-template.js",
+    "sloc": 3022
+   },
+   {
+    "path": "scripts/data/prerequisite-checker.js",
+    "sloc": 2988
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/talent-step.js",
+    "sloc": 2849
+   },
+   {
+    "path": "scripts/skills/skill-uses.js",
+    "sloc": 2617
+   },
+   {
+    "path": "scripts/items/swse-item-sheet.js",
+    "sloc": 2524
+   },
+   {
+    "path": "scripts/mentor/mentor-suggestion-data.js",
+    "sloc": 2279
+   },
+   {
+    "path": "scripts/engine/mentor/mentor-dialogues.data.js",
+    "sloc": 2246
+   },
+   {
+    "path": "scripts/houserules/houserules-manifest.js",
+    "sloc": 2229
+   },
+   {
+    "path": "scripts/engine/suggestion/SuggestionEngine.js",
+    "sloc": 2204
+   },
+   {
+    "path": "scripts/data/authority/feat-prerequisite-authority.js",
+    "sloc": 2131
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/feat-step.js",
+    "sloc": 2111
+   },
+   {
+    "path": "scripts/generation/data/location-population-profiles.js",
+    "sloc": 2032
+   },
+   {
+    "path": "scripts/apps/progression-framework/shell/progression-reconciler.js",
+    "sloc": 2026
+   },
+   {
+    "path": "scripts/apps/gm-datapad.js",
+    "sloc": 2011
+   },
+   {
+    "path": "scripts/sheets/v2/character-sheet/concept-context.js",
+    "sloc": 1942
+   },
+   {
+    "path": "scripts/sheets/v2/actor-sheet-base.js",
+    "sloc": 1834
+   },
+   {
+    "path": "scripts/engine/store/transaction-engine.js",
+    "sloc": 1818
+   },
+   {
+    "path": "scripts/ui/shell/AlliesSurfaceService.js",
+    "sloc": 1815
+   },
+   {
+    "path": "scripts/apps/store/store-main.js",
+    "sloc": 1724
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/summary-step.js",
+    "sloc": 1722
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/attribute-step.js",
+    "sloc": 1688
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/intro-step.js",
+    "sloc": 1639
+   },
+   {
+    "path": "scripts/houserules/houserule-settings.js",
+    "sloc": 1606
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/skills-step.js",
+    "sloc": 1571
+   },
+   {
+    "path": "scripts/rolls/roll-config.js",
+    "sloc": 1558
+   },
+   {
+    "path": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+    "sloc": 1549
+   },
+   {
+    "path": "scripts/apps/progression-framework/steps/species-step.js",
+    "sloc": 1527
+   }
+  ],
+  "todoMarkersRuntime": 4
+ }
+}

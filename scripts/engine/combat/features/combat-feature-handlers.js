@@ -1,6 +1,6 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { rollAttack } from '/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js';
-import { actorEntitledToMultiAttackPackage, buildFullAttackSequence, multiAttackChargeViolation, collectPlanAnswers, FULL_ATTACK_PACKAGES, getReadiedWeaponSelection, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
+import { buildFullAttackSequence, multiAttackChargeViolation, collectPlanAnswers, FULL_ATTACK_PACKAGES, getReadiedWeaponSelection } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
 import { attackSelectionOf } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
 import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { showRollModifiersDialog } from '/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
@@ -116,7 +116,6 @@ export const COMBAT_MULTIATTACK_SPECS = Object.freeze({
     actionId: 'double-attack',
     packageType: FULL_ATTACK_PACKAGES.DOUBLE_ATTACK,
     attackCount: 2,
-    fallbackPenalty: -5,
     penaltySource: 'Double Attack',
     actionType: 'full-round'
   },
@@ -126,7 +125,6 @@ export const COMBAT_MULTIATTACK_SPECS = Object.freeze({
     actionId: 'triple-attack',
     packageType: FULL_ATTACK_PACKAGES.TRIPLE_ATTACK,
     attackCount: 3,
-    fallbackPenalty: -10,
     penaltySource: 'Triple Attack',
     actionType: 'full-round'
   }
@@ -201,26 +199,6 @@ function applyForcedAttackOption(options = {}, spec = {}) {
   };
 }
 
-function fallbackMultiAttackPlan(actor, spec, weapon) {
-  const penalty = Number(spec?.fallbackPenalty ?? 0);
-  const count = Number(spec?.attackCount ?? 0);
-  return {
-    legal: !!weapon && count > 0,
-    packageType: spec.packageType,
-    actionType: spec.actionType ?? 'full-round',
-    warnings: weapon ? [] : ['No ready weapon. Ready one weapon (or choose which ready weapon to use) before using this attack.'],
-    attacks: Array.from({ length: count }, (_, index) => ({
-      weapon,
-      label: `${weapon?.name ?? 'Weapon'} — Attack ${index + 1}`,
-      weaponGroup: getWeaponGroup(weapon),
-      basePenalty: penalty,
-      reduction: 0,
-      finalPenalty: penalty,
-      penaltySource: spec.penaltySource ?? spec.label
-    }))
-  };
-}
-
 export async function executeCombatFeatureMultiattack({ actor, element, featureId } = {}) {
   const spec = getMultiattackSpec(featureId);
   if (!actor || !spec) {
@@ -230,17 +208,9 @@ export async function executeCombatFeatureMultiattack({ actor, element, featureI
 
   const equipped = getReadiedWeaponSelection(actor);
   const planAnswers = await collectPlanAnswers(equipped.primary, {});
-  let plan = buildFullAttackSequence(actor, { requestedPackage: spec.packageType, primaryWeapon: equipped.primary, answers: planAnswers });
-  if (!plan?.legal) {
-    // The fallback plan only covers a plan the authority could not build for a NON-entitlement reason. It must never turn "the actor does not
-    // have Double/Triple Attack for this weapon" into a legal sequence (execution boundary: a hidden button is not a security boundary).
-    const entitled = actorEntitledToMultiAttackPackage(actor, spec.packageType, equipped.primary, { answers: planAnswers });
-    if (!entitled) {
-      ui?.notifications?.warn?.(plan?.warnings?.join(' ') || `${spec.label} is not unlocked for this actor and weapon.`);
-      return;
-    }
-    plan = fallbackMultiAttackPlan(actor, spec, equipped.primary);
-  }
+  // `buildFullAttackSequence` is the ONLY sequence calculator (F-CMB-007 owner ruling): entitlement, weapon-specific feat scope, legal weapon form,
+  // reductions. An illegal/unresolved sequence is refused with its own warnings; nothing rebuilds a -5/-10 plan behind it.
+  const plan = buildFullAttackSequence(actor, { requestedPackage: spec.packageType, primaryWeapon: equipped.primary, answers: planAnswers });
   if (!plan?.legal || !plan.attacks?.length) {
     ui?.notifications?.warn?.(plan?.warnings?.join(' ') || 'No legal multiattack sequence is available.');
     return;

@@ -270,8 +270,9 @@ export function soleTargetedActor(user = gameRef()?.user) {
  * statement that the target is an opponent being observed; the "has acted" fact is computed from initiative order.
  */
 export async function confirmTargetDialog(title, content) {
-  const { SWSEDialogV2 } = await import('/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js').catch(() => ({}));
-  const Dialog = SWSEDialogV2?.confirm ? SWSEDialogV2 : globalThis.foundry?.applications?.api?.DialogV2;
+  const { peekUiPort } = await import('/systems/foundryvtt-swse/scripts/utils/ui-ports.js');
+  const registered = peekUiPort('dialogV2');
+  const Dialog = registered?.confirm ? registered : globalThis.foundry?.applications?.api?.DialogV2;
   return Dialog?.confirm ? await Dialog.confirm({ title, content, rejectClose: false }) : false;
 }
 

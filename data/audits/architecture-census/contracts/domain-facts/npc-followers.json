@@ -1,0 +1,806 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "npc-followers",
+ "name": "NPCs, nonheroic, followers, minions, allies, beasts",
+ "kind": "mechanical",
+ "files": 169,
+ "runtimeSloc": 9761,
+ "runtimeFiles": 28,
+ "counts": {
+  "files": 169,
+  "runtimeModules": 28,
+  "runtimeSloc": 9761,
+  "reachability": {
+   "reachable-static": 23,
+   "orphan-unreferenced": 5
+  },
+  "nonRuntimeByRole": {
+   "asset": 1,
+   "data": 22,
+   "evidence-or-doc": 41,
+   "presentation-style": 6,
+   "presentation-template": 50,
+   "test": 8,
+   "tool": 13
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/allies/faction-registry-service.js",
+   "consumers": 24,
+   "sloc": 1096,
+   "role": "registry",
+   "exports": [
+    "registerFactionRegistrySettings",
+    "FactionRegistryService"
+   ],
+   "writes": 7,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/apps/follower-creator.js",
+   "consumers": 16,
+   "sloc": 1163,
+   "role": "presentation-with-writes",
+   "exports": [
+    "FollowerCreator"
+   ],
+   "writes": 6,
+   "actorEngineCalls": 21,
+   "ciTests": 57
+  },
+  {
+   "path": "scripts/domain/followers/follower-slot-occupancy.js",
+   "consumers": 16,
+   "sloc": 95,
+   "role": "module",
+   "exports": [
+    "resolveFollowerSlotActorId",
+    "isFollowerSlotOccupied",
+    "FOLLOWER_CONVERSION_RESERVATION_TTL_MS",
+    "resolveFollowerSlotReservation",
+    "isFollowerSlotReservationExpired",
+    "isFollowerSlotReserved",
+    "buildFollowerSlotReservation",
+    "clearFollowerSlotReservation",
+    "finalizeReservedFollowerSlot",
+    "TARGET_CONVERSION_RESERVATION_FLAG_PATH",
+    "TARGET_CONVERSION_RESERVATION_DELETION_PATH",
+    "TARGET_CONVERSION_RESERVATION_PROTECTED_FLAG_PATH"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/domain/followers/follower-house-rules.js",
+   "consumers": 6,
+   "sloc": 96,
+   "role": "engine-or-service",
+   "exports": [
+    "FOLLOWER_MAX_SETTING",
+    "FOLLOWER_SHARE_SETTING",
+    "FOLLOWER_CAP_CHOICES",
+    "DEFAULT_FOLLOWER_CAP",
+    "RECRUITING_TALENTS",
+    "ARMOR_LADDER",
+    "followerCapLimit",
+    "isCappedRecruitingSlot",
+    "evaluateFollowerCap",
+    "canAddRecruitingSlot",
+    "ownedRecruitingTalentNames",
+    "armorLadderGrants"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 58
+  },
+  {
+   "path": "scripts/apps/minion-creator.js",
+   "consumers": 5,
+   "sloc": 428,
+   "role": "presentation-with-writes",
+   "exports": [
+    "MinionCreator"
+   ],
+   "writes": 7,
+   "actorEngineCalls": 8,
+   "ciTests": 57
+  },
+  {
+   "path": "scripts/infrastructure/hooks/follower-house-rule-settings.js",
+   "consumers": 5,
+   "sloc": 35,
+   "role": "engine-or-service",
+   "exports": [
+    "registerFollowerHouseRuleSettings",
+    "followerSharedBenefitsEnabled",
+    "resolveEffectiveGrantConfig"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 57
+  },
+  {
+   "path": "scripts/infrastructure/hooks/follower-hooks.js",
+   "consumers": 4,
+   "sloc": 305,
+   "role": "composition-wiring",
+   "exports": [
+    "reconcileFollowerEnhancementsForActor",
+    "reconcileFollowerSlotsForActor",
+    "initializeFollowerHooks"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 6,
+   "ciTests": 57
+  },
+  {
+   "path": "scripts/engine/import/npc-template-importer-engine.js",
+   "consumers": 3,
+   "sloc": 542,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "NPCTemplateImporterEngine",
+    "default"
+   ],
+   "writes": 4,
+   "actorEngineCalls": 1,
+   "ciTests": 1
+  },
+  {
+   "path": "scripts/core/npc-template-data-loader.js",
+   "consumers": 3,
+   "sloc": 136,
+   "role": "module",
+   "exports": [
+    "NPCTemplateDataLoader",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 1
+  },
+  {
+   "path": "scripts/apps/follower-manager.js",
+   "consumers": 2,
+   "sloc": 462,
+   "role": "presentation-with-writes",
+   "exports": [
+    "FollowerManager"
+   ],
+   "writes": 3,
+   "actorEngineCalls": 10,
+   "ciTests": 57
+  },
+  {
+   "path": "scripts/apps/minion-manager.js",
+   "consumers": 2,
+   "sloc": 121,
+   "role": "presentation-with-writes",
+   "exports": [
+    "MinionManager"
+   ],
+   "writes": 8,
+   "actorEngineCalls": 0,
+   "ciTests": 57
+  },
+  {
+   "path": "scripts/apps/npc-import-customization-wizard.js",
+   "consumers": 2,
+   "sloc": 123,
+   "role": "presentation",
+   "exports": [
+    "NPCImportCustomizationWizard",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/domain/followers/follower-talent-detach-plan.js",
+   "consumers": 2,
+   "sloc": 34,
+   "role": "module",
+   "exports": [
+    "computeGrantedItemIdsForTalent",
+    "buildOwnerRegistryDetachPatch",
+    "buildSlotRemovalPatch"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 58
+  },
+  {
+   "path": "scripts/engine/import/nonheroic-damage-profile-hydrator.js",
+   "consumers": 2,
+   "sloc": 402,
+   "role": "module",
+   "exports": [
+    "slugifyStatblockName",
+    "loadNonheroicDamageProfiles",
+    "clearNonheroicDamageProfileCache",
+    "findNonheroicDamageProfileMatch",
+    "hydrateImportedStatblockWeapon",
+    "NONHEROIC_DAMAGE_PROFILE_FILES",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 1
+  },
+  {
+   "path": "scripts/engine/npc-legal-review/NpcLegalReviewEngine.js",
+   "consumers": 2,
+   "sloc": 700,
+   "role": "presentation",
+   "exports": [
+    "NpcLegalReviewEngine",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/npc-legal-review/NpcReviewRepairEngine.js",
+   "consumers": 2,
+   "sloc": 374,
+   "role": "presentation",
+   "exports": [
+    "NpcReviewRepairEngine",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 2,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/npc-actor-sheet.js",
+   "consumers": 2,
+   "sloc": 429,
+   "role": "presentation-with-writes",
+   "exports": [
+    "SWSEV2NpcSheet"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 5,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/apps/allies/ally-assignment-modal.js",
+   "consumers": 1,
+   "sloc": 319,
+   "role": "presentation-with-writes",
+   "exports": [
+    "AllyAssignmentModal",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/apps/npc-template-importer.js",
+   "consumers": 1,
+   "sloc": 140,
+   "role": "presentation-with-writes",
+   "exports": [
+    "NPCTemplateImporter",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/import/npc-damage-hydration-hooks.js",
+   "consumers": 1,
+   "sloc": 205,
+   "role": "composition-wiring",
+   "exports": [
+    "hydrateWorldNpcDamage",
+    "hydrateExistingWorldNpcDamage",
+    "registerNpcDamageHydrationHooks"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/import/npc-statblock-bespoke-fallback.js",
+   "consumers": 1,
+   "sloc": 305,
+   "role": "module",
+   "exports": [
+    "hydrateNpcWeaponFromForceOrBespokeFallback",
+    "clearNpcForcePowerIndex"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/import/npc-statblock-item-fallback.js",
+   "consumers": 1,
+   "sloc": 258,
+   "role": "module",
+   "exports": [
+    "hydrateNpcWeaponFromStatblockFallback",
+    "clearNpcStatblockWeaponIndex"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/npc/npc-sheet-helpers.js",
+   "consumers": 1,
+   "sloc": 1127,
+   "role": "presentation",
+   "exports": [
+    "buildNpcConceptAbilities",
+    "buildNpcConceptSheetContext",
+    "isNpcStatblockAuthorityPath",
+    "isNpcSheetWritablePath",
+    "isQuietNpcSheetPath"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/apps/follower-creator.js",
+   "sloc": 1163,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/sheets/v2/npc/npc-sheet-helpers.js",
+   "sloc": 1127,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/allies/faction-registry-service.js",
+   "sloc": 1096,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/npc-legal-review/NpcLegalReviewEngine.js",
+   "sloc": 700,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/import/npc-template-importer-engine.js",
+   "sloc": 542,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/follower-manager.js",
+   "sloc": 462,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/sheets/v2/npc-actor-sheet.js",
+   "sloc": 429,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/minion-creator.js",
+   "sloc": 428,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/import/nonheroic-damage-profile-hydrator.js",
+   "sloc": 402,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/npc-legal-review/NpcReviewRepairEngine.js",
+   "sloc": 374,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/apps/nonheroic-units-browser.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 223,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/npc/NPCPanelContextBuilder.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 217,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/npc/NPCPanelValidators.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 200,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/npc/PANEL_REGISTRY.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 183,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/npc/NPCPanelVisibilityManager.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 43,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "actor-core": 20,
+  "infrastructure": 15,
+  "ui-shell": 10,
+  "progression": 7,
+  "feats": 4,
+  "vehicles": 4,
+  "combat": 3,
+  "skills": 2,
+  "species": 2,
+  "droids": 1,
+  "chat": 1,
+  "rolls": 1
+ },
+ "dependedOnByDomains": {
+  "ui-shell": 25,
+  "progression": 11,
+  "compat-patches": 8,
+  "galactic-profiles": 6,
+  "infrastructure": 4,
+  "actor-core": 4,
+  "vehicles": 3,
+  "talents": 2,
+  "governance": 1,
+  "holonet": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 23,
+   "sites": [
+    {
+     "path": "scripts/apps/minion-manager.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 8,
+     "lines": [
+      86,
+      96,
+      100,
+      116,
+      120,
+      123,
+      131,
+      142
+     ]
+    },
+    {
+     "path": "scripts/allies/faction-registry-service.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 6,
+     "lines": [
+      963,
+      975,
+      995,
+      1254,
+      1334,
+      1355
+     ]
+    },
+    {
+     "path": "scripts/engine/import/npc-template-importer-engine.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      203,
+      364,
+      373
+     ]
+    },
+    {
+     "path": "scripts/apps/minion-creator.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      408,
+      419
+     ]
+    },
+    {
+     "path": "scripts/apps/allies/ally-assignment-modal.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      463
+     ]
+    },
+    {
+     "path": "scripts/apps/follower-creator.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      1307
+     ]
+    },
+    {
+     "path": "scripts/apps/npc-template-importer.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      156
+     ]
+    },
+    {
+     "path": "scripts/engine/import/npc-damage-hydration-hooks.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      152
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A04-presentation-direct-writes",
+   "invariant": "A-04",
+   "count": 13,
+   "sites": [
+    {
+     "path": "scripts/apps/minion-manager.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 8,
+     "lines": [
+      86,
+      96,
+      100,
+      116,
+      120,
+      123,
+      131,
+      142
+     ]
+    },
+    {
+     "path": "scripts/apps/minion-creator.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      408,
+      419
+     ]
+    },
+    {
+     "path": "scripts/apps/allies/ally-assignment-modal.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      463
+     ]
+    },
+    {
+     "path": "scripts/apps/follower-creator.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      1307
+     ]
+    },
+    {
+     "path": "scripts/apps/npc-template-importer.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      156
+     ]
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "defense-totals",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "force",
+    "infrastructure",
+    "progression",
+    "talents",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/sheets/v2/npc/npc-sheet-helpers.js:212 buildFollowerDefenseValues",
+    "scripts/sheets/v2/npc/npc-sheet-helpers.js:791 derivedDefense"
+   ]
+  },
+  {
+   "responsibility": "ability-modifier",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "feats",
+    "force",
+    "infrastructure",
+    "mentor-suggestion",
+    "progression",
+    "rolls",
+    "species",
+    "talents",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/apps/follower-creator.js:705 _resolveProfileAbilityModifier"
+   ]
+  },
+  {
+   "responsibility": "feat-talent-grant",
+   "otherDomains": [
+    "progression",
+    "skills"
+   ],
+   "sites": [
+    "scripts/apps/minion-manager.js:79 applyTalent"
+   ]
+  },
+  {
+   "responsibility": "upgrade-slots",
+   "otherDomains": [
+    "compat-patches",
+    "customization",
+    "droids",
+    "progression",
+    "store-economy",
+    "ui-shell",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/apps/minion-creator.js:125 getAvailableMinionSlots"
+   ]
+  },
+  {
+   "responsibility": "force-power-dc-or-roll",
+   "otherDomains": [
+    "combat",
+    "force",
+    "infrastructure",
+    "talents"
+   ],
+   "sites": [
+    "scripts/engine/import/npc-statblock-bespoke-fallback.js:142 resolveForcePower"
+   ]
+  }
+ ],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "PANEL_REGISTRY",
+   "files": [
+    "scripts/sheets/v2/context/PANEL_REGISTRY.js",
+    "scripts/sheets/v2/npc/PANEL_REGISTRY.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "ready",
+   "sites": [
+    "scripts/allies/faction-registry-service.js:310",
+    "scripts/engine/import/npc-damage-hydration-hooks.js:227"
+   ]
+  },
+  {
+   "name": "createItem",
+   "sites": [
+    "scripts/infrastructure/hooks/follower-hooks.js:307"
+   ]
+  },
+  {
+   "name": "updateActor",
+   "sites": [
+    "scripts/infrastructure/hooks/follower-hooks.js:434"
+   ]
+  },
+  {
+   "name": "createActor",
+   "sites": [
+    "scripts/engine/import/npc-damage-hydration-hooks.js:220"
+   ]
+  },
+  {
+   "name": "deleteItem",
+   "sites": [
+    "scripts/infrastructure/hooks/follower-hooks.js:346"
+   ]
+  },
+  {
+   "name": "swse:progression:completed",
+   "sites": [
+    "scripts/apps/follower-creator.js:1707",
+    "scripts/apps/minion-creator.js:486",
+    "scripts/infrastructure/hooks/follower-hooks.js:421"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "docs/audits/generated/nonheroic-damage-profile-candidates.json",
+  "docs/audits/generated/nonheroic-damage-profile-candidates.md",
+  "docs/audits/generated/nonheroic-lane-a-identity-audit.json",
+  "docs/audits/generated/nonheroic-lane-a-identity-audit.md",
+  "docs/audits/generated/nonheroic-lane-b-remainder.json",
+  "docs/audits/generated/nonheroic-lane-b-remainder.md",
+  "docs/audits/generated/nonheroic-profile-coverage-audit.json",
+  "docs/audits/generated/nonheroic-profile-coverage-audit.md",
+  "docs/audits/generated/nonheroic-profile-promotion-pass-1.json",
+  "docs/audits/generated/nonheroic-profile-promotion-pass-1.md",
+  "docs/audits/generated/nonheroic-profile-promotion-pass-2.json",
+  "docs/audits/generated/nonheroic-profile-promotion-pass-2.md",
+  "docs/audits/generated/nonheroic-profile-promotion-pass-3.json",
+  "docs/audits/generated/nonheroic-profile-promotion-pass-3.md",
+  "docs/audits/generated/nonheroic-profile-promotion-pass-4.json",
+  "docs/audits/generated/nonheroic-profile-promotion-pass-4.md",
+  "docs/audits/generated/nonheroic-profile-promotion-pass-5.json",
+  "docs/audits/generated/nonheroic-profile-promotion-pass-5.md",
+  "docs/audits/generated/nonheroic-profile-weapon-uuid-audit.json",
+  "docs/audits/generated/nonheroic-profile-weapon-uuid-audit.md",
+  "docs/audits/gm-existing-npc-allies-assignment.md",
+  "docs/audits/gm-manual-follower-slot-allies.md",
+  "docs/audits/nonheroic-bulk-lane-a-runtime-activation.md",
+  "docs/audits/nonheroic-lane-a-identity-tightening.md",
+  "docs/audits/nonheroic-lane-b-remainder.md",
+  "docs/audits/nonheroic-weapon-damage-bulk-lane-a-pass-1.md",
+  "docs/audits/nonheroic-weapon-damage-bulk-lane-a-pass-2.md",
+  "docs/audits/nonheroic-weapon-damage-bulk-lane-a-pass-3.md",
+  "docs/audits/nonheroic-weapon-damage-bulk-lane-a-pass-4.md",
+  "docs/audits/nonheroic-weapon-damage-bulk-lane-a-pass-5.md",
+  "docs/audits/nonheroic-weapon-damage-phase-0.md",
+  "docs/audits/nonheroic-weapon-damage-phase-1-5.md",
+  "docs/audits/nonheroic-weapon-damage-phase-1.md",
+  "docs/audits/nonheroic-weapon-damage-phase-2.md",
+  "docs/audits/nonheroic-weapon-damage-phase-3.md",
+  "docs/audits/nonheroic-weapon-damage-phase-4.md",
+  "docs/audits/nonheroic-weapon-damage-phase-5.md",
+  "docs/audits/npc-v2-convergence-report.md",
+  "docs/nonheroic-damage-profile-bulk-candidate-pipeline.md",
+  "docs/nonheroic-weapon-uuid-metadata.md",
+  "docs/talent-social-crime-minion-cleanup-phase-t15.json"
+ ],
+ "tests": [
+  "tests/follower-deletion-failure-propagation.test.mjs",
+  "tests/follower-hooks-governed-cleanup.test.mjs",
+  "tests/follower-house-rules.test.mjs",
+  "tests/follower-slot-reservation.test.mjs",
+  "tests/follower-talent-detach-plan.test.mjs",
+  "tests/npc-concept-layout-skip.test.mjs",
+  "tests/npc-pr1158-review-corrections.test.mjs",
+  "tests/npc-v2-convergence.test.mjs"
+ ]
+}

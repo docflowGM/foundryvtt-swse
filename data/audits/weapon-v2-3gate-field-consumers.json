@@ -428,7 +428,7 @@
         "probe": "payloads"
       },
       "entrypoint": null,
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "note": "5D-B/5D-C",
@@ -1151,9 +1151,7 @@
         "scripts/apps/progression-framework/shell/progression-shell.js",
         "scripts/data/authority/talent-prerequisite-authority.js",
         "scripts/data/blaster-upgrades.js",
-        "scripts/data/droid-modifications.js",
         "scripts/data/droid-systems.js",
-        "scripts/dialogs/entity-dialog/effect-intent-engine.js",
         "scripts/domain/vehicles/vehicle-evidence-authority.js",
         "scripts/engine/abilities/active/active-adapter.js",
         "scripts/engine/abilities/active/active-contract.js",
@@ -1168,6 +1166,7 @@
         "scripts/engine/customization/effect-resolver.js",
         "scripts/engine/customization/modification-v2-runtime/modification-provisional-set.js",
         "scripts/engine/customization/upgrade-catalog.js",
+        "scripts/engine/effects/effect-intent-engine.js",
         "scripts/engine/effects/modifiers/ModifierUtils.js",
         "scripts/engine/feats/area-explosives-feat-normalization-hooks.js",
         "scripts/engine/force/force-executor.js",
@@ -1192,7 +1191,6 @@
         "scripts/sheets/v2/HelpModeManager.js",
         "scripts/sheets/v2/character-like-sheet.js",
         "scripts/sheets/v2/character-sheet/force-roll-dialog.js",
-        "scripts/sheets/v2/sheet-diagnostics-p0.js",
         "scripts/species/species-grant-ledger-builder.js",
         "scripts/tools/migrate-species-abilities.js",
         "scripts/ui/combat-stats-tooltip.js",
@@ -11027,7 +11025,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11045,7 +11043,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11063,7 +11061,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11081,7 +11079,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11099,7 +11097,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11117,7 +11115,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11135,7 +11133,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11153,7 +11151,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11171,7 +11169,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11249,7 +11247,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11267,7 +11265,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11285,7 +11283,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11303,7 +11301,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11321,7 +11319,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11339,7 +11337,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11357,7 +11355,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11375,7 +11373,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11393,7 +11391,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11411,7 +11409,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11429,7 +11427,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11447,7 +11445,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11465,7 +11463,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11483,7 +11481,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11501,7 +11499,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11519,7 +11517,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11537,7 +11535,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11555,7 +11553,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11573,7 +11571,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11591,7 +11589,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11609,7 +11607,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11627,7 +11625,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11645,7 +11643,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11663,7 +11661,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11681,7 +11679,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11699,7 +11697,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11717,7 +11715,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11735,7 +11733,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11783,7 +11781,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11801,7 +11799,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11819,7 +11817,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11837,7 +11835,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11855,7 +11853,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11873,7 +11871,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11891,7 +11889,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11909,7 +11907,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11927,7 +11925,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11945,7 +11943,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11963,7 +11961,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11981,7 +11979,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -11999,7 +11997,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12017,7 +12015,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12035,7 +12033,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12053,7 +12051,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12071,7 +12069,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12089,7 +12087,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12107,7 +12105,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12125,7 +12123,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12143,7 +12141,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12161,7 +12159,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12179,7 +12177,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12197,7 +12195,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12215,7 +12213,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12233,7 +12231,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12251,7 +12249,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12269,7 +12267,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12287,7 +12285,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12305,7 +12303,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12323,7 +12321,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12341,7 +12339,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12359,7 +12357,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12377,7 +12375,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
@@ -12395,7 +12393,7 @@
         "module": "scripts/items/weapon-runtime/weapon-runtime-resolver.js",
         "probe": "payloads"
       },
-      "behaviorTest": "tests/class-force-v2-temptation-trigger.test.mjs",
+      "behaviorTest": "tests/actor-engine-healing-condition-shift.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",

@@ -1,4 +1,3 @@
-import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 // ============================================
 // FILE: rolls/defenses.js
 // Defense rolling via RollCore (V2 Unified)

@@ -7,6 +7,7 @@
  */
 
 import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 export default class MinionActionsMechanics {
   static TALENTS = [
@@ -42,10 +43,7 @@ export default class MinionActionsMechanics {
   }
 
   static async _toChat(actor, title, bodyHtml) {
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<div class="swse-minion-actions-card"><h3>${title}</h3>${bodyHtml}</div>`
-    });
+    await SWSEChat.postHTML({ actor, content: `<div class="swse-minion-actions-card"><h3>${title}</h3>${bodyHtml}</div>` });
   }
 
   static async bodyguard(actor, minions = []) {

@@ -1,0 +1,556 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "species",
+ "name": "Species, traits and anatomy",
+ "kind": "mechanical",
+ "files": 267,
+ "runtimeSloc": 5578,
+ "runtimeFiles": 19,
+ "counts": {
+  "files": 267,
+  "runtimeModules": 18,
+  "runtimeSloc": 5562,
+  "reachability": {
+   "reachable-static": 15,
+   "orphan-unreferenced": 2,
+   "test-only-import": 1
+  },
+  "nonRuntimeByRole": {
+   "asset": 162,
+   "evidence-data": 4,
+   "data": 9,
+   "evidence-or-doc": 33,
+   "module": 1,
+   "presentation-style": 2,
+   "presentation-template": 3,
+   "test": 24,
+   "tool": 11
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/engine/registries/species-registry.js",
+   "consumers": 38,
+   "sloc": 541,
+   "role": "registry",
+   "exports": [
+    "SpeciesRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 375
+  },
+  {
+   "path": "scripts/species/species-variant-profile.js",
+   "consumers": 23,
+   "sloc": 145,
+   "role": "module",
+   "exports": [
+    "SpeciesVariantSnapshotError",
+    "isCompleteSnapshotVariant",
+    "actorUsesResolvedSnapshot",
+    "listMissingSnapshotFields",
+    "applySpeciesVariantProfile"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 364
+  },
+  {
+   "path": "scripts/species/species-grant-reconciliation.js",
+   "consumers": 7,
+   "sloc": 169,
+   "role": "module",
+   "exports": [
+    "MANIFEST_FLAG",
+    "SPECIES_EXCLUSIVE_RESETS",
+    "claimIndependentSkills",
+    "computeSpeciesGrantKey",
+    "withStaleDeletions",
+    "hasMaterializerSignature",
+    "reconcileSpeciesGrant"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/species/species-publication-selection.js",
+   "consumers": 7,
+   "sloc": 167,
+   "role": "module",
+   "exports": [
+    "PUBLICATION_SELECTION_ERRORS",
+    "PUBLICATION_STATUS",
+    "getPublicationVersions",
+    "isUsablePublicationVersion",
+    "getKnownPublications",
+    "getPublicationStatus",
+    "getSoleSnapshotVersion",
+    "isSupersededLegacyVariant",
+    "requiresPublicationSelection",
+    "checkPublicationSelection",
+    "isRecordedConfigurationRestore",
+    "compareTraitMechanics"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/species/species-anatomy-schema-v1.js",
+   "consumers": 6,
+   "sloc": 107,
+   "role": "module",
+   "exports": [
+    "SPECIES_ANATOMY_SCHEMA_VERSION",
+    "TOPOLOGY_STATUSES",
+    "CAPABILITY_KEYS",
+    "SUPPORTED_CONSTRAINT_TYPES",
+    "HELD_ITEM_LOAD_FLOOR_V1",
+    "SpeciesAnatomySchemaError",
+    "SPECIES_ANATOMY_ERROR_CODES",
+    "validateSpeciesAnatomyV1",
+    "declaresSpeciesAnatomy",
+    "readOptionalSpeciesAnatomy",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 378
+  },
+  {
+   "path": "scripts/engine/species/rage-engine.js",
+   "consumers": 5,
+   "sloc": 320,
+   "role": "engine-or-service",
+   "exports": [
+    "RageEngine",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 4,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/species/species-reroll-handler.js",
+   "consumers": 5,
+   "sloc": 394,
+   "role": "module-with-writes",
+   "exports": [
+    "SpeciesRerollHandler",
+    "registerRerollListeners",
+    "default"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 2,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/species/species-ability-choice.js",
+   "consumers": 4,
+   "sloc": 38,
+   "role": "module",
+   "exports": [
+    "ABILITY_CHOICE_ERRORS",
+    "normalizeChoiceMods",
+    "getAbilityChoiceOptions",
+    "resolveAbilityChoice"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 72
+  },
+  {
+   "path": "scripts/species/species-movement.js",
+   "consumers": 4,
+   "sloc": 29,
+   "role": "module",
+   "exports": [
+    "alternateMovementModes",
+    "planSpeciesMovement",
+    "primaryMode",
+    "describeLandSpeed",
+    "formatSpeedLine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 95
+  },
+  {
+   "path": "scripts/engine/species/SpeciesConditionalGrantResolver.js",
+   "consumers": 3,
+   "sloc": 158,
+   "role": "normalizer",
+   "exports": [
+    "SpeciesConditionalGrantResolver"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 2,
+   "ciTests": 2
+  },
+  {
+   "path": "scripts/species/species-trait-types.js",
+   "consumers": 3,
+   "sloc": 140,
+   "role": "module",
+   "exports": [
+    "SPECIES_TRAIT_TYPES",
+    "TRAIT_TYPE_LIST",
+    "BONUS_TARGETS",
+    "SKILL_DISPLAY_NAMES",
+    "CONDITIONS",
+    "MOVEMENT_MODES",
+    "SENSE_TYPES",
+    "EFFECT_TYPES",
+    "FREQUENCIES"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/species/species-tag-profile-utils.js",
+   "consumers": 2,
+   "sloc": 266,
+   "role": "module",
+   "exports": [
+    "buildSpeciesMetadataProfile",
+    "resolveSpeciesMetadataProfile",
+    "humanizeSpeciesTag"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 375
+  },
+  {
+   "path": "scripts/species/species-grant-ledger-builder.js",
+   "consumers": 2,
+   "sloc": 1456,
+   "role": "engine-or-service",
+   "exports": [
+    "SpeciesGrantLedgerBuilder",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 72
+  },
+  {
+   "path": "scripts/engine/species/species-activated-ability-engine.js",
+   "consumers": 1,
+   "sloc": 566,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "SpeciesActivatedAbilityEngine"
+   ],
+   "writes": 12,
+   "actorEngineCalls": 5,
+   "ciTests": 14
+  },
+  {
+   "path": "scripts/engine/species/species-profile-utils.js",
+   "consumers": 1,
+   "sloc": 244,
+   "role": "module",
+   "exports": [
+    "normalizeSpeciesProfileKey",
+    "getStructuredSpeciesProfile",
+    "CURATED_SPECIES_MENTOR_PROFILES",
+    "getCuratedSpeciesMentorProfile",
+    "buildSpeciesTags",
+    "buildCuratedOpeningSpeciesSuggestions"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/species/species-grant-ledger-builder.js",
+   "sloc": 1456,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/systems/species/species-trait-engine.js",
+   "sloc": 715,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/engine/species/species-activated-ability-engine.js",
+   "sloc": 566,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/registries/species-registry.js",
+   "sloc": 541,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/species/species-reroll-handler.js",
+   "sloc": 394,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/species/rage-engine.js",
+   "sloc": 320,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/species/species-tag-profile-utils.js",
+   "sloc": 266,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/species/species-profile-utils.js",
+   "sloc": 244,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/species/species-grant-reconciliation.js",
+   "sloc": 169,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/species/species-publication-selection.js",
+   "sloc": 167,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/engine/systems/species/species-trait-engine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 715,
+   "tests": 0
+  },
+  {
+   "path": "scripts/species/species-plan-transaction.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 102,
+   "tests": 3
+  },
+  {
+   "path": "scripts/species/index.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 5,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 8,
+  "combat": 3,
+  "actor-core": 3,
+  "progression": 2,
+  "ui-shell": 2,
+  "equipment": 1,
+  "abilities-effects": 1,
+  "rolls": 1
+ },
+ "dependedOnByDomains": {
+  "progression": 25,
+  "ui-shell": 7,
+  "actor-core": 6,
+  "abilities-effects": 5,
+  "equipment": 4,
+  "infrastructure": 3,
+  "combat": 3,
+  "compat-patches": 3,
+  "npc-followers": 2,
+  "rolls": 2,
+  "dev-tooling": 1,
+  "mentor-suggestion": 1,
+  "houserules": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 2,
+   "sites": [
+    {
+     "path": "scripts/species/species-reroll-handler.js",
+     "domain": "species",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      219,
+      237
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A05-chat-outside-swse-chat",
+   "invariant": "A-05",
+   "count": 12,
+   "sites": [
+    {
+     "path": "scripts/engine/species/species-activated-ability-engine.js",
+     "domain": "species",
+     "reach": "reachable-static",
+     "count": 12,
+     "lines": [
+      93,
+      142,
+      183,
+      223,
+      253,
+      270,
+      289,
+      344,
+      383,
+      415,
+      433,
+      455
+     ]
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "condition-track-penalty",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "force",
+    "infrastructure"
+   ],
+   "sites": [
+    "scripts/engine/species/rage-engine.js:98 getConditionStep",
+    "scripts/engine/species/species-activated-ability-engine.js:469 applyConditionSteps"
+   ]
+  },
+  {
+   "responsibility": "ability-modifier",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "feats",
+    "force",
+    "infrastructure",
+    "mentor-suggestion",
+    "npc-followers",
+    "progression",
+    "rolls",
+    "talents",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/engine/species/species-activated-ability-engine.js:615 getAbilityMod",
+    "scripts/species/species-variant-profile.js:52 normalizeAbilityMods"
+   ]
+  },
+  {
+   "responsibility": "damage-formula",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "droids",
+    "equipment",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/engine/species/rage-engine.js:189 getRageAttackDamageBonus"
+   ]
+  },
+  {
+   "responsibility": "modifier-aggregation",
+   "otherDomains": [
+    "abilities-effects",
+    "combat",
+    "equipment",
+    "feats",
+    "rolls",
+    "skills"
+   ],
+   "sites": [
+    "scripts/engine/species/rage-engine.js:204 collectAttackModifiers"
+   ]
+  }
+ ],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "MANIFEST_FLAG",
+   "files": [
+    "scripts/species/species-grant-reconciliation.js",
+    "scripts/species/species-plan-transaction.js"
+   ]
+  }
+ ],
+ "liveHooks": [],
+ "nonRuntimeEvidence": [
+  "data/audits/species-39-provenance-reconciliation.json",
+  "data/audits/species-book-by-book-rolling.json",
+  "data/audits/species-final-provenance-census.json",
+  "data/audits/species-health-phase-0-census.json",
+  "docs/architecture/equipment-ecosystem-e2b-s2-species-anatomy-schema-contract-v1.md",
+  "docs/audits/class-phase-6s-species-immunity-closure.md",
+  "docs/audits/equipment-ecosystem-e2a-anatomy-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e2b-i2-species-anatomy-migration-checkpoint.md",
+  "docs/audits/equipment-ecosystem-e2b-s1-species-anatomy-source-review.md",
+  "docs/audits/equipment-ecosystem-e3a1-species-permission-checkpoint.md",
+  "docs/audits/species-39-provenance-reconciliation.md",
+  "docs/audits/species-audit-overall-roadmap.md",
+  "docs/audits/species-audit-recovery-provenance.md",
+  "docs/audits/species-book-by-book-rolling.md",
+  "docs/audits/species-clone-wars-canonical-vs-fan-recheck.md",
+  "docs/audits/species-feature-implementation-audit.md",
+  "docs/audits/species-feature-implementation-status.json",
+  "docs/audits/species-final-health-report.md",
+  "docs/audits/species-health-phase-0.md",
+  "docs/audits/species-phase-0-removal-markers.md",
+  "docs/audits/species-phase-1a-core-provenance.md",
+  "docs/audits/swse-species-handoff.md",
+  "docs/audits/swse-species-implementation-status.md",
+  "docs/audits/swse-species-live-foundry-checklist.md",
+  "docs/audits/swse-species-mechanical-completeness.md",
+  "docs/audits/swse-species-migration-closeout.md",
+  "docs/audits/swse-species-outside-inventory.md",
+  "docs/audits/swse-species-variant-audit.md",
+  "docs/species-canonical-diff.md",
+  "docs/species-canonical-stats-audit.md",
+  "docs/species-details-attribute-wiring-fix.md",
+  "docs/species-phase3-runtime-rules.md",
+  "docs/species-phase4-special-attribute-rules.md",
+  "docs/species-phase6-activated-abilities.md",
+  "docs/species-phase8-special-abilities-compendium.md",
+  "docs/species-restick-sidecar-audit.md",
+  "docs/species-schema-hardening-phase5.md"
+ ],
+ "tests": [
+  "tests/eq-int-1-species-compatibility.test.mjs",
+  "tests/equipment-e2b-i3a-biological-integration.test.mjs",
+  "tests/helpers/species-registry-fixture.mjs",
+  "tests/helpers/species-trait-observer.mjs",
+  "tests/species-ability-choice-validation.test.mjs",
+  "tests/species-anatomy-profile-certification.test.mjs",
+  "tests/species-anatomy-schema-v1.test.mjs",
+  "tests/species-audit-numbers.test.mjs",
+  "tests/species-conditional-feat-requirements.test.mjs",
+  "tests/species-core-reconciliation.test.mjs",
+  "tests/species-core-trait-verification.test.mjs",
+  "tests/species-grant-reconciliation.test.mjs",
+  "tests/species-held-profiles.test.mjs",
+  "tests/species-legacy-item-migration.test.mjs",
+  "tests/species-movement-languages.test.mjs",
+  "tests/species-multi-publication-trait-verification.test.mjs",
+  "tests/species-multi-publication.test.mjs",
+  "tests/species-natural-weapons.test.mjs",
+  "tests/species-outside-provenance.test.mjs",
+  "tests/species-profile-invariants.test.mjs",
+  "tests/species-publication-selection.test.mjs",
+  "tests/species-skill-ownership.test.mjs",
+  "tests/species-source-pinned.test.mjs",
+  "tests/species-variant-atomic-profile.test.mjs"
+ ]
+}

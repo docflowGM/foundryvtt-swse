@@ -3,7 +3,6 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { SWSEInitiative } from "/systems/foundryvtt-swse/scripts/engine/combat/SWSEInitiative.js";
 import { DamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-engine.js";
 import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js";
-import { DamageResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-resolution-engine.js";
 import { ScaleEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/scale-engine.js";
 import { SubsystemEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js";
 import { EnhancedShields } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-shields.js";
@@ -355,11 +354,8 @@ export class CombatEngine {
         ? messageContent + ` <em style="color: red;">Target is dead!</em>`
         : messageContent;
 
-      ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: attacker }),
-        content: finalContent,
-        type: 'other'
-      });
+      const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js'); // lazy: keeps this engine out of the swse-chat static cycle
+      await SWSEChat.postHTML({ actor: attacker, content: finalContent });
     }
 
     /* DELEGATE UI HANDLING TO ADAPTER (Phase 1.5 consolidation) */
@@ -727,179 +723,6 @@ export class CombatEngine {
     return SWSEInitiative.rollInitiative(actor, options);
   }
 
-  /* -------------------------------------------- */
-  /* UNIFIED DAMAGE RESOLUTION                    */
-  /* -------------------------------------------- */
-
-  /**
-   * Unified damage resolution via DamageResolutionEngine.
-   * Handles:
-   * - Bonus HP application (highest source)
-   * - HP reduction
-   * - Damage Threshold evaluation
-   * - Condition track shifts
-   * - Death/Destroy determination
-   * - Force Point rescue eligibility
-   *
-   * All mutations via ActorEngine only.
-   *
-   * @param {Actor} actor - Target actor
-   * @param {number} damage - Total damage to apply
-   * @param {Object} context - Additional context
-   * @param {string} context.damageType - Damage type
-   * @param {Actor} context.source - Attacking actor
-   * @param {Object} context.options - Additional options
-   * @returns {Promise<Object>} Resolution result
-   */
-  static async applyDamage(actor, damage, context = {}) {
-
-    // Canonical Damage Packet (Phase 3 foundation): normalize this direct
-    // resolveDamage path too, so components/type reach mitigation consistently.
-    // Shape only, behaviour-preserving (see canonical-damage-packet.js).
-    const { buildCanonicalDamagePacket } = await import("/systems/foundryvtt-swse/scripts/engine/combat/canonical-damage-packet.js");
-    const canonicalPacket = buildCanonicalDamagePacket({
-      amount: damage,
-      type: context.damageType,
-      source: context.source,
-      options: context.options
-    });
-
-    const resolution = await DamageResolutionEngine.resolveDamage({
-      actor,
-      damage,
-      ...context,
-      damageType: context.damageType ?? canonicalPacket.primaryType,
-      options: {
-        ...(context.options ?? {}),
-        damageComponents: (Array.isArray(context.options?.damageComponents) && context.options.damageComponents.length)
-          ? context.options.damageComponents
-          : canonicalPacket.components,
-        canonicalPacket
-      }
-    });
-
-    const plan = {};
-
-    // Apply HP change (correct V2 path)
-    plan["system.hp.value"] = resolution.hpAfter;
-
-    // Apply condition track shift (numeric 0-5)
-    if (resolution.conditionDelta !== 0) {
-      plan["system.conditionTrack.current"] = resolution.conditionAfter;
-    }
-
-    // Delegate mutation to ActorEngine (no status flags)
-    await ActorEngine.updateActor(actor, plan);
-
-    /* ===================================================================
-       Apply death/destroyed via Active Effects (not raw system flags)
-       ================================================================= */
-
-    if (resolution.dead) {
-      await this._applyDeadEffect(actor);
-    }
-
-    if (resolution.destroyed) {
-      await this._applyDestroyedEffect(actor);
-    }
-
-    if (resolution.unconscious && !resolution.dead && !resolution.destroyed) {
-      await this._applyUnconsciousEffect(actor);
-    }
-
-    return resolution;
-  }
-
-  /**
-   * Apply "Dead" active effect (character death state)
-   * @private
-   */
-  static async _applyDeadEffect(actor) {
-    if (!actor) return;
-
-    // Check if already dead
-    const existingDead = actor.effects.contents.find(e =>
-      e.getFlag('foundryvtt-swse', 'effectType') === 'dead'
-    );
-
-    if (!existingDead) {
-      const effectData = {
-        name: 'Dead',
-        icon: 'icons/svg/skull.svg',
-        type: 'effect',
-        disabled: false,
-        flags: {
-          'foundryvtt-swse': {
-            effectType: 'dead',
-            persistent: true
-          }
-        }
-      };
-
-      // SOVEREIGNTY: Route ActiveEffect creation through ActorEngine
-      await ActorEngine.createActiveEffects(actor, [effectData], { source: 'combat-dead-effect' });
-    }
-  }
-
-  /**
-   * Apply "Destroyed" active effect (vehicle/droid destruction state)
-   * @private
-   */
-  static async _applyDestroyedEffect(actor) {
-    if (!actor) return;
-
-    // Check if already destroyed
-    const existingDestroyed = actor.effects.contents.find(e =>
-      e.getFlag('foundryvtt-swse', 'effectType') === 'destroyed'
-    );
-
-    if (!existingDestroyed) {
-      const effectData = {
-        name: 'Destroyed',
-        icon: 'icons/svg/explosion.svg',
-        type: 'effect',
-        disabled: false,
-        flags: {
-          'foundryvtt-swse': {
-            effectType: 'destroyed',
-            persistent: true
-          }
-        }
-      };
-
-      // SOVEREIGNTY: Route ActiveEffect creation through ActorEngine
-      await ActorEngine.createActiveEffects(actor, [effectData], { source: 'combat-destroyed-effect' });
-    }
-  }
-
-  /**
-   * Apply "Unconscious" active effect (temporary state)
-   * @private
-   */
-  static async _applyUnconsciousEffect(actor) {
-    if (!actor) return;
-
-    // Check if already unconscious
-    const existingUnconscious = actor.effects.contents.find(e =>
-      e.getFlag('foundryvtt-swse', 'effectType') === 'unconscious'
-    );
-
-    if (!existingUnconscious) {
-      const effectData = {
-        name: 'Unconscious',
-        icon: 'icons/svg/sleep.svg',
-        type: 'effect',
-        disabled: false,
-        flags: {
-          'foundryvtt-swse': {
-            effectType: 'unconscious',
-            persistent: false
-          }
-        }
-      };
-
-      // SOVEREIGNTY: Route ActiveEffect creation through ActorEngine
-      await ActorEngine.createActiveEffects(actor, [effectData], { source: 'combat-unconscious-effect' });
-    }
-  }
+  // F-CMB-002: the dormant CombatEngine.applyDamage twin (HP+CT only, no callers) and its Dead/Destroyed/Unconscious effect helpers were removed;
+  // ActorEngine.applyDamage -> DamageResolutionEngine.resolveDamage is the single damage boundary.
 }

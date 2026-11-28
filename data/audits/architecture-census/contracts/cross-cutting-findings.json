@@ -1,0 +1,225 @@
+{
+ "schema": "swse.v2-contract.cross-cutting-findings/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "note": "Findings that belong to no single domain. Coordinator-authored from census, probes and the 30 domain sidecars.",
+ "findings": [
+  {
+   "id": "F-X-001",
+   "domain": "cross-cutting",
+   "wave": 0,
+   "category": "consolidation",
+   "severity": "high",
+   "status": "confirmed",
+   "title": "No architectural ratchet: nothing stops new bypasses, patches or dead modules while cleanup proceeds",
+   "affectedFiles": [
+    ".github/workflows/rolling-system-validation.yml",
+    "tools/architecture-census/build-census.mjs",
+    "tools/architecture-census/probe-invariants.mjs"
+   ],
+   "evidence": [
+    ".github/workflows/rolling-system-validation.yml:1"
+   ],
+   "observed": "CI runs syntax checks, the rolling test suite and three targeted guards. There is no repository-wide check for direct document writes, chat bypasses, settings reads in engines, monkey-patches, engine-to-UI imports or new unreachable modules. Existing targeted checkers (e.g. the follower mutation checker) cover a handful of files and some are not in CI.",
+   "intendedOwnership": "A-P3 (PROPOSED): census and invariant probes as a CI gate.",
+   "contractRef": "A-P3; A-02; A-05; A-06; A-07; A-09",
+   "proposedSolution": "Add build-census.mjs --check and probe-invariants.mjs to CI as a non-blocking report, then convert to a ratchet: fail only when a probe count rises above a committed baseline. Extend P-A05 to cover createChatMessage helpers and P-A09 to the full monkey-patch pattern set found in B-PAT.",
+   "alternatives": "Per-domain guard tests (already the pattern for combat authority); slower to reach full coverage.",
+   "dependencies": [],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": false,
+   "regressionTests": "The gate itself; verify it flags a seeded violation in a throwaway branch.",
+   "foundryAcceptance": "none (static)",
+   "scope": "S",
+   "simplificationBenefit": "Prevents regrowth during waves 2-5; makes every later cleanup measurable.",
+   "risk": "Low; non-blocking first.",
+   "perfImpact": "none"
+  },
+  {
+   "id": "F-X-002",
+   "domain": "cross-cutting",
+   "wave": 5,
+   "category": "dependency",
+   "severity": "medium",
+   "status": "confirmed",
+   "title": "All 31 code-bearing domains form one dependency cycle; no domain can be tested or reasoned about in isolation",
+   "affectedFiles": [
+    "data/audits/architecture-census/import-graph.json"
+   ],
+   "evidence": [
+    "data/audits/architecture-census/import-graph.json:1"
+   ],
+   "observed": "Domain-level strongly connected component of size 31 (domainCycles). 9 file-level static cycles (52 files), the largest coupling actor derived calculators with combat math (B-ACT F-ACT-001). Several cycles are closed by unused or re-export imports (B-PRG, B-EQP).",
+   "intendedOwnership": "ENGINE-ARCHITECTURE \u00a74 dependency direction (APPROVED); A-P1 layering (PROPOSED).",
+   "contractRef": "A-07; A-P1",
+   "proposedSolution": "First remove the cheap cycle-closers identified in domain findings (unused imports, re-exports, dead writers). Then adopt A-P1 layers and track upward edges in dependency-matrix.md as a ratchet. Do not restructure beyond that until waves 2-4 have reduced the graph.",
+   "alternatives": "Accept the SCC and document allowed peer edges per domain; lower effort, keeps coupling.",
+   "dependencies": [
+    "F-X-001"
+   ],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": false,
+   "regressionTests": "Full rolling suite; import-graph diff showing removed edges.",
+   "foundryAcceptance": "Smoke load of a world (no import errors).",
+   "scope": "L",
+   "simplificationBenefit": "Enables isolated testing and safe deletion; reduces load-order hazards.",
+   "risk": "Medium; module-evaluation order changes can surface init bugs.",
+   "perfImpact": "possible-startup"
+  },
+  {
+   "id": "F-X-003",
+   "domain": "cross-cutting",
+   "wave": 1,
+   "category": "documentation",
+   "severity": "medium",
+   "status": "confirmed",
+   "title": "Constitutional architecture documents are stale or contradict each other (CR-01..CR-09)",
+   "affectedFiles": [
+    "docs/architecture/ARCHITECTURE.md",
+    "docs/architecture/ENGINE-ARCHITECTURE.md",
+    "docs/architecture/progression-architecture.md"
+   ],
+   "evidence": [
+    "docs/architecture/ARCHITECTURE.md:1",
+    "docs/architecture/ENGINE-ARCHITECTURE.md:1",
+    "docs/architecture/progression-architecture.md:1"
+   ],
+   "observed": "Wrong ActorEngine path, six missing referenced documents, rules-authority model that contradicts ENGINE-ARCHITECTURE and the code, ActorEngine described as calculation-free while it orchestrates damage/condition/Force points, a 'no runtime patching' claim contradicted by 108 live patch sites, HouseRuleService method names that do not exist (B-HRL).",
+   "intendedOwnership": "One home per rule (A-P2).",
+   "contractRef": "contradiction-register.md CR-01..CR-09; A-P2",
+   "proposedSolution": "Owner rules on CR-03/CR-04 (rules-authority and ActorEngine role). Then correct the documents to reference Level A IDs instead of restating rules, and mark corrected sections with the decision date.",
+   "alternatives": "Freeze ARCHITECTURE.md as historical and make A-global-invariants.md the constitution.",
+   "dependencies": [],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": false,
+   "regressionTests": "Link check; contract reference check (assemble-contracts.mjs --check).",
+   "foundryAcceptance": "none",
+   "scope": "S",
+   "simplificationBenefit": "Stops contributors (human or AI) following rules that are no longer true.",
+   "risk": "Low.",
+   "perfImpact": "none"
+  },
+  {
+   "id": "F-X-004",
+   "domain": "cross-cutting",
+   "wave": 1,
+   "category": "documentation",
+   "severity": "medium",
+   "status": "confirmed",
+   "title": "Owner standing instructions are not committed; several APPROVED invariants have no versioned source",
+   "affectedFiles": [
+    "CLAUDE.md"
+   ],
+   "evidence": [
+    "CLAUDE.md:1"
+   ],
+   "observed": "A-02 (owner-item helpers), A-10 (TransactionEngine atomicity), A-14 (unified shell, Holopad-first), A-15, A-16, A-17, A-18 rest on owner instructions given to Claude that are not in the repository.",
+   "intendedOwnership": "Owner decisions recorded durably (CLAUDE.md \u00a79 authorization boundary).",
+   "contractRef": "A-OPEN-01",
+   "proposedSolution": "Commit the standing instructions as a section of CLAUDE.md (owner action).",
+   "alternatives": "A docs/governance/owner-standing-instructions.md file referenced from CLAUDE.md.",
+   "dependencies": [],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": false,
+   "regressionTests": "none",
+   "foundryAcceptance": "none",
+   "scope": "S",
+   "simplificationBenefit": "Makes approval status auditable.",
+   "risk": "None.",
+   "perfImpact": "none"
+  },
+  {
+   "id": "F-X-005",
+   "domain": "cross-cutting",
+   "wave": 1,
+   "category": "documentation",
+   "severity": "medium",
+   "status": "confirmed",
+   "title": "31 rules questions surfaced by the audit are not yet in the rules decision register (90 total; 59 already referenced)",
+   "affectedFiles": [
+    "docs/audits/swse-rules-decisions-pending.md",
+    "docs/audits/architecture-census/rules-questions-for-register.md"
+   ],
+   "evidence": [
+    "docs/audits/swse-rules-decisions-pending.md:1"
+   ],
+   "observed": "Domain contracts record 90 DEFERRED_RULES_REVIEW items or rules-question findings; 59 cite an existing register ID, 31 do not. Investigators were not permitted to edit the register, and Phases 0-2 do not modify existing documents. The register is append-only and partly machine-parsed (tools/lib).",
+   "intendedOwnership": "CLAUDE.md \u00a75: append-only rules register.",
+   "contractRef": "A-11; unresolved-ledger.md",
+   "proposedSolution": "Review docs/audits/architecture-census/rules-questions-for-register.md and append the new items to the register (owner, or Claude on instruction). Nothing is decided by the audit.",
+   "alternatives": "Leave them in the audit ledger only (not recommended: CLAUDE.md requires one consolidated register).",
+   "dependencies": [],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": true,
+   "regressionTests": "none",
+   "foundryAcceptance": "none",
+   "scope": "S",
+   "simplificationBenefit": "One place for every open ruling.",
+   "risk": "None.",
+   "perfImpact": "none"
+  },
+  {
+   "id": "F-X-006",
+   "domain": "cross-cutting",
+   "wave": 2,
+   "category": "dead-code",
+   "severity": "low",
+   "status": "confirmed",
+   "title": "Committed scratch scripts under tests/",
+   "affectedFiles": [
+    "tests/_scratch-manifest.mjs",
+    "tests/_scratch2.mjs",
+    "tests/_scratch3.mjs"
+   ],
+   "evidence": [
+    "tests/_scratch-manifest.mjs:1",
+    "tests/_scratch2.mjs:1",
+    "tests/_scratch3.mjs:1"
+   ],
+   "observed": "Three _scratch*.mjs files are tracked in tests/. They are not test suites (CI runs only *.test.mjs) and nothing imports them.",
+   "intendedOwnership": "tests/ holds suites, helpers and fixtures.",
+   "contractRef": "testing disposition",
+   "proposedSolution": "Delete after the owner confirms they hold nothing needed.",
+   "alternatives": "Move to a gitignored scratch location.",
+   "dependencies": [],
+   "ownerDecisionRequired": false,
+   "rulesQuestion": false,
+   "regressionTests": "Rolling suite unaffected.",
+   "foundryAcceptance": "none",
+   "scope": "S",
+   "simplificationBenefit": "Minor.",
+   "risk": "None.",
+   "perfImpact": "none"
+  },
+  {
+   "id": "F-X-007",
+   "domain": "cross-cutting",
+   "wave": 2,
+   "category": "dead-code",
+   "severity": "medium",
+   "status": "confirmed",
+   "title": "1.98 MB of unreferenced assets, 43 unreferenced templates and 67 unreferenced stylesheets",
+   "affectedFiles": [
+    "data/audits/architecture-census/reachability.json"
+   ],
+   "evidence": [
+    "data/audits/architecture-census/reachability.json:1"
+   ],
+   "observed": "139 assets with no reference in any runtime file, template, style, data or pack; 43 .hbs and 67 .css with no runtime reference (B-UIS sampled and classified the templates/styles). Dynamic path construction was checked through template-literal patterns; generic loaders do not cover assets.",
+   "intendedOwnership": "Assets owned by their referencing domain; unreferenced assets removed (OSI asset cleanup rules).",
+   "contractRef": "OSI asset rules; B-UIS",
+   "proposedSolution": "Apply the OSI asset checklist per file (exact path, filename, CSS url, HBS src, JS construction, packs, system.json) before deleting; delete in one batch per directory.",
+   "alternatives": "Move to a design archive outside the shipped package.",
+   "dependencies": [
+    "F-X-001"
+   ],
+   "ownerDecisionRequired": false,
+   "rulesQuestion": false,
+   "regressionTests": "validate-partials; template preload check; visual smoke.",
+   "foundryAcceptance": "Visual smoke of sheets and Holopad surfaces.",
+   "scope": "M",
+   "simplificationBenefit": "Smaller package; fewer misleading files.",
+   "risk": "Low with the checklist.",
+   "perfImpact": "package-size"
+  }
+ ]
+}

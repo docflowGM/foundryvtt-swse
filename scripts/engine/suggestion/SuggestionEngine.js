@@ -29,7 +29,8 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { logSuggestionTrace } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-trace-controls.js";
 import { applySuggestionRouteCoherenceGuard } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-route-coherence-guard.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
-import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
+// Lazy: the Coordinator imports this module, so a static import here would be a cycle (F-SUG cycle break).
+const getSuggestionEngineCoordinator = async () => (await import("/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js")).SuggestionEngineCoordinator;
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { getSynergyForItem, findActiveSynergies } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CommunityMetaSynergies.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
@@ -354,7 +355,7 @@ export class SuggestionEngine {
         let buildIntent = options.buildIntent;
         if (!buildIntent) {
             try {
-                buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(actor, pendingData);
+                buildIntent = await (await getSuggestionEngineCoordinator()).analyzeBuildIntent(actor, pendingData);
             } catch (err) {
                 SWSELogger.warn('SuggestionEngine | Failed to analyze build intent:', err);
                 buildIntent = null; // no stored survey bias exists any more (V2 surveys write only the event ledger)
@@ -481,7 +482,7 @@ export class SuggestionEngine {
         let buildIntent = options.buildIntent;
         if (!buildIntent) {
             try {
-                buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(actor, pendingData);
+                buildIntent = await (await getSuggestionEngineCoordinator()).analyzeBuildIntent(actor, pendingData);
             } catch (err) {
                 SWSELogger.warn('SuggestionEngine | Failed to analyze build intent:', err);
                 buildIntent = null; // no stored survey bias exists any more (V2 surveys write only the event ledger)
@@ -716,7 +717,7 @@ export class SuggestionEngine {
         let buildIntent = options.buildIntent;
         if (!buildIntent) {
             try {
-                buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(actor, pendingData);
+                buildIntent = await (await getSuggestionEngineCoordinator()).analyzeBuildIntent(actor, pendingData);
             } catch (err) {
                 SWSELogger.warn('[SuggestionEngine.suggestForceTechniques] Failed to analyze build intent:', err);
                 buildIntent = null;
@@ -753,7 +754,7 @@ export class SuggestionEngine {
         let buildIntent = options.buildIntent;
         if (!buildIntent) {
             try {
-                buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(actor, pendingData);
+                buildIntent = await (await getSuggestionEngineCoordinator()).analyzeBuildIntent(actor, pendingData);
             } catch (err) {
                 SWSELogger.warn('[SuggestionEngine.suggestAttributeIncreases] Failed to analyze build intent:', err);
                 buildIntent = {};

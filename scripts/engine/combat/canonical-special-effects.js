@@ -110,7 +110,7 @@ async function applyStatusEffect(rec, ctx) {
     currentSpeed: Number.isFinite(speed) ? speed : undefined, rolledRounds,
   });
   if (!built.ok) return { applied: false, reason: built.reason };
-  const { EffectIntentEngine } = await import('/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js');
+  const { EffectIntentEngine } = await import('/systems/foundryvtt-swse/scripts/engine/effects/effect-intent-engine.js');
   const data = EffectIntentEngine.stampLifecycle(built.data, { actor: target, turnOwnerActorId: built.plan.turnOwnerActorId ?? null, phase: built.plan.phase ?? null });
   const created = await ActorEngine.createActiveEffects(target, [data], { source: 'weapon-outcome-effect' });
   return { applied: Array.isArray(created) ? created.length > 0 : !!created, effectIds: (created ?? []).map((e) => e?.id).filter(Boolean), duration: built.plan.key };

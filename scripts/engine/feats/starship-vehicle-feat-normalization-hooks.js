@@ -122,8 +122,8 @@ async function normalizeStarshipVehicleFeat(item, options = {}) {
 }
 
 export function registerStarshipVehicleFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeStarshipVehicleFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeStarshipVehicleFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeStarshipVehicleFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeStarshipVehicleFeat(item, options) : false);
   SWSELogger.log('[StarshipVehicleFeatNormalization] Hooks registered');
 }
 

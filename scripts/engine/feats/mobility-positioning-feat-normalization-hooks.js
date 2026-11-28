@@ -236,8 +236,8 @@ async function normalizeMobilityPositioningFeat(item, options = {}) {
 }
 
 export function registerMobilityPositioningFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeMobilityPositioningFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeMobilityPositioningFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeMobilityPositioningFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeMobilityPositioningFeat(item, options) : false);
   SWSELogger.log('[MobilityPositioningFeatNormalization] Hooks registered');
 }
 

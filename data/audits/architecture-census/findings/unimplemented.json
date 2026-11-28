@@ -1,0 +1,371 @@
+{
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "generator": "tools/architecture-census/assemble-findings.mjs",
+ "findings": [
+  {
+   "id": "F-GOV-001",
+   "category": "unimplemented",
+   "severity": "high",
+   "status": "confirmed",
+   "title": "A-02 has no runtime enforcement: MutationInterceptor context is write-only",
+   "affectedFiles": [
+    "scripts/governance/mutation/MutationInterceptor.js",
+    "scripts/governance/actor-engine/actor-engine.js"
+   ],
+   "evidence": [
+    "scripts/governance/mutation/MutationInterceptor.js:99",
+    "scripts/governance/mutation/MutationInterceptor.js:156",
+    "scripts/governance/mutation/MutationInterceptor.js:186",
+    "scripts/governance/mutation/MutationInterceptor.js:192",
+    "scripts/governance/actor-engine/actor-engine.js:1061"
+   ],
+   "observed": "ActorEngine sets/clears a global context around each write; nothing outside MutationInterceptor reads hasContext/_isAuthorized (git grep). No preUpdate hook checks it. A nested ActorEngine call clears the outer context (single slot, not a stack). Comments claim enforcement via Sentinel/secureActorUpdate, which does not exist.",
+   "intendedOwnership": "A-02 enforced or at least detected at runtime in dev/strict.",
+   "contractRef": "A-02; CR-GOV-01/02",
+   "proposedSolution": "Owner decision: (a) add a DEV/STRICT-only preUpdateActor/preUpdateItem/preCreate/preDelete observer that reports writes without context (make context a depth counter), or (b) remove the enforcement wording and rely on the census probe + CI ratchet (A-P3). Either way fix the single-slot nesting.",
+   "alternatives": "(b) is cheaper and matches the current evidence model.",
+   "dependencies": [
+    "B-ACT",
+    "A-P3"
+   ],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": false,
+   "regressionTests": "Unit: direct actor.update in STRICT mode emits a Sentinel report; nested ActorEngine calls keep outer context.",
+   "foundryAcceptance": "Run with sentinelMode DEV in a live world and confirm report volume is usable.",
+   "scope": "M",
+   "simplificationBenefit": "Turns A-02 from convention into a measurable gate.",
+   "risk": "Low (observer only).",
+   "perfImpact": "low",
+   "domain": "governance",
+   "contract": "B-GOV",
+   "affectedSloc": 3221,
+   "wave": 6
+  },
+  {
+   "id": "F-MEN-002",
+   "category": "unimplemented",
+   "severity": "high",
+   "status": "confirmed",
+   "title": "SuggestionEngineCoordinator.initialize() is never called",
+   "affectedFiles": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+    "scripts/engine/suggestion/SuggestionEngineHooks.js",
+    "scripts/utils/reason-inspector.js"
+   ],
+   "evidence": [
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js:68",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js:90",
+    "scripts/engine/suggestion/SuggestionEngineCoordinator.js:142",
+    "scripts/engine/suggestion/SuggestionEngineHooks.js:31",
+    "scripts/utils/reason-inspector.js:30"
+   ],
+   "observed": "No runtime module (static, dynamic, index, hooks) calls SuggestionEngineCoordinator.initialize(). Consequently game.swse.suggestions is never assigned, SuggestionEngineHooks never registers its 5 listeners (4 of which also have no emitter anywhere), and the BuildIdentityAnchor/PivotDetector/SuggestionStateService post-level-up pipeline never runs. The census labels these modules reachable-static because they are imported, not executed.",
+   "intendedOwnership": "Coordinator documented as 'Called during system ready hook' (SuggestionEngineCoordinator.js:66).",
+   "contractRef": "R-MEN-02 | R-MEN-05",
+   "proposedSolution": "Owner chooses: (a) wire initialize() once at ready (after fixing F-MEN-003/F-MEN-004-style multi-client guards) or (b) declare the anchor/pivot/hook pipeline retired, remove SuggestionEngineHooks/PivotStateManager/AnchorRepository writers and the game.swse.suggestions debug path.",
+   "alternatives": "Keep dormant and document as UNIMPLEMENTED.",
+   "dependencies": [
+    "F-MEN-001",
+    "F-MEN-003"
+   ],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": false,
+   "regressionTests": "Test that asserts initialize() is reachable from the ready hook, or a source guard that the retired modules are gone.",
+   "foundryAcceptance": "After choice (a): check game.swse.suggestions exists at ready and level-up writes one anchor/pivot state.",
+   "scope": "M",
+   "simplificationBenefit": "Removes an inert ~1k SLOC execution path or makes it real.",
+   "risk": "Enabling it activates untested writers on every level-up.",
+   "perfImpact": "unknown",
+   "domain": "mentor-suggestion",
+   "contract": "B-MEN",
+   "coordinatorVerified": "SuggestionEngineCoordinator.initialize (SuggestionEngineCoordinator.js:68) has no caller in scripts/ or index.js.",
+   "affectedSloc": 867,
+   "wave": 6
+  },
+  {
+   "id": "F-VEH-001",
+   "category": "unimplemented",
+   "severity": "high",
+   "status": "confirmed",
+   "title": "Vehicle import wizard and engine exist but are unwired; sheet button disabled with a false 'no implementation' claim",
+   "affectedFiles": [
+    "scripts/apps/vehicle-import-wizard.js",
+    "scripts/engine/import/vehicle-import-engine.js",
+    "scripts/sheets/v2/vehicle-actor-sheet.js",
+    "templates/actors/vehicle/v2/partials/vehicle-sheet-content.hbs"
+   ],
+   "evidence": [
+    "scripts/apps/vehicle-import-wizard.js:23",
+    "scripts/apps/vehicle-import-wizard.js:295",
+    "scripts/engine/import/vehicle-import-engine.js:90",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:700",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:704",
+    "templates/actors/vehicle/v2/partials/vehicle-sheet-content.hbs:40",
+    "scripts/dev/sheet-action-registry.mjs:46"
+   ],
+   "observed": "VehicleImportWizard (314 SLOC, template preloaded) has zero importers; VehicleImportEngine is reachable only from the debug scratch import. The sheet disables the import-vehicle button asserting no implementation exists. Tests read the wizard source as text only.",
+   "intendedOwnership": "C-VEH-2: sheet action -> VehicleImportWizard.create -> VehicleImportEngine.apply -> ActorEngine.updateActor",
+   "contractRef": "R-VEH-16 | A-14",
+   "proposedSolution": "Owner decides: wire import-vehicle to VehicleImportWizard.create({actor}) (wizard already fail-closed via engine) or retire wizard (class C) and keep engine for debug. Update the stale sheet comment either way.",
+   "alternatives": "Open wizard from Holopad/Shell Host asset bay instead of the sheet.",
+   "dependencies": [
+    "FOUNDRY_ACCEPTANCE vehicle import"
+   ],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": false,
+   "regressionTests": "Test that the import-vehicle action resolves to the wizard and that the engine refuses non-canonical documents (existing tests/vehicle-universal-phase4c-import-source.test.mjs).",
+   "foundryAcceptance": "Live V13: import a published vehicle into a vehicle actor; verify statblock replace and source identity.",
+   "scope": "S",
+   "simplificationBenefit": "Removes a dead 314-SLOC app or restores a documented feature; removes contradictory comment.",
+   "risk": "Runtime-risk area (vehicle import/materialization).",
+   "perfImpact": "none",
+   "domain": "vehicles",
+   "contract": "B-VEH",
+   "affectedSloc": 1162,
+   "wave": 6
+  },
+  {
+   "category": "unimplemented",
+   "severity": "medium",
+   "status": "confirmed",
+   "title": "Confident Success: second published cap not enforced; counter write not atomic",
+   "affectedFiles": [
+    "scripts/engine/feats/force-point-feat-actions.js"
+   ],
+   "evidence": [
+    "scripts/engine/feats/force-point-feat-actions.js:221",
+    "scripts/engine/feats/force-point-feat-actions.js:225",
+    "scripts/engine/feats/force-point-feat-actions.js:227",
+    "data/canonical/feats.json:10331"
+   ],
+   "observed": "Canonical text: no more than 3 FP per level and cannot have more FP than gained upon reaching current level; canonical automation note says \"Needs ... both Force Point caps\". Code enforces maxPerLevel (default 3 when rule missing) and relies on ActorEngine.gainForcePoints max cap; capToLevelStartMax is written by the hook but never read.",
+   "intendedOwnership": "Feats (rule) + FRC ForcePointsService (cap).",
+   "contractRef": "A-11, R-FEA-15",
+   "proposedSolution": "DEFERRED_RULES_REVIEW: record whether the second cap equals the FP max; do not implement an interpretation. Separately make the counter write part of the gain update.",
+   "alternatives": "",
+   "dependencies": [],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": true,
+   "regressionTests": "After ruling.",
+   "foundryAcceptance": "",
+   "scope": "S",
+   "simplificationBenefit": "",
+   "risk": "Mechanic may over-grant FP",
+   "perfImpact": "none",
+   "id": "F-FEA-008",
+   "domain": "feats",
+   "contract": "B-FEA",
+   "affectedSloc": 211,
+   "blockedByRulesDecision": true,
+   "wave": 6
+  },
+  {
+   "id": "F-GAL-001",
+   "category": "unimplemented",
+   "severity": "medium",
+   "status": "confirmed",
+   "title": "150 test-only generator modules are an intended-but-unimplemented integration, not dead code",
+   "affectedFiles": [
+    "scripts/generation/"
+   ],
+   "evidence": [
+    "docs/audits/gm-datapad-ecosystem-redesign.md:4948",
+    "docs/audits/gm-datapad-ecosystem-redesign.md:8985",
+    "docs/audits/gm-datapad-ecosystem-redesign.md:9551",
+    "tests/gm-generation-phase8d1-foundation.test.mjs:775"
+   ],
+   "observed": "Nothing outside scripts/generation imports it (only tests). The redesign log documents every phase as a generation-only layer awaiting its UI phase. It records the commit path (JobEngine, CampaignMutationCoordinator) as design only and not started. The repository has only one commit of history (shallow), so evidence comes from the docs, not from git log. About 28k SLOC is carried with no runtime use. CI tests keep it maintained.",
+   "intendedOwnership": "GM Datapad generation layer, to be surfaced by a GM UI and committed through C-GAL-1.",
+   "contractRef": "R-GAL-01 | R-GAL-09 | A-09",
+   "proposedSolution": "Do not delete. Owner decides whether 8D-4 (UI + CampaignMutationCoordinator) is still planned. If yes, keep it as an offline library and label it so in the census (classification 'intended-unwired'). If no, archive the directory as a whole (legacy C).",
+   "alternatives": "Move to a separate package/module until wired, to keep the system runtime lean.",
+   "dependencies": [],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": false,
+   "regressionTests": "Keep tests/gm-generation-*.test.mjs; add census reachability label.",
+   "foundryAcceptance": "Only once a UI exists.",
+   "scope": "L",
+   "simplificationBenefit": "Clarifies that ~29k SLOC is not live.",
+   "risk": "Deleting would discard reviewed design work.",
+   "perfImpact": "none",
+   "domain": "galactic-profiles",
+   "contract": "B-GAL",
+   "affectedSloc": 0,
+   "wave": 6
+  },
+  {
+   "id": "F-HOL-004",
+   "category": "unimplemented",
+   "severity": "medium",
+   "status": "confirmed",
+   "title": "Droid/ship/follower HP emitters test flattened keys and never fire",
+   "affectedFiles": [
+    "scripts/holonet/emitters/droid-emitter.js",
+    "scripts/holonet/emitters/ship-emitter.js",
+    "scripts/holonet/emitters/follower-emitter.js"
+   ],
+   "evidence": [
+    "scripts/holonet/emitters/droid-emitter.js:42",
+    "scripts/holonet/emitters/ship-emitter.js:42",
+    "scripts/holonet/emitters/follower-emitter.js:160"
+   ],
+   "observed": "The updateActor hook receives the change diff as an expanded object (changes.system.hp.value). The emitters read changes['system.hp'], which is undefined for expanded diffs, so the droid and ship handlers return early and the follower check is always false. The droid emitter also requires actor.system.isDroid and actor.system.ownedBy, which were not verified against the actor schema. These listeners run on every client for every actor update while doing no work.",
+   "intendedOwnership": "R-HOL-04",
+   "contractRef": "R-HOL-04 | A-16 (perf)",
+   "proposedSolution": "Technical defect fix: use foundry.utils.hasProperty(changes, 'system.hp.value'), gate to a single client (the active GM), and verify the droid and owner predicates against the V2 schema.",
+   "alternatives": "Emit from the damage/repair engines instead of observing updateActor.",
+   "dependencies": [],
+   "ownerDecisionRequired": false,
+   "rulesQuestion": false,
+   "regressionTests": "Unit test calling onUpdateActor with an expanded diff.",
+   "foundryAcceptance": "FOUNDRY_ACCEPTANCE_REQUIRED: damage an owned droid and see the notification.",
+   "scope": "S",
+   "simplificationBenefit": "",
+   "risk": "Low; turning on notifications could add record volume (F-HOL-008).",
+   "perfImpact": "unknown",
+   "domain": "holonet",
+   "contract": "B-HOL",
+   "affectedSloc": 491,
+   "wave": 6
+  },
+  {
+   "category": "unimplemented",
+   "severity": "medium",
+   "status": "confirmed",
+   "title": "Atomic species replacement transaction is not wired to any live entry point",
+   "affectedFiles": [
+    "scripts/species/species-plan-transaction.js",
+    "scripts/drag-drop/drop-handler.js"
+   ],
+   "evidence": [
+    "scripts/drag-drop/drop-handler.js:19",
+    "scripts/drag-drop/drop-handler.js:233"
+   ],
+   "observed": "buildSpeciesReplacementPlan/applySpeciesPlanWithRollback are tested (tests/species-drop-atomicity.test.mjs) but their only runtime importer, drop-handler.js, has no importer (no static, dynamic, template or pack reference found). How a species is replaced on an existing actor via the V2 sheet was not traced (UNVERIFIED); progression handles chargen.",
+   "intendedOwnership": "Progression single-step or the sheet drop path calling the species plan transaction",
+   "contractRef": "A-15 | U-SPC-01",
+   "proposedSolution": "Owner decision: wire species replacement through progression (preferred, one path) or through the V2 sheet drop handler; then delete the other.",
+   "alternatives": "Delete species-plan-transaction.js if species change is progression-only",
+   "dependencies": [
+    "ui-shell (sheet drop)",
+    "progression"
+   ],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": false,
+   "regressionTests": "tests/species-drop-atomicity.test.mjs against the wired entry point",
+   "foundryAcceptance": "Change species on an existing character",
+   "scope": "M",
+   "simplificationBenefit": "One species change path",
+   "risk": "Medium",
+   "perfImpact": "none",
+   "id": "F-SPC-002",
+   "domain": "species",
+   "contract": "B-SPC",
+   "affectedSloc": 504,
+   "wave": 6
+  },
+  {
+   "id": "F-GAM-003",
+   "category": "unimplemented",
+   "severity": "medium",
+   "status": "suspected",
+   "title": "No sum-to-pot conservation check for player-pool cashouts",
+   "affectedFiles": [
+    "scripts/games/wagers/game-credit-escrow-service.js",
+    "scripts/games/wagers/game-economy-policy-service.js",
+    "scripts/games/games/sabacc/sabacc-engine.js"
+   ],
+   "evidence": [
+    "scripts/games/wagers/game-credit-escrow-service.js:916",
+    "scripts/games/wagers/game-economy-policy-service.js:111",
+    "scripts/games/games/sabacc/sabacc-engine.js:871"
+   ],
+   "observed": "settleTableCreditBalances pays each seat its engine-reported tableCredits. For player-pool sessions the policy returns approvedPayout = requested (pvpClosedLoop) and records caps.humanPool without enforcing it. Conservation therefore depends entirely on the game engines keeping total table credits equal to the pot. Not traced whether every engine guarantees this.",
+   "intendedOwnership": "Escrow boundary should enforce sum(payouts) <= pot for closed-loop pools.",
+   "contractRef": "A-10 | D-GAM-3",
+   "proposedSolution": "Add an escrow-level invariant check that refuses or routes to GM approval when the sum exceeds the pot. Instrument it first to confirm whether it is ever violated.",
+   "alternatives": "",
+   "dependencies": [],
+   "ownerDecisionRequired": false,
+   "rulesQuestion": false,
+   "regressionTests": "Unit test with balances exceeding the pot.",
+   "foundryAcceptance": "none",
+   "scope": "S",
+   "simplificationBenefit": "",
+   "risk": "Low.",
+   "perfImpact": "none",
+   "domain": "games",
+   "contract": "B-GAM",
+   "affectedSloc": 2182,
+   "wave": 6
+  },
+  {
+   "id": "F-MIG-003",
+   "category": "unimplemented",
+   "severity": "low",
+   "status": "confirmed",
+   "title": "No migration registry; flag-namespace migration has no home",
+   "affectedFiles": [
+    "index.js"
+   ],
+   "evidence": [
+    "index.js:309",
+    "index.js:314"
+   ],
+   "observed": "Migrations are ad-hoc calls in index.js, each with its own version setting; F-ACT-009/F-PAT-005 need a flags.swse -> foundryvtt-swse migration with nowhere to register it.",
+   "intendedOwnership": "One ordered migration runner.",
+   "contractRef": "A-09",
+   "proposedSolution": "Introduce a small registry (id, version, run) executed by the active GM in order.",
+   "alternatives": "",
+   "dependencies": [
+    "B-ACT F-ACT-009"
+   ],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": false,
+   "regressionTests": "Runner unit tests.",
+   "foundryAcceptance": "Legacy world.",
+   "scope": "M",
+   "simplificationBenefit": "",
+   "risk": "Low.",
+   "perfImpact": "none",
+   "domain": "migration",
+   "contract": "B-MIG",
+   "affectedSloc": 317,
+   "wave": 6
+  },
+  {
+   "category": "unimplemented",
+   "severity": "low",
+   "status": "confirmed",
+   "title": "Hard-coded fallback starting credits by class",
+   "affectedFiles": [
+    "scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js"
+   ],
+   "evidence": [
+    "scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js:252"
+   ],
+   "observed": "When neither content authority nor class/background records yield credits, a fixed table (soldier/scout/scoundrel 3000, jedi/force_adept 1200, noble 4800) is used - a default for missing published data (CLAUDE.md §3).",
+   "intendedOwnership": "Class data (classes domain)",
+   "contractRef": "A-11",
+   "proposedSolution": "DEFERRED_RULES_REVIEW entry; prefer failing visibly when class data lacks starting credits.",
+   "alternatives": "",
+   "dependencies": [
+    "B-CLS"
+   ],
+   "ownerDecisionRequired": true,
+   "rulesQuestion": true,
+   "regressionTests": "",
+   "foundryAcceptance": "none",
+   "scope": "S",
+   "simplificationBenefit": "",
+   "risk": "Rules",
+   "perfImpact": "none",
+   "id": "F-PRG-019",
+   "domain": "progression",
+   "contract": "B-PRG",
+   "affectedSloc": 371,
+   "blockedByRulesDecision": true,
+   "wave": 6
+  }
+ ]
+}

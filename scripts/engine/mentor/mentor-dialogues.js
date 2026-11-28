@@ -1,8 +1,8 @@
-import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.data.js";
 import { localizeMentorData, localizeMentorDialogueValue } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-localization.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * SWSE Mentor Dialogue System
@@ -365,7 +365,7 @@ export async function setLevel1Class(actor, className) {
     try {
         // @mutation-exception: metadata
         // Store starting class for UI mentor selection (not progression engine)
-        await actor.setFlag('foundryvtt-swse', 'startingClass', className);
+        await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'startingClass', className, { recalc: false });
         SWSELogger.log(`[MENTOR-DIALOGUES] setLevel1Class: Successfully set starting class flag`);
     } catch (err) {
         SWSELogger.error(`[MENTOR-DIALOGUES] setLevel1Class: ERROR setting starting class:`, err);
@@ -391,7 +391,7 @@ export async function setMentorOverride(actor, mentorKey) {
     try {
         // @mutation-exception: metadata
         // Store manual mentor override (UI state, not progression engine)
-        await actor.setFlag('foundryvtt-swse', 'mentorOverride', mentorKey);
+        await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'mentorOverride', mentorKey, { recalc: false });
         SWSELogger.log(`[MENTOR-DIALOGUES] setMentorOverride: Successfully set mentor override flag`);
 
         // Emit hook for other systems to react to mentor change
@@ -445,7 +445,7 @@ export async function clearMentorOverride(actor) {
     try {
         // @mutation-exception: metadata
         // Clear mentor override to restore automatic selection (UI state)
-        await actor.unsetFlag('foundryvtt-swse', 'mentorOverride');
+        await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'mentorOverride', { recalc: false });
         SWSELogger.log(`[MENTOR-DIALOGUES] clearMentorOverride: Successfully cleared mentor override`);
 
         Hooks.callAll('swse:mentor:changed', {

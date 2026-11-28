@@ -65,7 +65,7 @@ const TRIAGE = {
   'feat_chain@scripts/engine/mentor/mentor-choice-line-composer.js': 'not a tag read: matches a REASON key string in mentor text; unaffected',
   'combat_action@scripts/apps/customization/item-customization-workbench.js': 'item-customization workbench (non-talent items); unaffected',
   'contextual@scripts/apps/progression-framework/steps/galactic-profile-step.js': 'galactic profile (non-talent); unaffected',
-  'contextual@scripts/dialogs/entity-dialog/effect-intent-engine.js': 'effect-intent dialog heuristics over effect descriptors (non-talent tags); unaffected'
+  'contextual@scripts/engine/effects/effect-intent-engine.js': 'effect-intent dialog heuristics over effect descriptors (non-talent tags); unaffected'
 };
 /** Static scan: quoted literals of a deleted tag, in scripts that read `tags`, plus the two pattern readers known to touch deleted families. */
 export function scanConsumers(deleteTags) {

@@ -26,6 +26,7 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
 import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { ForcePointFeatRules } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-rules.js";
+import { readBonusPool } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { ABILITY_OPTION_CONTRACTS, evaluateAbilityContract } from "/systems/foundryvtt-swse/scripts/engine/force/ability-option-contracts.js";
 import { verifyAttackEventRecord } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/attack-event-verify.js";
@@ -188,7 +189,7 @@ export class ForcePointsService {
   }
 
   static _bonusEntries(actor) {
-    const pool = actor?.getFlag?.('swse', 'bonusForcePoints') ?? actor?.flags?.swse?.bonusForcePoints ?? {};
+    const pool = readBonusPool(actor);
     // Entries are the actual wallet. Do not fabricate a freely spendable entry
     // from a legacy aggregate or pool note.
     return Array.isArray(pool.entries) ? pool.entries.filter(entry =>

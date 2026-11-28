@@ -2,6 +2,7 @@ import { SWSEGrappling } from "/systems/foundryvtt-swse/scripts/combat/systems/g
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { GrappleLegalityEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-legality-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 const ADVANCED_GRAPPLE_MANEUVERS = Object.freeze({
   trip: {
@@ -331,7 +332,7 @@ export function registerGrappleRuntimePatches() {
         </div>
       </section>
     `;
-    await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: attacker }), content: html });
+    await SWSEChat.postHTML({ actor: attacker, content: html });
   };
 }
 

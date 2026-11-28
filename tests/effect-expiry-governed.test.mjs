@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+// Finding F-ABL-001 (3F): managed-effect expiry wrote owned ActiveEffects with document.updateEmbeddedDocuments, bypassing ActorEngine.
+globalThis.window = globalThis.window || {}; registerFoundryPathLoader(); installFoundryShimGlobals();
+globalThis.foundry = globalThis.foundry ?? {}; globalThis.foundry.utils = globalThis.foundry.utils ?? {};
+globalThis.foundry.utils.randomID ??= () => 'x'; globalThis.foundry.utils.deepClone ??= (v) => JSON.parse(JSON.stringify(v));
+globalThis.foundry.applications = globalThis.foundry.applications ?? { api: { ApplicationV2: class {}, HandlebarsApplicationV2: class {}, HandlebarsApplicationMixin: (B) => B } };
+globalThis.localStorage ??= { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+globalThis.ui = { notifications: { warn() {}, info() {}, error() {} } };
+globalThis.Hooks = { on() {}, once() {}, callAll() {}, call() {} };
+globalThis.game = { ...(globalThis.game ?? {}), user: { id: 'gm', isGM: true }, combat: { id: 'c1' } };
+const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+const calls = [];
+ActorEngine.updateActiveEffects = async (a, u, o) => { calls.push(['actor', u, o.source]); };
+ActorEngine.updateOwnedItemEffects = async (a, i, u, o) => { calls.push(['item', i.id, u, o.source]); };
+const { EffectIntentEngine } = await import('/systems/foundryvtt-swse/scripts/engine/effects/effect-intent-engine.js');
+const direct = []; const mkFx = (id) => ({ id, disabled: false, flags: { swse: { effectIntent: { lifecycle: { duration: 'encounter', combatId: 'c1' } } } } });
+EffectIntentEngine.hasIntent = () => true; EffectIntentEngine.getIntent = () => ({ duration: 'encounter' });
+const actor = { id: 'a1', effects: [mkFx('e1')], items: [{ id: 'i1', effects: [mkFx('e2')], updateEmbeddedDocuments: async (...a) => direct.push(a) }], updateEmbeddedDocuments: async (...a) => direct.push(a) };
+const fn = EffectIntentEngine.expireManagedEffectsForActor;
+assert.ok(fn, 'found the expiry entry point');
+const r = await fn.call(EffectIntentEngine, actor, { timing: 'combat-end', combat: { id: 'c1' } });
+assert.deepEqual(direct, [], 'no direct document.updateEmbeddedDocuments call');
+assert.ok(calls.some((c) => c[0] === 'actor') && calls.some((c) => c[0] === 'item' && c[1] === 'i1'), 'both the actor-level and the owned-item effect go through ActorEngine');
+console.log('effect-expiry-governed: ok', JSON.stringify(r));

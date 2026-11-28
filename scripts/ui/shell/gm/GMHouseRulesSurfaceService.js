@@ -67,7 +67,7 @@ const NUMBER_CONTROL_RANGES = {
 const HOUSE_RULES_CATEGORIES = {
   characterCreation: [
     'abilityScoreMethod', 'pointBuyPool', 'allowAbilityReroll', 'allowPlayersNonheroic',
-    'maxStartingCredits', 'holonetCreditTransfersEnabled', 'holonetRequireCreditTransferApproval', 'holonetItemTradesEnabled', 'holonetRequireItemTradeApproval', 'holonetAssetTradesEnabled', 'holonetRequireAssetTradeApproval', 'holonetPartyFundEnabled', 'holonetPartyFundDefaultCutPercent', 'enableBackgrounds', 'backgroundSelectionCount',
+    'maxStartingCredits', 'wealthPayoutMode', 'holonetCreditTransfersEnabled', 'holonetRequireCreditTransferApproval', 'holonetItemTradesEnabled', 'holonetRequireItemTradeApproval', 'holonetAssetTradesEnabled', 'holonetRequireAssetTradeApproval', 'holonetPartyFundEnabled', 'holonetPartyFundDefaultCutPercent', 'enableBackgrounds', 'backgroundSelectionCount',
     'droidPointBuyPool', 'livingPointBuyPool', 'droidConstructionCredits', 'allowDroidDestiny'
   ],
   combat: [
@@ -109,6 +109,7 @@ const RULE_NAMES = {
       allowAbilityReroll: 'Allow Ability Reroll',
       allowPlayersNonheroic: 'Allow Non-Heroic Players',
       maxStartingCredits: 'Maximum Starting Credits',
+      wealthPayoutMode: 'Wealth Talent Payout',
       holonetRequireCreditTransferApproval: 'GM Approves Holonet Credit Transfers',
       holonetCreditTransfersEnabled: 'Allow Holonet Credit Transfers',
       holonetItemTradesEnabled: 'Allow Holonet Item Trades',
@@ -207,6 +208,7 @@ const RULE_DESCRIPTIONS = {
       allowAbilityReroll: 'Allow players to reroll low stat sets',
       allowPlayersNonheroic: 'Players can use the NPC generator',
       maxStartingCredits: 'Receive maximum starting credits',
+      wealthPayoutMode: 'Wealth multiplies Noble levels (RAW) or every Lineage-eligible class level (Expanded Wealth)',
       holonetRequireCreditTransferApproval: 'Require GM approval before accepted player-to-player Holonet credit transfers complete',
       holonetCreditTransfersEnabled: 'Show Messenger send/request credit controls to players',
       holonetItemTradesEnabled: 'Show Messenger item trade controls to players',

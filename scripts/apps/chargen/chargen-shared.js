@@ -6,6 +6,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getTalentTrees } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { normalizeTalentData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/item-normalizer.js";
 import { normalizeClassData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-normalizer.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 /**
  * Assert that a required pack is loaded and non-empty
@@ -455,7 +456,7 @@ export class ChargenDataCache {
  * @returns {Array} Array of skill objects
  */
 export function _getDefaultSkills() {
-  const athleticsOn = (() => { try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; } catch { return false; } })();
+  const athleticsOn = HouseRuleService.getBoolean('athleticsConsolidation', false);
   const base = [
     ...(!athleticsOn ? [{ key: 'acrobatics', name: 'Acrobatics', ability: 'dex', trained: false }] : []),
     ...(!athleticsOn ? [{ key: 'climb', name: 'Climb', ability: 'str', trained: false }] : []),

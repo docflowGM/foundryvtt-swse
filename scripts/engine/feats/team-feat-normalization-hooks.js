@@ -276,8 +276,8 @@ async function normalizeTeamFeat(item, options = {}) {
 }
 
 export function registerTeamFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeTeamFeat(item, options));
-  Hooks.on('updateItem', async (item, _data, options) => normalizeTeamFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeTeamFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, _data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeTeamFeat(item, options) : false);
   SWSELogger.log('[TeamFeats] Normalization hooks registered');
 }
 

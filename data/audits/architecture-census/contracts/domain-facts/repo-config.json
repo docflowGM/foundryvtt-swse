@@ -1,0 +1,33 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "repo-config",
+ "name": "Repository configuration, manifest and CI",
+ "kind": "configuration",
+ "files": 16,
+ "runtimeSloc": 0,
+ "runtimeFiles": 0,
+ "counts": {
+  "files": 16,
+  "runtimeModules": 0,
+  "runtimeSloc": 0,
+  "reachability": {},
+  "nonRuntimeByRole": {
+   "configuration": 9,
+   "data": 5,
+   "other": 2
+  }
+ },
+ "topModulesByConsumers": [],
+ "largestModules": [],
+ "unreachableModules": [],
+ "dependsOnDomains": {},
+ "dependedOnByDomains": {},
+ "probeHits": [],
+ "mechanicalResponsibilities": [],
+ "exactClones": [],
+ "duplicateSymbolNames": [],
+ "liveHooks": [],
+ "nonRuntimeEvidence": [],
+ "tests": []
+}

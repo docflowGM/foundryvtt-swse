@@ -9,6 +9,7 @@ import {
   FORCE_ALCHEMY_TEMPLATES,
   FORCE_ALCHEMY_SPECIALIST_TRAITS
 } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-data.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const DEFAULT_STATE = Object.freeze({
   version: 1,
@@ -206,7 +207,7 @@ export function readForceAlchemyState(actor) {
 async function writeForceAlchemyState(actor, nextState) {
   if (!actor?.setFlag) throw new Error('Cannot write Force Alchemy state without an actor document.');
   const normalized = normalizeForceAlchemyState(nextState);
-  await actor.setFlag(FORCE_ALCHEMY_FLAG_SCOPE, FORCE_ALCHEMY_FLAG_KEY, normalized);
+  await ActorEngine.updateActorFlags(actor, FORCE_ALCHEMY_FLAG_SCOPE, FORCE_ALCHEMY_FLAG_KEY, normalized, { recalc: false });
   return normalized;
 }
 

@@ -1,3 +1,5 @@
+> **2026-11-28 notice:** the verified end state of the V2 realignment is `docs/architecture/V2-REALIGNMENT-END-STATE.md`. Where this document disagrees with it for the listed authorities, that map describes the code.
+
 SWSE V2 ARCHITECTURE CONSTITUTION
 
 Authoritative reference for where rules live, how execution works, what is forbidden, and what must never change.

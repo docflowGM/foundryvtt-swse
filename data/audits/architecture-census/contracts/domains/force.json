@@ -1,0 +1,1053 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-FRC",
+  "domain": "force",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "FRC owns Force powers, the Force Point transaction model (ForcePointsService decisions, ActorEngine receipts/settlement per FP-RD rulings), Dark Side Score reading, regimens, traditions and Force Alchemy. Force V2 was merged at the audited commit and is offline-validated only; the Foundry v13 acceptance matrix (24 rows) is unexecuted. The normal Force Point balance has a single, guarded writer and lifecycle hooks in force-power-hooks are correctly gated. Real problems: the bonus Force Point pool has six builders and two flag scopes; the Force Point maximum is computed by two formulas and the dailyForcePoints house rule never reaches the stored max; Dark Side Score has no mutation owner; Force Alchemy moves credits outside TransactionEngine; force-suite-runtime-repairs patches the executor and DerivedCalculator at runtime; ForceExecutor also hosts ~15 talent actions and an ungated deleteCombat cleanup.",
+  "responsibilities": [
+    {
+      "id": "R-FRC-01",
+      "responsibility": "Force Point spend mutation",
+      "owner": {
+        "path": "scripts/governance/actor-engine/actor-engine.js",
+        "symbol": "ActorEngine.spendForcePoints"
+      },
+      "status": [
+        "APPROVED",
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:2116"
+      ],
+      "tests": [
+        "tests/force-point-transaction-integrity.test.mjs"
+      ],
+      "notes": "APPROVED by FP-RD owner rulings docs/audits/swse-rules-decisions-pending.md:3762"
+    },
+    {
+      "id": "R-FRC-02",
+      "responsibility": "FP spend authorization",
+      "owner": {
+        "path": "scripts/engine/force/force-points-service.js",
+        "symbol": "ForcePointsService.authorizeSpend"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/engine/force/force-points-service.js:242"
+      ],
+      "tests": [
+        "tests/force-v2-03b-transaction-behavior.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-FRC-03",
+      "responsibility": "FP settlement and reconciliation",
+      "owner": {
+        "path": "scripts/governance/actor-engine/actor-engine.js",
+        "symbol": "finalizeForcePointSpend/rollbackForcePointSpend"
+      },
+      "status": [
+        "OBSERVED",
+        "FOUNDRY_ACCEPTANCE_REQUIRED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:2236",
+        "scripts/governance/actor-engine/actor-engine.js:2294"
+      ],
+      "tests": [
+        "tests/class-force-v2-receipt-reconciliation.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-FRC-04",
+      "responsibility": "FP gain",
+      "owner": {
+        "path": "scripts/governance/actor-engine/actor-engine.js",
+        "symbol": "ActorEngine.gainForcePoints"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:2077",
+        "scripts/engine/force/force-points-service.js:564"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FRC-05",
+      "responsibility": "FP maximum formula",
+      "owner": {
+        "path": "scripts/data/force-points.js",
+        "symbol": "calculateMaxForcePointsForBuildPlan (+ ForcePointsService.getMax, no callers)"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/data/force-points.js:87",
+        "scripts/engine/force/force-points-service.js:67"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FRC-06",
+      "responsibility": "Bonus FP pool",
+      "owner": {
+        "path": "(none)",
+        "symbol": "(six builders)"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/force/force-executor.js:732",
+        "scripts/engine/talent/guardian-spirit-actions.js:91",
+        "scripts/governance/actor-engine/actor-engine.js:2175"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FRC-07",
+      "responsibility": "Dark Side Score read/caps",
+      "owner": {
+        "path": "scripts/engine/darkside/dsp-engine.js",
+        "symbol": "DSPEngine"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/engine/darkside/dsp-engine.js:199",
+        "scripts/engine/darkside/dsp-engine.js:232"
+      ],
+      "tests": [
+        "tests/dsp-engine-behavior.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-FRC-08",
+      "responsibility": "Dark Side Score mutation",
+      "owner": {
+        "path": "(none)",
+        "symbol": "(7 live writer modules)"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/force/force-engine.js:57",
+        "scripts/engine/force/temptation-of-the-dark-side.js:136"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FRC-09",
+      "responsibility": "Force power execution",
+      "owner": {
+        "path": "scripts/engine/force/force-executor.js",
+        "symbol": "ForceExecutor.executeForcePower"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/engine/force/force-executor.js:195"
+      ],
+      "tests": [
+        "tests/force-v2-game-night-integration.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-FRC-10",
+      "responsibility": "Force power lifecycle hooks",
+      "owner": {
+        "path": "scripts/infrastructure/hooks/force-power-hooks.js",
+        "symbol": "(module)"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/infrastructure/hooks/force-power-hooks.js:57",
+        "scripts/infrastructure/hooks/force-power-hooks.js:135"
+      ],
+      "tests": [],
+      "notes": "correctly gated (userId / isResponsibleGm)"
+    },
+    {
+      "id": "R-FRC-11",
+      "responsibility": "Force catalog lookup",
+      "owner": {
+        "path": "scripts/engine/registries/force-registry.js",
+        "symbol": "ForceRegistry"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/registries/force-registry.js:1"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FRC-12",
+      "responsibility": "Force Alchemy",
+      "owner": {
+        "path": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+        "symbol": "applyResourceCosts"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:441"
+      ],
+      "tests": [
+        "tests/class-force-v2-alchemy-atomicity.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-FRC-13",
+      "responsibility": "Force traditions",
+      "owner": {
+        "path": "scripts/apps/force-tradition/force-tradition-picker.js",
+        "symbol": "registerForceTraditionPickerHooks"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/apps/force-tradition/force-tradition-picker.js:397"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-FRC-14",
+      "responsibility": "Force power resolution schema v1",
+      "owner": {
+        "path": "scripts/engine/force/force-power-resolution-schema.js",
+        "symbol": "getForcePowerResolution"
+      },
+      "status": [
+        "APPROVED",
+        "UNIMPLEMENTED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "docs/architecture/force-power-resolution-v1.md:3"
+      ],
+      "tests": [
+        "tests/force-power-resolution-schema.test.mjs"
+      ],
+      "notes": "test-only import"
+    },
+    {
+      "id": "R-FRC-15",
+      "responsibility": "Runtime repairs (patches)",
+      "owner": {
+        "path": "scripts/engine/force/force-suite-runtime-repairs.js",
+        "symbol": "registerForceSuiteRuntimeRepairs"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "index.js:102",
+        "scripts/engine/force/force-suite-runtime-repairs.js:176",
+        "scripts/engine/force/force-suite-runtime-repairs.js:271"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "DSPEngine",
+      "path": "scripts/engine/darkside/dsp-engine.js",
+      "line": 199,
+      "consumers": 33,
+      "contract": "pure read/caps"
+    },
+    {
+      "symbol": "ForcePointsService",
+      "path": "scripts/engine/force/force-points-service.js",
+      "line": 242,
+      "consumers": 15,
+      "contract": "authorizeSpend decision; calcGain"
+    },
+    {
+      "symbol": "ActorEngine.spendForcePoints",
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "line": 2116,
+      "consumers": 0,
+      "contract": "typed context; receipt; queue (governance-owned)"
+    },
+    {
+      "symbol": "ForceEngine.spendForcePoint",
+      "path": "scripts/engine/force/force-engine.js",
+      "line": 22,
+      "consumers": 3,
+      "contract": "delegating wrapper spend+finalize"
+    },
+    {
+      "symbol": "ForceExecutor",
+      "path": "scripts/engine/force/force-executor.js",
+      "line": 195,
+      "consumers": 11,
+      "contract": "executeForcePower + Force talent actions"
+    },
+    {
+      "symbol": "calculateMaxForcePointsForBuildPlan",
+      "path": "scripts/data/force-points.js",
+      "line": 87,
+      "consumers": 3,
+      "contract": "FP max at progression"
+    },
+    {
+      "symbol": "registerForceExecutorChatHooks",
+      "path": "scripts/engine/force/force-executor.js",
+      "line": 1679,
+      "consumers": 1,
+      "contract": "deleteCombat cleanup + chat buttons"
+    },
+    {
+      "symbol": "registerForceSuiteRuntimeRepairs",
+      "path": "scripts/engine/force/force-suite-runtime-repairs.js",
+      "line": 607,
+      "consumers": 1,
+      "contract": "runtime patches + render hooks"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "governance/ActorEngine",
+      "store/TransactionEngine (credits)",
+      "rolls",
+      "chat/SWSEChat",
+      "data-registries",
+      "HouseRuleService via ForceRules"
+    ],
+    "prohibited": [
+      "engine->UI (A-07)",
+      "runtime patching of DerivedCalculator/ForceExecutor (A-09)",
+      "direct credit writes (A-10)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/force/force-executor.js",
+        "to": "scripts/apps/dialogs/swse-dialog-v2.js",
+        "evidence": "domain-facts force.json probeHits P-A07"
+      },
+      {
+        "from": "scripts/engine/force/force-suite-runtime-repairs.js",
+        "to": "scripts/sheets/v2/character-sheet/force-roll-dialog.js",
+        "evidence": "scripts/engine/force/force-suite-runtime-repairs.js:5"
+      },
+      {
+        "from": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+        "to": "actor credits (bypassing TransactionEngine)",
+        "evidence": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:441"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-FRC-1",
+      "boundary": "Force Point transaction",
+      "interface": "authorizeSpend -> spendForcePoints (committed) -> finalize/rollback -> triggers",
+      "status": [
+        "APPROVED",
+        "OBSERVED",
+        "FOUNDRY_ACCEPTANCE_REQUIRED"
+      ]
+    },
+    {
+      "id": "C-FRC-2",
+      "boundary": "Bonus FP pool",
+      "interface": "flags.swse.bonusForcePoints {entries,value,max,sources,note}",
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ]
+    },
+    {
+      "id": "C-FRC-3",
+      "boundary": "Dark Side Score",
+      "interface": "DSPEngine.getNextValue (pure) -> caller writes system.darkSide.value",
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ]
+    },
+    {
+      "id": "C-FRC-4",
+      "boundary": "Force Alchemy cost settlement",
+      "interface": "FP V2 receipt; DSS+credits one actor write; inverse-delta compensation",
+      "status": [
+        "OBSERVED",
+        "CONFLICT",
+        "FOUNDRY_ACCEPTANCE_REQUIRED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-FRC-01",
+      "existingSource": "docs/audits/class-force-v2-integration-matrix-2026-11-22.md header and §status",
+      "claim": "branch not for main; main untouched; not authorized for merge",
+      "observed": "audited commit f734b4d is \"Merge integration/class-force-v2-20261122 into main\"",
+      "evidence": [
+        "docs/audits/class-force-v2-integration-matrix-2026-11-22.md:3",
+        "docs/audits/class-force-v2-integration-matrix-2026-11-22.md:14"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-FRC-02",
+      "existingSource": "scripts/data/force-points.js header",
+      "claim": "prestige FP base never downgrades (persistent flag); recalculation in chargen-class.js / levelup-class.js",
+      "observed": "flag writers are in functions with no callers; named trigger files are retired; progression uses the build-plan variant which only reads the flags",
+      "evidence": [
+        "scripts/data/force-points.js:13",
+        "scripts/data/force-points.js:36",
+        "scripts/data/force-points.js:53",
+        "scripts/data/force-points.js:232"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-FRC-03",
+      "existingSource": "tests/class-force-v2-direct-fp-writer-classification.test.mjs header",
+      "claim": "pins every direct Force Point writer",
+      "observed": "bonus pool writers are outside the scan patterns",
+      "evidence": [
+        "tests/class-force-v2-direct-fp-writer-classification.test.mjs:1",
+        "tests/class-force-v2-direct-fp-writer-classification.test.mjs:12"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-FRC-01",
+      "item": "Force power resolution schema v1 not used at runtime",
+      "source": "docs/architecture/force-power-resolution-v1.md:3",
+      "status": "UNIMPLEMENTED"
+    },
+    {
+      "id": "U-FRC-02",
+      "item": "Forceful Recovery picker unreachable (only importer is an orphan feat module)",
+      "source": "scripts/apps/dialogs/forceful-recovery-picker.js",
+      "status": "UNIMPLEMENTED"
+    },
+    {
+      "id": "U-FRC-03",
+      "item": "dailyForcePoints house rule has no effect on the stored maximum",
+      "source": "scripts/core/settings.js:240; scripts/engine/force/force-points-service.js:82",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [
+    {
+      "item": "Last Grasp timing/cap exceptions; Emergency Patch failed-check charge",
+      "registerRef": "FP-RD-015 (OWNER_CONFIRMATION_PENDING)"
+    },
+    {
+      "item": "Uncertified contracted abilities",
+      "registerRef": "FP-RD-003"
+    },
+    {
+      "item": "Temptation of the Dark Side (Force Unleashed p.85)",
+      "registerRef": "FP-RD-013"
+    },
+    {
+      "item": "Whether the base-6/7 Force Point base persists after a prestige class is removed",
+      "registerRef": "NONE — new entry required (owner)"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "A1 Force Point spend + finalize",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "A2 Failed paid roll rollback",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "A3 Round cap",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "B1 Destiny spend separate ledger",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "C1 Temptation mark (needs live roll stack)",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "C2 Temptation spend window, owner prompted",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "C3 Initiative reorder",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "C4 Late delivery / reload",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "C5 Concurrent FP + Destiny receipts",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "C6 Two Sith Lords mark each other (live needed)",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "C7 Capped condition track",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "D1 GM world time only",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "E1 Serenity",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "E2 Prophet review",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "F1 Immunities",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "G1 Reactions (verified event, non-owner refused)",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "G2 Reaction settlement on finalize failure",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "H1 WatchCircle Initiate",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "H2 Drain Force",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "I1 Last Grasp / Emergency Patch (provisional FP-RD-015)",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "J1 Force Alchemy multi-resource costs with injected failures (not atomic)",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "J2 Receipt reconciliation",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "K1 Retired legacy entry points absent",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "L1 Cross-client repeat of C2/C4/G1 (cannot be proven offline)",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "Not covered by matrix: Alchemy multi-resource atomicity; Last Grasp timing/cap; unresolved reaction receipts after client close; reactions other than Block/Deflect/Force Fortification via chat-dataset context",
+      "source": "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md"
+    },
+    {
+      "item": "Proposed: Guardian Spirit claim then Force Point spend, reload",
+      "source": "F-FRC-003"
+    },
+    {
+      "item": "Proposed: dailyForcePoints on/off at level-up",
+      "source": "F-FRC-002"
+    },
+    {
+      "item": "Proposed: end combat with two clients; Force talent cleanup once",
+      "source": "F-FRC-006"
+    }
+  ],
+  "findings": [
+    {
+      "category": "duplicate-authority",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Normal Force Point balance spend/regain: single authority confirmed; lead not a duplicate",
+      "affectedFiles": [
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/engine/force/force-points-service.js",
+        "scripts/engine/force/force-engine.js",
+        "scripts/utils/force-points.js"
+      ],
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:2116",
+        "scripts/governance/actor-engine/actor-engine.js:2077",
+        "scripts/engine/force/force-points-service.js:564",
+        "scripts/engine/force/force-engine.js:22",
+        "scripts/engine/force/force-engine.js:29"
+      ],
+      "observed": "Spend: ForceEngine.spendForcePoint delegates to ActorEngine.spendForcePoints + finalize (wrapper, legacy D-style but thin and typed). Regain: ActorEngine.gainForcePoints uses ForcePointsService.calcGain (pure). ForcePointsService.calcSpend has no callers (dead helper). scripts/utils/force-points.js (ForcePointsUtil) is orphan. Talent-side debit exists only for the bonus pool (F-FRC-003).",
+      "intendedOwnership": "ActorEngine mutation + ForcePointsService calculation (as observed).",
+      "contractRef": "A-01, R-FRC-01",
+      "proposedSolution": "Delete calcSpend and the orphan util after owner confirmation; keep ForceEngine.spendForcePoint or inline it at its 3 call sites.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "existing direct-fp-writer guard",
+      "foundryAcceptance": "Matrix A1-A3",
+      "scope": "S",
+      "simplificationBenefit": "Low",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-FRC-001"
+    },
+    {
+      "category": "duplicate-authority",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Force Point maximum computed by two formulas; dailyForcePoints house rule never applied",
+      "affectedFiles": [
+        "scripts/data/force-points.js",
+        "scripts/engine/force/force-points-service.js",
+        "scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js"
+      ],
+      "evidence": [
+        "scripts/data/force-points.js:87",
+        "scripts/data/force-points.js:90",
+        "scripts/engine/force/force-points-service.js:67",
+        "scripts/engine/force/force-points-service.js:82",
+        "scripts/engine/force/force-points-service.js:84",
+        "scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js:320",
+        "scripts/core/settings.js:240"
+      ],
+      "observed": "Progression writes system.forcePoints.max from calculateMaxForcePointsForBuildPlan = base + floor(level/2) + MetaResourceFeatResolver bonus. ForcePointsService.getMax additionally applies the dailyForcePoints band and max(MetaResource, ForcePointFeatRules) bonus, but has no callers. ActorEngine.gainForcePoints caps at the stored max. Result: the registered dailyForcePoints house rule does not change the maximum; two feat-bonus readers exist.",
+      "intendedOwnership": "One FRC formula (ForcePointsService) consumed by progression.",
+      "contractRef": "A-01, A-06, R-FRC-05",
+      "proposedSolution": "Make calculateMaxForcePointsForBuildPlan delegate to a ForcePointsService build-plan entry point (same inputs) and delete the duplicate; owner confirms whether daily FP mode should drive the stored max.",
+      "alternatives": "Delete ForcePointsService.getMax and the house rule if daily mode is not wanted.",
+      "dependencies": [
+        "B-PRG finalizer"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Unit test: both entry points equal for the same build plan, with the house rule on and off.",
+      "foundryAcceptance": "Level-up with dailyForcePoints on.",
+      "scope": "S",
+      "simplificationBenefit": "One formula",
+      "risk": "Changes stored max for worlds using the house rule",
+      "perfImpact": "none",
+      "id": "F-FRC-002"
+    },
+    {
+      "category": "duplicate-authority",
+      "severity": "critical",
+      "status": "confirmed",
+      "title": "Bonus Force Point pool: six builders, two flag scopes, outside the writer guard",
+      "affectedFiles": [
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/engine/force/force-executor.js",
+        "scripts/engine/talent/guardian-spirit-actions.js",
+        "scripts/engine/talent/force-adept-talent-actions.js",
+        "scripts/engine/talent/jedi-prestige-talent-actions.js",
+        "scripts/engine/feats/force-point-feat-actions.js",
+        "scripts/actors/base/swse-actor-base.js"
+      ],
+      "evidence": [
+        "scripts/governance/actor-engine/actor-engine.js:2127",
+        "scripts/governance/actor-engine/actor-engine.js:2175",
+        "scripts/engine/force/force-executor.js:647",
+        "scripts/engine/force/force-executor.js:660",
+        "scripts/engine/force/force-executor.js:732",
+        "scripts/engine/talent/guardian-spirit-actions.js:29",
+        "scripts/engine/talent/guardian-spirit-actions.js:91",
+        "scripts/engine/talent/force-adept-talent-actions.js:113",
+        "scripts/engine/talent/jedi-prestige-talent-actions.js:114",
+        "scripts/engine/feats/force-point-feat-actions.js:151",
+        "scripts/actors/base/swse-actor-base.js:447",
+        "scripts/actors/base/swse-actor-base.js:464"
+      ],
+      "observed": "Pool entries are normalized/built independently in ActorEngine, ForceExecutor (_normalizeBonusForcePointEntries, 351-token exact clone of GuardianSpiritActions._normalizeEntries), GuardianSpiritActions, force-adept, jedi-prestige and feats (buildBonusPool, 158-token clone of ForceExecutor). Five writers use the literal path flags.swse.bonusForcePoints; GuardianSpiritActions uses setFlag('swse') which SWSEActorBase redirects to flags[foundryvtt-swse], and getFlag('swse') prefers that copy, so after a Guardian Spirit write all ActorEngine debits and other grants become invisible (see F-TAL-007). The direct-FP-writer test does not scan this pool.",
+      "intendedOwnership": "FRC: ActorEngine.grantBonusForcePoints / expireBonusForcePoints + spendForcePoints; ForcePointsService pool normalizer; one storage path.",
+      "contractRef": "A-01, A-02, C-FRC-2",
+      "proposedSolution": "Add one pool module (normalize/build) and ActorEngine grant/expire APIs; migrate the five builders; add a migration merging the foundryvtt-swse copy into flags.swse (or the reverse, decided once); extend the writer guard to bonusForcePoints.",
+      "alternatives": "",
+      "dependencies": [
+        "F-TAL-007"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Guard test over bonusForcePoints writers; shim test for scope coherence after setFlag('swse').",
+      "foundryAcceptance": "Force Flow natural 1 grant, spend, end encounter; Guardian Spirit claim + spend + reload.",
+      "scope": "M",
+      "simplificationBenefit": "Six builders -> one",
+      "risk": "Existing worlds with two copies",
+      "perfImpact": "none",
+      "id": "F-FRC-003"
+    },
+    {
+      "category": "duplicate-authority",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Dark Side Score mutation has no owner (7 live writer modules)",
+      "affectedFiles": [
+        "scripts/engine/force/force-engine.js",
+        "scripts/engine/force/temptation-of-the-dark-side.js",
+        "scripts/engine/combat/sith-lord-temptation-service.js",
+        "scripts/engine/poison/poison-engine.js",
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+        "scripts/engine/talent/force-adept-talent-actions.js",
+        "scripts/engine/talent/sith-talent-actions.js"
+      ],
+      "evidence": [
+        "scripts/engine/force/force-engine.js:47",
+        "scripts/engine/force/force-engine.js:57",
+        "scripts/engine/force/temptation-of-the-dark-side.js:136",
+        "scripts/engine/combat/sith-lord-temptation-service.js:200",
+        "scripts/engine/poison/poison-engine.js:576",
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:440",
+        "scripts/engine/talent/force-adept-talent-actions.js:265",
+        "scripts/engine/talent/sith-talent-actions.js:198"
+      ],
+      "observed": "DSPEngine is pure; each caller composes the new value and writes system.darkSide.value via ActorEngine.updateActor. Logging differs (force-engine pushes into actor.system.dspLog in place before update; force-adept logs before/after/delta; sith logs reason only; temptation/poison/alchemy none). poison-engine uses getValue()+n instead of getNextValue. Orphan force-suite.js and utils/force-points.js add two more.",
+      "intendedOwnership": "FRC: one DSS mutation (ActorEngine.adjustDarkSideScore(actor, delta, reason) computing via DSPEngine).",
+      "contractRef": "A-01, C-FRC-3",
+      "proposedSolution": "Add the API and migrate the 7 writers; keep DSPEngine pure.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Guard listing allowed system.darkSide.value writers; dsp-engine-behavior extension.",
+      "foundryAcceptance": "Dark side power use, Temptation, poison DSS increase.",
+      "scope": "M",
+      "simplificationBenefit": "One log shape",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-FRC-004"
+    },
+    {
+      "category": "bypass-engine",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Force Alchemy debits credits outside TransactionEngine (A-10)",
+      "affectedFiles": [
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+        "scripts/engine/store/transaction-engine.js"
+      ],
+      "evidence": [
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:78",
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:86",
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:441",
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:443",
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:462",
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:476",
+        "scripts/engine/store/transaction-engine.js:557",
+        "scripts/engine/store/transaction-engine.js:308"
+      ],
+      "observed": "Credits are debited (441) and compensated (476) with ActorEngine.updateActor on a path chosen by a six-way heuristic (creditUpdatePath, 78-86) - a second credit schema interpretation. Line 462 (the probe hit) only builds the in-memory result payload: false positive. TransactionEngine already exposes executeCreditAdjustment (557) and executeMutationTransaction (308). The DSS+credit single write and inverse-delta compensation are deliberate (integration matrix :260) but not routed through the credit authority.",
+      "intendedOwnership": "TransactionEngine for the credit leg (OSI).",
+      "contractRef": "A-10, C-FRC-4",
+      "proposedSolution": "Use TransactionEngine.executeMutationTransaction for credits + DSS (it is the documented path when credits and actor mutation must succeed together); keep the FP V2 receipt leg; delete creditUpdatePath in favour of the TransactionEngine credit path.",
+      "alternatives": "executeCreditAdjustment for credits and a separate DSS write (loses the single write).",
+      "dependencies": [
+        "B-STO contract"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "class-force-v2-alchemy-atomicity extended for TransactionEngine routing.",
+      "foundryAcceptance": "Matrix J1.",
+      "scope": "S",
+      "simplificationBenefit": "One credit path",
+      "risk": "Changes failure semantics of an accepted design",
+      "perfImpact": "none",
+      "id": "F-FRC-005"
+    },
+    {
+      "category": "bypass-engine",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "force-executor.js: 16 direct flag writes incl. ungated deleteCombat cleanup",
+      "affectedFiles": [
+        "scripts/engine/force/force-executor.js"
+      ],
+      "evidence": [
+        "scripts/engine/force/force-executor.js:87",
+        "scripts/engine/force/force-executor.js:581",
+        "scripts/engine/force/force-executor.js:734",
+        "scripts/engine/force/force-executor.js:771",
+        "scripts/engine/force/force-executor.js:817",
+        "scripts/engine/force/force-executor.js:1034",
+        "scripts/engine/force/force-executor.js:1065",
+        "scripts/engine/force/force-executor.js:1683",
+        "scripts/engine/force/force-executor.js:1689",
+        "scripts/engine/force/force-executor.js:1697"
+      ],
+      "observed": "Talent-state flags written directly (A-02 violations, no exception comments). shouldSuppressTaintDarkSideIncrease (87) writes inside a predicate. Force Flow grant writes the pool via ActorEngine then a separate setFlag (734): two writes. deleteCombat (1683) runs on every client and issues up to 10 writes per combatant (non-owners fail; one error aborts the loop on that client). Contrast force-power-hooks.js isResponsibleGm.",
+      "intendedOwnership": "ActorEngine; responsible-GM lifecycle.",
+      "contractRef": "A-02, A-08",
+      "proposedSolution": "Gate deleteCombat with isResponsibleGm(); batch the cleanup into one ActorEngine.updateActor with -=flag deletions per actor; fold paired writes.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Shim test: two users, one cleanup update per actor.",
+      "foundryAcceptance": "End combat with GM and player connected.",
+      "scope": "S",
+      "simplificationBenefit": "10 writes -> 1 per actor",
+      "risk": "Low",
+      "perfImpact": "medium",
+      "id": "F-FRC-006"
+    },
+    {
+      "category": "oversized-module",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "ForceExecutor mixes power execution with ~15 Force talent actions",
+      "affectedFiles": [
+        "scripts/engine/force/force-executor.js"
+      ],
+      "evidence": [
+        "scripts/engine/force/force-executor.js:195",
+        "scripts/engine/force/force-executor.js:608",
+        "scripts/engine/force/force-executor.js:714",
+        "scripts/engine/force/force-executor.js:791",
+        "scripts/engine/force/force-executor.js:903",
+        "scripts/engine/force/force-executor.js:1030",
+        "scripts/engine/force/force-executor.js:1093",
+        "scripts/engine/force/force-executor.js:1113"
+      ],
+      "observed": "1,740 lines, 57 static members: executeForcePower plus Savant recoveries, Force Flow, Aversion, Illusion, Force Link, Telepathic Link, Suppress Force, Telepathic Influence; talent rules also live in scripts/engine/talent/*. Patched at runtime by force-suite-runtime-repairs.",
+      "intendedOwnership": "Seam: ForcePowerExecutor (execution) vs Force talent actions module (talents domain or FRC talent adapter).",
+      "contractRef": "R-FRC-09",
+      "proposedSolution": "Extract talent actions into a force-talent-actions module using the same V2 spend contracts; keep the executor focused.",
+      "alternatives": "",
+      "dependencies": [
+        "F-FRC-008"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "force-v2-03b-talent-contracts unchanged.",
+      "foundryAcceptance": "",
+      "scope": "M",
+      "simplificationBenefit": "Clear ownership",
+      "risk": "Tests import ForceExecutor statics",
+      "perfImpact": "none",
+      "id": "F-FRC-007"
+    },
+    {
+      "category": "legacy-compat",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "force-suite-runtime-repairs: runtime patches of executor and DerivedCalculator, DOM repairs on every AppV2 render",
+      "affectedFiles": [
+        "scripts/engine/force/force-suite-runtime-repairs.js",
+        "scripts/patches/force-suite-render-guard-hotfix.js"
+      ],
+      "evidence": [
+        "scripts/engine/force/force-suite-runtime-repairs.js:110",
+        "scripts/engine/force/force-suite-runtime-repairs.js:135",
+        "scripts/engine/force/force-suite-runtime-repairs.js:176",
+        "scripts/engine/force/force-suite-runtime-repairs.js:271",
+        "scripts/engine/force/force-suite-runtime-repairs.js:616",
+        "scripts/engine/force/force-suite-runtime-repairs.js:618",
+        "scripts/patches/force-suite-render-guard-hotfix.js:8",
+        "index.js:102"
+      ],
+      "observed": "Live at init: replaces ForceExecutor._getTelepathicIntruderBonus, _generateForcePowerRollMessage, executeForcePower and DerivedCalculator.computeAll (Skill Focus non-stacking applied post hoc to derived updates); repairForceCardIds and repairSkillMathDisplay bound to both renderSWSEV2CharacterSheet and renderApplicationV2, so a character sheet render runs each twice and every other AppV2 render runs the actor lookup. A separate hotfix wraps sheet.render and detects this module by Error().stack. Legacy class F (runtime-risk): it changes execution and derived math.",
+      "intendedOwnership": "Fixes belong in ForceExecutor, DerivedCalculator/skills (Skill Focus) and the sheet template/context.",
+      "contractRef": "A-09, A-04",
+      "proposedSolution": "Fold each repair into its owner with a test, then delete the module and the render-guard hotfix; meanwhile drop the duplicate renderApplicationV2 bindings.",
+      "alternatives": "",
+      "dependencies": [
+        "skills domain (Skill Focus)",
+        "ui-shell"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Per-repair parity tests.",
+      "foundryAcceptance": "Force tab actions and skill math display after removal.",
+      "scope": "M",
+      "simplificationBenefit": "Removes a hidden execution layer and stack-sniffing hotfix",
+      "risk": "Medium",
+      "perfImpact": "medium",
+      "id": "F-FRC-008"
+    },
+    {
+      "category": "dead-code",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "scripts/data/force-points.js: write-in-calculation functions with no callers; stale header",
+      "affectedFiles": [
+        "scripts/data/force-points.js"
+      ],
+      "evidence": [
+        "scripts/data/force-points.js:53",
+        "scripts/data/force-points.js:204",
+        "scripts/data/force-points.js:232",
+        "scripts/data/force-points.js:243",
+        "scripts/data/force-points.js:291",
+        "scripts/data/force-points.js:300",
+        "scripts/data/force-points.js:315"
+      ],
+      "observed": "The 6 A-02 probe hits are un-awaited actor.setFlag calls inside getForcePointBase / hasPrestigeForcePointBonus (mutation inside a calculation, A-08), reachable only from calculateMaxForcePoints, updateActorForcePoints, initializeActorForcePoints and debug helpers, none of which has a caller. The live export is calculateMaxForcePointsForBuildPlan (read-only). Consequently the persistent prestige markers that FRC and progression read are never written by live code (CR-FRC-02).",
+      "intendedOwnership": "FRC formula (F-FRC-002).",
+      "contractRef": "A-08, CR-FRC-02",
+      "proposedSolution": "Delete the uncalled functions (legacy C); owner decides whether persistence of base 6/7 is still intended and, if so, where the marker is written (progression finalizer).",
+      "alternatives": "",
+      "dependencies": [
+        "F-FRC-002"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": true,
+      "regressionTests": "Build-plan max tests.",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "~200 SLOC",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-FRC-009"
+    },
+    {
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Unreachable Force cluster",
+      "affectedFiles": [
+        "scripts/components/force-suite.js",
+        "scripts/utils/force-points.js",
+        "scripts/utils/force-enhancement-dialog.js",
+        "scripts/utils/force-enhancement-detector.js",
+        "scripts/apps/dialogs/forceful-recovery-picker.js",
+        "scripts/engine/force/force-power-resolution-schema.js"
+      ],
+      "evidence": [
+        "scripts/components/force-suite.js:18",
+        "scripts/utils/force-points.js:12"
+      ],
+      "observed": "No importer, global, template or pack reference (git grep). force-suite.js and utils/force-points.js contain their own DSS writes. force-power-resolution-schema is test-only (approved contract, unimplemented). forceful-recovery-picker only imported by an orphan feat module.",
+      "intendedOwnership": "",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete force-suite.js, utils/force-points.js, force-enhancement-* (legacy C, owner confirm); keep resolution schema as UNIMPLEMENTED; wire or delete forceful-recovery-picker with the feat second-wind family.",
+      "alternatives": "",
+      "dependencies": [
+        "F-FEA-004"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "~800 SLOC",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-FRC-010"
+    },
+    {
+      "category": "presentation-rules",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Force Alchemy: direct ChatMessage.create and state setFlag from apps/ services",
+      "affectedFiles": [
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+        "scripts/apps/force-alchemy/force-alchemy-state-service.js"
+      ],
+      "evidence": [
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:1201",
+        "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js:1418",
+        "scripts/apps/force-alchemy/force-alchemy-state-service.js:209"
+      ],
+      "observed": "Two direct chat creates; Alchemy state written by actor.setFlag. Mechanics services live under scripts/apps/ (presentation path) although they are engine logic.",
+      "intendedOwnership": "SWSEChat; ActorEngine; scripts/engine/force/alchemy/",
+      "contractRef": "A-05, A-02, A-04",
+      "proposedSolution": "Use SWSEChat.postHTML and ActorEngine.updateActor; move the mechanics/state services under scripts/engine/force/.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "alchemy suites",
+      "foundryAcceptance": "J1",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "Low",
+      "perfImpact": "none",
+      "id": "F-FRC-011"
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Force documentation consolidation candidates",
+      "affectedFiles": [
+        "docs/audits/class-force-v2-integration-matrix-2026-11-22.md",
+        "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md",
+        "docs/audits/class-force-v2-live-run-setup-and-evidence.md",
+        "docs/architecture/force-power-resolution-v1.md"
+      ],
+      "evidence": [
+        "docs/audits/class-force-v2-integration-matrix-2026-11-22.md:14",
+        "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md:1"
+      ],
+      "observed": "The integration matrix and acceptance matrix are live certification records and must be preserved; the integration matrix header is stale after the merge (CR-FRC-01). bookwise-v2.9 and certification checkpoints are machine-consumed evidence.",
+      "intendedOwnership": "B-FRC links them",
+      "contractRef": "CR-FRC-01",
+      "proposedSolution": "Candidates only: append (do not rewrite) a post-merge status note; link from B-FRC. Never delete acceptance or certification records.",
+      "alternatives": "",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "",
+      "foundryAcceptance": "",
+      "scope": "S",
+      "simplificationBenefit": "",
+      "risk": "None",
+      "perfImpact": "none",
+      "id": "F-FRC-012"
+    }
+  ]
+}

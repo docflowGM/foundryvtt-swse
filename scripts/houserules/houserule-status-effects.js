@@ -126,7 +126,10 @@ const STATUS_EFFECTS_LIBRARY = {
 
 export class StatusEffectsMechanics {
   static initialize() {
-    Hooks.on('updateActor', (actor, data) => this.onActorUpdate(actor, data));
+    Hooks.on('updateActor', (actor, data, _options, userId) => {
+      if (userId !== undefined && userId !== game.user?.id) return; // originating client only (hook fires on every client)
+      return this.onActorUpdate(actor, data);
+    });
     Hooks.on('restCompleted', (data) => this.onRestCompleted(data));
     SWSELogger.debug('Status effects mechanics initialized');
   }

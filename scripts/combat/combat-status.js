@@ -8,6 +8,7 @@
  */
 
 import { isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export const COMBAT_STATUS_FLAG_SCOPE = 'foundryvtt-swse';
 export const COMBAT_STATUS_FLAG_KEY = 'combatStatus';
@@ -112,7 +113,7 @@ export const CombatStatusResolver = {
     next.updatedRound = patch.updatedRound ?? patch.round ?? current.updatedRound ?? globalThis.game?.combat?.round ?? null;
     next.updatedTurn = patch.updatedTurn ?? patch.turn ?? current.updatedTurn ?? globalThis.game?.combat?.turn ?? null;
     next.updatedCombatId = patch.updatedCombatId ?? patch.combatId ?? current.updatedCombatId ?? globalThis.game?.combat?.id ?? null;
-    await actor.setFlag(COMBAT_STATUS_FLAG_SCOPE, COMBAT_STATUS_FLAG_KEY, next);
+    await ActorEngine.updateActorFlags(actor, COMBAT_STATUS_FLAG_SCOPE, COMBAT_STATUS_FLAG_KEY, next, { recalc: false });
     Hooks.callAll('swse.combatStatusChanged', { actorId: actor.id, status: next, source: patch.source ?? 'system' });
     return next;
   },

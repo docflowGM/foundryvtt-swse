@@ -12,6 +12,7 @@
  */
 
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/utils/responsible-gm.js";
 
 let registered = false;
 let syncingActors = false;
@@ -162,11 +163,7 @@ function classItemLevel(item = {}) {
  * down (the active GM performs the pass). With no election information the GM gate alone applies.
  */
 function isAuthorizedReconciliationClient() {
-  const user = game?.user;
-  if (user?.isGM !== true) return false;
-  const activeGM = game?.users?.activeGM;
-  if (activeGM && activeGM.id !== undefined && activeGM.id !== user.id) return false;
-  return true;
+  return isResponsibleGM(); // the single active-GM client (utils/responsible-gm.js)
 }
 
 async function syncActorClassItemsToLedger(actor, { reason = 'progression-ledger-sync' } = {}) {

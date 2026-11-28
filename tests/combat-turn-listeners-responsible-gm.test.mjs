@@ -1,0 +1,44 @@
+import assert from 'node:assert/strict';
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+// Phase 3D multi-client gate: combatTurn fires on every client. Listeners that write (Affliction damage, Master Advisor Force Point grant,
+// Block/Deflect reset, effect expiry) must run on exactly one client: the responsible (active) GM.
+globalThis.window = globalThis.window || {}; registerFoundryPathLoader(); installFoundryShimGlobals();
+globalThis.foundry = globalThis.foundry ?? {}; globalThis.foundry.utils = globalThis.foundry.utils ?? {};
+globalThis.foundry.utils.randomID ??= () => 'x'; globalThis.foundry.utils.deepClone ??= (v) => JSON.parse(JSON.stringify(v));
+globalThis.foundry.applications = globalThis.foundry.applications ?? { api: { ApplicationV2: class {}, HandlebarsApplicationV2: class {}, HandlebarsApplicationMixin: (B) => B } };
+globalThis.localStorage ??= { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+globalThis.ui = { notifications: { warn() {}, info() {}, error() {} } };
+const handlers = []; globalThis.Hooks = { on: (ev, fn) => handlers.push({ ev, fn }), once() {}, callAll() {}, call() {} };
+globalThis.SWSE = {}; globalThis.CONFIG = { statusEffects: [] };
+const setUser = (isGM, id = 'u1', activeGM = { id: 'gm1' }) => { globalThis.game = { ...(globalThis.game ?? {}), user: { id, isGM }, users: { activeGM }, actors: { get: () => null } }; };
+const { isResponsibleGM } = await import('/systems/foundryvtt-swse/scripts/utils/responsible-gm.js');
+setUser(false); assert.equal(isResponsibleGM(), false, 'a player is never responsible');
+setUser(true, 'gm2', { id: 'gm1' }); assert.equal(isResponsibleGM(), false, 'a non-active GM is not responsible');
+setUser(true, 'gm1', { id: 'gm1' }); assert.equal(isResponsibleGM(), true, 'the active GM is responsible');
+setUser(true, 'gmX', null); assert.equal(isResponsibleGM(), true, 'with no known active GM, a GM acts');
+
+const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+const writes = [];
+for (const m of ['applyDamage', 'unsetActorFlag', 'updateActorFlags', 'updateActor', 'deleteEmbeddedDocuments']) ActorEngine[m] = async () => { writes.push(m); };
+const sith = await import('/systems/foundryvtt-swse/scripts/engine/talent/sith-talent-actions.js');
+const jedi = await import('/systems/foundryvtt-swse/scripts/engine/talent/jedi-prestige-talent-actions.js');
+const saber = await import('/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-talent-actions.js');
+const fx = await import('/systems/foundryvtt-swse/scripts/combat/active-effects-manager.js');
+const N = (p) => ({ pendingAfflictions: [{ sourceActorId: 's', sourceActorName: 'S' }], pendingMasterAdvisorForcePoint: { sourceActorId: 's', granted: true } }[p] ?? null);
+const actor = { id: 'a1', name: 'A', isOwner: true, getFlag: (_ns, p) => N(p), getRollData: () => ({}), effects: { filter: () => [{ id: 'e1', duration: { rounds: 1 }, flags: {} }] }, system: {} };
+const turn = { round: 2, combatant: { actor } };
+sith.SithTalentActions.registerHooks(); jedi.JediPrestigeTalentActions.registerHooks(); saber.LightsaberTalentActions.registerHooks();
+fx.SWSEActiveEffectsManager.init();
+const turnHandlers = handlers.filter((h) => h.ev === 'combatTurn');
+assert.ok(turnHandlers.length >= 4, `combatTurn listeners registered (${turnHandlers.length})`);
+setUser(false, 'player');
+for (const h of turnHandlers) await h.fn(turn, turn, turn);
+assert.deepEqual(writes, [], 'a player client performs no combatTurn writes');
+setUser(true, 'gm2', { id: 'gm1' });
+for (const h of turnHandlers) await h.fn(turn, turn, turn);
+assert.deepEqual(writes, [], 'a non-active GM client performs no combatTurn writes');
+setUser(true, 'gm1', { id: 'gm1' });
+for (const h of turnHandlers) await h.fn(turn, turn, turn);
+assert.ok(writes.length > 0, 'the responsible GM still performs the writes');
+console.log('combat-turn-listeners-responsible-gm: ok', writes.length, 'writes on the responsible GM');

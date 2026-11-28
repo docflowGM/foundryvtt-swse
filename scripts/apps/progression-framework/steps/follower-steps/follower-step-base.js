@@ -247,14 +247,19 @@ export class FollowerStepBase extends ProgressionStepPlugin {
   async getAllLanguages() {
     try {
       const { LanguageRegistry } = await import('/systems/foundryvtt-swse/scripts/registries/language-registry.js');
-      await LanguageRegistry.ensureLoaded?.();
-      const all = LanguageRegistry.getAll?.() || [];
-      const names = all.map(lang => lang?.name || lang?.label || lang?.id).filter(Boolean);
+      await LanguageRegistry.ensureLoaded();
+      const all = await LanguageRegistry.all();
+      const names = all.map(language => language?.name || language?.label || language?.id).filter(Boolean);
       if (names.length) return this._uniqueStrings(names);
-    } catch (_err) {
-      // Fall back to a stable core list if the registry is unavailable in this context.
+    } catch (error) {
+      swseLogger.warn('[FollowerStepBase] Full language catalog unavailable; using core fallback.', error);
     }
-    return BASE_LANGUAGE_FALLBACK;
+    return [
+      'Basic', 'Binary', 'Bocce', 'Bothese', 'Dosh', 'Durese', 'Ewokese', 'Gamorrean',
+      'Gunganese', 'High Galactic', 'Huttese', 'Ithorese', 'Jawa Trade Language',
+      'Kel Dor', 'Mon Calamarian', 'Quarrenese', 'Rodese', 'Shyriiwook', 'Sith',
+      'Sullustese', 'Togruti', "Twi'leki", 'Ubese', 'Zabrak',
+    ];
   }
 
   getOwnerLanguages(ownerActor) {

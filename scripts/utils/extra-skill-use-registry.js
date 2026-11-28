@@ -2,6 +2,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use-filter.js";
 import { TreatInjuryMedicalSecretResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/medical/treat-injury-medical-secret-resolver.js";
 import { planQuickSabotage, resolveSaboteurSkillUse } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/saboteur-quick-sabotage.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 
 
@@ -17,8 +18,7 @@ const KNOWLEDGE_SKILL_KEYS = [
 ];
 
 function athleticsConsolidationActive() {
-  try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; }
-  catch (_err) { return false; }
+  return HouseRuleService.getBoolean('athleticsConsolidation', false);
 }
 
 function isAthleticsComponentKey(skillKey) {

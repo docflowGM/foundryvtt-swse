@@ -1,0 +1,677 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "holonet",
+ "name": "Holonet messaging and notifications",
+ "kind": "feature",
+ "files": 94,
+ "runtimeSloc": 18683,
+ "runtimeFiles": 75,
+ "counts": {
+  "files": 94,
+  "runtimeModules": 75,
+  "runtimeSloc": 18683,
+  "reachability": {
+   "reachable-static": 64,
+   "unreachable-importers-only": 3,
+   "reachable-dynamic": 1,
+   "orphan-unreferenced": 7
+  },
+  "nonRuntimeByRole": {
+   "asset": 6,
+   "evidence-or-doc": 2,
+   "presentation-style": 3,
+   "presentation-template": 2,
+   "test": 5,
+   "tool": 1
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/holonet/contracts/enums.js",
+   "consumers": 52,
+   "sloc": 157,
+   "role": "module",
+   "exports": [
+    "RECORD_TYPE",
+    "INTENT_TYPE",
+    "DELIVERY_STATE",
+    "LIFECYCLE_STATE",
+    "RECIPIENT_TYPE",
+    "PERSONA_TYPE",
+    "SURFACE_TYPE",
+    "SOURCE_FAMILY",
+    "AUDIENCE_TYPE"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/contracts/holonet-audience.js",
+   "consumers": 28,
+   "sloc": 35,
+   "role": "module",
+   "exports": [
+    "HolonetAudience"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/subsystems/holonet-storage.js",
+   "consumers": 28,
+   "sloc": 443,
+   "role": "module-with-writes",
+   "exports": [
+    "HolonetStorage"
+   ],
+   "writes": 14,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/subsystems/holonet-intel-service.js",
+   "consumers": 25,
+   "sloc": 1127,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "INTEL_METADATA_KEY",
+    "INTEL_KIND",
+    "INTEL_CLASSIFICATION",
+    "INTEL_STATUS",
+    "INTEL_PERSISTENCE",
+    "INTEL_REVEAL_STATE",
+    "INTEL_LOCKBOX_STATUS",
+    "HolonetIntelService"
+   ],
+   "writes": 3,
+   "actorEngineCalls": 2,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/holonet-engine.js",
+   "consumers": 19,
+   "sloc": 224,
+   "role": "engine-or-service",
+   "exports": [
+    "HolonetEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/subsystems/holonet-messenger-service.js",
+   "consumers": 19,
+   "sloc": 7055,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "PartyFundAccess",
+    "HolonetMessengerService"
+   ],
+   "writes": 15,
+   "actorEngineCalls": 13,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/contracts/holonet-sender.js",
+   "consumers": 18,
+   "sloc": 36,
+   "role": "module",
+   "exports": [
+    "HolonetSender"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/holonet-preferences.js",
+   "consumers": 13,
+   "sloc": 65,
+   "role": "module-with-writes",
+   "exports": [
+    "HolonetPreferences"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/contracts/holonet-notification.js",
+   "consumers": 12,
+   "sloc": 25,
+   "role": "module",
+   "exports": [
+    "HolonetNotification"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/subsystems/holonet-socket-service.js",
+   "consumers": 12,
+   "sloc": 232,
+   "role": "engine-or-service",
+   "exports": [
+    "HolonetSocketService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/subsystems/holonet-emission-service.js",
+   "consumers": 9,
+   "sloc": 91,
+   "role": "engine-or-service",
+   "exports": [
+    "HolonetEmissionService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 10
+  },
+  {
+   "path": "scripts/holonet/subsystems/gm-combat-recovery-service.js",
+   "consumers": 8,
+   "sloc": 1389,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "GMCombatRecoveryService"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 34,
+   "ciTests": 10
+  },
+  {
+   "path": "scripts/holonet/subsystems/holonet-decryption-service.js",
+   "consumers": 8,
+   "sloc": 888,
+   "role": "engine-or-service",
+   "exports": [
+    "HolonetDecryptionService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/subsystems/holonet-delivery-router.js",
+   "consumers": 8,
+   "sloc": 76,
+   "role": "module",
+   "exports": [
+    "HolonetDeliveryRouter"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/contracts/holonet-record.js",
+   "consumers": 7,
+   "sloc": 103,
+   "role": "module",
+   "exports": [
+    "HolonetRecord"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/subsystems/holonet-state-service.js",
+   "consumers": 7,
+   "sloc": 62,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "HolonetStateService"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 0,
+   "ciTests": 13
+  },
+  {
+   "path": "scripts/holonet/contracts/holonet-event.js",
+   "consumers": 6,
+   "sloc": 21,
+   "role": "module",
+   "exports": [
+    "HolonetEvent"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/contracts/holonet-recipient.js",
+   "consumers": 6,
+   "sloc": 93,
+   "role": "module",
+   "exports": [
+    "HolonetRecipient"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/subsystems/gm-healing-trigger.js",
+   "consumers": 6,
+   "sloc": 121,
+   "role": "module",
+   "exports": [
+    "GMHealingTrigger"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 1,
+   "ciTests": 10
+  },
+  {
+   "path": "scripts/holonet/contracts/holonet-boundaries.js",
+   "consumers": 5,
+   "sloc": 63,
+   "role": "module",
+   "exports": [
+    "HOLONET_SPHERE",
+    "getHolonetSphere",
+    "isBulletinRecord",
+    "isMessengerRecord",
+    "normalizeBulletinRecord",
+    "normalizeMessengerRecord",
+    "assertHolonetBoundary"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/contracts/holonet-message.js",
+   "consumers": 5,
+   "sloc": 21,
+   "role": "module",
+   "exports": [
+    "HolonetMessage"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/sources/bulletin-source.js",
+   "consumers": 5,
+   "sloc": 58,
+   "role": "module",
+   "exports": [
+    "BulletinSource"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/subsystems/bulletin-contact-registry.js",
+   "consumers": 5,
+   "sloc": 157,
+   "role": "registry",
+   "exports": [
+    "BulletinContactRegistry"
+   ],
+   "writes": 3,
+   "actorEngineCalls": 0,
+   "ciTests": 2
+  },
+  {
+   "path": "scripts/holonet/subsystems/messenger-notification-bridge.js",
+   "consumers": 5,
+   "sloc": 147,
+   "role": "adapter",
+   "exports": [
+    "MessengerNotificationBridge"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/holonet/contracts/holonet-projection-surface.js",
+   "consumers": 4,
+   "sloc": 21,
+   "role": "module",
+   "exports": [
+    "HolonetProjectionSurface"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/holonet/subsystems/holonet-messenger-service.js",
+   "sloc": 7055,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/holonet/subsystems/gm-combat-recovery-service.js",
+   "sloc": 1389,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/holonet/subsystems/holonet-intel-service.js",
+   "sloc": 1127,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/holonet/subsystems/holonet-decryption-service.js",
+   "sloc": 888,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/holonet/contracts/holonet-intent-registry.js",
+   "sloc": 601,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/holonet/subsystems/holonet-storage.js",
+   "sloc": 443,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/holonet/data/holonews-seed-events.js",
+   "sloc": 418,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/holonet/subsystems/messenger-maintenance-service.js",
+   "sloc": 317,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/holonet/emitters/home-feed-task-emitter.js",
+   "sloc": 265,
+   "reach": "reachable-dynamic"
+  },
+  {
+   "path": "scripts/holonet/integration/holonet-init.js",
+   "sloc": 260,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/holonet/services/holonet-badge-service.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 147,
+   "tests": 0
+  },
+  {
+   "path": "scripts/holonet/scripts/core/first-run-experience.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 119,
+   "tests": 0
+  },
+  {
+   "path": "scripts/holonet/scripts/core/sidebar-structure-diagnostics.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 92,
+   "tests": 0
+  },
+  {
+   "path": "scripts/holonet/scripts/core/init.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 91,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/notifications.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 78,
+   "tests": 0
+  },
+  {
+   "path": "scripts/holonet/ui/holonet-badge-renderer.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 49,
+   "tests": 0
+  },
+  {
+   "path": "scripts/holonet/contracts/holonet-delivery-state.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 23,
+   "tests": 0
+  },
+  {
+   "path": "scripts/holonet/index.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 18,
+   "tests": 0
+  },
+  {
+   "path": "scripts/holonet/contracts/index.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 14,
+   "tests": 0
+  },
+  {
+   "path": "scripts/holonet/scripts/scene-controls/init.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 1,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "games": 12,
+  "infrastructure": 9,
+  "ui-shell": 7,
+  "houserules": 5,
+  "actor-core": 5,
+  "combat": 3,
+  "store-economy": 3,
+  "mentor-suggestion": 2,
+  "governance": 1,
+  "classes": 1,
+  "customization": 1,
+  "progression": 1,
+  "npc-followers": 1
+ },
+ "dependedOnByDomains": {
+  "ui-shell": 88,
+  "games": 8,
+  "customization": 7,
+  "infrastructure": 2,
+  "galactic-profiles": 2,
+  "chat": 1,
+  "vehicles": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 2,
+   "sites": [
+    {
+     "path": "scripts/holonet/subsystems/holonet-intel-service.js",
+     "domain": "holonet",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      1010
+     ]
+    },
+    {
+     "path": "scripts/holonet/subsystems/holonet-messenger-service.js",
+     "domain": "holonet",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      1675
+     ]
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "second-wind",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "feats",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/holonet/subsystems/gm-combat-recovery-service.js:888 resetSecondWindForActors"
+   ]
+  }
+ ],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "initializeFirstRunExperience",
+   "files": [
+    "scripts/core/first-run-experience.js",
+    "scripts/holonet/scripts/core/first-run-experience.js"
+   ]
+  },
+  {
+   "name": "registerFirstRunConsoleHelpers",
+   "files": [
+    "scripts/core/first-run-experience.js",
+    "scripts/holonet/scripts/core/first-run-experience.js"
+   ]
+  },
+  {
+   "name": "registerFirstRunSettings",
+   "files": [
+    "scripts/core/first-run-experience.js",
+    "scripts/holonet/scripts/core/first-run-experience.js"
+   ]
+  },
+  {
+   "name": "resetWelcome",
+   "files": [
+    "scripts/core/first-run-experience.js",
+    "scripts/holonet/scripts/core/first-run-experience.js"
+   ]
+  },
+  {
+   "name": "WelcomeDialog",
+   "files": [
+    "scripts/core/first-run-experience.js",
+    "scripts/holonet/scripts/core/first-run-experience.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "updateActor",
+   "sites": [
+    "scripts/holonet/emitters/droid-emitter.js:24",
+    "scripts/holonet/emitters/follower-emitter.js:39",
+    "scripts/holonet/emitters/ship-emitter.js:24"
+   ]
+  },
+  {
+   "name": "createActor",
+   "sites": [
+    "scripts/holonet/emitters/follower-emitter.js:32"
+   ]
+  },
+  {
+   "name": "restCompleted",
+   "sites": [
+    "scripts/holonet/emitters/healing-emitter.js:23"
+   ]
+  },
+  {
+   "name": "swseStoreTransactionComplete",
+   "sites": [
+    "scripts/holonet/emitters/store-emitter.js:23"
+   ]
+  },
+  {
+   "name": "swseCustomPurchaseApproved",
+   "sites": [
+    "scripts/holonet/emitters/store-emitter.js:29"
+   ]
+  },
+  {
+   "name": "swseCustomPurchaseDenied",
+   "sites": [
+    "scripts/holonet/emitters/store-emitter.js:35"
+   ]
+  },
+  {
+   "name": "swseProgressionLevelUp",
+   "sites": [
+    "scripts/holonet/emitters/follower-emitter.js:25",
+    "scripts/holonet/emitters/progression-emitter.js:24"
+   ]
+  },
+  {
+   "name": "swseApprovalResolved",
+   "sites": [
+    "scripts/holonet/emitters/approvals-emitter.js:23"
+   ]
+  },
+  {
+   "name": "swseGmCombatRecoveryCompleted",
+   "sites": [
+    "scripts/holonet/emitters/healing-emitter.js:29"
+   ]
+  },
+  {
+   "name": "swseStoreStateChanged",
+   "sites": [
+    "scripts/holonet/emitters/store-state-emitter.js:29"
+   ]
+  },
+  {
+   "name": "swseStorePriceChanged",
+   "sites": [
+    "scripts/holonet/emitters/store-state-emitter.js:35"
+   ]
+  },
+  {
+   "name": "swse:setting-changed",
+   "sites": [
+    "scripts/holonet/integration/holonet-init.js:246"
+   ]
+  },
+  {
+   "name": "**",
+   "sites": [
+    "scripts/holonet/subsystems/holonet-bus.js:63"
+   ]
+  },
+  {
+   "name": "closeWorld",
+   "sites": [
+    "scripts/holonet/subsystems/holonews-auto-publisher.js:129"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [],
+ "tests": [
+  "tests/gm-holonet-phase8a-exactly-once-publication.test.mjs",
+  "tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs",
+  "tests/gm-job-source-location-identity.test.mjs",
+  "tests/ti4c0-g16-holonet-credit-evidence.test.mjs",
+  "tests/ti4c0-g26-party-fund-integrity.test.mjs"
+ ]
+}

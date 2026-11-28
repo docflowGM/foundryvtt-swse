@@ -11,7 +11,6 @@ import { canApplyShaperLore, shaperLoreBonus } from "/systems/foundryvtt-swse/sc
 import { masterOfMovementRemaining, isMasterOfMovementRerollSkill } from "/systems/foundryvtt-swse/scripts/engine/combat/class-master-of-movement.js";
 import { observedSkillBonus, hasObservedSkillTarget, soleTargetedActor } from "/systems/foundryvtt-swse/scripts/engine/combat/class-target-observation.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
-import { getCriticalConfirmBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/items/weapon-range-profile-resolver.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { getCoreAttackOptionEconomy } from "/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-action-economy.js";
@@ -64,8 +63,6 @@ export const ROLL_HOOKS = Object.freeze({
   POST_FORCE_POINT: 'swse.postForcePointRoll',
 
   // Critical confirmation
-  PRE_CRIT_CONFIRM: 'swse.preRollCritConfirm',
-  POST_CRIT_CONFIRM: 'swse.postRollCritConfirm',
 
   // Generic roll hook
   PRE_ROLL: 'swse.preRoll',
@@ -2148,111 +2145,6 @@ export function analyzeCriticalThreat(d20Result, critRange = 20) {
   };
 }
 
-/**
- * @deprecated Phase 2 rolling-system alignment (docs/audits/rolling-system-alignment-phase-2.md):
- * SWSE does not use a critical-confirmation roll. This function has no
- * remaining callers in the active codebase; kept only for compatibility in
- * case an external macro/module still references it. Do not add new callers —
- * route attack outcome interpretation through AttackOutcomeResolver instead.
- *
- * Roll a critical hit confirmation (only for expanded threat ranges, NOT nat 20)
- * @param {Object} options
- * @param {Actor} options.actor - The attacking actor
- * @param {Item} options.weapon - The weapon used
- * @param {number} options.attackBonus - The attack bonus used
- * @param {number} options.targetDefense - The target's Reflex defense
- * @param {number} [options.fpBonus=0] - Force Point bonus already applied
- * @param {number} options.originalD20 - The original d20 result (for context)
- * @returns {Promise<Object>} { roll, confirmed, d20, total }
- */
-export async function rollCriticalConfirmation({ actor, weapon, attackBonus, targetDefense, fpBonus = 0, originalD20 }) {
-  // Create roll context for hooks
-  const context = {
-    actor,
-    weapon,
-    attackBonus,
-    targetDefense,
-    fpBonus,
-    modifiers: {}
-  };
-
-  // Call pre-roll hook
-  if (!callPreRollHook(ROLL_HOOKS.PRE_CRIT_CONFIRM, context)) {
-    return { roll: null, confirmed: false, cancelled: true };
-  }
-
-  // Calculate confirmation bonus (base attack bonus + critical confirmation bonus from rules)
-  const critConfirmBonus = getCriticalConfirmBonus(actor, weapon) || 0;
-  const totalBonus = attackBonus + critConfirmBonus;
-  const formula = `1d20 + ${totalBonus}`;
-
-  let roll;
-  try {
-    roll = await RollEngine.safeRoll(formula);
-    if (!roll) {
-      SWSELogger.error('Critical confirmation roll failed: RollEngine returned null');
-      ui.notifications.error('Critical confirmation roll failed');
-      return { roll: null, confirmed: false, error: 'RollEngine failure' };
-    }
-  } catch (err) {
-    SWSELogger.error('Critical confirmation roll failed:', err);
-    ui.notifications.error('Critical confirmation roll failed');
-    return { roll: null, confirmed: false, error: err };
-  }
-
-  const d20 = roll.dice[0].results[0].result;
-  const confirmed = roll.total >= targetDefense;
-
-  // Record in history
-  RollHistory.record({
-    roll,
-    actor,
-    type: 'critConfirm',
-    result: { confirmed, targetDefense },
-    context
-  });
-
-  // Create chat message
-  const html = `
-    <div class="swse-crit-confirm-card ${confirmed ? 'confirmed' : 'failed'}">
-      <div class="crit-header">
-        <i class="fa-solid fa-crosshairs"></i>
-        Critical Confirmation
-      </div>
-      <div class="crit-result">
-        <div class="roll-total">${roll.total}</div>
-        <div class="roll-d20">d20: ${d20}</div>
-        <div class="roll-formula">${formula}</div>
-      </div>
-      <div class="crit-vs">
-        vs Reflex ${targetDefense}
-      </div>
-      <div class="crit-outcome ${confirmed ? 'success' : 'failure'}">
-        ${confirmed
-          ? '<i class="fa-solid fa-circle-check"></i> CRITICAL HIT CONFIRMED!'
-          : '<i class="fa-solid fa-circle-xmark"></i> Critical not confirmed (normal hit)'}
-      </div>
-    </div>
-  `;
-
-  await createChatMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    content: html,
-    rolls: [roll]
-  });
-
-  // Show 3D dice if available
-  if (game.dice3d) {
-    await game.dice3d.showForRoll(roll, game.user, true);
-  }
-
-  // Call post-roll hook
-  const result = { roll, confirmed, d20, total: roll.total, targetDefense };
-  callPostRollHook(ROLL_HOOKS.POST_CRIT_CONFIRM, { ...context, result });
-
-  return result;
-}
-
 /* ============================================================================
    CONCEALMENT CHECK
    ============================================================================ */
@@ -2318,6 +2210,5 @@ export default {
   buildRollConfigModel,
   getSkillTotal,
   analyzeCriticalThreat,
-  rollCriticalConfirmation,
   rollConcealmentCheck
 };

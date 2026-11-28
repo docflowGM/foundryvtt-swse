@@ -1,0 +1,102 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "dev-tooling",
+ "name": "Dev tools, debug, build, validation and audit tooling",
+ "kind": "tooling",
+ "files": 280,
+ "runtimeSloc": 3404,
+ "runtimeFiles": 23,
+ "counts": {
+  "files": 280,
+  "runtimeModules": 3,
+  "runtimeSloc": 276,
+  "reachability": {
+   "unreachable-importers-only": 1,
+   "orphan-unreferenced": 2
+  },
+  "nonRuntimeByRole": {
+   "tool": 253,
+   "diagnostic": 12,
+   "other": 1,
+   "module": 6,
+   "migration": 1,
+   "presentation": 1,
+   "test": 3
+  }
+ },
+ "topModulesByConsumers": [],
+ "largestModules": [
+  {
+   "path": "scripts/validate-mutation-sovereignty.js",
+   "sloc": 116,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/tools/force-suggestion-utils.js",
+   "sloc": 104,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/validate/validate-advisory.js",
+   "sloc": 56,
+   "reach": "orphan-unreferenced"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/validate-mutation-sovereignty.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 116,
+   "tests": 0
+  },
+  {
+   "path": "scripts/tools/force-suggestion-utils.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 104,
+   "tests": 0
+  },
+  {
+   "path": "scripts/validate/validate-advisory.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 56,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 7,
+  "droids": 3,
+  "progression": 2,
+  "actor-core": 2,
+  "talents": 2,
+  "skills": 1,
+  "vehicles": 1,
+  "species": 1,
+  "mentor-suggestion": 1,
+  "governance": 1,
+  "classes": 1,
+  "feats": 1,
+  "data-registries": 1
+ },
+ "dependedOnByDomains": {
+  "ui-shell": 5,
+  "infrastructure": 3,
+  "equipment": 2,
+  "progression": 1,
+  "governance": 1
+ },
+ "probeHits": [],
+ "mechanicalResponsibilities": [],
+ "exactClones": [],
+ "duplicateSymbolNames": [],
+ "liveHooks": [],
+ "nonRuntimeEvidence": [],
+ "tests": [
+  "tests/gm-datapad-action-integrity-contract.test.mjs",
+  "tests/phase5-sheet-action-integrity-contract.test.mjs",
+  "tests/prerequisite-authority-boundary-regression.test.mjs"
+ ]
+}

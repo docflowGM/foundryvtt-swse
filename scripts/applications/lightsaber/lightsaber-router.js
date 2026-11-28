@@ -1,5 +1,6 @@
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 
 let lightsaberConstructionHooksRegistered = false;
@@ -72,8 +73,8 @@ export async function promptLightsaberConstructionIfEligible(actor, { newLevel =
         proceed: {
           label: "Proceed Now",
           callback: async () => {
-            await actor.setFlag("foundryvtt-swse", "lightsaberConstructionPrompted", true);
-            await actor.setFlag("foundryvtt-swse", "lightsaberConstructionDeferred", false);
+            await ActorEngine.updateActorFlags(actor, "foundryvtt-swse", "lightsaberConstructionPrompted", true, { recalc: false });
+            await ActorEngine.updateActorFlags(actor, "foundryvtt-swse", "lightsaberConstructionDeferred", false, { recalc: false });
             openLightsaberInterface(actor, null, { mode: "construct", openedFromPrompt: true });
             resolve(true);
           }
@@ -81,8 +82,8 @@ export async function promptLightsaberConstructionIfEligible(actor, { newLevel =
         later: {
           label: "Later",
           callback: async () => {
-            await actor.setFlag("foundryvtt-swse", "lightsaberConstructionPrompted", true);
-            await actor.setFlag("foundryvtt-swse", "lightsaberConstructionDeferred", true);
+            await ActorEngine.updateActorFlags(actor, "foundryvtt-swse", "lightsaberConstructionPrompted", true, { recalc: false });
+            await ActorEngine.updateActorFlags(actor, "foundryvtt-swse", "lightsaberConstructionDeferred", true, { recalc: false });
             ui.notifications.info("Lightsaber construction remains available from your character sheet.");
             resolve(false);
           }

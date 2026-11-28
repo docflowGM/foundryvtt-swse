@@ -81,11 +81,6 @@ export const DROID_PART_CATEGORIES = Object.freeze({
   accessory: 'accessory'
 });
 
-export const DROID_REQUIRED_PARTS = Object.freeze({
-  processor: { defaultId: 'heuristic', defaultName: 'Heuristic Processor' },
-  locomotion: { defaultId: 'walking', defaultName: 'Walking' },
-  appendages: { defaultId: 'hand', defaultName: '2 Droid Arms' }
-});
 
 const BASE_APPENDAGE_SLOTS = Object.freeze([
   { key: 'leftArm', label: 'Left Arm', required: true, defaultId: 'hand', defaultName: 'Droid Arm / Hand' },
@@ -497,9 +492,6 @@ export function getDroidPartDefinition(idOrName) {
   return DROID_PART_DEFINITION_MAP[key] ?? DROID_PART_DEFINITIONS.find(def => slugify(def.name) === key) ?? null;
 }
 
-export function getDroidPartsBySlot(slot) {
-  return DROID_PART_DEFINITIONS.filter(def => def.slot === slot);
-}
 
 export function normalizeDroidSystemIdentityKey(value) {
   if (value === undefined || value === null) return '';
@@ -785,23 +777,6 @@ export function normalizeDroidPartSource(source, options = {}) {
   };
 }
 
-export function isDroidPartWeapon(partOrSource) {
-  const part = partOrSource?.category ? partOrSource : normalizeDroidPartSource(partOrSource);
-  if (part?.countsAsWeapon || part?.selfDestruct) return true;
-  const name = slugify(part?.name);
-  return /weapon|taser|launcher|stunner|self-destruct|torch|rocket-arm|projectile/.test(name);
-}
-
-export function getSelfDestructDamage(actorOrSize, options = {}) {
-  const size = typeof actorOrSize === 'string'
-    ? actorOrSize.toLowerCase()
-    : String(actorOrSize?.system?.droidSystems?.size ?? actorOrSize?.system?.size ?? 'medium').toLowerCase();
-  const effectiveSize = options.miniaturized === true ? sizeShift(size, 2) : size;
-  const table = options.miniaturized === true
-    ? { diminutive: '4d6', tiny: '6d6', small: '8d6', medium: '10d6', large: '20d6', huge: '20d6', gargantuan: '20d6', colossal: '20d6' }
-    : { small: '4d6', medium: '6d6', large: '8d6', huge: '10d6', gargantuan: '20d6', colossal: '20d6' };
-  return table[effectiveSize] ?? table[size] ?? (options.miniaturized ? '10d6' : '6d6');
-}
 
 function sizeShift(size, steps) {
   const idx = SIZE_ORDER.indexOf(String(size ?? 'medium').toLowerCase());
@@ -834,57 +809,6 @@ export function resolveDroidPartPrerequisites(parts = []) {
   return messages;
 }
 
-export function resolveProcessorSlots(parts = []) {
-  const processors = parts.filter(part => part.slot === 'processor' || part.category === 'processor');
-  const extraSlots = parts.reduce((sum, part) => sum + (Number(part.grants?.processorSlots ?? 0) || 0), 0);
-  const capacity = Math.max(1, 1 + extraSlots);
-  return Array.from({ length: capacity }, (_, index) => {
-    const installed = processors[index] ?? null;
-    return {
-      key: index === 0 ? 'primaryProcessor' : `backupProcessor${index}`,
-      label: index === 0 ? 'Active Processor' : `Reserve Processor ${index}`,
-      active: index === 0,
-      installed,
-      empty: !installed,
-      lockedReason: index > 0 ? 'Unlocked by Backup Processor; only one processor can be active at a time.' : ''
-    };
-  });
-}
-
-export function resolveAppendageSlots(parts = [], existingSlots = []) {
-  const appendages = parts.filter(part => part.slot === 'appendage' || part.category === 'appendage');
-  const configured = Array.isArray(existingSlots) ? existingSlots : [];
-  const slotDefs = [...BASE_APPENDAGE_SLOTS];
-
-  for (const slot of configured) {
-    const key = slot?.key || slot?.slotKey || slot?.location;
-    if (key && !slotDefs.some(def => def.key === key)) {
-      slotDefs.push({ key, label: slot.label || key, required: false, defaultName: 'Empty appendage mount' });
-    }
-  }
-
-  for (const part of appendages) {
-    const key = part.slotKey || part.location;
-    if (key && !slotDefs.some(def => def.key === key)) {
-      slotDefs.push({ key, label: toTitle(key), required: false, defaultName: 'Empty appendage mount' });
-    }
-  }
-
-  const used = new Set();
-  return slotDefs.map((slot, index) => {
-    let installed = null;
-    if (slot.key) installed = appendages.find(part => !used.has(part) && (part.slotKey === slot.key || part.location === slot.key)) ?? null;
-    if (!installed) installed = appendages.find(part => !used.has(part)) ?? null;
-    if (installed) used.add(installed);
-    return {
-      ...slot,
-      index,
-      installed,
-      empty: !installed,
-      defaultName: slot.defaultName || 'Empty appendage mount'
-    };
-  });
-}
 
 function toTitle(value) {
   return String(value ?? '')
@@ -894,69 +818,4 @@ function toTitle(value) {
     .trim();
 }
 
-export function collectDroidPartEffectsFromActor(actor) {
-  if (!actor || actor.type !== 'droid') return [];
-  const parts = [];
-  const ds = actor.system?.droidSystems ?? {};
-  const add = (entry, options = {}) => {
-    const part = normalizeDroidPartSource(entry, options);
-    if (part?.id) parts.push(part);
-  };
 
-  if (ds.processor?.id || ds.processor?.name) add(ds.processor, { category: 'processor', slot: 'processor' });
-  if (Array.isArray(ds.processors)) ds.processors.forEach(p => add(p, { category: 'processor', slot: 'processor' }));
-  if (ds.locomotion?.id || ds.locomotion?.name || ds.locomotion?.type) add(ds.locomotion, { category: 'locomotion', slot: 'locomotion' });
-  for (const key of ['appendages', 'accessories', 'sensors', 'weapons', 'armor']) {
-    const value = ds[key];
-    if (Array.isArray(value)) value.forEach(v => add(v, { category: key === 'weapons' ? 'weapon' : key }));
-    else if (value && typeof value === 'object' && (value.id || value.name)) add(value, { category: key });
-  }
-
-  const itemArray = typeof actor.items?.toObject === 'function'
-    ? actor.items.contents ?? [...actor.items]
-    : Array.isArray(actor.items) ? actor.items : [];
-  for (const item of itemArray) {
-    if (item?.system?.droidPart?.enabled || item?.system?.integrated || item?.flags?.swse?.integrated) {
-      add(item, { type: item.type });
-    }
-  }
-
-  const effectParts = [];
-  const prereqMessages = resolveDroidPartPrerequisites(parts);
-  const activeComboMessages = prereqMessages.filter(msg => msg.severity === 'info');
-
-  for (const part of parts) {
-    for (const effect of part.effects ?? []) {
-      if (!effect?.target) continue;
-      effectParts.push({ ...effect, sourceId: part.id, sourceName: part.name, description: effect.label || `${part.name}: ${effect.target}` });
-    }
-    for (const combo of part.comboEffects ?? []) {
-      const required = combo.requires ?? [];
-      const isActive = activeComboMessages.some(msg => msg.partId === part.id && required.every(req => msg.message.includes(req)));
-      if (!isActive) continue;
-      for (const effect of combo.effects ?? []) {
-        if (!effect?.target) continue;
-        effectParts.push({ ...effect, sourceId: part.id, sourceName: part.name, description: effect.label || `${part.name}: ${effect.target}` });
-      }
-    }
-  }
-
-  return effectParts;
-}
-
-export function makeDroidPartUseChatHtml(actor, part, actionLabel = 'uses') {
-  const safeName = foundry.utils.escapeHTML?.(actor?.name ?? 'Droid') ?? actor?.name ?? 'Droid';
-  const partName = foundry.utils.escapeHTML?.(part?.name ?? 'Droid Part') ?? part?.name ?? 'Droid Part';
-  const desc = foundry.utils.escapeHTML?.(part?.rulesText || part?.description || '') ?? (part?.rulesText || part?.description || '');
-  const weapon = part?.asWeapon;
-  const weaponLine = weapon?.countsAsWeapon
-    ? `<p><strong>Weapon:</strong> ${foundry.utils.escapeHTML?.(weapon.damage || weapon.special || 'Special') ?? (weapon.damage || weapon.special || 'Special')}</p>`
-    : '';
-  return `
-    <div class="swse-chat-card swse-droid-part-card">
-      <h3>${safeName} ${actionLabel} ${partName}</h3>
-      ${desc ? `<p>${desc}</p>` : ''}
-      ${weaponLine}
-    </div>
-  `;
-}

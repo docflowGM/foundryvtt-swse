@@ -48,7 +48,7 @@ assert.match(executor, /async function _postCombinedCard\(actor, sequence, resul
 assert.match(executor, /flags: \{ swse: \{\s*\n\s*schemaVersion: FULL_ATTACK_SCHEMA_VERSION,\s*\n\s*fullAttack: true,\s*\n\s*packageType: sequence\.packageType,\s*\n\s*sequenceId,/);
 
 // 4. Sequence penalties are declared once in the plan (buildFullAttackSequence
-// / fallbackMultiAttackPlan) BEFORE the loop and passed as a literal number
+// ) BEFORE the loop and passed as a literal number
 // into each rollAttack() call — never recomputed inside the loop from a
 // different declaration state. (Both live paths read step.finalPenalty /
 // attack.finalPenalty, a precomputed plan field, not a fresh calculation.)

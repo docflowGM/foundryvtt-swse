@@ -19,7 +19,7 @@ import { SWSEV2CharacterLikeSheet } from "/systems/foundryvtt-swse/scripts/sheet
  * exact file: ≥8 other files depend on the literal runtime string
  * 'SWSEV2CharacterSheet' via Foundry's `renderSWSEV2CharacterSheet` hook
  * convention, `constructor.name` checks, `.prototype` patching, or a DOM
- * `id`-prefix selector. See scripts/patches/force-suite-render-guard-hotfix.js,
+ * `id`-prefix selector. See repaintForceSheet() in scripts/engine/force/force-suite-runtime-repairs.js,
  * scripts/patches/combat-ui-behavior-hotfix.js,
  * scripts/engine/force/force-suite-runtime-repairs.js,
  * scripts/engine/combat/features/combat-feature-panel-renderer.js,

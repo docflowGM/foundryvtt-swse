@@ -177,8 +177,8 @@ async function normalizeReturnFireFeat(item, options = {}) {
 }
 
 export function registerReturnFireFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeReturnFireFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeReturnFireFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeReturnFireFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeReturnFireFeat(item, options) : false);
   SWSELogger.log('[ReturnFireNormalization] Hooks registered');
 }
 

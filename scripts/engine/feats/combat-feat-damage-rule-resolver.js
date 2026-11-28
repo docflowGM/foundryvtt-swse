@@ -1,5 +1,5 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { getHeroicLevel, getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { getHeroicLevel, getHalfHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 
 function normalizeKey(value = '') {
   return String(value ?? '')
@@ -143,7 +143,7 @@ async function setComboState(actor, state) {
     });
     return;
   }
-  await actor.setFlag?.('foundryvtt-swse', 'attackComboState', state);
+  await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'attackComboState', state, { recalc: false });
 }
 
 function skipPending(state = {}, ruleId = '') {
@@ -177,7 +177,7 @@ export class CombatFeatDamageRuleResolver {
       if (mutation?.type !== 'HEROIC_LEVEL_DAMAGE_REPLACEMENT') continue;
       if (!targetHasNotActed(actor, context)) continue;
       const heroic = Math.max(0, Number(getHeroicLevel(actor)) || Number(actor?.system?.level) || 0);
-      const half = Math.max(0, Number(getEffectiveHalfLevel(actor)) || Math.floor(heroic / 2));
+      const half = Math.max(0, Number(getHalfHeroicLevel(actor)) || Math.floor(heroic / 2));
       const bonus = Math.max(0, heroic - half);
       if (bonus <= 0) continue;
       parts.flatBonus += bonus;

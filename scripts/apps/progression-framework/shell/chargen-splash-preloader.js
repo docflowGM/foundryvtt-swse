@@ -13,7 +13,6 @@ const CORE_TEMPLATES = Object.freeze([
   ROOT + 'steps/species-work-surface.hbs',
   ROOT + 'steps/class-work-surface.hbs',
   ROOT + 'steps/attribute-work-surface.hbs',
-  ROOT + 'steps/galactic-profile-class-work-surface.hbs',
   ROOT + 'steps/galactic-profile-archetype-work-surface.hbs',
   ROOT + 'steps/galactic-profile-review-work-surface.hbs',
   ROOT + 'details-panel/galactic-profile-details.hbs',

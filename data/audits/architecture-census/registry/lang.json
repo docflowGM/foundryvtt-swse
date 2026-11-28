@@ -1,0 +1,494 @@
+{
+ "schema": "swse.architecture-census.registry/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "shard": "lang",
+ "count": 25,
+ "files": [
+  {
+   "id": "F-3d8f9bc28a",
+   "path": "lang/ar.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 471257,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-1127fe9817",
+   "path": "lang/bn.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 472832,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-13ff829da6",
+   "path": "lang/da.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 469000,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-a7e3f95dd3",
+   "path": "lang/de.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 472959,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-e481363e06",
+   "path": "lang/en.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 470410,
+   "lines": 8395,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "docs/audits/v2-actor-authority-performance-phase-1.md",
+    "docs/audits/v2-phase-2-actor-authority-normalization.md",
+    "docs/audits/v2-phase-3-derived-performance.md",
+    "docs/audits/v2-phase-4-sheet-architecture.md",
+    "docs/audits/v2-phase-5-sheet-ux-action-integrity.md",
+    "docs/audits/v2-phase-6-context-render-performance.md",
+    "docs/audits/vehicle-crew-runtime-and-ux-phase-7.md",
+    "scripts/apps/progression-framework/shell/option-card-action.js",
+    "scripts/ui/defense-tooltip.js",
+    "scripts/ui/weapon-tooltip.js",
+    "system.json",
+    "tests/progression-suggestion-and-render-contracts.test.mjs"
+   ],
+   "referencedByCount": 12,
+   "runtimeReferrerCount": 4,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-1da58dbdf7",
+   "path": "lang/es.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 474179,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-0dd1aa66f7",
+   "path": "lang/fi.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 469580,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-164c6f5fad",
+   "path": "lang/fr.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 476810,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-16faab2c52",
+   "path": "lang/he.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 469657,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-ba7c17c950",
+   "path": "lang/hi.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 474182,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-84ab750861",
+   "path": "lang/id.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 469116,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-771294e0f4",
+   "path": "lang/it.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 470233,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-700e7141de",
+   "path": "lang/ja.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 480502,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-436a662200",
+   "path": "lang/ko.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 474256,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-d84f4e6d10",
+   "path": "lang/nl.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 469133,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-9007d85a8a",
+   "path": "lang/pl.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 468947,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-ff1612bae8",
+   "path": "lang/pt-BR.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 473997,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-f738ed68c6",
+   "path": "lang/ru.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 497754,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-93b9a764ca",
+   "path": "lang/sv.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 468890,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-8b6490de47",
+   "path": "lang/th.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 472795,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-1285524a85",
+   "path": "lang/tr.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 468940,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-85fc9d7d5b",
+   "path": "lang/uk.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 471378,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-c715c9a8e3",
+   "path": "lang/ur.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 470208,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-7cde315841",
+   "path": "lang/vi.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 469736,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-ce0e283075",
+   "path": "lang/zh-CN.json",
+   "top": "lang",
+   "ext": "json",
+   "bytes": 465604,
+   "lines": 8358,
+   "sloc": null,
+   "primarySystem": "localization",
+   "domainBasis": "path-rule",
+   "role": "localization",
+   "runtimeReachability": "manifest-language",
+   "referencedBy": [
+    "system.json"
+   ],
+   "referencedByCount": 1,
+   "runtimeReferrerCount": 1,
+   "verification": "reference-traced"
+  }
+ ]
+}

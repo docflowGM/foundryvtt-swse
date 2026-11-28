@@ -5,6 +5,7 @@
  * Called once from system initialization (module/system.js or equivalent).
  * Ensures all game data is normalized and indexed for optimal progression engine performance.
  */
+import { loadCanonicalPrerequisiteIndex } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/canonical-prerequisite-index.js';
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { FeatureIndex } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/feature-index.js";
@@ -33,7 +34,7 @@ import { validateMentorIntegration } from "/systems/foundryvtt-swse/scripts/engi
 // Deferred intentionally: Extracting rollout configuration requires a dedicated progression-framework refactor.
 // Do not expand this dependency; move pure logic into scripts/engine/progression in a later pass.
 // PHASE 4: Rollout Configuration
-import { RolloutSettings } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/rollout/rollout-settings.js";
+import { RolloutSettings } from "/systems/foundryvtt-swse/scripts/engine/progression/rollout-settings.js";
 import { initializeClassPrerequisitesCache } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-init.js";
 import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
@@ -176,6 +177,12 @@ export const SystemInitHooks = {
             if (!talentSuccess) {
                 SWSELogger.error('TalentDB build failed');
                 return { ok: false, stage: 'TalentDB' };
+            }
+
+            // 3b. Load the generated canonical prerequisite index (PRQ.1D). Non-fatal: without it the checker keeps its previous behavior.
+            SWSELogger.log('  - Loading canonical prerequisite index...');
+            if (!(await loadCanonicalPrerequisiteIndex())) {
+                SWSELogger.warn('[System Init] Canonical prerequisite index unavailable; prerequisite checks use the compatibility path.');
             }
 
             // 4. Warm class prerequisite cache so UI and suggestion paths read the same legality layer.

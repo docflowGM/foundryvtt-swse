@@ -1,0 +1,423 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "houserules",
+ "name": "House rules",
+ "kind": "feature",
+ "files": 43,
+ "runtimeSloc": 8356,
+ "runtimeFiles": 25,
+ "counts": {
+  "files": 43,
+  "runtimeModules": 25,
+  "runtimeSloc": 8356,
+  "reachability": {
+   "orphan-unreferenced": 3,
+   "reachable-static": 9,
+   "unreachable-importers-only": 10,
+   "test-only-import": 1,
+   "reachable-dynamic": 2
+  },
+  "nonRuntimeByRole": {
+   "data": 1,
+   "evidence-or-doc": 2,
+   "presentation-style": 3,
+   "presentation-template": 10,
+   "test": 2
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/engine/system/HouseRuleService.js",
+   "consumers": 76,
+   "sloc": 197,
+   "role": "engine-or-service",
+   "exports": [
+    "HouseRuleService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 376
+  },
+  {
+   "path": "scripts/houserules/house-rule-grant-table.js",
+   "consumers": 7,
+   "sloc": 118,
+   "role": "engine-or-service",
+   "exports": [
+    "HOUSE_RULE_GRANTS",
+    "FEAT_TALENT_RULE_KEYS",
+    "isFeatTalentRuleKey",
+    "getFeatTalentRulesSignature",
+    "isGrantEnabled",
+    "normalizeGrantName",
+    "enabledGrants",
+    "grantForSetting",
+    "grantForItem",
+    "readHouseRuleMarker",
+    "actorHasGrant",
+    "canWriteGrants"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 79
+  },
+  {
+   "path": "scripts/houserules/adapters/FeatRulesAdapter.js",
+   "consumers": 5,
+   "sloc": 37,
+   "role": "engine-or-service",
+   "exports": [
+    "FeatRulesAdapter"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 80
+  },
+  {
+   "path": "scripts/houserules/adapters/HealingRules.js",
+   "consumers": 5,
+   "sloc": 73,
+   "role": "engine-or-service",
+   "exports": [
+    "HealingRules"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 10
+  },
+  {
+   "path": "scripts/houserules/houserule-feat-grants.js",
+   "consumers": 4,
+   "sloc": 301,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "HouseRuleFeatGrants"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 1,
+   "ciTests": 6
+  },
+  {
+   "path": "scripts/houserules/houserule-recovery.js",
+   "consumers": 3,
+   "sloc": 120,
+   "role": "engine-or-service",
+   "exports": [
+    "RecoveryMechanics"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 1,
+   "ciTests": 10
+  },
+  {
+   "path": "scripts/houserules/houserule-talent-combination.js",
+   "consumers": 3,
+   "sloc": 85,
+   "role": "engine-or-service",
+   "exports": [
+    "HouseRuleTalentCombination"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 52
+  },
+  {
+   "path": "scripts/houserules/houserule-status-effects.js",
+   "consumers": 2,
+   "sloc": 277,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "StatusEffectsMechanics"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 3,
+   "ciTests": 10
+  },
+  {
+   "path": "scripts/houserules/houserules-manifest.js",
+   "consumers": 2,
+   "sloc": 2229,
+   "role": "engine-or-service",
+   "exports": [
+    "HOUSERULE_MANIFEST",
+    "buildManifestIndex",
+    "validateHouleruleManifest"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 1
+  },
+  {
+   "path": "scripts/houserules/houserule-settings.js",
+   "consumers": 1,
+   "sloc": 1606,
+   "role": "engine-or-service",
+   "exports": [
+    "registerHouseruleSettings"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/settings/house-rules.js",
+   "consumers": 1,
+   "sloc": 184,
+   "role": "engine-or-service",
+   "exports": [
+    "registerHouseRuleSettings",
+    "ClassTreeAccessForm",
+    "getClassTreeOverrides",
+    "addClassTreeAccess",
+    "removeClassTreeAccess",
+    "clearClassTreeOverrides",
+    "isDarkSidePrestigeRuleEnabled"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/houserules/houserules-manifest.js",
+   "sloc": 2229,
+   "reach": "reachable-dynamic"
+  },
+  {
+   "path": "scripts/houserules/houserule-settings.js",
+   "sloc": 1606,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/houserules/houserule-menus.js",
+   "sloc": 475,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/houserules/houserule-presets.js",
+   "sloc": 449,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/houserules/houserule-healing.js",
+   "sloc": 339,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/apps/house-rules-app.js",
+   "sloc": 335,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/houserules/houserule-feat-grants.js",
+   "sloc": 301,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/houserules/houserules-data.js",
+   "sloc": 287,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/houserules/houserule-status-effects.js",
+   "sloc": 277,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/houserules/houserule-mechanics.js",
+   "sloc": 259,
+   "reach": "orphan-unreferenced"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/houserules/houserule-menus.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 475,
+   "tests": 0
+  },
+  {
+   "path": "scripts/houserules/houserule-presets.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 449,
+   "tests": 0
+  },
+  {
+   "path": "scripts/houserules/houserule-healing.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 339,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/house-rules-app.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 335,
+   "tests": 0
+  },
+  {
+   "path": "scripts/houserules/houserules-data.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 287,
+   "tests": 0
+  },
+  {
+   "path": "scripts/houserules/houserule-mechanics.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 259,
+   "tests": 0
+  },
+  {
+   "path": "scripts/houserules/houserule-healing-skill-integration.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 223,
+   "tests": 0
+  },
+  {
+   "path": "scripts/houserules/houserule-actor-enhancements.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 171,
+   "tests": 0
+  },
+  {
+   "path": "scripts/houserules/houserules-config.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 154,
+   "tests": 0
+  },
+  {
+   "path": "scripts/houserules/houserule-skill-training.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 149,
+   "tests": 0
+  },
+  {
+   "path": "scripts/houserules/houserule-flanking.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 100,
+   "tests": 0
+  },
+  {
+   "path": "scripts/houserules/houserule-block-mechanic.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 90,
+   "tests": 0
+  },
+  {
+   "path": "scripts/houserules/houserule-condition-track.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 49,
+   "tests": 0
+  },
+  {
+   "path": "scripts/houserules/houserule-grapple.js",
+   "reach": "test-only-import",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 49,
+   "tests": 3
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 24,
+  "combat": 9,
+  "ui-shell": 7,
+  "actor-core": 7,
+  "skills": 3,
+  "force": 1,
+  "feats": 1,
+  "talents": 1,
+  "rolls": 1,
+  "progression": 1,
+  "species": 1,
+  "classes": 1
+ },
+ "dependedOnByDomains": {
+  "progression": 23,
+  "combat": 11,
+  "ui-shell": 8,
+  "infrastructure": 8,
+  "mentor-suggestion": 6,
+  "holonet": 5,
+  "force": 4,
+  "store-economy": 3,
+  "actor-core": 2,
+  "vehicles": 2,
+  "governance": 2,
+  "migration": 2,
+  "classes": 1,
+  "data-registries": 1,
+  "abilities-effects": 1,
+  "skills": 1,
+  "settings-config": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/houserules/houserule-status-effects.js",
+     "domain": "houserules",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      298
+     ]
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [],
+ "exactClones": [],
+ "duplicateSymbolNames": [],
+ "liveHooks": [
+  {
+   "name": "updateActor",
+   "sites": [
+    "scripts/houserules/houserule-status-effects.js:129"
+   ]
+  },
+  {
+   "name": "createActor",
+   "sites": [
+    "scripts/houserules/houserule-feat-grants.js:41"
+   ]
+  },
+  {
+   "name": "updateSetting",
+   "sites": [
+    "scripts/houserules/houserule-feat-grants.js:33"
+   ]
+  },
+  {
+   "name": "restCompleted",
+   "sites": [
+    "scripts/houserules/houserule-recovery.js:18",
+    "scripts/houserules/houserule-status-effects.js:130"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "docs/audits/modification-v2-gm-installation-check-houserules-owner-direction-2026-10-15.md",
+  "docs/audits/reconciliation-v2-house-rule-coverage.md"
+ ],
+ "tests": [
+  "tests/houserule-grapple-authority.test.mjs",
+  "tests/talent-step-block-deflect-cache-coherency.test.mjs"
+ ]
+}

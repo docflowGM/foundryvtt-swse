@@ -7,7 +7,6 @@
  * the skill use being attempted or to the roll that was just produced.
  */
 
-import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";

@@ -1,0 +1,294 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "classes",
+ "name": "Classes and prestige classes",
+ "kind": "mechanical",
+ "files": 134,
+ "runtimeSloc": 3162,
+ "runtimeFiles": 11,
+ "counts": {
+  "files": 134,
+  "runtimeModules": 10,
+  "runtimeSloc": 3097,
+  "reachability": {
+   "reachable-static": 9,
+   "unreachable-importers-only": 1
+  },
+  "nonRuntimeByRole": {
+   "asset": 33,
+   "evidence-data": 3,
+   "data": 35,
+   "evidence-or-doc": 33,
+   "other": 1,
+   "module": 1,
+   "presentation-style": 1,
+   "presentation-template": 4,
+   "test": 10,
+   "tool": 3
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/data/classes-db.js",
+   "consumers": 25,
+   "sloc": 111,
+   "role": "module",
+   "exports": [
+    "ClassesDB"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 370
+  },
+  {
+   "path": "scripts/engine/registries/classes-registry.js",
+   "consumers": 23,
+   "sloc": 158,
+   "role": "registry",
+   "exports": [
+    "ClassesRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/data/class-normalizer.js",
+   "consumers": 15,
+   "sloc": 176,
+   "role": "normalizer",
+   "exports": [
+    "normalizeClassId",
+    "normalizeClass",
+    "getClassValue",
+    "validateClass"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 370
+  },
+  {
+   "path": "scripts/engine/prestige/identity-engine.js",
+   "consumers": 10,
+   "sloc": 1086,
+   "role": "engine-or-service",
+   "exports": [
+    "IdentityEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 55
+  },
+  {
+   "path": "scripts/data/prestige-prerequisites.js",
+   "consumers": 9,
+   "sloc": 568,
+   "role": "module",
+   "exports": [
+    "PRESTIGE_PREREQUISITES",
+    "getPrerequisites",
+    "hasPrerequisites",
+    "getAllPrestigeClassNames"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 364
+  },
+  {
+   "path": "scripts/engine/prestige/prestige-layer-registry.js",
+   "consumers": 4,
+   "sloc": 414,
+   "role": "registry",
+   "exports": [
+    "PrestigeLayerRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 55
+  },
+  {
+   "path": "scripts/data/class-tag-metadata.js",
+   "consumers": 3,
+   "sloc": 205,
+   "role": "module",
+   "exports": [
+    "CLASS_TAG_METADATA",
+    "getClassTagMetadata"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 371
+  },
+  {
+   "path": "scripts/engine/prestige/bias-tag-projection.js",
+   "consumers": 1,
+   "sloc": 127,
+   "role": "module",
+   "exports": [
+    "BiasTagProjection"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 52
+  },
+  {
+   "path": "scripts/data/class-relationship-registry.js",
+   "consumers": 1,
+   "sloc": 40,
+   "role": "registry",
+   "exports": [
+    "ClassRelationshipRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/engine/prestige/identity-engine.js",
+   "sloc": 1086,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/data/prestige-prerequisites.js",
+   "sloc": 568,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/prestige/prestige-layer-registry.js",
+   "sloc": 414,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/core/sidebar-icon-class-audit.js",
+   "sloc": 212,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/data/class-tag-metadata.js",
+   "sloc": 205,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/data/class-normalizer.js",
+   "sloc": 176,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/registries/classes-registry.js",
+   "sloc": 158,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/prestige/bias-tag-projection.js",
+   "sloc": 127,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/data/classes-db.js",
+   "sloc": 111,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/data/class-relationship-registry.js",
+   "sloc": 40,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/core/sidebar-icon-class-audit.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 212,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "mentor-suggestion": 6,
+  "infrastructure": 5,
+  "force": 1,
+  "houserules": 1,
+  "progression": 1,
+  "talents": 1
+ },
+ "dependedOnByDomains": {
+  "progression": 28,
+  "mentor-suggestion": 13,
+  "infrastructure": 6,
+  "skills": 3,
+  "documentation": 2,
+  "actor-core": 2,
+  "data-registries": 2,
+  "force": 1,
+  "dev-tooling": 1,
+  "abilities-effects": 1,
+  "holonet": 1,
+  "houserules": 1
+ },
+ "probeHits": [],
+ "mechanicalResponsibilities": [],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "normalizeClass",
+   "files": [
+    "scripts/apps/progression-framework/steps/step-normalizers.js",
+    "scripts/data/class-normalizer.js"
+   ]
+  }
+ ],
+ "liveHooks": [],
+ "nonRuntimeEvidence": [
+  "data/audits/class-mechanics-protected-baseline.json",
+  "data/audits/class-phase-6a-structural-census.json",
+  "data/audits/class-phase-6b-prestige-source-ledger.json",
+  "docs/audits/class-feature-contract-wave-a-matrix.md",
+  "docs/audits/class-feature-implementation-audit.md",
+  "docs/audits/class-feature-implementation-status.json",
+  "docs/audits/class-mechanics-step-2-bab.md",
+  "docs/audits/class-mechanics-step-3-hit-dice-defenses.md",
+  "docs/audits/class-phase-6a-6b-recovery-provenance.md",
+  "docs/audits/class-phase-6a-read-only-census.md",
+  "docs/audits/class-phase-6b-prestige-source-audit.md",
+  "docs/audits/class-phase-6d-unlock-corrections.md",
+  "docs/audits/class-phase-6f1-runtime-hardening-checkpoint.md",
+  "docs/audits/class-phase-6f10-quick-sabotage.md",
+  "docs/audits/class-phase-6f11-saboteur-convergence.md",
+  "docs/audits/class-phase-6f2-piracy-sith-adjudication.md",
+  "docs/audits/class-phase-6f4-saboteur-destructive.md",
+  "docs/audits/class-phase-6f5-elite-trooper-dr.md",
+  "docs/audits/class-phase-6f6-gunslinger-trusty-sidearm.md",
+  "docs/audits/class-phase-6f7-infiltrator-unarmed-stun.md",
+  "docs/audits/class-phase-6f9-shaper-lore.md",
+  "docs/audits/class-phase-6h-jedi-master-sith-lord-authority.md",
+  "docs/audits/class-phase-6j-fallen-jedi-execution-gate.md",
+  "docs/audits/class-phase-6l-prophet-vision-finalization.md",
+  "docs/audits/class-phase-6m-serenity-temporal-roll.md",
+  "docs/audits/class-phase-6n-sith-lord-temptation.md",
+  "docs/audits/class-phase-6o-typed-effect-ingress.md",
+  "docs/audits/class-phase-6p-prophet-gm-vision-review.md",
+  "docs/audits/class-phase-6q-indomitable-consumer-closure.md",
+  "docs/audits/class-realignment-iv-wave-a-print-verification.md",
+  "docs/audits/class-realignment-iv-wave-c.md",
+  "docs/audits/class-realignment-iv-wave-d.md",
+  "docs/design/SWSE_Prestige_Q3_All_32_Classes_Consolidated_v01.md",
+  "docs/design/SWSE_Prestige_Q4_Rolling_Editorial.md",
+  "docs/design/SWSE_Prestige_Q5_Rolling_Editorial.md",
+  "docs/design/SWSE_Prestige_Q6_Fresh_Chat_Handoff_2026-11-15.md"
+ ],
+ "tests": [
+  "tests/class-hit-die-defense-source.test.mjs",
+  "tests/class-pack-protected-guard.test.mjs",
+  "tests/class-phase-6d-officer-improviser-unlocks.test.mjs",
+  "tests/class-phase-6d-other-feature-unlocks.test.mjs",
+  "tests/class-phase-6f2-sith-one-dsp.test.mjs",
+  "tests/class-phase-6h-jedi-master-sith-lord-authority.test.mjs",
+  "tests/helpers/recon-fixture.mjs",
+  "tests/mentor-survey-evidence-provenance.test.mjs",
+  "tests/mentor-survey-multiclass-q2.test.mjs",
+  "tests/reconciliation-v2-contract.test.mjs"
+ ]
+}

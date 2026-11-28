@@ -1,9 +1,10 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { ownedAbilityInstance } from "/systems/foundryvtt-swse/scripts/utils/canonical-ability-identity.js";
+import { readBonusPool } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { verifyAdjacentAllyEvent } from "/systems/foundryvtt-swse/scripts/engine/force/ability-option-contracts.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
@@ -11,6 +12,7 @@ import { accruedPenalty, withRecordedUse, withCreditedBackUse } from "/systems/f
 import { isWeaponReadied } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { resolveReactionWeapon, selectedReactionModifiers, canonicalLightsaberGroupOf } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-weapon-context.js";
+import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/utils/responsible-gm.js";
 
 // seam for the two roll collaborators (a test injects its own; production uses the real roll dialog and skill roll)
 export const LIGHTSABER_TALENT_IO = { showRollModifiersDialog, rollSkillCheck };
@@ -78,7 +80,7 @@ function currentBlockDeflectState(actor) {
 // all equipped weapons are never silently combined.
 async function chooseReactionWeapon(candidates, title) {
   const options = candidates.map((c) => `<option value="${esc(c.item.id)}">${esc(c.item.name)}</option>`).join('');
-  const picked = await SWSEDialogV2.prompt({
+  const picked = await DialogPort.prompt({
     title: `${title} - choose the weapon`,
     content: `<form class="swse-dialog"><p>More than one equipped weapon can be used for ${esc(title)} with different effects. Choose the one you are using.</p><div class="form-group"><select name="weapon">${options}</select></div></form>`,
     label: 'Use this weapon',
@@ -125,7 +127,7 @@ async function promptAttackRollDc(title, { note = '', includeArea = false, inclu
     ${includeCortosis ? '<label class="checkbox"><input type="checkbox" name="cortosis" /> I am using a Cortosis Gauntlet for Block</label>' : ''}
     <p class="notes">You must be aware of the attack and not Flat-Footed. Lightsaber requirements remain table-adjudicated unless a talent explicitly changes them.</p>
   </form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title,
     content,
     label: 'Roll Use the Force',
@@ -153,7 +155,7 @@ async function promptNamedTarget(title, note = '') {
     <div class="form-group"><label>Target</label><input name="targetName" type="text" placeholder="Target name" /></div>
     <p class="notes">Exact range, line of sight, adjacency, target type, and weapon context remain GM/player adjudicated when the scene cannot prove them.</p>
   </form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title,
     content,
     label: 'Continue',
@@ -185,7 +187,7 @@ async function promptSeveringStrikeDetails(actor) {
     <label class="checkbox"><input type="checkbox" name="applyCondition" ${target?.actor ? 'checked' : ''} /> Apply -1 Condition Track and Persistent Condition to selected/targeted token</label>
     <p class="notes">The damage replacement itself is GM/player adjudicated: deal half damage instead of full damage. Limb penalties and surgery/cybernetic recovery are recorded in chat.</p>
   </form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title: 'Severing Strike',
     content,
     label: 'Use Severing Strike',
@@ -248,7 +250,7 @@ async function pickProtectableEvent(actor, talent) {
   if (!options.length) return null;
   if (options.length === 1) return options[0];
   const list = options.map((o, i) => `<option value="${i}">${esc(o.attacker.name)} attacks ${esc(o.ally.name)} (${o.event.attackTotal})</option>`).join('');
-  const picked = await SWSEDialogV2.prompt({
+  const picked = await DialogPort.prompt({
     title: `Protect an adjacent ally`, label: 'Protect',
     content: `<form class="swse-dialog"><div class="form-group"><label>Attack to answer</label><select name="pick">${list}</select></div></form>`,
     callback: (html) => { const root = html instanceof HTMLElement ? html : html?.[0] ?? html; return Number(new FormData(root?.querySelector?.('form') ?? root).get('pick')); }
@@ -260,10 +262,10 @@ async function pickProtectableEvent(actor, talent) {
 // spend is non-counting on the qualifying check (owner ruling FP-RD-007, Option B).
 async function askUseTemporaryPoint(actor, talent, modResult) {
   if (modResult?.useForcePoint !== true) return false;
-  const entries = actor?.getFlag?.(NS, 'bonusForcePoints')?.entries ?? actor?.flags?.swse?.bonusForcePoints?.entries ?? [];
+  const entries = readBonusPool(actor).entries ?? [];
   const has = Array.isArray(entries) && entries.some(e => e?.entitlement?.kind === 'regimen-reaction' && Number(e.value) >= 1 && (e.entitlement.talents ?? []).includes(talent));
   if (!has) return false;
-  return await SWSEDialogV2.confirm({
+  return await DialogPort.confirm({
     title: 'Temporary Force Point',
     content: `<p>Spend a temporary Force Point from your Force regimen on this ${talent === 'block' ? 'Block' : 'Deflect'} check instead of an ordinary Force Point? It does not count toward the one Force Point per round limit (a Force Point on this qualifying check is exempt).</p>`,
     defaultYes: false
@@ -279,24 +281,24 @@ export class LightsaberTalentActions {
 
   static async _recordBlockDeflectUse(actor, kind, success, increment = 5) {
     const state = currentBlockDeflectState(actor);
-    await actor?.setFlag?.(NS, BLOCK_DEFLECT_FLAG, {
+    await ActorEngine.updateActorFlags(actor, NS, BLOCK_DEFLECT_FLAG, {
       ...state,
       ...withRecordedUse(state, increment),
       lastKind: kind,
       lastSuccess: success === true,
       updatedAt: Date.now()
-    });
+    }, { recalc: false });
   }
 
   static async _creditBackBlockDeflectUse(actor, reason = '') {
     const state = currentBlockDeflectState(actor);
     if (state.uses <= 0) return false;
-    await actor?.setFlag?.(NS, BLOCK_DEFLECT_FLAG, {
+    await ActorEngine.updateActorFlags(actor, NS, BLOCK_DEFLECT_FLAG, {
       ...state,
       ...withCreditedBackUse(state),
       creditedBackReason: reason,
       creditedBackAt: Date.now()
-    });
+    }, { recalc: false });
     return true;
   }
 
@@ -372,7 +374,7 @@ export class LightsaberTalentActions {
     const success = roll.success === true;
     await this._recordBlockDeflectUse(actor, 'Block', success, weaponMods.increment);
     if (success) {
-      await actor?.setFlag?.(NS, 'lastSuccessfulBlock', { encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, usedAt: Date.now(), area: choice.area });
+      await ActorEngine.updateActorFlags(actor, NS, 'lastSuccessfulBlock', { encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, usedAt: Date.now(), area: choice.area }, { recalc: false });
     }
     await postCard(actor, 'Block', `<p>${esc(actor.name)} attempts to Block a melee attack (${roll.roll?.total ?? '?'} vs DC ${choice.dc}).</p>
       <p><strong>${success ? 'Success' : 'Failure'}:</strong> ${success ? (choice.area ? 'For a melee area attack, take half damage if the attack hit or no damage if it missed.' : 'The melee attack is negated.') : 'The melee attack is not negated.'}</p>
@@ -456,7 +458,7 @@ export class LightsaberTalentActions {
     const success = roll.success === true;
     await this._recordBlockDeflectUse(actor, 'Deflect', success, weaponMods.increment);
     if (success) {
-      await actor?.setFlag?.(NS, 'lastSuccessfulDeflect', { encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, usedAt: Date.now(), area: choice.area });
+      await ActorEngine.updateActorFlags(actor, NS, 'lastSuccessfulDeflect', { encounterId: encounterId(), round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, usedAt: Date.now(), area: choice.area }, { recalc: false });
     }
     await postCard(actor, 'Deflect', `<p>${esc(actor.name)} attempts to Deflect a ranged attack (${roll.roll?.total ?? '?'} vs DC ${choice.dc}).</p>
       <p><strong>${success ? 'Success' : 'Failure'}:</strong> ${success ? (choice.area ? 'For autofire/Force Lightning-style barrages, take half damage if the attack hit or no damage if it missed.' : 'The ranged attack is negated.') : 'The ranged attack is not negated.'}</p>
@@ -502,7 +504,7 @@ export class LightsaberTalentActions {
     const weapons = weaponOptions(actor).filter(w => isLightsaberLike(w, String(w.name ?? '') + ' ' + String(w.system?.group ?? '') + ' ' + String(w.system?.weaponType ?? '')));
     const weaponList = weapons.length ? `<div class="form-group"><label>Lightsaber</label><select name="weaponId">${weapons.map(w => `<option value="${esc(w.id)}">${esc(w.name)}</option>`).join('')}</select></div>` : '';
     const content = `<form class="swse-dialog"><p>Throw a lightsaber as a Standard Action; it is treated as a thrown weapon, not an improvised weapon.</p>${weaponList}<label class="checkbox"><input type="checkbox" name="pullBack" /> Target is within 6 squares and I want to pull the lightsaber back with a Swift Action now</label><p class="notes">The thrown attack itself uses the normal attack roller/range penalties. This helper handles the optional DC 20 Use the Force pull-back.</p></form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Lightsaber Throw', content, label: 'Use Lightsaber Throw', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Lightsaber Throw', content, label: 'Use Lightsaber Throw', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       const fd = new FormData(form);
@@ -536,7 +538,7 @@ export class LightsaberTalentActions {
     if (!redirectWeapon) return null;
     const target = await promptNamedTarget('Redirect Shot', 'Use after successfully Deflecting a single blaster bolt. Autofire barrages and other projectiles cannot be redirected.');
     if (!target) return null;
-    await actor?.setFlag?.(NS, 'redirectShot', { roundKey, used: true, targetName: target.targetName, usedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'redirectShot', { roundKey, used: true, targetName: target.targetName, usedAt: Date.now() }, { recalc: false });
     const improved = hasTalent(actor, 'Improved Redirect');
     const credited = improved ? await this._creditBackBlockDeflectUse(actor, 'Improved Redirect') : false;
     await postCard(actor, 'Redirect Shot', `<p>${esc(actor.name)} redirects a deflected blaster bolt toward <strong>${esc(target.targetName)}</strong>.</p><p>Make the immediate ranged attack using normal range penalties, not counting the distance the bolt traveled to reach you. If it hits, it deals normal weapon damage.</p>${improved ? `<p><strong>Improved Redirect:</strong> the Deflect use that triggered this Redirect ${credited ? 'does not count toward the cumulative Block/Deflect penalty.' : 'would not count toward the cumulative Block/Deflect penalty; no tracked Deflect use was available to credit back.'}</p>` : ''}`, { talentName: 'Redirect Shot', targetName: target.targetName, improvedRedirect: improved, creditedBack: credited });
@@ -566,7 +568,7 @@ export class LightsaberTalentActions {
     }
     const target = await promptNamedTarget('Riposte', 'Use after successfully negating a non-area melee attack with Block.');
     if (!target) return null;
-    await actor?.setFlag?.(NS, 'encounterUses.riposte', { encounterId: encounterId(), used: true, targetName: target.targetName, usedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.riposte', { encounterId: encounterId(), used: true, targetName: target.targetName, usedAt: Date.now() }, { recalc: false });
     const improved = hasTalent(actor, 'Improved Riposte');
     const credited = improved ? await this._creditBackBlockDeflectUse(actor, 'Improved Riposte') : false;
     await postCard(actor, 'Riposte', `<p>${esc(actor.name)} makes a lightsaber attack against <strong>${esc(target.targetName)}</strong>, whose non-area melee attack was successfully negated with Block.</p><p>Once per encounter. Cannot be used against melee area attacks such as Whirlwind Attack.</p>${improved ? `<p><strong>Improved Riposte:</strong> the Block use that triggered this Riposte ${credited ? 'does not count toward the cumulative Block/Deflect penalty.' : 'would not count toward the cumulative Block/Deflect penalty; no tracked Block use was available to credit back.'}</p>` : ''}`, { talentName: 'Riposte', targetName: target.targetName, improvedRiposte: improved, creditedBack: credited });
@@ -608,7 +610,7 @@ export class LightsaberTalentActions {
       return null;
     }
     const content = `<form class="swse-dialog"><p>Spend 1 Force Point as a Standard Action to throw your lightsaber in a 6-square line. Make one ranged attack roll and compare it to each target's Reflex Defense.</p><div class="form-group"><label>Line / target group</label><input name="targetName" type="text" placeholder="Targets in 6-square line" /></div><label class="checkbox"><input type="checkbox" name="pullBack" checked /> Attempt DC 20 Use the Force to pull the lightsaber back as a Swift Action</label><p class="notes">Hit: normal lightsaber damage. Miss/fails to exceed Reflex: half damage. This is an Area Attack.</p></form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Improved Lightsaber Throw', content, label: 'Use Improved Lightsaber Throw', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Improved Lightsaber Throw', content, label: 'Use Improved Lightsaber Throw', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       const fd = new FormData(form);
@@ -734,10 +736,11 @@ export class LightsaberTalentActions {
     globalThis.SWSE.__lightsaberTalentActionsRegistered = true;
 
     Hooks.on('combatTurn', async (combat, _prior, current) => {
+      if (!isResponsibleGM()) return; // fires on every client; one client resets the use state
       try {
         const actor = current?.combatant?.actor ?? combat?.combatant?.actor ?? null;
         if (!actor) return;
-        await actor.unsetFlag?.(NS, BLOCK_DEFLECT_FLAG);
+        await ActorEngine.unsetActorFlag(actor, NS, BLOCK_DEFLECT_FLAG, { recalc: false });
       } catch (err) {
         console.warn('[SWSE] Failed to reset Block/Deflect use state:', err);
       }

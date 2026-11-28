@@ -1,0 +1,992 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-VEH",
+  "domain": "vehicles",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "Vehicles are largely conformant adapters over the shared combat pipeline (combat-authority-map confirmed for damage, battery, range, ammo); all 11 declared vehicle Actor packs are generated at release from data/canonical/vehicles/vehicles.json, so committed packs/vehicles-*.db are retired input. Real problems: the vehicle import wizard/engine are unwired while the sheet button claims no implementation exists; a createItem hook grants Starship Tactics maneuvers outside the progression shell; two spend paths for starship maneuvers; engine-to-UI dialog in crew assignment; Party Fund debit outside TransactionEngine under an owner-approved workflow (A-10 conflict to decide); a 3-file ledger import cycle with a clean seam.",
+  "responsibilities": [
+    {
+      "id": "R-VEH-01",
+      "responsibility": "Canonical vehicle catalog to 11 Actor packs at release build",
+      "owner": {
+        "path": "tools/build-universal-vehicle-pack-sources.mjs",
+        "symbol": "buildUniversalVehiclePackSources"
+      },
+      "status": [
+        "OBSERVED",
+        "APPROVED"
+      ],
+      "verification": "test-verified",
+      "evidence": [
+        "tools/release/build-packs.mjs:68",
+        "tools/release/build-packs.mjs:80",
+        "docs/audits/vehicles/universal-vehicle-phase4c-runtime-cutover-checkpoint.md:13"
+      ],
+      "tests": [
+        "tests/vehicle-universal-phase4c-runtime-consumers.test.mjs"
+      ],
+      "notes": "APPROVED by phase4c checkpoint; 6/6 offline pass"
+    },
+    {
+      "id": "R-VEH-02",
+      "responsibility": "Runtime compendium index/document loading, fail-closed",
+      "owner": {
+        "path": "scripts/core/vehicle-pack-data-loader.js",
+        "symbol": "VehiclePackDataLoader"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/core/vehicle-pack-data-loader.js:4",
+        "scripts/core/vehicle-pack-data-loader.js:97"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-VEH-03",
+      "responsibility": "Vehicle runtime projection and source classification",
+      "owner": {
+        "path": "scripts/domain/vehicles/vehicle-runtime-contract.js",
+        "symbol": "classifyVehicleActorRuntime"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/domain/vehicles/vehicle-runtime-contract.js:268"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-VEH-04",
+      "responsibility": "Sealed Shipyard installation ledger (plan/seal/guarded writes)",
+      "owner": {
+        "path": "scripts/domain/vehicles/vehicle-installation-ledger.js",
+        "symbol": "planVehicleInstallation"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/domain/vehicles/vehicle-installation-ledger.js:178",
+        "scripts/domain/vehicles/vehicle-installation-ledger.js:300"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-VEH-05",
+      "responsibility": "Installation/uninstall/job persistence via ActorEngine",
+      "owner": {
+        "path": "scripts/engine/vehicles/vehicle-installation-service.js",
+        "symbol": "VehicleInstallationService"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/vehicles/vehicle-installation-service.js:37",
+        "scripts/engine/vehicles/vehicle-installation-service.js:179"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-VEH-06",
+      "responsibility": "Modification effects catalog (implemented effects only)",
+      "owner": {
+        "path": "scripts/domain/vehicles/vehicle-modification-effects.js",
+        "symbol": "EFFECTS"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/domain/vehicles/vehicle-modification-effects.js:162"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-VEH-07",
+      "responsibility": "Vehicle weapon damage spec feeding shared pipeline",
+      "owner": {
+        "path": "scripts/domain/vehicles/vehicle-weapon-damage.js",
+        "symbol": "resolveVehicleWeaponDamage"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/domain/vehicles/vehicle-weapon-damage.js:179"
+      ],
+      "tests": [
+        "tests/architecture-combat-authority.test.mjs"
+      ],
+      "notes": "adapter, not duplicate damage authority"
+    },
+    {
+      "id": "R-VEH-08",
+      "responsibility": "Battery attack total",
+      "owner": {
+        "path": "scripts/domain/vehicles/vehicle-weapon-battery.js",
+        "symbol": "resolveBatteryAttackTotal"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/domain/vehicles/vehicle-weapon-battery.js:100"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-VEH-09",
+      "responsibility": "Launcher ammunition ledger and purchases",
+      "owner": {
+        "path": "scripts/engine/vehicles/vehicle-ammunition-purchase-service.js",
+        "symbol": "VehicleAmmunitionPurchaseService"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/vehicles/vehicle-ammunition-service.js:37",
+        "scripts/engine/vehicles/vehicle-ammunition-purchase-service.js:257"
+      ],
+      "tests": [],
+      "notes": "Party Fund debit outside TransactionEngine (F-VEH-006)"
+    },
+    {
+      "id": "R-VEH-10",
+      "responsibility": "Logistics: personal credits through TransactionEngine",
+      "owner": {
+        "path": "scripts/engine/vehicles/vehicle-logistics-service.js",
+        "symbol": "VehicleLogisticsService"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/vehicles/vehicle-logistics-service.js:134"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-VEH-11",
+      "responsibility": "Scene state for mines/interdiction (only Scene writer)",
+      "owner": {
+        "path": "scripts/engine/vehicles/vehicle-scene-state.js",
+        "symbol": "putSceneRecord"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/engine/vehicles/vehicle-scene-state.js:23"
+      ],
+      "tests": [],
+      "notes": "A-02 world-document exception"
+    },
+    {
+      "id": "R-VEH-12",
+      "responsibility": "Crew stations and crew assignment",
+      "owner": {
+        "path": "scripts/engine/crew/vehicle-crew-assignment-service.js",
+        "symbol": "VehicleCrewAssignmentService"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/crew/vehicle-crew-assignment-service.js:96",
+        "scripts/engine/crew/vehicle-crew-assignment-service.js:456"
+      ],
+      "tests": [],
+      "notes": "A-07 (F-VEH-004)"
+    },
+    {
+      "id": "R-VEH-13",
+      "responsibility": "Vehicle-sheet prepared maneuver list and spend toggle",
+      "owner": {
+        "path": "scripts/engine/StarshipManeuversEngine.js",
+        "symbol": "StarshipManeuversEngine"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/engine/StarshipManeuversEngine.js:143",
+        "scripts/engine/StarshipManeuversEngine.js:171"
+      ],
+      "tests": [],
+      "notes": "second spend path (F-VEH-003)"
+    },
+    {
+      "id": "R-VEH-14",
+      "responsibility": "Starship Tactics maneuver grant on feat creation",
+      "owner": {
+        "path": "scripts/infrastructure/hooks/starship-maneuver-hooks.js",
+        "symbol": "initializeStarshipManeuverHooks"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/infrastructure/hooks/starship-maneuver-hooks.js:17",
+        "scripts/utils/starship-maneuver-manager.js:123"
+      ],
+      "tests": [],
+      "notes": "A-15 (F-VEH-002)"
+    },
+    {
+      "id": "R-VEH-15",
+      "responsibility": "Vehicle actor sheet vehicle-only context/wiring",
+      "owner": {
+        "path": "scripts/sheets/v2/vehicle-actor-sheet.js",
+        "symbol": "SWSEV2VehicleSheet"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/sheets/v2/vehicle-actor-sheet.js:281"
+      ],
+      "tests": [
+        "tests/phase4-sheet-architecture-contract.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-VEH-16",
+      "responsibility": "Vehicle import from canonical source Actor",
+      "owner": {
+        "path": "scripts/engine/import/vehicle-import-engine.js",
+        "symbol": "VehicleImportEngine"
+      },
+      "status": [
+        "OBSERVED",
+        "UNIMPLEMENTED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/engine/import/vehicle-import-engine.js:17",
+        "scripts/engine/import/vehicle-import-engine.js:90"
+      ],
+      "tests": [
+        "tests/vehicle-universal-phase4c-import-source.test.mjs"
+      ],
+      "notes": "engine reachable only from debug scratch import; no UI entry"
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "readCertifiedInstallations",
+      "path": "scripts/domain/vehicles/vehicle-installation-ledger.js",
+      "line": 101,
+      "consumers": 41,
+      "contract": "pure read of sealed ledger (module consumers)"
+    },
+    {
+      "symbol": "resolveVehicleWeaponDamage",
+      "path": "scripts/domain/vehicles/vehicle-weapon-damage.js",
+      "line": 179,
+      "consumers": 41,
+      "contract": "spec -> {ok, formula, multiplier, damageType} or refusal"
+    },
+    {
+      "symbol": "EFFECTS",
+      "path": "scripts/domain/vehicles/vehicle-modification-effects.js",
+      "line": 162,
+      "consumers": 28,
+      "contract": "implemented effects only"
+    },
+    {
+      "symbol": "VehicleInstallationService",
+      "path": "scripts/engine/vehicles/vehicle-installation-service.js",
+      "line": 37,
+      "consumers": 26,
+      "contract": "install/uninstall/jobs serialised per vehicle"
+    },
+    {
+      "symbol": "classifyVehicleActorRuntime",
+      "path": "scripts/domain/vehicles/vehicle-runtime-contract.js",
+      "line": 268,
+      "consumers": 25,
+      "contract": "read-only selector"
+    },
+    {
+      "symbol": "UNIVERSAL_VEHICLE_PACKS",
+      "path": "scripts/domain/vehicles/universal-vehicle-pack-registry.js",
+      "line": 18,
+      "consumers": 15,
+      "contract": "11 packs / 31 categories"
+    },
+    {
+      "symbol": "VehicleAmmunitionService",
+      "path": "scripts/engine/vehicles/vehicle-ammunition-service.js",
+      "line": 37,
+      "consumers": 16,
+      "contract": "idempotent spend/refund per attack id"
+    },
+    {
+      "symbol": "StarshipManeuversEngine",
+      "path": "scripts/engine/StarshipManeuversEngine.js",
+      "line": 115,
+      "consumers": 1,
+      "contract": "list / mark spent / regain (delegates regain to StarshipManeuverSuite)"
+    },
+    {
+      "symbol": "SWSE.debug.vehicles",
+      "path": "index.js",
+      "line": 117,
+      "consumers": 0,
+      "contract": "GM-only debug globals (macro surface)"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "infrastructure",
+      "data-registries",
+      "actor-core (ActorEngine)",
+      "combat (shared attack/damage pipeline)",
+      "rolls",
+      "store-economy (TransactionEngine)",
+      "houserules (HouseRuleService)",
+      "force (StarshipManeuverSuite)"
+    ],
+    "prohibited": [
+      "engine -> UI (A-07)",
+      "vehicle-owned credit ledgers (A-10)",
+      "vehicle-specific damage application"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/engine/crew/vehicle-crew-assignment-service.js",
+        "to": "scripts/apps/dialogs/swse-dialog-v2.js",
+        "evidence": "scripts/engine/crew/vehicle-crew-assignment-service.js:2"
+      },
+      {
+        "from": "scripts/engine/crew/vehicle-crew-assignment-service.js",
+        "to": "scripts/sheets/v2/vehicle-sheet/crew-resolver.js",
+        "evidence": "scripts/engine/crew/vehicle-crew-assignment-service.js:4"
+      },
+      {
+        "from": "scripts/engine/crew/vehicle-weapon-station-service.js",
+        "to": "scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js",
+        "evidence": "scripts/engine/crew/vehicle-weapon-station-service.js:11"
+      },
+      {
+        "from": "scripts/engine/vehicles/vehicle-interdiction-service.js",
+        "to": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+        "evidence": "scripts/engine/vehicles/vehicle-interdiction-service.js:14"
+      },
+      {
+        "from": "scripts/domain/vehicles/vehicle-installation-ledger.js",
+        "to": "scripts/domain/vehicles/vehicle-modification-effects.js (cycle)",
+        "evidence": "scripts/domain/vehicles/vehicle-installation-ledger.js:15"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-VEH-1",
+      "boundary": "Shipyard ledger (pure plan/seal) <-> VehicleInstallationService (persistence)",
+      "interface": "planVehicleInstallation / planVehicleUninstall / authorizeLedgerWrite / readCertifiedInstallations",
+      "status": [
+        "OBSERVED"
+      ]
+    },
+    {
+      "id": "C-VEH-2",
+      "boundary": "Canonical catalog -> generated packs -> VehiclePackDataLoader -> VehicleImportEngine",
+      "interface": "buildUniversalVehiclePackSources / loadVehicleIndex / loadVehicleDocument / VehicleImportEngine.apply",
+      "status": [
+        "OBSERVED",
+        "UNIMPLEMENTED"
+      ]
+    },
+    {
+      "id": "C-VEH-3",
+      "boundary": "Vehicle combat adapter -> shared attack/damage pipeline",
+      "interface": "vehicle resolvers return specs/totals; attacks.js rolls; ActorEngine.applyDamage applies",
+      "status": [
+        "OBSERVED",
+        "APPROVED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-VEH-01",
+      "existingSource": "docs/audits/vehicles/universal-vehicle-phase4c-runtime-cutover-checkpoint.md §Browser/import",
+      "claim": "VehicleImportWizard is the browse/import wizard",
+      "observed": "Wizard has no importer; sheet import-vehicle button is force-disabled with a comment saying no implementation exists",
+      "evidence": [
+        "scripts/apps/vehicle-import-wizard.js:23",
+        "scripts/sheets/v2/vehicle-actor-sheet.js:700",
+        "scripts/dev/sheet-action-registry.mjs:46"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-VEH-02",
+      "existingSource": "docs/architecture/v2-contracts/contradiction-register.md CR-12",
+      "claim": "vehicles-ground-armor/hybrids have no tracked source",
+      "observed": "All 11 declared vehicle packs are generated from data/canonical/vehicles/vehicles.json by the release builder; committed packs/vehicles-*.db are retired input for every vehicle pack; NeDB previews tracked in build/vehicle-phase4b/sources/",
+      "evidence": [
+        "tools/release/build-packs.mjs:71",
+        "tools/release/build-packs.mjs:80",
+        ".github/workflows/vehicle-universal-phase1.yml:86",
+        "system.json:881",
+        "system.json:894"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-VEH-03",
+      "existingSource": "docs/audits/vehicles/canonical-compendium.md §Cutover",
+      "claim": "system.json registers vehicles-canonical-ships",
+      "observed": "Not declared; test pins its absence",
+      "evidence": [
+        "docs/audits/vehicles/canonical-compendium.md:22",
+        "tests/vehicle-universal-phase4c-runtime-consumers.test.mjs:12"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-VEH-04",
+      "existingSource": "OSI A-10 vs docs/audits/swse-rules-decisions-pending.md V-P6C-19",
+      "claim": "TransactionEngine is single credit authority vs owner-approved Party Fund workflow",
+      "observed": "Party Fund debit via PartyFundAccess.setBalance/appendLedger, compensating restore on failure",
+      "evidence": [
+        "scripts/engine/vehicles/vehicle-ammunition-purchase-service.js:257",
+        "docs/audits/swse-rules-decisions-pending.md:2099"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-VEH-05",
+      "existingSource": "scripts/sheets/v2/vehicle-actor-sheet.js:44 comment",
+      "claim": "helpers duplicated from character-sheet.js",
+      "observed": "source now character-like-sheet.js",
+      "evidence": [
+        "scripts/sheets/v2/vehicle-actor-sheet.js:46",
+        "scripts/sheets/v2/character-like-sheet.js:156"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-VEH-01",
+      "item": "Vehicle import UI entry (wizard unwired, button disabled)",
+      "source": "scripts/sheets/v2/vehicle-actor-sheet.js:704",
+      "status": "UNIMPLEMENTED"
+    },
+    {
+      "id": "U-VEH-02",
+      "item": "GM tool to resolve indeterminate Party Fund requests (P6B-D-074)",
+      "source": "docs/audits/swse-rules-decisions-pending.md:2099",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [
+    {
+      "item": "Stock launcher printed Payload as canonical ammunition pool",
+      "registerRef": "V-P6C-21"
+    },
+    {
+      "item": "Non-starship vehicles",
+      "registerRef": "V-P5-03"
+    },
+    {
+      "item": "Derived statistics depending on crew quality",
+      "registerRef": "V-P5-04"
+    },
+    {
+      "item": "Operator authorization for vehicle-mounted weapons",
+      "registerRef": "EQ-004"
+    },
+    {
+      "item": "Vehicle Dodge stacking",
+      "registerRef": "CF-RD-006"
+    },
+    {
+      "item": "Whether a maneuver may be marked spent without the Pilot activation check (vehicle sheet path) — owner/rules question raised by F-VEH-003, not registered",
+      "registerRef": "none (new; owner to register if a rules question)"
+    }
+  ],
+  "foundryAcceptance": [
+    {
+      "item": "Vehicle import/materialization from canonical packs",
+      "source": "docs/audits/vehicles/universal-vehicle-phase4d-native-runtime-acceptance.md"
+    },
+    {
+      "item": "Party Fund ammunition settlement and restore",
+      "source": "docs/audits/swse-rules-decisions-pending.md:2099"
+    },
+    {
+      "item": "Starship Tactics feat during chargen finalization: double prompt/grant",
+      "source": "scripts/infrastructure/hooks/starship-maneuver-hooks.js:36"
+    },
+    {
+      "item": "Vehicle crew assignment drop stack",
+      "source": "scripts/sheets/v2/vehicle-actor-sheet.js:286"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-VEH-001",
+      "category": "unimplemented",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Vehicle import wizard and engine exist but are unwired; sheet button disabled with a false 'no implementation' claim",
+      "affectedFiles": [
+        "scripts/apps/vehicle-import-wizard.js",
+        "scripts/engine/import/vehicle-import-engine.js",
+        "scripts/sheets/v2/vehicle-actor-sheet.js",
+        "templates/actors/vehicle/v2/partials/vehicle-sheet-content.hbs"
+      ],
+      "evidence": [
+        "scripts/apps/vehicle-import-wizard.js:23",
+        "scripts/apps/vehicle-import-wizard.js:295",
+        "scripts/engine/import/vehicle-import-engine.js:90",
+        "scripts/sheets/v2/vehicle-actor-sheet.js:700",
+        "scripts/sheets/v2/vehicle-actor-sheet.js:704",
+        "templates/actors/vehicle/v2/partials/vehicle-sheet-content.hbs:40",
+        "scripts/dev/sheet-action-registry.mjs:46"
+      ],
+      "observed": "VehicleImportWizard (314 SLOC, template preloaded) has zero importers; VehicleImportEngine is reachable only from the debug scratch import. The sheet disables the import-vehicle button asserting no implementation exists. Tests read the wizard source as text only.",
+      "intendedOwnership": "C-VEH-2: sheet action -> VehicleImportWizard.create -> VehicleImportEngine.apply -> ActorEngine.updateActor",
+      "contractRef": "R-VEH-16 | A-14",
+      "proposedSolution": "Owner decides: wire import-vehicle to VehicleImportWizard.create({actor}) (wizard already fail-closed via engine) or retire wizard (class C) and keep engine for debug. Update the stale sheet comment either way.",
+      "alternatives": "Open wizard from Holopad/Shell Host asset bay instead of the sheet.",
+      "dependencies": [
+        "FOUNDRY_ACCEPTANCE vehicle import"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Test that the import-vehicle action resolves to the wizard and that the engine refuses non-canonical documents (existing tests/vehicle-universal-phase4c-import-source.test.mjs).",
+      "foundryAcceptance": "Live V13: import a published vehicle into a vehicle actor; verify statblock replace and source identity.",
+      "scope": "S",
+      "simplificationBenefit": "Removes a dead 314-SLOC app or restores a documented feature; removes contradictory comment.",
+      "risk": "Runtime-risk area (vehicle import/materialization).",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-VEH-002",
+      "category": "multiple-writers",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "createItem hook grants Starship Tactics maneuvers outside the progression shell; recursion guard key never set",
+      "affectedFiles": [
+        "scripts/infrastructure/hooks/starship-maneuver-hooks.js",
+        "scripts/utils/starship-maneuver-manager.js",
+        "scripts/apps/progression-framework/steps/starship-maneuver-step.js",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js"
+      ],
+      "evidence": [
+        "scripts/infrastructure/hooks/starship-maneuver-hooks.js:17",
+        "scripts/infrastructure/hooks/starship-maneuver-hooks.js:22",
+        "scripts/infrastructure/hooks/starship-maneuver-hooks.js:36",
+        "scripts/infrastructure/hooks/actor-hooks.js:174",
+        "scripts/utils/starship-maneuver-manager.js:97",
+        "scripts/utils/starship-maneuver-manager.js:113",
+        "scripts/utils/starship-maneuver-manager.js:123",
+        "scripts/apps/progression-framework/shell/progression-finalizer.js:1838"
+      ],
+      "observed": "On any feat named like 'starship tactics' created on the creating client, the hook opens a selection dialog and creates maneuver Items plus sets system.starshipManeuverSuite. The progression framework has its own starship-maneuver step and finalizer writes to starshipManeuverSuite. The hook's guard checks options.meta.guardKey==='starship-maneuver-grant' but grantManeuvers never passes it; createItem has no mutation-in-flight guard (updateActor does).",
+      "intendedOwnership": "A-15: maneuver choices live in progression draft state and are committed once by ProgressionFinalizer; non-progression feat grants route to a progression entry, not a hook dialog.",
+      "contractRef": "A-15 | A-08 | R-VEH-14",
+      "proposedSolution": "Restrict the hook to non-progression creations (skip when ActorEngine.isActorMutationInFlight or a progression source option is present) or remove it and launch the progression starship-maneuver step on out-of-progression grants. Pass the guard key from grantManeuvers.",
+      "alternatives": "Keep hook but convert to a notification prompting the player to open the progression shell.",
+      "dependencies": [
+        "B-PRG owner of starship-maneuver-step"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Test: finalizing chargen with Starship Tactics creates maneuvers exactly once and opens no dialog; adding the feat via sheet drop takes the approved path.",
+      "foundryAcceptance": "Live V13: chargen with Starship Tactics; level-up adding it; GM drop of the feat.",
+      "scope": "M",
+      "simplificationBenefit": "One maneuver grant path instead of two.",
+      "risk": "Progression finalization runtime-risk; duplicate grants possible.",
+      "perfImpact": "low"
+    },
+    {
+      "id": "F-VEH-003",
+      "category": "duplicate-authority",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Two spend paths for starship maneuvers with different semantics",
+      "affectedFiles": [
+        "scripts/engine/StarshipManeuversEngine.js",
+        "scripts/engine/force/starship-maneuver-suite.js",
+        "scripts/sheets/v2/vehicle-actor-sheet.js"
+      ],
+      "evidence": [
+        "scripts/engine/StarshipManeuversEngine.js:143",
+        "scripts/engine/StarshipManeuversEngine.js:154",
+        "scripts/engine/StarshipManeuversEngine.js:171",
+        "scripts/engine/force/starship-maneuver-suite.js:59",
+        "scripts/engine/force/starship-maneuver-suite.js:75",
+        "scripts/sheets/v2/vehicle-actor-sheet.js:686",
+        "scripts/sheets/v2/character-like-sheet.js:5208"
+      ],
+      "observed": "Vehicle sheet useManeuver writes system.discarded=true on the crew/vehicle item without a roll; the character sheet uses StarshipManeuverSuite.activateManeuver (Pilot activation check, then discarded). Regain on the vehicle sheet already delegates to the suite.",
+      "intendedOwnership": "StarshipManeuverSuite is the single maneuver use/regain authority; vehicle sheet is a view/adapter.",
+      "contractRef": "R-VEH-13 | A-01",
+      "proposedSolution": "Route vehicle-sheet use through StarshipManeuverSuite.activateManeuver(pilot,itemId); keep StarshipManeuversEngine as list builder only. If a manual 'mark spent' GM tool is wanted, owner must say so.",
+      "alternatives": "Keep manual toggle as GM-only override with explicit label.",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": true,
+      "regressionTests": "Test that vehicle-sheet use invokes the suite and produces a Pilot activation roll.",
+      "foundryAcceptance": "Live V13: use maneuver from vehicle Pilot station.",
+      "scope": "S",
+      "simplificationBenefit": "One spend authority.",
+      "risk": "Low; behavior change visible to players.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-VEH-004",
+      "category": "dependency",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Engine to UI: crew assignment service opens a dialog; pure modules misplaced under UI directories",
+      "affectedFiles": [
+        "scripts/engine/crew/vehicle-crew-assignment-service.js",
+        "scripts/engine/crew/vehicle-weapon-station-service.js",
+        "scripts/engine/vehicles/vehicle-interdiction-service.js",
+        "scripts/sheets/v2/vehicle-sheet/crew-resolver.js",
+        "scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js",
+        "scripts/dialogs/entity-dialog/effect-intent-engine.js"
+      ],
+      "evidence": [
+        "scripts/engine/crew/vehicle-crew-assignment-service.js:2",
+        "scripts/engine/crew/vehicle-crew-assignment-service.js:4",
+        "scripts/engine/crew/vehicle-crew-assignment-service.js:456",
+        "scripts/engine/crew/vehicle-weapon-station-service.js:11",
+        "scripts/engine/vehicles/vehicle-interdiction-service.js:14"
+      ],
+      "observed": "VehicleCrewAssignmentService builds HTML and calls SWSEDialogV2.prompt inside the service (real violation). crew-resolver.js, weapon-station-mapping.js and effect-intent-engine.js contain no DOM access; they are domain logic in UI directories (layering-only probe hits).",
+      "intendedOwnership": "Engine returns candidates; sheet/controller presents the picker and calls assignCrew.",
+      "contractRef": "A-07",
+      "proposedSolution": "Move the picker (content + prompt) to scripts/sheets/v2/vehicle-sheet/vehicle-crew-assignment-controls.js; relocate crew-resolver and weapon-station-mapping to scripts/domain/vehicles/, effect-intent-engine to scripts/engine/effects/ (path moves, imports rerouted).",
+      "alternatives": "Inject a prompt function into the service.",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Existing tests/phase6-vehicle-crew-assignment.test.mjs plus a dependency test asserting no scripts/engine/** import of scripts/apps|sheets|dialogs for these files.",
+      "foundryAcceptance": "Live V13: assign crew via picker.",
+      "scope": "S",
+      "simplificationBenefit": "Removes 4 of 6 vehicle A-07 probe hits.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-VEH-005",
+      "category": "dependency",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Three-file static import cycle in the Shipyard ledger",
+      "affectedFiles": [
+        "scripts/domain/vehicles/vehicle-installation-ledger.js",
+        "scripts/domain/vehicles/vehicle-modification-effects.js",
+        "scripts/domain/vehicles/vehicle-runtime-contract.js"
+      ],
+      "evidence": [
+        "scripts/domain/vehicles/vehicle-installation-ledger.js:15",
+        "scripts/domain/vehicles/vehicle-modification-effects.js:19",
+        "scripts/domain/vehicles/vehicle-runtime-contract.js:9",
+        "scripts/domain/vehicles/vehicle-runtime-contract.js:10",
+        "scripts/domain/vehicles/vehicle-runtime-contract.js:251"
+      ],
+      "observed": "ledger -> effects (EFFECTS) -> runtime-contract (getVehiclePublishedFieldState) -> ledger (readCertifiedInstallations). getVehiclePublishedFieldState is a pure function with no dependencies.",
+      "intendedOwnership": "C-VEH-1 acyclic: effects and field-state helpers below ledger, runtime-contract above.",
+      "contractRef": "A-07 | C-VEH-1",
+      "proposedSolution": "Move getVehiclePublishedFieldState to a new pure module (e.g. scripts/domain/vehicles/vehicle-published-field-state.js) re-exported from runtime-contract; effects imports it directly.",
+      "alternatives": "Move EFFECTS to its own constants module.",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Import-graph test asserting no cycle among scripts/domain/vehicles/**.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "Removes one of 9 static cycles; ESM init order no longer matters.",
+      "risk": "Very low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-VEH-006",
+      "category": "contract-contradiction",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Party Fund ammunition debit outside TransactionEngine (owner workflow vs A-10); notification via raw ChatMessage",
+      "affectedFiles": [
+        "scripts/engine/vehicles/vehicle-ammunition-purchase-service.js",
+        "scripts/holonet/subsystems/holonet-messenger-service.js"
+      ],
+      "evidence": [
+        "scripts/engine/vehicles/vehicle-ammunition-purchase-service.js:43",
+        "scripts/engine/vehicles/vehicle-ammunition-purchase-service.js:257",
+        "scripts/engine/vehicles/vehicle-ammunition-purchase-service.js:258",
+        "scripts/engine/vehicles/vehicle-ammunition-purchase-service.js:265",
+        "scripts/holonet/subsystems/holonet-messenger-service.js:1445",
+        "docs/audits/swse-rules-decisions-pending.md:2099"
+      ],
+      "observed": "GM approval settles by PartyFundAccess.setBalance + appendLedger, then delivers; failure restores the snapshot; unprovable restore -> indeterminate. Owner-approved as workflow V-P6C-19, but A-10 (OSI) says TransactionEngine is the single credit authority with no parallel ledgers. Whisper uses globalThis.ChatMessage.create (A-05).",
+      "intendedOwnership": "A-10: TransactionEngine owns all credit movement including party funds.",
+      "contractRef": "A-10 | A-05 | R-VEH-09",
+      "proposedSolution": "Owner decides whether Party Fund is in A-10 scope. If yes: add a TransactionEngine party-fund transaction (debit + ledger + delivery callback) and route this settlement through it. Route the whisper through SWSEChat.",
+      "alternatives": "Record Party Fund as a documented A-10 exception owned by holonet.",
+      "dependencies": [
+        "B-STO store-economy",
+        "holonet domain"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Existing p51/p52/p53 tests plus a test that settlement calls TransactionEngine.",
+      "foundryAcceptance": "Live V13: approve Party Fund request; forced delivery failure restores fund.",
+      "scope": "M",
+      "simplificationBenefit": "One credit authority.",
+      "risk": "Trade/credit runtime-risk area.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-VEH-007",
+      "category": "legacy-compat",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Undeclared tracked vehicle pack artefacts and a stale branch-pinned workflow",
+      "affectedFiles": [
+        "packs/vehicles-canonical-ships.db",
+        "packs/vehicles-canonical-ships/CURRENT",
+        "packs/vehicles-starships.db",
+        "packs/vehicles-weapon-emplacements.db",
+        "packs/vehicles.db",
+        ".github/workflows/canonical-ship-pack.yml",
+        ".gitignore",
+        "tools/vehicles/build-canonical-ships.mjs",
+        "scripts/maintenance/inspect-packs.js"
+      ],
+      "evidence": [
+        ".github/workflows/canonical-ship-pack.yml:4",
+        ".github/workflows/canonical-ship-pack.yml:58",
+        ".gitignore:30",
+        ".gitignore:31",
+        "tests/vehicle-universal-phase4c-runtime-consumers.test.mjs:12",
+        "scripts/maintenance/inspect-packs.js:167",
+        "docs/audits/vehicles/universal-vehicle-phase4c-runtime-cutover-checkpoint.md:13"
+      ],
+      "observed": "vehicles-canonical-ships (.db + tracked LevelDB dir, .gitignore exempts it), vehicles-starships.db, vehicles-weapon-emplacements.db and vehicles.db are tracked but undeclared; the phase4c checkpoint calls them retired historical input; canonical-ship-pack.yml still commits to feat/vehicle-canonical-census-cutover. The other 9 committed packs/vehicles-*.db are also never read by the release build for vehicles. Readers: node tools and audit reports only.",
+      "intendedOwnership": "C-VEH-2: data/canonical/vehicles/vehicles.json is the single vehicle source.",
+      "contractRef": "A-09 | A-01",
+      "proposedSolution": "Legacy class B (referenced by tools/tests): reroute tools/vehicles/build-canonical-ships.mjs, inspect-packs.js and validate-content-completeness to the canonical source, retire canonical-ship-pack.yml, then delete the undeclared artefacts (class C). Owner decides whether the 9 retired declared-name .db files stay as historical input.",
+      "alternatives": "Move them to an archive directory.",
+      "dependencies": [
+        "CR-12 owner decision"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "tests/vehicle-universal-phase4c-runtime-consumers.test.mjs keeps legacy names undeclared.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "~8 MB of retired pack data and one workflow removed; one vehicle source.",
+      "risk": "Low; compendium-shape runtime-risk only if a world references the old pack ids.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-VEH-008",
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Orphan vehicle modules",
+      "affectedFiles": [
+        "scripts/engine/import/vehicle-import-normalizer.js",
+        "scripts/engine/import/vehicle-weapon-import-normalizer.js",
+        "scripts/domain/vehicles/vehicle-modification-factory.js",
+        "scripts/data/vehicle-category-registry.js",
+        "scripts/engine/crew/crew-interaction-engine.js"
+      ],
+      "evidence": [
+        "scripts/engine/import/vehicle-weapon-import-normalizer.js:524",
+        "scripts/domain/vehicles/vehicle-modification-factory.js:14",
+        "scripts/engine/crew/crew-interaction-engine.js:8",
+        "tests/vehicle-universal-phase4c-import-source.test.mjs:17"
+      ],
+      "observed": "No static/dynamic importer, no template/pack/global reference (grep of scripts, templates, packs). The legacy normalizers are explicitly forbidden from running (tests assert absence of calls); modification-factory predates the sealed ledger planner; category registry is superseded by universal-vehicle-pack-registry. Several tests read normalizer source as text.",
+      "intendedOwnership": "Superseded by C-VEH-1/C-VEH-2 authorities.",
+      "contractRef": "A-09",
+      "proposedSolution": "Class C deletion candidates after rewriting the text-reading pins (tests/phase2c_cp8_vehicle_import_source_fields.test.mjs, tests/phase2c-vehicle-live-roll-guard.test.mjs, tests/phase2c-vehicle-source-integrity-guards.test.mjs) to assert absence.",
+      "alternatives": "Keep as reference under docs/.",
+      "dependencies": [
+        "F-VEH-001 decision (wizard)"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Updated pins assert the files are gone and no runtime path calls them.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "~1,170 SLOC removed.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-VEH-009",
+      "category": "wrapper-indirection",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Deprecated VehicleInstallationService.install wrapper with no callers",
+      "affectedFiles": [
+        "scripts/engine/vehicles/vehicle-installation-service.js"
+      ],
+      "evidence": [
+        "scripts/engine/vehicles/vehicle-installation-service.js:104",
+        "scripts/engine/vehicles/vehicle-installation-service.js:105"
+      ],
+      "observed": "install(args) forwards to gmInstantInstall; grep finds no callers in scripts or tests.",
+      "intendedOwnership": "Callers use startJob or gmInstantInstall.",
+      "contractRef": "A-09",
+      "proposedSolution": "Class D: delete the wrapper (check macros/packs once more).",
+      "alternatives": "none",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "none needed",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "Removes an alias that hides a GM override.",
+      "risk": "Very low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-VEH-010",
+      "category": "duplicate-normalization",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Starship maneuver manager recomputes the Wisdom modifier from raw base when derived is absent",
+      "affectedFiles": [
+        "scripts/utils/starship-maneuver-manager.js"
+      ],
+      "evidence": [
+        "scripts/utils/starship-maneuver-manager.js:124",
+        "scripts/utils/starship-maneuver-manager.js:210",
+        "scripts/utils/starship-maneuver-manager.js:241",
+        "scripts/utils/starship-maneuver-manager.js:242"
+      ],
+      "observed": "Three sites fall back to floor((wis.base-10)/2), ignoring species/enhancement modifiers; handleAbilityIncrease compares raw base values only.",
+      "intendedOwnership": "Ability modifiers come from actor derived attributes (actor-core).",
+      "contractRef": "A-01 | A-03",
+      "proposedSolution": "Read only system.derived.attributes.wis.mod; if absent, refuse/defer rather than recompute.",
+      "alternatives": "Call the actor-core ability modifier helper.",
+      "dependencies": [
+        "B-ACT actor-core ability authority"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Test with a species Wisdom bonus: suite size uses the derived modifier.",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "One ability-modifier authority.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-VEH-011",
+      "category": "consolidation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Verbatim sheet helper clones between vehicle and character-like sheets",
+      "affectedFiles": [
+        "scripts/sheets/v2/vehicle-actor-sheet.js",
+        "scripts/sheets/v2/character-like-sheet.js"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/vehicle-actor-sheet.js:73",
+        "scripts/sheets/v2/vehicle-actor-sheet.js:170",
+        "scripts/sheets/v2/vehicle-actor-sheet.js:211",
+        "scripts/sheets/v2/character-like-sheet.js:156",
+        "scripts/sheets/v2/character-like-sheet.js:467",
+        "scripts/sheets/v2/character-like-sheet.js:508"
+      ],
+      "observed": "See F-UIS-002 (owned by ui-shell).",
+      "intendedOwnership": "Shared pure module under scripts/sheets/v2/shared/.",
+      "contractRef": "A-01 | F-UIS-002",
+      "proposedSolution": "Tracked in B-UIS F-UIS-002.",
+      "alternatives": "none",
+      "dependencies": [
+        "F-UIS-002"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "see F-UIS-002",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "see F-UIS-002",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-VEH-012",
+      "category": "ownership-violation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "Probe hits classified as legitimate exceptions or false positives",
+      "affectedFiles": [
+        "scripts/domain/vehicles/vehicle-phase4d-scratch-import.js",
+        "scripts/domain/vehicles/vehicle-modification-rules.js",
+        "scripts/engine/vehicles/vehicle-logistics-service.js",
+        "scripts/engine/vehicles/vehicle-scene-state.js",
+        "scripts/domain/vehicles/vehicle-cp23c4-gm-observation-ledger.js"
+      ],
+      "evidence": [
+        "scripts/domain/vehicles/vehicle-phase4d-scratch-import.js:51",
+        "scripts/domain/vehicles/vehicle-phase4d-scratch-import.js:54",
+        "scripts/domain/vehicles/vehicle-phase4d-scratch-import.js:75",
+        "scripts/domain/vehicles/vehicle-modification-rules.js:121",
+        "scripts/engine/vehicles/vehicle-logistics-service.js:9",
+        "scripts/engine/vehicles/vehicle-logistics-service.js:120",
+        "scripts/engine/vehicles/vehicle-scene-state.js:23",
+        "scripts/domain/vehicles/vehicle-cp23c4-gm-observation-ledger.js:168"
+      ],
+      "observed": "P-A02 scratch-import:75 is a GM-only, explicit-opt-in world Actor create/delete (world-document exception; legacy class E debug global). P-A10 hits: modification-rules:121 is a cost quote (no write); logistics-service:9/120 are comments (actual debit through TransactionEngine at :134). Scene and settings writes are world documents.",
+      "intendedOwnership": "A-02 world-document exception; A-10 satisfied for personal credits.",
+      "contractRef": "A-02 | A-10",
+      "proposedSolution": "Add the A-02 exception comment at scratch-import:75; owner decides whether SWSE.debug.vehicles stays shipped (class E).",
+      "alternatives": "none",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "none",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "Clears 4 probe hits from the backlog.",
+      "risk": "None.",
+      "perfImpact": "none"
+    }
+  ]
+}

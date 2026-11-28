@@ -284,7 +284,7 @@ const reset = () => { spent.length = 0; h.log.itemWrites.length = 0; h.log.actor
 
 // ------------------------------------------------------------------------------------------------ 15: weapon-sourced 'equipped' effects need effective READIED; armor unchanged
 {
-  const eff = strip(read('scripts/dialogs/entity-dialog/effect-intent-engine.js'));
+  const eff = strip(read('scripts/engine/effects/effect-intent-engine.js'));
   assert.ok(/application === 'equipped'\)\s*\{[\s\S]*?item\.type === 'weapon'[\s\S]*?isWeaponReadied\(item\.actor, item\)/.test(eff), "application:'equipped' on a weapon asks the shared readiness interface");
   assert.ok(/return system\.equipped === true \|\| system\.integrated === true;/.test(eff), 'armor/equipment keep the worn-state flag');
   assert.ok(/application === 'activated'\) return system\.activated === true/.test(eff), 'activation-dependent effects check activation independently');

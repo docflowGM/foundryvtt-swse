@@ -233,8 +233,8 @@ async function normalizeWeaponLeftoverFeat(item, options = {}) {
 }
 
 export function registerWeaponLeftoverFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeWeaponLeftoverFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeWeaponLeftoverFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeWeaponLeftoverFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeWeaponLeftoverFeat(item, options) : false);
   SWSELogger.log('[WeaponLeftoverNormalization] Hooks registered');
 }
 

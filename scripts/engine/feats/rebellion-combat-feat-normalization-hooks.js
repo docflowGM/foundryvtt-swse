@@ -188,8 +188,8 @@ async function normalizeRebellionCombatFeat(item, options = {}) {
 }
 
 export function registerRebellionCombatFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeRebellionCombatFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeRebellionCombatFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeRebellionCombatFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeRebellionCombatFeat(item, options) : false);
   SWSELogger.log('[RebellionCombatFeatNormalization] Hooks registered');
 }
 

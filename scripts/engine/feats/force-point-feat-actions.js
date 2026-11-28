@@ -1,6 +1,7 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { readBonusPool, bonusPoolUpdate, buildBonusPool } from "/systems/foundryvtt-swse/scripts/engine/force/bonus-force-point-pool.js";
 import { ForcePointFeatRules } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-rules.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 function normalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -59,26 +60,10 @@ function bonusPoolEntries(pool = {}) {
   return entries;
 }
 
-function buildBonusPool(entries = [], existing = {}) {
-  const clean = entries.filter(entry => Math.max(0, Number(entry.value) || 0) > 0);
-  const value = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.value) || 0), 0);
-  const max = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.max ?? entry.value) || 0), 0);
-  return {
-    ...existing,
-    value,
-    max: Math.max(value, max),
-    sources: [...new Set(clean.map(entry => entry.source).filter(Boolean))],
-    entries: clean,
-    note: existing.note || 'Bonus Force Points are spent before normal Force Points and may have source-specific restrictions.'
-  };
-}
+
 
 async function postForcePointFeatMessage(actor, title, body, flags = {}) {
-  return createChatMessage({
-    speaker: ChatMessage.getSpeaker?.({ actor }) ?? { alias: actor?.name ?? 'Force Point Feat' },
-    content: `<section class="swse-chat-card swse-force-point-feat-card"><header class="swse-chat-card__header"><strong>${title}</strong></header><div class="swse-chat-card__body">${body}</div></section>`,
-    flags: { 'foundryvtt-swse': { forcePointFeatAction: true, ...flags } }
-  });
+  return SWSEChat.postHTML({ speaker: ChatMessage.getSpeaker?.({ actor }) ?? { alias: actor?.name ?? 'Force Point Feat' }, content: `<section class="swse-chat-card swse-force-point-feat-card"><header class="swse-chat-card__header"><strong>${title}</strong></header><div class="swse-chat-card__body">${body}</div></section>`, flags: { 'foundryvtt-swse': { forcePointFeatAction: true, ...flags } } });
 }
 
 export class ForcePointFeatActions {
@@ -132,7 +117,7 @@ export class ForcePointFeatActions {
     const amount = Math.max(1, Number(options.amount ?? 1) || 1);
     const source = String(options.source ?? 'Temporary Force Point');
     const encounterId = options.encounterId ?? activeEncounterId();
-    const existingPool = actor.getFlag?.('swse', 'bonusForcePoints') ?? {};
+    const existingPool = readBonusPool(actor);
     const entries = bonusPoolEntries(existingPool);
     const id = options.id ?? `${normalizeToken(source)}-${encounterId ?? 'no-encounter'}-${Date.now()}`;
 
@@ -147,9 +132,7 @@ export class ForcePointFeatActions {
       createdAt: Date.now()
     });
 
-    await ActorEngine.updateActor(actor, {
-      'flags.swse.bonusForcePoints': buildBonusPool(entries, existingPool)
-    }, { source: 'ForcePointFeatActions.grantTemporaryForcePoint', render: false });
+    await ActorEngine.updateActor(actor, bonusPoolUpdate(actor, buildBonusPool(entries, existingPool)), { source: 'ForcePointFeatActions.grantTemporaryForcePoint', render: false });
 
     if (options.postChat !== false) {
       await postForcePointFeatMessage(actor, source, `<p>${actor.name} gains <strong>${amount}</strong> temporary Force Point${amount === 1 ? '' : 's'}${encounterId ? ' for this encounter' : ''}.</p>`, { source, amount, temporary: true, encounterId });
@@ -183,7 +166,7 @@ export class ForcePointFeatActions {
       id: `jedi-familiarity-${encounterId}`,
       postChat: context.postChat
     });
-    await actor.setFlag?.('foundryvtt-swse', 'jediFamiliarityUsedThisEncounter', encounterId);
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'jediFamiliarityUsedThisEncounter', encounterId, { recalc: false });
     return result;
   }
 
@@ -224,7 +207,7 @@ export class ForcePointFeatActions {
     const amount = Math.max(1, Number(rule?.amount ?? 1) || 1);
     const result = await ActorEngine.gainForcePoints(actor, amount);
     if (result?.gained > 0) {
-      await actor.setFlag?.('foundryvtt-swse', 'confidentSuccessForcePointGains', { level, count: used + result.gained });
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'confidentSuccessForcePointGains', { level, count: used + result.gained }, { recalc: false });
       if (context.postChat !== false) {
         await postForcePointFeatMessage(actor, 'Confident Success', `<p>${actor.name} gains <strong>${result.gained}</strong> Force Point after successfully learning secret information.</p>`, { source: 'Confident Success', amount: result.gained, level, count: used + result.gained });
       }

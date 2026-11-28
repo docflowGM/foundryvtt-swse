@@ -13,7 +13,10 @@ const NS = 'foundryvtt-swse';
 export class SkillTrainingMechanics {
   static initialize() {
     // Initialize training tracking on actors
-    Hooks.on('createActor', (actor) => this.initializeActorTraining(actor));
+    Hooks.on('createActor', (actor, _options, userId) => {
+      if (userId !== undefined && userId !== game.user?.id) return; // originating client only (hook fires on every client)
+      return this.initializeActorTraining(actor);
+    });
     Hooks.on('updateActor', (actor, data) => this.validateTrainingData(actor, data));
     SWSELogger.debug('Skill training mechanics initialized');
   }

@@ -18,7 +18,8 @@ export { resolveAttackWeaponRuntime, resolveCanonicalAttackProficiency, summariz
 export * from './attack-shape.js';
 export * from './fire-state.js';
 export * from './area-shape.js';
-export { canonicalFeatSlug, featIs, featKeyOf, abilityChoiceMatchesWeapon } from './ability-selector.js';
+export { canonicalFeatSlug, featIs, featKeyOf } from './ability-selector.js';
+export { abilityChoiceMatchesWeapon } from './ability-choice-match.js';
 export * from './special-mechanics.js';
 export { buildAttackForms, findAttackForm, attackFormSelection, attackFormValue } from './attack-form-options.js';
 export { resolveCanonicalRange, assertRangeSelectionResolvable, canonicalRangePenalty, normalizeRangeBand, RANGE_BANDS } from './canonical-range.js';

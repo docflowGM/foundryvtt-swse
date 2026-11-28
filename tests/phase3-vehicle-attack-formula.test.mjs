@@ -59,7 +59,7 @@ assert.match(math, /if \(label === 'BAB' \|\| label === gunnerAbilityLabel\) con
 // known once weapon-station-mapping.js's precedence (explicit mapping, or
 // exactly one station of that role) has run.
 assert.match(contextBuilder, /getStationSkillActions\(weapon\.crewRole \|\| 'gunner'\)/);
-assert.match(contextBuilder, /import \{ resolveWeaponOperatorStation \} from "\/systems\/foundryvtt-swse\/scripts\/sheets\/v2\/vehicle-sheet\/weapon-station-mapping\.js"/);
+assert.match(contextBuilder, /import \{ resolveWeaponOperatorStation \} from "\/systems\/foundryvtt-swse\/scripts\/actors\/vehicle\/weapon-station-mapping\.js"/);
 assert.match(contextBuilder, /mount\.actions = \(mount\.operatorResolved && mount\.fireAction\)\s*\n\s*\? \[\{ \.\.\.mount\.fireAction, stationKey: resolution\.stationKey \}\]\s*\n\s*: \[\];/);
 
 // 6. No stacking of an assigned gunner's BAB with abstract crew quality:

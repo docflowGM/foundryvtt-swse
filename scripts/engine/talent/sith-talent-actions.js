@@ -1,13 +1,14 @@
 import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort, openForceAlchemyWorkbenchPort as openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { getClassLevel, getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
-import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
+
 import { getTalentAbilityMod as abilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
 import { isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/utils/responsible-gm.js";
 
 const NS = 'swse';
 
@@ -104,7 +105,7 @@ function htmlSelect(name, label, options = []) {
 
 async function promptSelect(title, body, select) {
   const content = `<form class="swse-dialog swse-sith-talent-dialog"><p>${body}</p>${htmlSelect(select.name, select.label, select.options)}</form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title,
     content,
     label: 'Continue',
@@ -118,7 +119,7 @@ async function promptSelect(title, body, select) {
 
 async function promptText(title, body, { name = 'value', label = 'Value', placeholder = '' } = {}) {
   const content = `<form class="swse-dialog swse-sith-talent-dialog"><p>${body}</p><div class="form-group"><label>${esc(label)}</label><input type="text" name="${esc(name)}" placeholder="${esc(placeholder)}" /></div></form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title,
     content,
     label: 'Continue',
@@ -267,7 +268,7 @@ async function markEncounterUse(actor, key, title) {
     await postCard(actor, title, `<p>${esc(title)} has already been used this encounter.</p>`, { encounterId: enc, used: true });
     return false;
   }
-  await actor.setFlag?.(NS, `encounterUses.${key}`, { encounterId: enc, used: true, usedAt: Date.now() });
+  await ActorEngine.updateActorFlags(actor, NS, `encounterUses.${key}`, { encounterId: enc, used: true, usedAt: Date.now() }, { recalc: false });
   return true;
 }
 
@@ -420,7 +421,7 @@ export class SithTalentActions {
         context: { category: 'talent', type: 'sith-talent', itemName: 'Dark Healing Field', totalLabel: 'Use the Force' }
       });
       const healed = await applyHealing(actor, Math.floor(totalDamage / 2));
-      await actor.setFlag?.(NS, 'encounterUses.darkHealingField', { encounterId: enc, used: true, targetCount: targets.length, totalDamage, healed, usedAt: Date.now() });
+      await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.darkHealingField', { encounterId: enc, used: true, targetCount: targets.length, totalDamage, healed, usedAt: Date.now() }, { recalc: false });
       return postCard(actor, 'Dark Healing Field', `<p>${esc(actor.name)} drains life energy from up to three creatures.</p><ul>${rows.join('')}</ul><p><strong>Total damage:</strong> ${totalDamage}. <strong>Healing applied:</strong> ${healed} HP.</p>`, { targetCount: targets.length, totalDamage, healed });
     });
   }
@@ -439,7 +440,7 @@ export class SithTalentActions {
     let kept = second;
     let spent = false;
     if (master && Number(first?.total ?? 0) > Number(second?.total ?? 0)) {
-      const spend = await SWSEDialogV2.confirm?.({ title: 'Dark Side Master', content: `<p>Spend 1 Force Point to keep the better result (${first.total}) instead of the reroll (${second.total})?</p>` });
+      const spend = await DialogPort.confirm?.({ title: 'Dark Side Master', content: `<p>Spend 1 Force Point to keep the better result (${first.total}) instead of the reroll (${second.total})?</p>` });
       if (spend) {
         const fp = await beginContractedForcePoint(actor, 'sith:Dark Side Master', {}, { label: 'Dark Side Master' });
         if (fp.ok) spent = await fp.settle(async () => { kept = first; return true; });
@@ -475,7 +476,7 @@ export class SithTalentActions {
     const afflictions = target.getFlag?.(NS, 'pendingAfflictions') ?? [];
     const next = Array.isArray(afflictions) ? [...afflictions] : [];
     next.push({ id: `${actor.id}-${Date.now()}`, sourceActorId: actor.id, sourceActorName: actor.name, encounterId: encounterId(), createdAt: Date.now(), triggered: false });
-    await target.setFlag?.(NS, 'pendingAfflictions', next);
+    await ActorEngine.updateActorFlags(target, NS, 'pendingAfflictions', next, { recalc: false });
     return postCard(actor, 'Affliction', `<p>${esc(actor.name)} marks <strong>${esc(target.name)}</strong> with Affliction after damaging a single opponent with a Force Power.</p><p>At the beginning of the target's next turn, before actions, the target takes 2d6 Force damage.</p>`, { targetActorId: target.id });
   }
 
@@ -499,7 +500,7 @@ export class SithTalentActions {
     const targetFp = Number(target?.system?.forcePoints?.value ?? 0) || 0;
     await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: power.id, 'system.discarded': false, 'flags.swse.lastRecoverySource': 'drain-force' }], { source: 'drain-force', render: false });
     await ActorEngine.updateActor(target, { 'system.forcePoints.value': Math.max(0, targetFp - 1) }, { source: 'drain-force' });
-    await actor.setFlag?.(NS, 'encounterUses.drainForce', { encounterId: enc, used: true, recoveredPowerId: power.id, recoveredPowerName: power.name, targetActorId: target.id, usedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.drainForce', { encounterId: enc, used: true, recoveredPowerId: power.id, recoveredPowerName: power.name, targetActorId: target.id, usedAt: Date.now() }, { recalc: false });
     return postCard(actor, 'Drain Force', `<p>${esc(actor.name)} reacts after damaging Force-sensitive <strong>${esc(target.name)}</strong>.</p><p><strong>Recovered Force Power:</strong> ${esc(power.name)}.</p><p><strong>${esc(target.name)} Force Points:</strong> ${targetFp} → ${Math.max(0, targetFp - 1)}.</p>`, { targetActorId: target.id, recoveredPowerId: power.id });
   }
 
@@ -517,7 +518,7 @@ export class SithTalentActions {
     if (!weaponId) return null;
     const weapon = actor.items.get?.(weaponId) ?? Array.from(actor.items ?? []).find(item => item.id === weaponId);
     const enc = encounterId();
-    await actor.setFlag?.(NS, 'rapidAlchemy', { encounterId: enc, weaponId, weaponName: weapon?.name ?? 'Selected weapon', attackBonus: 2, damageBonus: 5, active: true, sacrificePending: false, sacrificed: false, createdAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'rapidAlchemy', { encounterId: enc, weaponId, weaponName: weapon?.name ?? 'Selected weapon', attackBonus: 2, damageBonus: 5, active: true, sacrificePending: false, sacrificed: false, createdAt: Date.now() }, { recalc: false });
     return postCard(actor, 'Rapid Alchemy', `<p>${esc(actor.name)} alters <strong>${esc(weapon?.name ?? 'a melee weapon')}</strong>.</p><p>For the remainder of the encounter, attacks with that weapon gain a <strong>+2 Equipment bonus</strong>. Use <strong>Rapid Alchemy: Sacrifice Bonus</strong> before a damage roll to trade that attack bonus for <strong>+5 Equipment bonus</strong> on one damage roll with the same weapon.</p>`, { weaponId, weaponName: weapon?.name ?? null, attackBonus: 2 });
   }
 
@@ -529,13 +530,13 @@ export class SithTalentActions {
     if (state?.sacrificed === true || state?.sacrificePending === true) {
       return postCard(actor, 'Rapid Alchemy: Sacrifice Bonus', '<p>The Rapid Alchemy attack bonus has already been sacrificed or is already pending for the next damage roll.</p>', { alreadySacrificed: true });
     }
-    await actor.setFlag?.(NS, 'rapidAlchemy', { ...state, active: false, sacrificePending: true, sacrificed: true, sacrificedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'rapidAlchemy', { ...state, active: false, sacrificePending: true, sacrificed: true, sacrificedAt: Date.now() }, { recalc: false });
     return postCard(actor, 'Rapid Alchemy: Sacrifice Bonus', `<p>${esc(actor.name)} sacrifices Rapid Alchemy's +2 attack bonus on <strong>${esc(state.weaponName ?? 'the altered weapon')}</strong>.</p><p>The next damage roll made with that weapon gains a <strong>+5 Equipment bonus</strong>.</p>`, { weaponId: state.weaponId, damageBonus: 5 });
   }
 
   static async announceSithAlchemyDeferred(actor) {
     let dsp = null;
-    const record = await SWSEDialogV2.confirm?.({
+    const record = await DialogPort.confirm?.({
       title: 'Sith Alchemy',
       content: '<p>Sith Alchemy crafting automation is deferred until the item/transformation UI exists.</p><p>If the character has just completed an Alchemical Transformation, record the required <strong>+1 Dark Side Score</strong> on the character sheet now?</p>'
     });
@@ -545,7 +546,7 @@ export class SithTalentActions {
 
   static async announceSithAlchemySpecialistDeferred(actor) {
     let dsp = null;
-    const record = await SWSEDialogV2.confirm?.({
+    const record = await DialogPort.confirm?.({
       title: 'Sith Alchemy Specialist',
       content: '<p>Sith Alchemy Specialist trait automation is deferred until the item/trait UI exists.</p><p>If the character has just applied a Sith Alchemy Specialist trait, record the required <strong>+1 Dark Side Score</strong> on the character sheet now?</p>'
     });
@@ -571,8 +572,8 @@ export class SithTalentActions {
     return fp.settle(async () => {
       const key = `bondedMounts.${target.id}`;
       const record = { mountActorId: target.id, mountName: target.name, bondedAt: Date.now(), sourceActorId: actor.id, sourceActorName: actor.name };
-      await actor.setFlag?.(NS, key, record);
-      try { await target.setFlag?.(NS, 'bondedMount', { riderActorId: actor.id, riderName: actor.name, bondedAt: record.bondedAt }); } catch (err) { console.warn('[SWSE] Bonded Mount target flag failed:', err); }
+      await ActorEngine.updateActorFlags(actor, NS, key, record, { recalc: false });
+      try { await ActorEngine.updateActorFlags(target, NS, 'bondedMount', { riderActorId: actor.id, riderName: actor.name, bondedAt: record.bondedAt }, { recalc: false }); } catch (err) { console.warn('[SWSE] Bonded Mount target flag failed:', err); }
       return postCard(actor, 'Bonded Mount', `<p>${esc(actor.name)} spends 1 Force Point as a Full-Round Action to bond <strong>${esc(target.name)}</strong> as a mount.</p><p>Recorded the bond on the rider${isBeastActor(target) ? '' : '; GM should verify the target is a domesticated Friendly/Helpful beast'}.</p><p>While riding, the mount uses the rider's Reflex and Will Defenses, and the rider benefits from the mount's special senses. Those mounted-state bonuses remain GM/player adjudicated until the mount/rider UI owns mounted state.</p>`, { targetActorId: target.id, forcePointSpent: true });
     });
   }
@@ -616,7 +617,7 @@ export class SithTalentActions {
       flavor: 'Wild Sense — Beast Perception',
       context: { category: 'talent', type: 'beastwarden-talent', itemName: 'Wild Sense', totalLabel: 'Beast Perception' }
     });
-    await actor.setFlag?.(NS, 'wildSense', { targetActorId: target.id, targetName: target.name, perceptionTotal: roll?.total ?? null, round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, expires: 'end-of-turn', usedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'wildSense', { targetActorId: target.id, targetName: target.name, perceptionTotal: roll?.total ?? null, round: game?.combat?.round ?? null, turn: game?.combat?.turn ?? null, expires: 'end-of-turn', usedAt: Date.now() }, { recalc: false });
     return postCard(actor, 'Wild Sense', `<p>${esc(actor.name)} touches the mind of <strong>${esc(target.name)}</strong>.</p><p><strong>${esc(target.name)} Perception:</strong> ${roll?.total ?? '?'}</p><p>${esc(actor.name)} perceives what the beast perceives and is considered to have line of sight to anything the beast has line of sight to until the end of this turn.</p><p>Beast attitude, 12-square range, and line of sight remain GM/player adjudicated.</p>`, { targetActorId: target.id, perceptionTotal: roll?.total ?? null });
   }
 
@@ -646,7 +647,7 @@ export class SithTalentActions {
       const duration = Math.max(1, 5 + abilityMod(actor, 'con'));
       const round = Number(game?.combat?.round ?? 0) || 0;
       const state = { active: true, startedRound: round || null, durationRounds: duration, expiresAfterRound: round ? round + duration : null, meleeAttackBonus: 2, meleeDamageBonus: 2, conditionPenaltyPending: true, createdAt: Date.now() };
-      await actor.setFlag?.(NS, 'channelAnger', state);
+      await ActorEngine.updateActorFlags(actor, NS, 'channelAnger', state, { recalc: false });
       return postCard(actor, 'Channel Anger', `<p>${esc(actor.name)} spends 1 Force Point as a Swift Action and enters a rage.</p><p><strong>Effect:</strong> +2 Rage bonus on melee attack rolls and melee damage rolls for ${duration} rounds.</p><p><strong>Restriction:</strong> cannot use Skills requiring patience and concentration, such as Mechanics, Stealth, or Use the Force.</p><p><strong>End:</strong> moves -1 step on the Condition Track when the rage ends${round ? ` after round ${round + duration}` : '; track duration manually outside combat'}.</p>`, { durationRounds: duration, meleeAttackBonus: 2, meleeDamageBonus: 2, forcePointSpent: true });
     });
   }
@@ -657,7 +658,7 @@ export class SithTalentActions {
     const before = conditionTrackValue(actor);
     const after = Math.min(5, before + 1);
     await ActorEngine.updateActor(actor, { 'system.conditionTrack.current': after }, { meta: { guardKey: 'channel-anger-end' } });
-    await actor.unsetFlag?.(NS, 'channelAnger');
+    await ActorEngine.unsetActorFlag(actor, NS, 'channelAnger', { recalc: false });
     return postCard(actor, 'Channel Anger Ends', `<p>${esc(actor.name)}'s rage ends.</p><p><strong>Condition Track:</strong> ${before} → ${after}.</p>`, { beforeCondition: before, afterCondition: after });
   }
 
@@ -673,7 +674,7 @@ export class SithTalentActions {
     const hpMax = actorHpMax(target);
     const currentSpeed = Number(target?.system?.derived?.speed?.walk ?? target?.system?.derived?.speed?.total ?? target?.system?.speed?.value ?? target?.system?.speed ?? 0) || 0;
     const crippledSpeed = currentSpeed > 0 ? Math.max(1, Math.floor(currentSpeed / 2)) : null;
-    await target.setFlag?.(NS, 'cripplingStrike', { sourceActorId: actor.id, sourceActorName: actor.name, originalSpeed: currentSpeed || null, crippledSpeed, maxHpWhenCrippled: hpMax || null, appliedAt: Date.now(), until: 'fully-healed' });
+    await ActorEngine.updateActorFlags(target, NS, 'cripplingStrike', { sourceActorId: actor.id, sourceActorName: actor.name, originalSpeed: currentSpeed || null, crippledSpeed, maxHpWhenCrippled: hpMax || null, appliedAt: Date.now(), until: 'fully-healed' }, { recalc: false });
     return postCard(actor, 'Crippling Strike', `<p>${esc(actor.name)} spends 1 Force Point after a critical hit to cripple <strong>${esc(target.name)}</strong>.</p><p>${crippledSpeed ? `<strong>Speed:</strong> ${currentSpeed} → ${crippledSpeed} until fully healed.` : 'The target is flagged as crippled; adjust speed manually if the actor has no numeric speed path.'}</p><p>Triggered by a verified critical hit this round.</p>`, { targetActorId: target.id, forcePointSpent: true, originalSpeed: currentSpeed || null, crippledSpeed });
     });
   }
@@ -702,25 +703,25 @@ export class SithTalentActions {
     if (!options.length) {
       const manual = await promptText('Stolen Form', 'No Lightsaber Forms talents were found in the talents compendium. Enter the chosen Lightsaber Forms talent to record it on the actor.', { label: 'Lightsaber Form Talent', placeholder: 'Ataru, Makashi, Soresu...' });
       if (!manual) return null;
-      await actor.setFlag?.(NS, `stolenForm.${slug(manual)}`, { talentName: manual, recordedAt: Date.now(), manual: true });
+      await ActorEngine.updateActorFlags(actor, NS, `stolenForm.${slug(manual)}`, { talentName: manual, recordedAt: Date.now(), manual: true }, { recalc: false });
       return postCard(actor, 'Stolen Form', `<p>Recorded <strong>${esc(manual)}</strong> as a Stolen Form selection. Add the granted talent manually if it is not present on the actor.</p>`, { talentName: manual, manual: true });
     }
     const selected = await promptSelect('Stolen Form', 'Choose one Lightsaber Forms talent to gain through Stolen Form. You must still meet that form talent\'s prerequisites.', { name: 'talentName', label: 'Lightsaber Forms Talent', options });
     if (!selected) return null;
     if (hasTalent(actor, selected)) {
-      await actor.setFlag?.(NS, `stolenForm.${slug(selected)}`, { talentName: selected, alreadyOwned: true, recordedAt: Date.now() });
+      await ActorEngine.updateActorFlags(actor, NS, `stolenForm.${slug(selected)}`, { talentName: selected, alreadyOwned: true, recordedAt: Date.now() }, { recalc: false });
       return postCard(actor, 'Stolen Form', `<p>${esc(actor.name)} already has <strong>${esc(selected)}</strong>. Recorded it as a Stolen Form selection for prerequisite/benefit tracking.</p>`, { talentName: selected, alreadyOwned: true });
     }
     const doc = await findTalentDocumentByName(selected);
     if (!doc) {
-      await actor.setFlag?.(NS, `stolenForm.${slug(selected)}`, { talentName: selected, manual: true, recordedAt: Date.now() });
+      await ActorEngine.updateActorFlags(actor, NS, `stolenForm.${slug(selected)}`, { talentName: selected, manual: true, recordedAt: Date.now() }, { recalc: false });
       return postCard(actor, 'Stolen Form', `<p>Recorded <strong>${esc(selected)}</strong> as a Stolen Form selection, but the talent document could not be loaded. Add it manually if needed.</p>`, { talentName: selected, manual: true });
     }
     const data = doc.toObject();
     data.flags = foundry.utils.mergeObject(data.flags ?? {}, { swse: { grantedBy: 'Stolen Form', stolenFormSelection: true, originalTalentId: doc.id, selectedAt: Date.now() } }, { inplace: false, recursive: true });
     data.system = foundry.utils.mergeObject(data.system ?? {}, { grantedBy: 'Stolen Form', sourceTalent: 'Stolen Form' }, { inplace: false, recursive: true });
     const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [data], { source: 'stolen-form' });
-    await actor.setFlag?.(NS, `stolenForm.${slug(selected)}`, { talentName: selected, itemId: created?.[0]?.id ?? null, recordedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, `stolenForm.${slug(selected)}`, { talentName: selected, itemId: created?.[0]?.id ?? null, recordedAt: Date.now() }, { recalc: false });
     return postCard(actor, 'Stolen Form', `<p>${esc(actor.name)} gains <strong>${esc(selected)}</strong> from the Lightsaber Forms Talent Tree via Stolen Form.</p><p>The granted talent was added to the actor and flagged as granted by Stolen Form.</p>`, { talentName: selected, grantedItemId: created?.[0]?.id ?? null });
   }
 
@@ -744,7 +745,7 @@ export class SithTalentActions {
       const before = conditionTrackValue(target);
       const after = Math.max(0, before - 2);
       await ActorEngine.updateActor(target, { 'system.conditionTrack.current': after }, { source: 'focus-terror' });
-      await target.setFlag?.(NS, 'sithCommander.focusTerror', { encounterId: enc, sourceActorId: actor.id, sourceActorName: actor.name, attackPenalty: -2, skillPenalty: -2, startedRound: round, durationRounds: duration, expiresAfterRound: round + duration, createdAt: Date.now() });
+      await ActorEngine.updateActorFlags(target, NS, 'sithCommander.focusTerror', { encounterId: enc, sourceActorId: actor.id, sourceActorName: actor.name, attackPenalty: -2, skillPenalty: -2, startedRound: round, durationRounds: duration, expiresAfterRound: round + duration, createdAt: Date.now() }, { recalc: false });
       rows.push(`<li><strong>${esc(target.name)}</strong>: Condition Track ${before} → ${after}; -2 attack rolls and Skill Checks for ${duration} rounds.</li>`);
     }
     return postCard(actor, 'Focus Terror', `<p>${esc(actor.name)} harnesses allied fear.</p>${rows.length ? `<ul>${rows.join('')}</ul>` : '<p>No allies were targeted; apply +2 condition-track improvement and -2 attack/skill penalties manually to eligible allies.</p>'}<p>Range and line of sight remain GM/player adjudicated.</p>`, { targetActorIds: targets.map(t => t.id), durationRounds: duration });
@@ -757,7 +758,7 @@ export class SithTalentActions {
     const enc = encounterId();
     const rows = [];
     for (const target of targets) {
-      await target.setFlag?.(NS, 'sithCommander.inciteRage', { encounterId: enc, sourceActorId: actor.id, sourceActorName: actor.name, attackBonus: 1, reflexPenalty: -2, createdAt: Date.now() });
+      await ActorEngine.updateActorFlags(target, NS, 'sithCommander.inciteRage', { encounterId: enc, sourceActorId: actor.id, sourceActorName: actor.name, attackBonus: 1, reflexPenalty: -2, createdAt: Date.now() }, { recalc: false });
       rows.push(`<li><strong>${esc(target.name)}</strong>: +1 rage bonus on attack rolls and -2 Reflex Defense until the encounter ends or ${esc(actor.name)} is unconscious/killed.</li>`);
     }
     return postCard(actor, 'Incite Rage', `<p>${esc(actor.name)} channels anger and hatred into allies.</p>${rows.length ? `<ul>${rows.join('')}</ul>` : '<p>No allies were targeted; apply +1 attack / -2 Reflex manually to eligible allies.</p>'}<p>Range, line of sight, ally status, and source incapacitation remain GM/player adjudicated where the system cannot infer them.</p>`, { targetActorIds: targets.map(t => t.id) });
@@ -780,7 +781,7 @@ export class SithTalentActions {
       const currentTemp = Number(target?.system?.hp?.temp ?? 0) || 0;
       const nextTemp = Math.max(currentTemp, amount);
       await ActorEngine.updateActor(target, { 'system.hp.temp': nextTemp }, { source: 'power-of-hatred' });
-      await target.setFlag?.(NS, 'sithCommander.powerOfHatred', { encounterId: enc, sourceActorId: actor.id, sourceActorName: actor.name, amount, previousTempHp: currentTemp, appliedTempHp: nextTemp, createdAt: Date.now() });
+      await ActorEngine.updateActorFlags(target, NS, 'sithCommander.powerOfHatred', { encounterId: enc, sourceActorId: actor.id, sourceActorName: actor.name, amount, previousTempHp: currentTemp, appliedTempHp: nextTemp, createdAt: Date.now() }, { recalc: false });
       rows.push(`<li><strong>${esc(target.name)}</strong>: temporary HP ${currentTemp} → ${nextTemp}.</li>`);
     }
     return postCard(actor, 'Power of Hatred', `<p>${esc(actor.name)} inflames allied hatred.</p>${rows.length ? `<ul>${rows.join('')}</ul>` : '<p>No allies were targeted; grant bonus hit points manually to eligible allies below half HP.</p>'}<p>Bonus HP from multiple sources do not stack; the system preserves higher existing temporary HP.</p>`, { targetActorIds: targets.map(t => t.id), tempHpAmount: amount });
@@ -793,6 +794,7 @@ export class SithTalentActions {
     globalThis.SWSE.__sithTalentActionsRegistered = true;
 
     Hooks.on('combatTurn', async (combat) => {
+      if (!isResponsibleGM()) return; // fires on every client; Affliction damage must be applied once
       try {
         const actor = combat?.combatant?.actor ?? null;
         if (!actor) return;
@@ -813,21 +815,24 @@ export class SithTalentActions {
           await ActorEngine.applyDamage(actor, { amount: damage, type: 'force', source: 'Affliction', sourceActor: game?.actors?.get?.(entry.sourceActorId) ?? null, options: { bypassThreshold: false } });
           rows.push(`<li>${damage} Force damage from ${esc(entry.sourceActorName || 'Affliction')}</li>`);
         }
-        await actor.unsetFlag?.(NS, 'pendingAfflictions');
+        await ActorEngine.unsetActorFlag(actor, NS, 'pendingAfflictions', { recalc: false });
         await postCard(actor, 'Affliction', `<p>${esc(actor.name)} suffers Affliction damage at the beginning of their turn, before taking actions.</p><ul>${rows.join('')}</ul><p><strong>Total:</strong> ${total} Force damage.</p>`, { targetActorId: actor.id, totalDamage: total });
       } catch (err) {
         console.warn('[SWSE] Affliction turn-start damage failed:', err);
       }
     });
 
-    Hooks.on('preUpdateActor', async (actor, update) => {
+    // F-TAL-004: this was a preUpdateActor listener that awaited writes inside the pre-hook. It now runs after the update, only on the client whose user
+    // made it; the condition is unchanged (the new HP value reached maximum).
+    Hooks.on('updateActor', async (actor, update, _options, userId) => {
+      if (userId !== undefined && userId !== game.user?.id) return;
       try {
         const incomingHp = update?.system?.hp?.value ?? update?.system?.hitPoints?.value ?? update?.system?.attributes?.hp?.value;
         if (incomingHp === undefined) return;
         const cripple = actor.getFlag?.(NS, 'cripplingStrike') ?? null;
         const maxHp = actorHpMax(actor);
         if (cripple && maxHp > 0 && Number(incomingHp) >= maxHp) {
-          await actor.unsetFlag?.(NS, 'cripplingStrike');
+          await ActorEngine.unsetActorFlag(actor, NS, 'cripplingStrike', { recalc: false });
           await postCard(actor, 'Crippling Strike Ends', `<p>${esc(actor.name)} has returned to maximum hit points. Remove the Crippling Strike speed reduction.</p>`, { targetActorId: actor.id });
         }
       } catch (err) {
@@ -835,11 +840,14 @@ export class SithTalentActions {
       }
     });
 
-    Hooks.on('deleteCombat', async (combat) => {
+    // deleteCombat fires on every client: only the originating user's client cleans up, and only actors it may modify (a restore of
+    // temp HP must not run once per connected client).
+    Hooks.on('deleteCombat', async (combat, _options, userId) => {
+      if (userId !== undefined && userId !== game.user?.id) return;
       try {
         for (const combatant of combat?.combatants ?? []) {
           const actor = combatant?.actor;
-          if (!actor) continue;
+          if (!actor || actor.isOwner === false) continue;
           const power = actor.getFlag?.(NS, 'sithCommander.powerOfHatred') ?? null;
           if (power?.encounterId === combat?.id) {
             const currentTemp = Number(actor?.system?.hp?.temp ?? 0) || 0;
@@ -847,12 +855,12 @@ export class SithTalentActions {
             if (applied > 0 && currentTemp <= applied) {
               await ActorEngine.updateActor(actor, { 'system.hp.temp': Math.max(0, Number(power?.previousTempHp ?? 0) || 0) }, { source: 'power-of-hatred-cleanup' });
             }
-            await actor.unsetFlag?.(NS, 'sithCommander.powerOfHatred');
+            await ActorEngine.unsetActorFlag(actor, NS, 'sithCommander.powerOfHatred', { recalc: false });
           }
-          await actor.unsetFlag?.(NS, 'sithCommander.focusTerror');
-          await actor.unsetFlag?.(NS, 'sithCommander.inciteRage');
+          await ActorEngine.unsetActorFlag(actor, NS, 'sithCommander.focusTerror', { recalc: false });
+          await ActorEngine.unsetActorFlag(actor, NS, 'sithCommander.inciteRage', { recalc: false });
           const rapid = actor.getFlag?.(NS, 'rapidAlchemy') ?? null;
-          if (rapid?.encounterId === combat?.id) await actor.unsetFlag?.(NS, 'rapidAlchemy');
+          if (rapid?.encounterId === combat?.id) await ActorEngine.unsetActorFlag(actor, NS, 'rapidAlchemy', { recalc: false });
         }
       } catch (err) {
         console.warn('[SWSE] Sith encounter cleanup failed:', err);

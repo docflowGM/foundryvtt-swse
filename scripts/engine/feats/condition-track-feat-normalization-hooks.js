@@ -173,8 +173,8 @@ async function normalizeConditionTrackFeat(item, options = {}) {
 }
 
 export function registerConditionTrackFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeConditionTrackFeat(item, options));
-  Hooks.on('updateItem', async (item, _data, options) => normalizeConditionTrackFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeConditionTrackFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, _data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeConditionTrackFeat(item, options) : false);
   SWSELogger.log('[ConditionTrackFeats] Normalization hooks registered');
 }
 

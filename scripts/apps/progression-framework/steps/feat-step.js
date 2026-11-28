@@ -37,7 +37,7 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
 import { FeatChoiceDialog } from '/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js';
 import { attachFeatIconPath, resolveFeatIconPath } from './feat-icon-resolver.js';
-import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
+import { PendingEntitlementService } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/pending-entitlement-service.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { buildLevelUpEntitlementManifest, getManifestStartingFeatNameSet, normalizeManifestName } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
 import { isDroidProgressionActor } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js';
@@ -279,6 +279,58 @@ function getUnmetChoiceFeatPrerequisites(feat, ownedFeatNames = new Set()) {
   return missing;
 }
 
+
+// ---- chained feat prerequisite refresh (F-PRG-001): formerly installed at runtime by scripts/patches/progression-feat-chain-hotfix.js ----
+function normalizeChoice(choice) {
+  if (choice == null) return '';
+  if (typeof choice === 'string' || typeof choice === 'number') return String(choice);
+  if (Array.isArray(choice)) return choice.map(normalizeChoice).sort().join('|');
+  if (typeof choice === 'object') {
+    return Object.entries(choice)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, value]) => `${key}:${normalizeChoice(value)}`)
+      .join('|');
+  }
+  return String(choice);
+}
+
+function featSelectionSignature(shell) {
+  const feats = Array.isArray(shell?.progressionSession?.draftSelections?.feats)
+    ? shell.progressionSession.draftSelections.feats
+    : [];
+
+  return feats.map((feat, index) => {
+    const id = feat?.id || feat?._id || feat?.name || index;
+    const slot = feat?.slotKey || feat?.stepId || feat?.slotType || '';
+    const choice = feat?.system?.selectedChoice
+      ?? feat?.system?.selectedChoices
+      ?? feat?.selectedChoice
+      ?? null;
+    return `${id}::${slot}::${normalizeChoice(choice)}`;
+  }).join('||');
+}
+
+async function refreshFeatAvailability(step, shell) {
+  const actor = shell?.actor;
+  if (!actor || typeof step?._getLegalFeats !== 'function') return;
+
+  const legalFeats = await step._getLegalFeats(actor, shell);
+  step._legalFeats = Array.isArray(legalFeats) ? legalFeats : [];
+  step._noChoicesAvailable = step._legalFeats.length === 0;
+
+  if (typeof step._getSuggestedFeats === 'function') {
+    step._suggestedFeats = await step._getSuggestedFeats(actor, step._legalFeats, shell);
+  }
+  step._refreshGroupedFeats?.();
+  step._ensureDefaultFocusedFeat?.();
+  step._ensureActiveCategory?.();
+
+  swseLogger.debug('[FeatStep] Refreshed prerequisite legality after feat selection', {
+    stepId: step?.descriptor?.stepId || null,
+    selectedCount: step?._getCommittedFeatsForSlot?.(shell)?.length || 0,
+    legalCount: step._legalFeats.length,
+  });
+}
 
 export class FeatStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -617,7 +669,7 @@ export class FeatStep extends ProgressionStepPlugin {
     const legal = [];
     this._availabilityByFeatId = new Map();
     const pendingAbilityData = this._buildPendingAbilityData(shell);
-    const evaluationActor = this._buildEvaluationActorForPrereqs(actor, shell);
+    const evaluationActor = await this._buildEvaluationActorForPrereqs(actor, shell);
     const classLookupKeys = resolveClassLookupKeysForFeatStep(shell);
     const isMulticlassStartingFeatSlot = this._isLevelupMulticlassStartingFeatSlot(shell);
     const multiclassStartingFeatNames = isMulticlassStartingFeatSlot
@@ -1115,7 +1167,7 @@ export class FeatStep extends ProgressionStepPlugin {
     return resolveClassLookupKeysForFeatStep(shell);
   }
 
-  _buildEvaluationActorForPrereqs(actor, shell) {
+  async _buildEvaluationActorForPrereqs(actor, shell) {
     const recoveryContext = this.descriptor?.reconciliationContext || null;
     if (!recoveryContext) return actor;
     return PrereqAdapter.buildHistoricalEvaluationContext(actor, recoveryContext, {
@@ -2087,6 +2139,27 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   async onItemCommitted(item, shell) {
+    const before = featSelectionSignature(shell);
+    const result = await this._onItemCommittedBase(item, shell);
+    const after = featSelectionSignature(shell);
+
+    // Cancelled, rejected, or focus-only interactions do not need a full legality pass.
+    if (before === after) return result;
+
+    try {
+      await refreshFeatAvailability(this, shell);
+    } catch (error) {
+      swseLogger.error('[FeatStep] Failed to refresh chained feat prerequisites', {
+        stepId: this?.descriptor?.stepId || null,
+        feat: item?.name || item?.id || item?._id || null,
+        error: error?.message || String(error),
+      });
+    }
+
+    return result;
+  }
+
+  async _onItemCommittedBase(item, shell) {
     if (!item) return;
 
     const feat = this._getFeat(item?.id || item?._id || item);
@@ -2126,7 +2199,7 @@ export class FeatStep extends ProgressionStepPlugin {
       if (choiceMeta?.required && choiceSource !== 'grantPool') {
         const pendingForChoice = this._buildPendingAbilityData(shell);
         pendingForChoice.selectedFeats = currentSlotSelections;
-        const evaluationActor = this._buildEvaluationActorForPrereqs(shell.actor, shell);
+        const evaluationActor = await this._buildEvaluationActorForPrereqs(shell.actor, shell);
         const selectedChoice = await FeatChoiceDialog.prompt(evaluationActor || shell.actor, feat, {
           title: localizeProgressionText('SWSE.Progression.Feat.Messages.ChooseTitle', { feat: feat.name }),
           context: { pending: pendingForChoice }

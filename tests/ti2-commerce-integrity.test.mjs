@@ -314,7 +314,11 @@ const worldFor = (...as) => { const m = new Map(as.map((x) => [x.id, x])); globa
   reset(); worldFor(actor); throwOn(['swseCreditAdjustmentComplete']);
   let r = await silent(() => TransactionEngine.executeCreditAdjustment({ actor, amount: -50, reason: 'ti2', transactionContext: 'gm-credit-adjustment' }, { source: 'ti2', rederive: false })); restoreHooks();
   assert.equal(r.success, true, 'a committed adjustment is not rolled back because a hook threw'); assert.equal(actor.system.credits, 950); assert.equal(snapMode.restores, 0); assert.match(r.presentationError ?? '', /swseCreditAdjustmentComplete/);
-  const src = (await import('node:fs')).readFileSync(new URL('../scripts/engine/store/transaction-engine.js', import.meta.url), 'utf8');
+  // 3N-TE: the engine's settlement code lives in transaction-engine.js plus the modules extracted from it (emitter in transaction-helpers.js, settlements in *-settlements.js).
+  const fs = (await import('node:fs'));
+  const teDir = new URL('../scripts/engine/store/', import.meta.url);
+  const teFiles = fs.readdirSync(teDir).filter((f) => f === 'transaction-engine.js' || f === 'transaction-helpers.js' || f === 'transaction-recovery.js' || /-settlements?\.js$/.test(f));
+  const src = teFiles.map((f) => fs.readFileSync(new URL(f, teDir), 'utf8')).join('\n');
   const raw = [...src.matchAll(/Hooks\.callAll\?\./g)].length;
   assert.equal(raw, 1, 'every completion hook in the engine goes through the single post-commit-safe emitter (the only raw Hooks.callAll is inside it); owner ruling Q4 removed the former asset-customization exception');
   ok('TI-2 post-commit: a throwing completion hook does not roll back a committed credit adjustment; every engine completion hook, asset customization included (owner ruling Q4), uses the safe emitter');

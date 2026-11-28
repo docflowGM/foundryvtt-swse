@@ -7,6 +7,7 @@
  */
 
 import { LanguageStep } from '../language-step.js';
+import { applyOwnerConstrainedFollowerLanguages, ownerConstrainedLanguageStepData, rejectFollowerCustomLanguage } from './follower-language-owner-constraint.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 function uniqueStrings(values = []) {
@@ -17,8 +18,26 @@ function uniqueStrings(values = []) {
     .filter(Boolean)));
 }
 
+// Token used for language de-duplication (formerly in scripts/patches/progression-choice-language-hotfix.js).
+function normalizeLanguageToken(value) {
+  return String(value || '').trim().toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '');
+}
+
 export class FollowerLanguageStep extends LanguageStep {
   async onStepEnter(shell) {
+    await this._onStepEnterBase(shell);
+    await applyOwnerConstrainedFollowerLanguages(this, shell);
+  }
+
+  async getStepData(context) {
+    return ownerConstrainedLanguageStepData(await super.getStepData(context));
+  }
+
+  async _addCustomLanguage() {
+    rejectFollowerCustomLanguage();
+  }
+
+  async _onStepEnterBase(shell) {
     this._followerChoices = this._getFollowerChoices(shell);
     this._allLanguages = await this._getAllLanguages();
     await this._loadSpeciesLanguageRules();
@@ -113,6 +132,15 @@ export class FollowerLanguageStep extends LanguageStep {
   }
 
   _restoreFollowerSelectedLanguages(shell) {
+    this._restoreFollowerSelectedLanguagesBase(shell);
+    const granted = new Set((this._knownLanguageGrants || [])
+      .map(grant => normalizeLanguageToken(grant?.name || grant))
+      .filter(Boolean));
+    this._selectedBonusLanguages = (this._selectedBonusLanguages || [])
+      .filter(name => !granted.has(normalizeLanguageToken(name)));
+  }
+
+  _restoreFollowerSelectedLanguagesBase(shell) {
     const choices = this._getFollowerChoices(shell);
     const knownTokens = new Set(this._knownLanguages.map(value => this._normalizeLanguageToken(value)));
     const saved = uniqueStrings([

@@ -3,6 +3,10 @@
 // UNIFIED Prerequisite Validator (v3)
 // ============================================
 
+import { resolvePrerequisiteAbilityScore } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/prerequisite-ability-score.js';
+import { ActorPrerequisiteSnapshot } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/actor-prerequisite-snapshot.js';
+import { PrerequisiteEvaluator } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/prerequisite-evaluator.js';
+import { compiledLeafToRequirement, compiledPrerequisiteEntryFor } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/canonical-prerequisite-index.js';
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
@@ -317,30 +321,8 @@ export class PrerequisiteChecker {
             };
         }
 
-        const activeShell = globalThis.game?.__swseActiveProgressionShell;
-        const draftAttributes = pending?.attributes
-            || pending?.abilityIncreases
-            || (activeShell?.actor?.id === actor?.id
-                ? activeShell?.progressionSession?.draftSelections?.attributes
-                : null);
-        const draftFinal = draftAttributes?.finalValues?.[abilityKey];
-        const draftComputed = Number.isFinite(Number(draftAttributes?.values?.[abilityKey]))
-            ? Number(draftAttributes.values[abilityKey]) + (Number(draftAttributes?.speciesMods?.[abilityKey]) || 0)
-            : null;
-
-        // The previous fallback chain (system.attributes.<key>.total/.value,
-        // system.abilities.<key>.value) checked fields that don't exist
-        // anywhere on the real schema (system.attributes only ever has
-        // .base/.racial/.enhancement/.temp), so it silently evaluated every
-        // ability-score prerequisite against the hardcoded default of 10
-        // whenever no active progression-shell draft applied.
-        // SchemaAdapters.getAbilityScore() is the canonical authority
-        // (docs/systems/ABILITY_SCHEMA_AUTHORITY.md): derived data, then
-        // system.attributes reconstruction, then system.abilities only as a
-        // last-resort compatibility fallback.
-        const ability = draftFinal
-            ?? draftComputed
-            ?? SchemaAdapters.getAbilityScore(actor, abilityKey);
+        // One ability-score read for every prerequisite interpreter (draft attributes, then SchemaAdapters.getAbilityScore).
+        const ability = resolvePrerequisiteAbilityScore(actor, abilityKey, pending);
         const met = Number(ability) >= required;
         return {
             met,
@@ -690,6 +672,31 @@ export class PrerequisiteChecker {
      * @returns {Object} - { met: boolean, missing: string[], details: object }
      */
     static checkFeatPrerequisites(actor, feat, pending = {}) {
+        return this._withHistoricalContext(actor, () => this._checkFeatCore(actor, feat, pending));
+    }
+
+    /**
+     * 3N-PRG D2: a historical-evaluation actor (PrereqAdapter) that failed to build is never evaluated as if it were the live actor, and an unmet
+     * result lists the items that could not be credited for lack of acquisition provenance.
+     */
+    static _withHistoricalContext(actor, evaluate) {
+        const progression = actor?.system?.progression;
+        if (progression?.historicalEvaluation && progression.historicalContextError) {
+            return {
+                met: false,
+                unresolved: true,
+                missing: [`Prerequisites could not be evaluated for this historical level (${progression.historicalContextError})`],
+                details: { historicalContextError: progression.historicalContextError }
+            };
+        }
+        const result = evaluate();
+        if (progression?.historicalEvaluation && result && result.met === false && progression.historicalUnresolvedItems?.length) {
+            return { ...result, details: { ...(result.details || {}), historicalUnresolvedItems: progression.historicalUnresolvedItems } };
+        }
+        return result;
+    }
+
+    static _checkFeatCore(actor, feat, pending = {}) {
         // Support both document and name
         if (typeof feat === 'string') {
             feat = { name: feat, system: {} };
@@ -724,6 +731,12 @@ export class PrerequisiteChecker {
                 missing: [droidOnlyBlockReason],
                 details: { droidChassisGate: droidOnlyBlockReason }
             };
+        }
+
+        // PRQ.1D: a COMPILED canonical-index entry is evaluated from its structure, never by re-parsing prose.
+        const compiledFeat = compiledPrerequisiteEntryFor('feat', feat);
+        if (compiledFeat) {
+            return this._evaluateCompiledEntry(compiledFeat, actor, pending, feat.name);
         }
 
         // Canon raw prerequisite text is treated as the current source of truth.
@@ -771,6 +784,10 @@ export class PrerequisiteChecker {
      * @returns {Object} - { met: boolean, missing: string[], details: object }
      */
     static checkTalentPrerequisites(actor, talent, pending = {}) {
+        return this._withHistoricalContext(actor, () => this._checkTalentCore(actor, talent, pending));
+    }
+
+    static _checkTalentCore(actor, talent, pending = {}) {
         // Support both document and name
         if (typeof talent === 'string') {
             talent = { name: talent, system: {} };
@@ -794,6 +811,12 @@ export class PrerequisiteChecker {
                 missing: [droidOnlyBlockReason],
                 details: { droidChassisGate: droidOnlyBlockReason }
             };
+        }
+
+        // PRQ.1D: a COMPILED canonical-index entry is evaluated from its structure, never by re-parsing prose.
+        const compiledTalent = compiledPrerequisiteEntryFor('talent', talent);
+        if (compiledTalent) {
+            return this._evaluateCompiledEntry(compiledTalent, actor, pending, talent.name);
         }
 
         if (typeof prereqData === 'string' && prereqData.trim() && prereqData.trim().toLowerCase() !== 'none') {
@@ -1091,6 +1114,25 @@ export class PrerequisiteChecker {
      *
      * @private
      */
+    /**
+     * PRQ.1D: evaluate a COMPILED canonical-index entry through the structured-condition interpreter. The result names the index entry so a consumer can
+     * tell compiled evaluation from the compatibility path.
+     */
+    static _evaluateCompiledEntry(entry, actor, pending, nameForError) {
+        // The canonical PrerequisiteEvaluator interprets the compiled leaves against an ActorPrerequisiteSnapshot. Fail closed: a leaf the grammar does not
+        // define, or an evaluator result that is unresolved/advisory, is NOT a satisfied prerequisite.
+        const requirements = entry.structure.conditions.map((leaf) => compiledLeafToRequirement(leaf, (id) => this._resolveSkillKeyOrId(id)));
+        const index = { uuid: entry.uuid, state: entry.state, interpreter: 'PrerequisiteEvaluator' };
+        if (requirements.some((r) => r === null)) {
+            return { met: false, missing: ['Prerequisite could not be verified (unsupported compiled condition)'], details: { canonicalIndex: index, unresolved: true } };
+        }
+        const snapshot = ActorPrerequisiteSnapshot.from(actor, pending || {});
+        const result = PrerequisiteEvaluator.evaluate(snapshot, requirements, { houseruleFeats: this.getHouseruleGrantedFeats() });
+        const unresolved = Array.isArray(result.unresolved) ? result.unresolved : [];
+        const missing = [...(result.missing || []), ...unresolved];
+        return { met: result.passed === true && unresolved.length === 0, missing, details: { canonicalIndex: index, ...(unresolved.length ? { unresolved } : {}) } };
+    }
+
     static _evaluateStructuredPrerequisites(parsed, actor, pending, nameForError) {
         if (!parsed || parsed.length === 0) {
             return { met: true, missing: [], details: {} };
@@ -1258,7 +1300,9 @@ export class PrerequisiteChecker {
             case 'or':
                 return this._checkOrCondition(prereq, actor, pending);
             default:
-                return { met: true, message: '' };
+                // An unrecognized structured condition is never silently satisfied (PRQ contract: unknown clause => not verified). Every type in the
+                // production feat/talent structures has a handler above (tests/structured-prerequisite-unknown-clause.test.mjs).
+                return { met: false, message: `Prerequisite could not be verified (unsupported condition type "${type}")` };
         }
     }
 
@@ -1660,6 +1704,14 @@ export class PrerequisiteChecker {
     }
 
     static _checkBabCondition(prereq, actor, pending) {
+        const historicalBab = actor?.system?.progression?.historicalEvaluation ? actor.system.progression.historicalBab : null;
+        if (actor?.system?.progression?.historicalEvaluation && !historicalBab?.resolved) {
+            return {
+                met: false,
+                unresolved: true,
+                message: `Base attack bonus at this level could not be determined (${historicalBab?.reason || 'no class-level history'})`
+            };
+        }
         const bab = getBaseAttackBonus(actor, pending);
         const required = prereq.minimum ?? prereq.min ?? 0;
         const met = bab >= required;
@@ -3071,6 +3123,11 @@ function getTotalLevel(actor) {
  */
 function getBaseAttackBonus(actor, pending = {}) {
     if (!actor) {return 0;}
+
+    // 3N-PRG D2: a historical-evaluation context carries its own BAB, computed by BABCalculator over reconstructed class levels (or unresolved).
+    // The live actor's BAB fields and class items never decide a historical prerequisite.
+    const historical = actor.system?.progression?.historicalEvaluation ? actor.system.progression.historicalBab : null;
+    if (actor.system?.progression?.historicalEvaluation) {return historical?.resolved ? (Number(historical.value) || 0) : 0;}
 
     const directBab = maxNumeric([
         actor.system?.bab?.total,

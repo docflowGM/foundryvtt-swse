@@ -1,0 +1,1784 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "combat",
+ "name": "Combat, actions, attacks, damage, conditions, hazards",
+ "kind": "mechanical",
+ "files": 431,
+ "runtimeSloc": 34726,
+ "runtimeFiles": 174,
+ "counts": {
+  "files": 431,
+  "runtimeModules": 172,
+  "runtimeSloc": 34532,
+  "reachability": {
+   "reachable-static": 148,
+   "string-referenced-only": 2,
+   "orphan-unreferenced": 14,
+   "reachable-dynamic": 3,
+   "test-only-import": 5
+  },
+  "nonRuntimeByRole": {
+   "asset": 10,
+   "data": 4,
+   "evidence-or-doc": 91,
+   "normalizer": 1,
+   "module": 1,
+   "other": 1,
+   "presentation-style": 13,
+   "presentation-template": 33,
+   "test": 96,
+   "tool": 9
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/combat/rolls/attacks.js",
+   "consumers": 67,
+   "sloc": 1199,
+   "role": "module-with-writes",
+   "exports": [
+    "computeFinalAttackComposition",
+    "isCanonicalHintedWeapon",
+    "previewAttackContext",
+    "previewAmmoPreflight",
+    "buildAttackConditionContext",
+    "resolveCanonicalAttackStage",
+    "getTargetReflex",
+    "getTargetDefense",
+    "resolveTargetContext",
+    "checkAttackSourceReadiness",
+    "rollAttack",
+    "rollDamage"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/combat/combat-option-resolver.js",
+   "consumers": 59,
+   "sloc": 229,
+   "role": "normalizer",
+   "exports": [
+    "camelize",
+    "extractAttackOptionRules",
+    "actorBAB",
+    "CombatOptionResolver",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 360
+  },
+  {
+   "path": "scripts/engine/combat/action/action-economy-consumption.js",
+   "consumers": 58,
+   "sloc": 190,
+   "role": "module",
+   "exports": [
+    "ActionEconomyConsumption",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/combat/combat-roll-math.js",
+   "consumers": 48,
+   "sloc": 771,
+   "role": "module",
+   "exports": [
+    "getTargetActorFromOptions",
+    "weaponMatchesId",
+    "rapidAlchemyState",
+    "rapidAlchemyAttackBonus",
+    "resolveAttackBonus",
+    "resolveStockDroidDamageContract",
+    "resolveDamageBonus",
+    "DAMAGE_STAGE",
+    "buildExtraWeaponDiceFormula",
+    "stepDamageDieFormula",
+    "resolveCriticalMultiplier",
+    "resolveDamageComposition"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/combat/rolls/enhanced-rolls.js",
+   "consumers": 31,
+   "sloc": 1495,
+   "role": "module",
+   "exports": [
+    "resolveAutofireForm",
+    "SWSERoll",
+    "RollHistory",
+    "ROLL_HOOKS"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 4,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/combat/combat-stat-rules.js",
+   "consumers": 29,
+   "sloc": 541,
+   "role": "engine-or-service",
+   "exports": [
+    "SIZE_ORDER",
+    "REFLEX_SIZE_MODIFIERS",
+    "DAMAGE_THRESHOLD_SIZE_BONUSES",
+    "GRAPPLE_SIZE_MODIFIERS",
+    "normalizeCombatSize",
+    "getActorCombatSize",
+    "getReflexSizeModifier",
+    "getDamageThresholdSizeBonus",
+    "getGrappleSizeModifier",
+    "computeGrappleBonus",
+    "resolveGrappleBonus",
+    "isRangedWeapon"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/combat/damage-packet-builder.js",
+   "consumers": 29,
+   "sloc": 390,
+   "role": "module",
+   "exports": [
+    "normalizeDamageWorkflowContext",
+    "resolveDamagePacketType",
+    "resolveDamageDisposition",
+    "shouldOfferDamageRoll",
+    "buildDamagePacket",
+    "buildWeaponDamagePacket",
+    "finalizeDamagePacketForTarget",
+    "buildDamageApplyOptions",
+    "DamagePacketBuilder",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/combat/workflow/combat-context-serializer.js",
+   "consumers": 27,
+   "sloc": 321,
+   "role": "module",
+   "exports": [
+    "summarizeCombatWorkflowContext",
+    "encodeCombatWorkflowContext",
+    "decodeCombatWorkflowContext",
+    "mergeCombatWorkflowContextIntoRollOptions"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/engine/combat/fire-state-store.js",
+   "consumers": 25,
+   "sloc": 523,
+   "role": "module-with-writes",
+   "exports": [
+    "currentClock",
+    "readFireState",
+    "applyOwnedSelection",
+    "heldGroupOf",
+    "previewReadiness",
+    "COORDINATOR_OWNED_FIRE_STATE_KEYS",
+    "fireStateDeltaFor",
+    "fireStateUpdateFor",
+    "confirmsItemUpdate",
+    "spendRequiredActions",
+    "commitFired",
+    "clearReload"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 1,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/combat/rolls/damage.js",
+   "consumers": 24,
+   "sloc": 282,
+   "role": "module-with-writes",
+   "exports": [
+    "rollDamage",
+    "rollDamageWithEffects",
+    "rollDamageGeneric",
+    "applyDamage",
+    "rollAndApplyDamage",
+    "npcStatblockFlatDamageFormula",
+    "composeWeaponDamage"
+   ],
+   "writes": 3,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/combat/damage-type-rules.js",
+   "consumers": 18,
+   "sloc": 604,
+   "role": "engine-or-service",
+   "exports": [
+    "normalizeDamageTypeKey",
+    "uniqueDamageTypes",
+    "expandDamageTypeAliases",
+    "damageTypesFromContext",
+    "isDamageType",
+    "PHYSICAL_DAMAGE_TYPES",
+    "physicalDamageTypesOf",
+    "eventPhysicalDamageTypes",
+    "hasDamageType",
+    "damageTypesMatch",
+    "damageContextForReaction",
+    "collectDamageProtections"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/combat/systems/grappling-system.js",
+   "consumers": 18,
+   "sloc": 841,
+   "role": "module",
+   "exports": [
+    "resolveOpposedGrappleOutcome",
+    "SWSEGrappling"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 1,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/combat/unarmed-attack-helper.js",
+   "consumers": 16,
+   "sloc": 315,
+   "role": "module",
+   "exports": [
+    "getMartialArtsStep",
+    "getUnarmedFamilyExtraWeaponDice",
+    "getUnarmedStyleRules",
+    "unarmedAttackDoesNotProvoke",
+    "increaseDamageDie",
+    "getBaseUnarmedDamage",
+    "getUnarmedDamage",
+    "isGenuineVirtualUnarmed",
+    "VIRTUAL_UNARMED_VARIANTS",
+    "buildVirtualUnarmedWeapon",
+    "buildUnarmedAttackContext"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 356
+  },
+  {
+   "path": "scripts/engine/combat/ConditionTrackRules.js",
+   "consumers": 14,
+   "sloc": 60,
+   "role": "engine-or-service",
+   "exports": [
+    "ConditionTrackRules"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/combat/multi-attack.js",
+   "consumers": 14,
+   "sloc": 771,
+   "role": "module",
+   "exports": [
+    "WEAPON_GROUPS",
+    "MULTI_ATTACK_FEATS",
+    "getWeaponGroup",
+    "isDoubleWeapon",
+    "extractWeaponGroupFromFeat",
+    "getDoubleAttackGroups",
+    "getTripleAttackGroups",
+    "actorHasMultiAttackFor",
+    "multiAttackChargeViolation",
+    "actorEntitledToMultiAttackPackage",
+    "getDualWeaponMasteryLevel",
+    "getDualWeaponPenalty"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/combat/action/action-economy-persistence.js",
+   "consumers": 13,
+   "sloc": 189,
+   "role": "module-with-writes",
+   "exports": [
+    "ActionEconomyPersistence",
+    "default"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/combat/grapple-state-engine.js",
+   "consumers": 13,
+   "sloc": 463,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "GrappleStateEngine",
+    "default"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 2,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/combat/action/action-engine-v2.js",
+   "consumers": 11,
+   "sloc": 185,
+   "role": "engine-or-service",
+   "exports": [
+    "ActionEngine",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/combat/utils/combat-actions-mapper.js",
+   "consumers": 10,
+   "sloc": 395,
+   "role": "normalizer",
+   "exports": [
+    "CombatActionsMapper"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/combat/threshold-engine.js",
+   "consumers": 9,
+   "sloc": 417,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "ThresholdEngine",
+    "ION_THRESHOLD_CT_STEPS",
+    "ThresholdResult"
+   ],
+   "writes": 3,
+   "actorEngineCalls": 11,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/combat/weapon-target-gate-classifiers.js",
+   "consumers": 9,
+   "sloc": 206,
+   "role": "module",
+   "exports": [
+    "canonicalSelectionFromContext",
+    "normalizeKey",
+    "getAttackType",
+    "normalizeRangeBand",
+    "getRangeBand",
+    "contextManeuver",
+    "weaponText",
+    "weaponDamageText",
+    "isVehicleWeapon",
+    "isUnarmedWeapon",
+    "weaponMatchesGroup",
+    "weaponMatchesText"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 360
+  },
+  {
+   "path": "scripts/engine/combat/attack-outcome-resolver.js",
+   "consumers": 8,
+   "sloc": 30,
+   "role": "normalizer",
+   "exports": [
+    "resolveAttackOutcome",
+    "AttackOutcomeResolver",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 355
+  },
+  {
+   "path": "scripts/engine/combat/class-target-observation.js",
+   "consumers": 8,
+   "sloc": 212,
+   "role": "module",
+   "exports": [
+    "runtimeDeps",
+    "OBSERVATION_FLAG_SCOPE",
+    "OBSERVATION_FLAG_KEY",
+    "OBSERVATION_FEATURES",
+    "observationIdentity",
+    "observationClassLevel",
+    "ownsObservationFeature",
+    "observationBonusFor",
+    "observationFeatureUsable",
+    "activeObservations",
+    "observedAttackBonus",
+    "observedReflexBonus"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/combat/features/combat-feature-contract.js",
+   "consumers": 8,
+   "sloc": 164,
+   "role": "module",
+   "exports": [
+    "COMBAT_FEATURE_BUCKETS",
+    "COMBAT_FEATURE_ACTION_GROUPS",
+    "COMBAT_FEATURE_ACTION_GROUP_ORDER",
+    "COMBAT_FEATURE_TRIGGER_GROUPS",
+    "COMBAT_FEATURE_TRIGGER_GROUP_ORDER",
+    "COMBAT_FEATURE_PASSIVE_GROUPS",
+    "COMBAT_FEATURE_PASSIVE_GROUP_ORDER",
+    "COMBAT_FEATURE_AUTOMATION_STATUS",
+    "COMBAT_FEATURE_READINESS",
+    "COMBAT_FEATURE_ACTIONS",
+    "normalizeCombatFeatureId",
+    "emptyCombatFeaturesModel"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 13
+  },
+  {
+   "path": "scripts/engine/combat/reactions/reaction-engine.js",
+   "consumers": 8,
+   "sloc": 518,
+   "role": "engine-or-service",
+   "exports": [
+    "ReactionEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 3,
+   "ciTests": 353
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/combat/rolls/enhanced-rolls.js",
+   "sloc": 1495,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/combat/rolls/attacks.js",
+   "sloc": 1199,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/combat/reactions/reaction-registry.js",
+   "sloc": 915,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/combat/systems/grappling-system.js",
+   "sloc": 841,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/combat/combat-roll-math.js",
+   "sloc": 771,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/combat/multi-attack.js",
+   "sloc": 771,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/poison/poison-engine.js",
+   "sloc": 726,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/combat/damage-type-rules.js",
+   "sloc": 604,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/combat/features/combat-feature-classifier.js",
+   "sloc": 565,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/combat/CombatEngine.js",
+   "sloc": 555,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/components/combat-action-bar.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 282,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/combat/aid-another-action-adapter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 278,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/combat/damage-engine-test.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 263,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/actions/action-availability-engine.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 251,
+   "tests": 2
+  },
+  {
+   "path": "scripts/engine/combat/CombatMechanicsEngine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 201,
+   "tests": 0
+  },
+  {
+   "path": "scripts/combat/combat-integration.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 198,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/combat/damage-log-formatter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 183,
+   "tests": 0
+  },
+  {
+   "path": "scripts/components/condition-track.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 172,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/combat-panel-manager.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 137,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/character-sheet/combat-ui.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 133,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/combat/attack-of-opportunity-feat-rules.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 121,
+   "tests": 2
+  },
+  {
+   "path": "scripts/engine/combat/galaxy-intrigue-combat-action-adapter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 112,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/damage-app.js",
+   "reach": "string-referenced-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 106,
+   "tests": 0
+  },
+  {
+   "path": "scripts/combat/combat-automation.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 101,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/combat/unknown-regions-combat-action-adapter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 100,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/actions/action-option-card-adapter.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 54,
+   "tests": 1
+  },
+  {
+   "path": "scripts/engine/combat/massive-damage-engine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 51,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/actions/actor-action-resolver.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 48,
+   "tests": 3
+  },
+  {
+   "path": "scripts/engine/actions/action-registry.js",
+   "reach": "test-only-import",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 46,
+   "tests": 2
+  },
+  {
+   "path": "scripts/utils/calc-conditions.js",
+   "reach": "string-referenced-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 8,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/combat/subsystems/vehicle/index.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 2,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "equipment": 103,
+  "infrastructure": 58,
+  "actor-core": 57,
+  "vehicles": 36,
+  "abilities-effects": 35,
+  "rolls": 21,
+  "feats": 14,
+  "chat": 14,
+  "progression": 12,
+  "ui-shell": 11,
+  "houserules": 11,
+  "force": 9,
+  "customization": 7,
+  "talents": 6,
+  "droids": 4,
+  "species": 3,
+  "governance": 2,
+  "settings-config": 1
+ },
+ "dependedOnByDomains": {
+  "ui-shell": 56,
+  "feats": 53,
+  "vehicles": 35,
+  "actor-core": 21,
+  "rolls": 20,
+  "infrastructure": 17,
+  "compat-patches": 13,
+  "equipment": 11,
+  "force": 10,
+  "abilities-effects": 10,
+  "houserules": 9,
+  "talents": 5,
+  "species": 3,
+  "holonet": 3,
+  "npc-followers": 3,
+  "skills": 3,
+  "store-economy": 2,
+  "chat": 2,
+  "droids": 2,
+  "customization": 1,
+  "governance": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 25,
+   "sites": [
+    {
+     "path": "scripts/engine/combat/damage-resolution-engine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 6,
+     "lines": [
+      83,
+      94,
+      100,
+      112,
+      137,
+      346
+     ]
+    },
+    {
+     "path": "scripts/combat/rolls/damage.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      20,
+      248,
+      253
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/SWSEInitiative.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      142,
+      175,
+      325
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/threshold-engine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      53,
+      598,
+      762
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/action/action-economy-persistence.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      152,
+      180
+     ]
+    },
+    {
+     "path": "scripts/engine/poison/poison-engine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      126,
+      273
+     ]
+    },
+    {
+     "path": "scripts/apps/combat-action-browser.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      274
+     ]
+    },
+    {
+     "path": "scripts/combat/active-effects-manager.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      61
+     ]
+    },
+    {
+     "path": "scripts/combat/combat-status.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      115
+     ]
+    },
+    {
+     "path": "scripts/combat/rolls/attacks.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      1402
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/fire-state-store.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      292
+     ]
+    },
+    {
+     "path": "scripts/infrastructure/hooks/combat-hooks.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      344
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A04-presentation-direct-writes",
+   "invariant": "A-04",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/apps/combat-action-browser.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      274
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A05-chat-outside-swse-chat",
+   "invariant": "A-05",
+   "count": 11,
+   "sites": [
+    {
+     "path": "scripts/engine/combat/reactions/reaction-registry.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      8,
+      1024
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/starship/subsystem-engine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      208,
+      342
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/starship/vehicle-turn-controller.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      150,
+      190
+     ]
+    },
+    {
+     "path": "scripts/engine/poison/poison-engine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      783,
+      812
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/CombatEngine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      358
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/full-attack-executor.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      197
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/recurring-damage-engine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      307
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A06-settings-get-in-engines",
+   "invariant": "A-06",
+   "count": 3,
+   "sites": [
+    {
+     "path": "scripts/engine/combat/ConditionEngine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      13,
+      17
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/SecondWindEngine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      8
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A07-engine-imports-ui",
+   "invariant": "A-07",
+   "count": 6,
+   "sites": [
+    {
+     "path": "scripts/engine/combat/canonical-special-effects.js",
+     "target": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "kind": "dynamic"
+    },
+    {
+     "path": "scripts/engine/combat/class-target-observation.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "dynamic"
+    },
+    {
+     "path": "scripts/engine/combat/features/combat-feature-panel-renderer.js",
+     "target": "scripts/sheets/v2/character-sheet/combat-feature-sheet-adapter.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/combat/sith-lord-temptation-service.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/combat/ui/CombatUIAdapter.js",
+     "target": "scripts/ui/chat/chat-interaction-bridge.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/combat/weapon-control-effects.js",
+     "target": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "kind": "dynamic"
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "defense-totals",
+   "otherDomains": [
+    "actor-core",
+    "force",
+    "infrastructure",
+    "npc-followers",
+    "progression",
+    "talents",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/combat/rolls/attacks.js:675 getTargetDefenseValue",
+    "scripts/combat/rolls/attacks.js:688 getTargetDefense",
+    "scripts/combat/rolls/enhanced-rolls.js:104 getDefenseValue",
+    "scripts/engine/combat/vehicles/utils/vehicle-calculations.js:70 computeVehicleReflexDefense"
+   ]
+  },
+  {
+   "responsibility": "damage-threshold",
+   "otherDomains": [
+    "feats",
+    "infrastructure"
+   ],
+   "sites": [
+    "scripts/engine/combat/combat-stat-rules.js:98 getDamageThresholdSizeBonus",
+    "scripts/engine/combat/threshold-engine.js:122 getDamageThreshold",
+    "scripts/engine/combat/threshold-engine.js:221 calculateDamageThreshold"
+   ]
+  },
+  {
+   "responsibility": "condition-track-penalty",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "force",
+    "infrastructure",
+    "species"
+   ],
+   "sites": [
+    "scripts/combat/utils/combat-utils.js:29 getConditionPenalty",
+    "scripts/engine/combat/ConditionEngine.js:39 calculateConditionStep",
+    "scripts/engine/combat/ConditionEngine.js:150 applyConditionStep",
+    "scripts/engine/combat/ConditionEngine.js:392 getConditionPenalty"
+   ]
+  },
+  {
+   "responsibility": "skill-total",
+   "otherDomains": [
+    "infrastructure",
+    "mentor-suggestion",
+    "progression",
+    "rolls",
+    "skills"
+   ],
+   "sites": [
+    "scripts/combat/swse-combat.js:12 getInitiativeSkillTotal",
+    "scripts/combat/swse-combatant.js:19 getInitiativeSkillTotal",
+    "scripts/engine/combat/combined-feat-action-resolver.js:205 getSkillBonus",
+    "scripts/engine/combat/starship/enhanced-commander.js:126 getSkillBonus",
+    "scripts/engine/combat/SWSEInitiative.js:25 getActorInitiativeSkillTotal"
+   ]
+  },
+  {
+   "responsibility": "ability-modifier",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "feats",
+    "force",
+    "infrastructure",
+    "mentor-suggestion",
+    "npc-followers",
+    "progression",
+    "rolls",
+    "species",
+    "talents",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/engine/combat/reactions/reaction-registry.js:614 swseAbilityMod"
+   ]
+  },
+  {
+   "responsibility": "half-heroic-level",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core"
+   ],
+   "sites": [
+    "scripts/engine/combat/combat-stat-rules.js:849 forcePowerDamageAddsHalfLevel",
+    "scripts/engine/combat/combat-stat-rules.js:880 getHalfLevelDamageBonus"
+   ]
+  },
+  {
+   "responsibility": "damage-formula",
+   "otherDomains": [
+    "actor-core",
+    "droids",
+    "equipment",
+    "species",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/combat/rolls/enhanced-rolls.js:55 getWeaponDamageFormula",
+    "scripts/combat/utils/combat-utils.js:73 getCriticalDamageBonus",
+    "scripts/combat/utils/combat-utils.js:183 computePassiveStateDamageBonus",
+    "scripts/engine/combat/combat-roll-math.js:769 resolveDamageBonus",
+    "scripts/engine/combat/combat-roll-math.js:1228 buildDamageFormula",
+    "scripts/engine/combat/combat-stat-rules.js:442 getWeaponFlatDamageBonus",
+    "scripts/engine/combat/combat-stat-rules.js:880 getHalfLevelDamageBonus",
+    "scripts/engine/combat/damage-resolution-engine.js:132 resolveDamage",
+    "scripts/engine/combat/damage-timing-rider-adapter.js:249 resolveDamageBonus",
+    "scripts/engine/combat/subsystems/vehicle/vehicle-collisions.js:114 computeCollisionDamage",
+    "scripts/engine/combat/unarmed-attack-helper.js:235 getBaseUnarmedDamage",
+    "scripts/engine/combat/vehicles/utils/vehicle-calculations.js:106 computeVehicleDamage",
+    "scripts/engine/combat/weapons-engine.js:270 getBaseDamage"
+   ]
+  },
+  {
+   "responsibility": "damage-application",
+   "otherDomains": [
+    "actor-core",
+    "equipment",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/combat/rolls/damage.js:285 applyDamage",
+    "scripts/combat/systems/enhanced-combat-system.js:170 applyDamage",
+    "scripts/engine/combat/CombatEngine.js:754 applyDamage",
+    "scripts/engine/combat/damage-engine.js:24 applyDamage",
+    "scripts/engine/combat/damage-resolution-engine.js:132 resolveDamage",
+    "scripts/engine/combat/damage-timing-rider-adapter.js:358 applyToDamagePacket",
+    "scripts/engine/combat/damage-timing-rider-adapter.js:367 applyDamage",
+    "scripts/engine/combat/weapon-control-effects.js:121 dealDamage"
+   ]
+  },
+  {
+   "responsibility": "attack-bonus",
+   "otherDomains": [
+    "data-registries",
+    "equipment",
+    "rolls",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/combat/utils/combat-utils.js:49 computeAttackBonus",
+    "scripts/engine/combat/combat-roll-math.js:403 resolveAttackBonus",
+    "scripts/engine/combat/combat-stat-rules.js:437 getWeaponFlatAttackBonus",
+    "scripts/engine/combat/scale-engine.js:253 getScaleAttackModifier",
+    "scripts/engine/combat/starship/enhanced-commander.js:105 getAttackBonus",
+    "scripts/engine/combat/vehicle-attack-math.js:189 resolveVehicleAttackBonus",
+    "scripts/engine/combat/vehicle-attack-math.js:315 resolveAbstractCrewAttackBonus",
+    "scripts/engine/combat/vehicles/utils/vehicle-calculations.js:27 computeVehicleAttackBonus"
+   ]
+  },
+  {
+   "responsibility": "critical-hit",
+   "otherDomains": [],
+   "sites": [
+    "scripts/combat/utils/combat-utils.js:57 getEffectiveCritRange",
+    "scripts/combat/utils/combat-utils.js:88 getCriticalMultiplier",
+    "scripts/engine/combat/combat-roll-math.js:898 resolveCriticalMultiplier",
+    "scripts/engine/combat/combat-stat-rules.js:781 getCriticalMultiplier"
+   ]
+  },
+  {
+   "responsibility": "initiative",
+   "otherDomains": [
+    "infrastructure",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/combat/rolls/enhanced-rolls.js:1657 rollInitiative",
+    "scripts/combat/swse-combat.js:12 getInitiativeSkillTotal",
+    "scripts/combat/swse-combat.js:112 rollInitiative",
+    "scripts/combat/swse-combatant.js:19 getInitiativeSkillTotal",
+    "scripts/engine/combat/SWSEInitiative.js:25 getActorInitiativeSkillTotal",
+    "scripts/engine/combat/SWSEInitiative.js:64 getInitiativeFormulaBonus",
+    "scripts/engine/combat/SWSEInitiative.js:204 rollInitiative",
+    "scripts/ui/combat-stats-tooltip.js:197 getInitiativeBreakdown"
+   ]
+  },
+  {
+   "responsibility": "grapple",
+   "otherDomains": [
+    "feats"
+   ],
+   "sites": [
+    "scripts/combat/systems/grappling-system.js:214 resolveOpposedGrappleOutcome",
+    "scripts/engine/combat/combat-stat-rules.js:103 getGrappleSizeModifier",
+    "scripts/engine/combat/combat-stat-rules.js:132 computeGrappleBonus",
+    "scripts/engine/combat/combat-stat-rules.js:164 resolveGrappleBonus",
+    "scripts/engine/combat/grapple-state-query.js:29 getGrappleFlag",
+    "scripts/engine/combat/grapple-state-query.js:48 getGrappleEffects",
+    "scripts/engine/combat/grapple-state-query.js:62 getGrappleStateInfo",
+    "scripts/ui/combat-stats-tooltip.js:113 getGrappleBreakdown"
+   ]
+  },
+  {
+   "responsibility": "price-computation",
+   "otherDomains": [
+    "customization",
+    "droids",
+    "equipment",
+    "feats",
+    "mentor-suggestion",
+    "skills",
+    "store-economy"
+   ],
+   "sites": [
+    "scripts/engine/combat/threshold-engine.js:640 calculateRepairCost"
+   ]
+  },
+  {
+   "responsibility": "modifier-aggregation",
+   "otherDomains": [
+    "abilities-effects",
+    "equipment",
+    "feats",
+    "rolls",
+    "skills",
+    "species"
+   ],
+   "sites": [
+    "scripts/combat/systems/grappling-system.js:61 collectContextualGrappleModifiers",
+    "scripts/engine/combat/combat-option-resolver.js:169 collectWeaponRuleModifiers",
+    "scripts/engine/combat/vehicles/utils/vehicle-calculations.js:167 computeDogfightingModifier"
+   ]
+  },
+  {
+   "responsibility": "second-wind",
+   "otherDomains": [
+    "actor-core",
+    "feats",
+    "holonet",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/engine/combat/SecondWindEngine.js:20 shouldResetSecondWind",
+    "scripts/engine/combat/SecondWindEngine.js:57 resetAllSecondWind",
+    "scripts/engine/combat/SecondWindRules.js:19 getSecondWindHpThreshold",
+    "scripts/engine/combat/SecondWindRules.js:58 canUseSecondWind",
+    "scripts/sheets/v2/character-sheet/combat-feature-sheet-adapter.js:78 addSecondWindFallback"
+   ]
+  },
+  {
+   "responsibility": "size-modifier",
+   "otherDomains": [],
+   "sites": [
+    "scripts/combat/utils/combat-utils.js:263 getSizeModifier",
+    "scripts/engine/combat/combat-stat-rules.js:93 getReflexSizeModifier",
+    "scripts/engine/combat/combat-stat-rules.js:98 getDamageThresholdSizeBonus",
+    "scripts/engine/combat/combat-stat-rules.js:103 getGrappleSizeModifier"
+   ]
+  },
+  {
+   "responsibility": "force-power-dc-or-roll",
+   "otherDomains": [
+    "force",
+    "infrastructure",
+    "npc-followers",
+    "talents"
+   ],
+   "sites": [
+    "scripts/combat/rolls/enhanced-rolls.js:1978 rollUseTheForce"
+   ]
+  },
+  {
+   "responsibility": "skill-roll",
+   "otherDomains": [
+    "rolls",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/combat/rolls/enhanced-rolls.js:1302 rollSkill"
+   ]
+  }
+ ],
+ "exactClones": [
+  {
+   "tokens": 149,
+   "sites": [
+    "scripts/apps/talent-tree-workbench/custom-talent-tree-workbench-hooks.js:12 actorFromElement",
+    "scripts/engine/combat/features/combat-feature-action-router.js:23 actorFromElement",
+    "scripts/engine/combat/features/combat-feature-legacy-action-bridge.js:27 actorFromElement"
+   ]
+  },
+  {
+   "tokens": 176,
+   "sites": [
+    "scripts/engine/combat/features/combat-feature-handlers.js:182 applyForcedAttackOption",
+    "scripts/patches/combat-ui-behavior-hotfix.js:493 applyForcedAttackOption"
+   ]
+  },
+  {
+   "tokens": 151,
+   "sites": [
+    "scripts/sheets/v2/character-like-sheet.js:4101",
+    "scripts/sheets/v2/character-sheet/combat-ui.js:40"
+   ]
+  },
+  {
+   "tokens": 145,
+   "sites": [
+    "scripts/engine/combat/damage-item-dice-contributions.js:17 actorHasTalentNamed",
+    "scripts/engine/combat/weapons-engine.js:28"
+   ]
+  },
+  {
+   "tokens": 142,
+   "sites": [
+    "scripts/combat/combat-integration.js:242",
+    "scripts/components/condition-track.js:198"
+   ]
+  },
+  {
+   "tokens": 142,
+   "sites": [
+    "scripts/combat/combat-integration.js:261",
+    "scripts/components/condition-track.js:217"
+   ]
+  }
+ ],
+ "duplicateSymbolNames": [
+  {
+   "name": "isMeleeWeapon",
+   "files": [
+    "scripts/combat/utils/combat-utils.js",
+    "scripts/engine/combat/combat-stat-rules.js",
+    "scripts/items/weapon-branch-resolver.js"
+   ]
+  },
+  {
+   "name": "rollDamage",
+   "files": [
+    "scripts/combat/rolls/attacks.js",
+    "scripts/combat/rolls/damage.js",
+    "scripts/utils/dice-utils.js"
+   ]
+  },
+  {
+   "name": "slugify",
+   "files": [
+    "scripts/engine/combat/damage-profile-registry.js",
+    "scripts/utils/stable-id.js",
+    "scripts/utils/string-utils.js"
+   ]
+  },
+  {
+   "name": "ActionEngine",
+   "files": [
+    "scripts/engine/combat/action/action-engine-v2.js",
+    "scripts/engine/combat/action/action-engine.js"
+   ]
+  },
+  {
+   "name": "ActionPolicyController",
+   "files": [
+    "scripts/engine/combat/action/action-policy-controller.js",
+    "scripts/engine/combat/action/action-policy.js"
+   ]
+  },
+  {
+   "name": "actorItems",
+   "files": [
+    "scripts/engine/combat/weapon-target-gate-classifiers.js",
+    "scripts/engine/effects/adapters/effect-card-utils.js"
+   ]
+  },
+  {
+   "name": "ATTACK_ABILITY_OVERRIDE_FLAG",
+   "files": [
+    "scripts/engine/combat/combat-stat-rules.js",
+    "scripts/items/weapon-runtime/attack-ability-override.js"
+   ]
+  },
+  {
+   "name": "buildOfficerShareTalentGrant",
+   "files": [
+    "scripts/engine/combat/officer-share-talent-grant-plan.js",
+    "scripts/engine/combat/officer-share-talent-service.js"
+   ]
+  },
+  {
+   "name": "buildWeaponDamagePacket",
+   "files": [
+    "scripts/engine/combat/builders/weapon-damage-packet-builder.js",
+    "scripts/engine/combat/damage-packet-builder.js"
+   ]
+  },
+  {
+   "name": "canonicalSelectionFromContext",
+   "files": [
+    "scripts/engine/combat/weapon-target-gate-classifiers.js",
+    "scripts/items/weapon-runtime/attack-shape.js"
+   ]
+  },
+  {
+   "name": "checkAttackSourceReadiness",
+   "files": [
+    "scripts/combat/rolls/attack-readiness-gate.js",
+    "scripts/combat/rolls/attacks.js"
+   ]
+  },
+  {
+   "name": "composeWeaponDamage",
+   "files": [
+    "scripts/combat/rolls/damage.js",
+    "scripts/domain/vehicles/vehicle-modification-effects.js"
+   ]
+  },
+  {
+   "name": "ConditionTrackComponent",
+   "files": [
+    "scripts/combat/combat-integration.js",
+    "scripts/components/condition-track.js"
+   ]
+  },
+  {
+   "name": "controlDeclarationOf",
+   "files": [
+    "scripts/engine/combat/weapon-control-effects.js",
+    "scripts/items/weapon-runtime/control-rules.js"
+   ]
+  },
+  {
+   "name": "getCriticalMultiplier",
+   "files": [
+    "scripts/combat/utils/combat-utils.js",
+    "scripts/engine/combat/combat-stat-rules.js"
+   ]
+  },
+  {
+   "name": "isCanonicalHintedWeapon",
+   "files": [
+    "scripts/combat/rolls/attacks.js",
+    "scripts/combat/systems/enhanced-combat-system.js"
+   ]
+  },
+  {
+   "name": "isRangedWeapon",
+   "files": [
+    "scripts/engine/combat/combat-stat-rules.js",
+    "scripts/items/weapon-branch-resolver.js"
+   ]
+  },
+  {
+   "name": "isVehicleWeapon",
+   "files": [
+    "scripts/engine/combat/combat-stat-rules.js",
+    "scripts/engine/combat/weapon-target-gate-classifiers.js"
+   ]
+  },
+  {
+   "name": "LIBRARY_SCOPES",
+   "files": [
+    "scripts/sheets/v2/character-sheet/combat-action-library-context.js",
+    "scripts/sheets/v2/character-sheet/combat-tab-ui.js"
+   ]
+  },
+  {
+   "name": "normalizeRangeBand",
+   "files": [
+    "scripts/engine/combat/weapon-target-gate-classifiers.js",
+    "scripts/items/weapon-runtime/canonical-range.js"
+   ]
+  },
+  {
+   "name": "ownOfficerTalentItem",
+   "files": [
+    "scripts/engine/combat/officer-share-talent-grant-plan.js",
+    "scripts/engine/combat/officer-share-talent-service.js"
+   ]
+  },
+  {
+   "name": "readAttackAbilityOverride",
+   "files": [
+    "scripts/engine/combat/combat-stat-rules.js",
+    "scripts/items/weapon-runtime/attack-ability-override.js"
+   ]
+  },
+  {
+   "name": "ROLL_HOOKS",
+   "files": [
+    "scripts/combat/rolls/enhanced-rolls.js",
+    "scripts/rolls/roll-config.js"
+   ]
+  },
+  {
+   "name": "rollAttack",
+   "files": [
+    "scripts/combat/rolls/attacks.js",
+    "scripts/utils/dice-utils.js"
+   ]
+  },
+  {
+   "name": "RollHistory",
+   "files": [
+    "scripts/combat/rolls/enhanced-rolls.js",
+    "scripts/rolls/roll-config.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "ready",
+   "sites": [
+    "scripts/engine/combat/reactions/reaction-registry.js:1108"
+   ]
+  },
+  {
+   "name": "init",
+   "sites": [
+    "scripts/combat/active-effects-manager.js:423",
+    "scripts/combat/combat-status.js:211"
+   ]
+  },
+  {
+   "name": "updateActor",
+   "sites": [
+    "scripts/combat/active-effects-manager.js:367"
+   ]
+  },
+  {
+   "name": "combatTurn",
+   "sites": [
+    "scripts/combat/active-effects-manager.js:372",
+    "scripts/engine/combat/action/action-economy-hooks.js:23"
+   ]
+  },
+  {
+   "name": "renderSWSEV2CharacterSheet",
+   "sites": [
+    "scripts/engine/combat/features/combat-feature-panel-renderer.js:93"
+   ]
+  },
+  {
+   "name": "deleteCombat",
+   "sites": [
+    "scripts/engine/combat/action/action-economy-hooks.js:40",
+    "scripts/engine/combat/threshold-engine.js:48"
+   ]
+  },
+  {
+   "name": "(expr:hook)",
+   "sites": [
+    "scripts/engine/combat/recurring-damage-engine.js:142",
+    "scripts/engine/poison/poison-engine.js:18"
+   ]
+  },
+  {
+   "name": "renderSWSEV2NpcSheet",
+   "sites": [
+    "scripts/engine/combat/features/combat-feature-panel-renderer.js:94"
+   ]
+  },
+  {
+   "name": "renderSWSEV2DroidSheet",
+   "sites": [
+    "scripts/engine/combat/features/combat-feature-panel-renderer.js:95"
+   ]
+  },
+  {
+   "name": "renderTokenHUD",
+   "sites": [
+    "scripts/apps/combat-action-browser.js:99"
+   ]
+  },
+  {
+   "name": "swse.forcePointSpent",
+   "sites": [
+    "scripts/engine/poison/poison-engine.js:29"
+   ]
+  },
+  {
+   "name": "swse.postRollAttack",
+   "sites": [
+    "scripts/infrastructure/hooks/combat-hooks.js:146"
+   ]
+  },
+  {
+   "name": "getCombatTrackerEntryContext",
+   "sites": [
+    "scripts/infrastructure/hooks/combat-hooks.js:154"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "docs/architecture/action-authority-v1.md",
+  "docs/architecture/combat-authority-map.md",
+  "docs/audits/combat-phase-0a-glaring-gap-ledger.json",
+  "docs/audits/combat-phase-0a-rules-source-baseline.md",
+  "docs/audits/combat-phase-0b-action-routing-ledger.json",
+  "docs/audits/combat-phase-0b-combat-action-routing-audit.md",
+  "docs/audits/combat-phase-0b-fight-defensively-addendum.md",
+  "docs/audits/combat-phase-0c-attack-callpath-ledger.json",
+  "docs/audits/combat-phase-0c-attack-roll-audit.md",
+  "docs/audits/combat-phase-0c-attack-roll-seam-ledger.json",
+  "docs/audits/combat-phase-0c-meets-beats-audit.md",
+  "docs/audits/combat-phase-0d-damage-callpath-ledger.json",
+  "docs/audits/combat-phase-0d-damage-rules-fidelity-audit.md",
+  "docs/audits/combat-phase-0d-damage-seam-ledger.json",
+  "docs/audits/combat-phase-0d-ranged-melee-penalty-addendum.md",
+  "docs/audits/combat-phase-0e-ammo-ui-requirements.md",
+  "docs/audits/combat-phase-0e-autofire-burst-stun-ammo-audit.md",
+  "docs/audits/combat-phase-0f-grapple-ion-seam-ledger.json",
+  "docs/audits/combat-phase-0f-grapple-rules-fidelity-audit.md",
+  "docs/audits/combat-phase-0f-ion-damage-addendum.md",
+  "docs/audits/combat-phase-0g-damage-type-crosswalk.md",
+  "docs/audits/combat-phase-0g-damage-types-hazards-semantics-audit.md",
+  "docs/audits/combat-phase-0g-special-damage-seam-ledger.json",
+  "docs/audits/combat-phase-0h-action-economy-state-addendum.md",
+  "docs/audits/combat-phase-0h-combat-state-audit.md",
+  "docs/audits/combat-phase-0h-state-seam-ledger.json",
+  "docs/audits/combat-phase-0h-state-storage-crosswalk.md",
+  "docs/audits/combat-phase-0i-callpath-ledger.json",
+  "docs/audits/combat-phase-0i-callpath-trace-audit.md",
+  "docs/audits/combat-phase-0i-context-loss-ledger.json",
+  "docs/audits/combat-phase-0i-routing-recommendations.md",
+  "docs/audits/combat-phase-0j-healing-implementation-boundary.md",
+  "docs/audits/combat-phase-0j-healing-repair-callpath-ledger.json",
+  "docs/audits/combat-phase-0j-healing-repair-rules-audit.md",
+  "docs/audits/combat-phase-0j-positive-damage-repair-seam-ledger.json",
+  "docs/audits/combat-phase-0k-context-contract-recommendations.md",
+  "docs/audits/combat-phase-0k-context-seam-ledger.json",
+  "docs/audits/combat-phase-0l-automation-boundary-report.md",
+  "docs/audits/combat-phase-0l-final-phase-0-index.md",
+  "docs/audits/combat-phase-0l-implementation-readiness-ledger.json",
+  "docs/audits/combat-phase-0l-phase-1-readiness-plan.md",
+  "docs/audits/combat-phase-0l-risk-priority-matrix.md",
+  "docs/audits/combat-phase-1a-aggregator-wiring-plan.md",
+  "docs/audits/combat-phase-1a-authority-ledger.json",
+  "docs/audits/combat-phase-1a-authority-map.md",
+  "docs/audits/combat-phase-1a-direct-call-seam-ledger.json",
+  "docs/audits/combat-phase-1a-final-recommendation.md",
+  "docs/audits/combat-phase-1a-ssot-decision-matrix.md",
+  "docs/audits/combat-phase-1b-workflow-registry-implementation.md",
+  "docs/audits/combat-phase-1c-direct-workflow-handlers.md",
+  "docs/audits/combat-phase-1d-action-economy-hardening.md",
+  "docs/audits/combat-phase-1e-context-preservation.md",
+  "docs/audits/combat-phase-1f-workflow-routing-and-damage-handoff.md",
+  "docs/audits/combat-phase-2a-damage-packet-handoff.md",
+  "docs/audits/combat-phase-2b-targeted-damage-rules.md",
+  "docs/audits/combat-tab-ux-convergence.md",
+  "docs/audits/combat-tab-ux/combat-new-1100.png",
+  "docs/audits/combat-tab-ux/combat-new-380.png",
+  "docs/audits/combat-tab-ux/combat-new-lib-720.png",
+  "docs/audits/generated/action-authority-normalization-audit-report.json",
+  "docs/audits/generated/action-authority-normalization-audit-report.md",
+  "docs/audits/generated/attack-option-coverage-report.json",
+  "docs/audits/generated/attack-option-coverage-report.md",
+  "docs/audits/generated/damage-profile-audit.json",
+  "docs/audits/generated/damage-profile-audit.md",
+  "docs/audits/generated/phase10d-reaction-adapter-report.json",
+  "docs/audits/generated/phase10d-reaction-adapter-report.md",
+  "docs/audits/generated/phase10f-damage-timing-rider-adapter-report.json",
+  "docs/audits/generated/phase10f-damage-timing-rider-adapter-report.md",
+  "docs/audits/generated/phase10g-damage-timing-wiring-report.json",
+  "docs/audits/generated/phase10g-damage-timing-wiring-report.md",
+  "docs/audits/generated/phase10h-damage-context-callsites-report.json",
+  "docs/audits/generated/phase10h-damage-context-callsites-report.md",
+  "docs/audits/gm-datapad-recovery-action-integrity.md",
+  "docs/audits/legacy-grapple-return-fire-addendum-2026-07-06.json",
+  "docs/audits/phase-0-damage-packet-recalibration-audit.md",
+  "docs/audits/phase-3-canonical-damage-packet-design.md",
+  "docs/audits/phase-3-component-damage-pipeline-design.md",
+  "docs/audits/phase-3-d3-damage-reduction-design.md",
+  "docs/audits/v2-damage-modifier-authority-audit-correction-1.md",
+  "docs/audits/v2-damage-modifier-authority-audit.md",
+  "docs/audits/v2-phase-5-sheet-ux-action-integrity.md",
+  "docs/combat-action-ability-cards-phase-t13.json",
+  "docs/combat-features-reform-phase-0.md",
+  "docs/poison-engine-bundle-readme.md",
+  "docs/poison-engine-phase1.md",
+  "docs/poison-engine-phase2.md",
+  "docs/systems/CANONICAL_DAMAGE_PACKET.md",
+  "docs/systems/COMBAT_MATH_SSOT.md"
+ ],
+ "tests": [
+  "tests/action-authority-136-record-reconciliation.test.mjs",
+  "tests/action-authority-entitlement-reconciliation.test.mjs",
+  "tests/action-authority-groundwork-normalization-audit.test.mjs",
+  "tests/action-authority-groundwork.test.mjs",
+  "tests/action-authority-presentation-reconciliation.test.mjs",
+  "tests/attack-bonus-math-integrity.test.mjs",
+  "tests/attack-composition-actionid-diagnostic.test.mjs",
+  "tests/attack-damage-option-context-transport.test.mjs",
+  "tests/attack-dialog-context-authority-correction.test.mjs",
+  "tests/attack-dialog-context-authority.test.mjs",
+  "tests/attack-outcome-resolver.test.mjs",
+  "tests/attack-outcome-ssot-check.test.mjs",
+  "tests/attack-outcome-wiring.test.mjs",
+  "tests/attack-target-defense-authority.test.mjs",
+  "tests/attempt-grab-reflex-defense-authority.test.mjs",
+  "tests/canonical-damage-packet-authority.test.mjs",
+  "tests/class-command-cover.test.mjs",
+  "tests/class-force-v2-attunement-cutover.test.mjs",
+  "tests/class-force-v2-direct-fp-cutover.test.mjs",
+  "tests/class-force-v2-threshold-cutover.test.mjs",
+  "tests/class-phase-6f11-saboteur-convergence.test.mjs",
+  "tests/class-phase-6f4-saboteur-destructive.test.mjs",
+  "tests/class-phase-6f5-elite-trooper-dr.test.mjs",
+  "tests/class-phase-6f6-gunslinger-trusty-sidearm.test.mjs",
+  "tests/class-phase-6f7-infiltrator-unarmed-stun.test.mjs",
+  "tests/class-phase-6f8-master-saboteur-reroll.test.mjs",
+  "tests/class-phase-6z-reaction-execution-admission.test.mjs",
+  "tests/class-realignment-iv-wave-c-score-mark.test.mjs",
+  "tests/class-realignment-iv-wave-d-master-of-movement.test.mjs",
+  "tests/combat-action-eligibility-coverage.test.mjs",
+  "tests/combat-action-eligibility.test.mjs",
+  "tests/combat-action-identity.test.mjs",
+  "tests/combat-action-routing-closure.test.mjs",
+  "tests/combat-feature-stance-authority.test.mjs",
+  "tests/combat-loadout-preview.test.mjs",
+  "tests/combat-stats-tooltip-grapple-authority.test.mjs",
+  "tests/combat-tab-ux-contract.test.mjs",
+  "tests/d016-physical-damage-type-flow.test.mjs",
+  "tests/damage-modifier-ssot.test.mjs",
+  "tests/damage-threshold-authority.test.mjs",
+  "tests/equipment-e4c1-wp5-c2-attack-integrity.test.mjs",
+  "tests/equipment-e4c1-wp5-c3-trust-boundaries.test.mjs",
+  "tests/equipment-e4c1-wp5-c3b-force-point-lifecycle.test.mjs",
+  "tests/force-v2-03b-block-deflect-events.test.mjs",
+  "tests/full-attack-reroll-guard-check.test.mjs",
+  "tests/grapple-bonus-ssot-parity.test.mjs",
+  "tests/grapple-size-modifier-book-values.test.mjs",
+  "tests/grapple-state-attack-penalty.test.mjs",
+  "tests/initiative-ability-fallback-authority.test.mjs",
+  "tests/officer-share-talent-action-rules.test.mjs",
+  "tests/officer-share-talent-cleanup-plan.test.mjs",
+  "tests/officer-share-talent-delivery.test.mjs",
+  "tests/officer-share-talent-scene.test.mjs",
+  "tests/officer-share-talent-transaction.test.mjs",
+  "tests/phase2-vehicle-attack-alignment.test.mjs",
+  "tests/phase3-diagnostics-harness.test.mjs",
+  "tests/phase4-damage-application-receipt.test.mjs",
+  "tests/phase4-full-attack-sequence-identity.test.mjs",
+  "tests/phase5-full-attack-message-state.test.mjs",
+  "tests/phase5-full-attack-reroll-handler.test.mjs",
+  "tests/shield-mitigation-resolver-authority.test.mjs",
+  "tests/stock-droid-attack-math.test.mjs",
+  "tests/stock-droid-damage-math.test.mjs",
+  "tests/talent-membership-and-pack-completion.test.mjs",
+  "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+  "tests/vehicle-universal-phase4e-p36-area-miss-damage.test.mjs",
+  "tests/vehicle-universal-phase4e-p41-shieldbuster.test.mjs",
+  "tests/vehicle-universal-phase4e-p5-combat-chain.test.mjs",
+  "tests/weapon-3gate-damage-branch-authority.test.mjs",
+  "tests/weapon-3gate-evasion-area-path.test.mjs",
+  "tests/weapon-3gate-math-matrix.test.mjs",
+  "tests/weapon-3gate-w1-minimum-hit-damage.test.mjs",
+  "tests/weapon-3gate-w3-range-continuity.test.mjs",
+  "tests/weapon-3gate-w7-legacy-entrypoints.test.mjs",
+  "tests/weapon-phase-5d-a-attack-consumption.test.mjs",
+  "tests/weapon-phase-5d-b-profile-selection.test.mjs",
+  "tests/weapon-phase-5d-c-damage-consumption.test.mjs",
+  "tests/weapon-phase-5d-d-range-resource-consumption.test.mjs",
+  "tests/weapon-phase-5d-d-thrown-melee-correction.test.mjs",
+  "tests/weapon-phase-5d-e-multiplier-correction.test.mjs",
+  "tests/weapon-phase-5d-e-special-effects.test.mjs",
+  "tests/weapon-phase-5d-f-multiattack-convergence.test.mjs",
+  "tests/weapon-phase-5d-g-fire-state-area-selectors.test.mjs",
+  "tests/weapon-phase-5d-h-executable-field-closure.test.mjs",
+  "tests/weapon-phase-5d-i-a-core-attack-residuals.test.mjs",
+  "tests/weapon-phase-5d-i-b-wielding-activation-threat.test.mjs",
+  "tests/weapon-phase-5d-i-c-a-outcome-persistent-effects.test.mjs",
+  "tests/weapon-phase-5d-i-c-b-grapple-control.test.mjs",
+  "tests/weapon-phase-5d-i-c-c-reaction-defense.test.mjs",
+  "tests/weapon-phase-5d-i-d-b1-mounting.test.mjs",
+  "tests/weapon-phase-5d-i-d-b2-wielding-size.test.mjs",
+  "tests/weapon-phase-5d-i-d-b5-stock.test.mjs",
+  "tests/weapon-phase-5d-i-d-e-talent-relations.test.mjs",
+  "tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs",
+  "tests/weapon-production-mixed-resource-ammunition.test.mjs",
+  "tests/weapons-engine-modifier-source-authority.test.mjs"
+ ]
+}

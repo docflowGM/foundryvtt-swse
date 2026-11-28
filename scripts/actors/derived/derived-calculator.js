@@ -22,7 +22,6 @@
  * - Pure input → output transformer
  */
 
-import { HPCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/hp-calculator.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { BABCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/bab-calculator.js";
 import { DefenseCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/defense-calculator.js";
@@ -31,7 +30,8 @@ import { DerivedOverrideEngine } from "/systems/foundryvtt-swse/scripts/engine/a
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
-import { getEffectiveHalfLevel, getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { actorHasSkillFocusForSkill } from "/systems/foundryvtt-swse/scripts/actors/derived/skill-focus-identity.js";
+import { getHalfCharacterLevel, getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { CANONICAL_SKILL_DEFS, normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 import { isRankedModeEnabled, deriveTrainedFromRanks } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
@@ -258,11 +258,16 @@ export class DerivedCalculator {
       const hp = {
         base: actor.system.hp?.max || 1,
         max: actor.system.hp?.max || 1,
-        value: actor.system.hp?.value || actor.system.hp?.max || 1,
+        // 3N-DC P0: a CURRENT HP of 0 is a real value (a downed actor), not "missing". The truthy fallback (`value || max`) mirrored full HP for an
+        // actor at 0 HP. Only a missing/non-numeric value falls back to max.
+        value: Number.isFinite(Number(actor.system.hp?.value)) && actor.system.hp?.value !== null && actor.system.hp?.value !== ''
+          ? Number(actor.system.hp.value)
+          : (actor.system.hp?.max || 1),
         total: actor.system.hp?.max || 1,
         adjustment: 0 // Adjustments are part of ActorEngine.recomputeHP, not derived
       };
-      const bab = await BABCalculator.calculate(classLevels, { adjustment: babAdjustment });
+      const babDetail = await BABCalculator.calculateDetailed(classLevels, { adjustment: babAdjustment });
+      const bab = babDetail.total;
       const defenses = await DefenseCalculator.calculate(actor, classLevels, { adjustments: defenseAdjustments });
 
       // Build update object (all writes go to system.derived.*)
@@ -345,6 +350,8 @@ export class DerivedCalculator {
       if (bab >= 0) {
         updates['system.derived.bab'] = bab;
         updates['system.derived.babAdjustment'] = babAdjustment;
+        // 3N-DC: say whether this BAB is certified (exact class progression) or an estimate / startup-deferred value. Additive; `bab` stays numeric.
+        updates['system.derived.babProvenance'] = babDetail.provenance;
       }
 
       // ========================================
@@ -506,7 +513,7 @@ export class DerivedCalculator {
       // Half-level is derived from the level-split authority, not a persisted system field.
       // system.halfLevel can be absent/stale during Foundry prepareData/update cycles,
       // which caused trained skills to miss the +1 at level 2 and similar level-up flows.
-      const halfLevel = getEffectiveHalfLevel(actor);
+      const halfLevel = getHalfCharacterLevel(actor); // skills: one-half CHARACTER level (3N-DC)
       const isDroid = actor?.type === 'droid' || actor.system.isDroid || false;
       const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
       const talentNames = this._getTalentNameSet(actor);
@@ -677,7 +684,15 @@ export class DerivedCalculator {
         const nonFocusModifierBonus = (skillFocusModifierBonus > 0 && rawFeatBonus >= skillFocusModifierBonus)
           ? rawFeatBonus - skillFocusModifierBonus
           : rawFeatBonus;
-        const featBonus = nonFocusModifierBonus + effectiveSFBonus;
+        let featBonus = nonFocusModifierBonus + effectiveSFBonus;
+        // 3N-DC P0 (F-ACT-015): single canonical Skill Focus non-stacking. This is the former runtime `computeAll()` wrapper in
+        // force-suite-runtime-repairs.js, folded in verbatim: a focused skill whose actor owns the Skill Focus feat for it never also keeps a
+        // second +5 from the modifier aggregate that the Skill Focus recognizer above did not identify.
+        let duplicateSkillFocusSuppressed = 0;
+        if (skill.focused && focusBonus > 0 && featBonus >= 5 && actorHasSkillFocusForSkill(actor, skillKey)) {
+          duplicateSkillFocusSuppressed = 5;
+          featBonus -= duplicateSkillFocusSuppressed;
+        }
         total += featBonus;
 
         // PHASE 4: Get state-dependent modifiers for this skill.
@@ -700,13 +715,11 @@ export class DerivedCalculator {
         total += stateBonus;
 
         // Apply armor check penalty (if skill is affected by armor)
-        let armorPenalty = 0;
-        if (skillDef.armorPenalty) {
-          armorPenalty = actor.system.derived?.armor?.checkPenalty ||
-                         actor.system.armor?.checkPenalty ||
-                         0;
-          total += armorPenalty;
-        }
+        // 3N-DC P0: the armor check penalty is applied ONCE, as typed modifiers from ModifierEngine (armor-usage-resolver: resolveArmorUsageEffects).
+        // This pass used to read a persisted `system.armor.checkPenalty` / `system.derived.armor.checkPenalty` (no live writer; legacy data only) and
+        // add it again, so an actor carrying that stale field counted the penalty twice. The breakdown keeps its `armor` row at 0 (the real penalty is
+        // inside the modifier-engine part) so consumers' shape is unchanged.
+        const armorPenalty = 0;
 
         // Apply condition track penalty
         const conditionPenalty = actor.system.derived?.damage?.conditionPenalty || 0;
@@ -723,7 +736,7 @@ export class DerivedCalculator {
           { key: 'misc', label: 'Misc', value: skillMiscMod, source: 'actor.system.skills' },
           { key: 'species', label: 'Species / special ability', value: speciesBonus, source: 'species' },
           { key: 'trained', label: rankedMode ? 'Ranks' : 'Trained', value: rankedMode ? rankBonus : trainedBonus, source: rankedMode ? 'ranks' : 'training' },
-          { key: 'halfLevel', label: '1/2 heroic level', value: halfLevelBonus, source: 'level' },
+          { key: 'halfLevel', label: '1/2 character level', value: halfLevelBonus, source: 'level' },
           { key: 'focus', label: 'Skill Focus', value: focusBonus, source: 'focus' },
           { key: 'occupation', label: 'Occupation', value: occupationBonusValue, source: 'occupation' },
           { key: 'modifiers', label: 'Feat / equipment / effects', value: featBonus, source: 'modifier-engine' },
@@ -762,6 +775,7 @@ export class DerivedCalculator {
           trainedBonus,
           rankBonus,
           focusBonus,
+          ...(duplicateSkillFocusSuppressed ? { skillFocusNonStacking: true, duplicateSkillFocusSuppressed } : {}),
           stateBonus: stateBonus,
           armorPenalty: armorPenalty,
           conditionPenalty: conditionPenalty,
@@ -769,7 +783,8 @@ export class DerivedCalculator {
           math: {
             total,
             parts: skillBreakdown,
-            verified: Math.abs(breakdownTotal - total) <= 0.001
+            verified: Math.abs(breakdownTotal - total) <= 0.001,
+            ...(duplicateSkillFocusSuppressed ? { skillFocusNonStacking: true, duplicateSkillFocusSuppressed } : {})
           }
         };
       }
@@ -912,27 +927,14 @@ export class DerivedCalculator {
         const damageThresholdAdjustment = (modifierMap['defense.damageThreshold'] || 0) + (thresholdFeatRules.flatBonus || 0);
         let damageThreshold = thresholdDefenseBase + getDamageThresholdSizeBonus(actor) + damageThresholdAdjustment;
 
+        // OPTIONAL house rule (enableEnhancedMassiveDamage + modifyDamageThresholdFormula; not published RAW). Owner ruling F-CMB-003: add the selected level
+        // modifier ONCE to the correctly calculated RAW threshold above (which already holds Fortitude/substituted defense, the size bonus and published
+        // feat/talent modifiers): fullLevel -> + heroic level, halfLevel -> + floor(heroic level / 2). The size bonus is never added a second time and
+        // a zero heroic level is never silently replaced by total character level (a Nonheroic-only actor has no heroic level to add).
         if (enableEnhanced && modifyFormula) {
-
-          const formulaType =
-            safeGet('damageThresholdFormulaType', 'fullLevel');
-
-          const computedHeroicLevel =
-            heroicLevel || actor.system.level || 1;
-
-          const sizeMod = getDamageThresholdSizeBonus(actor);
-
-          if (formulaType === 'halfLevel') {
-            damageThreshold =
-              damageThreshold +
-              Math.floor(computedHeroicLevel / 2) +
-              sizeMod;
-          } else {
-            damageThreshold =
-              damageThreshold +
-              computedHeroicLevel +
-              sizeMod;
-          }
+          const formulaType = safeGet('damageThresholdFormulaType', 'fullLevel');
+          const enhancedHeroicLevel = Math.max(0, Number(heroicLevel) || 0);
+          damageThreshold += formulaType === 'halfLevel' ? Math.floor(enhancedHeroicLevel / 2) : enhancedHeroicLevel;
         }
 
         updates['system.derived.damageThreshold'] = damageThreshold;

@@ -1,0 +1,2769 @@
+{
+ "schema": "swse.architecture-census.invariant-probes/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "generator": "tools/architecture-census/probe-invariants.mjs",
+ "note": "Hits are candidate violations; Phase 2 classifies them.",
+ "probes": [
+  {
+   "id": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "description": "update/setFlag/unsetFlag/*EmbeddedDocuments/create/delete on actor-, item-, effect-, token- or combat-like receivers outside scripts/governance/actor-engine/.",
+   "hits": 331,
+   "liveHits": 295,
+   "files": 120,
+   "liveFiles": 97,
+   "byMethod": {
+    "update": 35,
+    "create": 19,
+    "delete": 19,
+    "setFlag": 155,
+    "unsetFlag": 48,
+    "createDocuments": 4,
+    "deleteDocuments": 3,
+    "updateEmbeddedDocuments": 8,
+    "createEmbeddedDocuments": 2,
+    "deleteEmbeddedDocuments": 1,
+    "updateDocuments": 1
+   },
+   "byDomain": {
+    "talents": 72,
+    "combat": 25,
+    "equipment": 24,
+    "mentor-suggestion": 24,
+    "npc-followers": 23,
+    "force": 23,
+    "infrastructure": 16,
+    "customization": 15,
+    "feats": 15,
+    "progression": 15,
+    "ui-shell": 13,
+    "compat-patches": 8,
+    "galactic-profiles": 5,
+    "actor-core": 4,
+    "store-economy": 3,
+    "abilities-effects": 3,
+    "holonet": 2,
+    "species": 2,
+    "vehicles": 1,
+    "skills": 1,
+    "houserules": 1
+   },
+   "sites": [
+    {
+     "path": "scripts/engine/talent/sith-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 25,
+     "lines": [
+      270,
+      423,
+      478,
+      502,
+      520,
+      532,
+      574,
+      575,
+      619,
+      649,
+      660,
+      676,
+      705,
+      711,
+      716,
+      723,
+      747,
+      760,
+      783,
+      816,
+      830,
+      850,
+      852,
+      853,
+      855
+     ]
+    },
+    {
+     "path": "scripts/items/swse-item-sheet.js",
+     "domain": "equipment",
+     "reach": "reachable-static",
+     "count": 19,
+     "lines": [
+      226,
+      233,
+      1135,
+      1144,
+      1228,
+      1689,
+      1956,
+      2133,
+      2456,
+      2477,
+      2485,
+      2492,
+      2510,
+      2515,
+      2544,
+      2568,
+      2582,
+      2598,
+      2809
+     ]
+    },
+    {
+     "path": "scripts/engine/force/force-executor.js",
+     "domain": "force",
+     "reach": "reachable-static",
+     "count": 16,
+     "lines": [
+      87,
+      581,
+      734,
+      771,
+      817,
+      1034,
+      1065,
+      1689,
+      1690,
+      1691,
+      1692,
+      1693,
+      1694,
+      1695,
+      1696,
+      1697
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/consular-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 12,
+     "lines": [
+      351,
+      449,
+      547,
+      590,
+      613,
+      694,
+      884,
+      969,
+      1004,
+      1008,
+      1012,
+      1020
+     ]
+    },
+    {
+     "path": "scripts/apps/minion-manager.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 8,
+     "lines": [
+      86,
+      96,
+      100,
+      116,
+      120,
+      123,
+      131,
+      142
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/force-adept-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 8,
+     "lines": [
+      284,
+      382,
+      494,
+      511,
+      529,
+      550,
+      630,
+      707
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/lightsaber-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 7,
+     "lines": [
+      282,
+      294,
+      375,
+      459,
+      539,
+      569,
+      740
+     ]
+    },
+    {
+     "path": "scripts/allies/faction-registry-service.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 6,
+     "lines": [
+      963,
+      975,
+      995,
+      1254,
+      1334,
+      1355
+     ]
+    },
+    {
+     "path": "scripts/data/force-points.js",
+     "domain": "force",
+     "reach": "reachable-static",
+     "count": 6,
+     "lines": [
+      232,
+      235,
+      243,
+      248,
+      291,
+      300
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/damage-resolution-engine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 6,
+     "lines": [
+      83,
+      94,
+      100,
+      112,
+      137,
+      346
+     ]
+    },
+    {
+     "path": "scripts/patches/follower-orphan-transfer-hotfix.js",
+     "domain": "compat-patches",
+     "reach": "reachable-static",
+     "count": 6,
+     "lines": [
+      99,
+      100,
+      159,
+      225,
+      226,
+      334
+     ]
+    },
+    {
+     "path": "scripts/core/mutation-safety.js",
+     "domain": "infrastructure",
+     "reach": "reachable-static",
+     "count": 5,
+     "lines": [
+      26,
+      46,
+      93,
+      119,
+      156
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/sentinel-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 5,
+     "lines": [
+      296,
+      357,
+      446,
+      505,
+      593
+     ]
+    },
+    {
+     "path": "scripts/locations/location-registry-service.js",
+     "domain": "galactic-profiles",
+     "reach": "reachable-static",
+     "count": 5,
+     "lines": [
+      805,
+      826,
+      840,
+      880,
+      917
+     ]
+    },
+    {
+     "path": "scripts/utils/lightsaber-light-sync.js",
+     "domain": "customization",
+     "reach": "reachable-static",
+     "count": 5,
+     "lines": [
+      89,
+      102,
+      111,
+      132,
+      167
+     ]
+    },
+    {
+     "path": "scripts/applications/lightsaber/lightsaber-router.js",
+     "domain": "customization",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      75,
+      76,
+      84,
+      85
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/session-storage.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      285,
+      329,
+      516,
+      518
+     ]
+    },
+    {
+     "path": "scripts/core/document-api-v13.js",
+     "domain": "infrastructure",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      34,
+      181,
+      392,
+      422
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionStateService.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      56,
+      90,
+      130,
+      198
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/guardian-spirit-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      91,
+      182,
+      208,
+      272
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/lightsaber-form-engine.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      182,
+      194,
+      288,
+      317
+     ]
+    },
+    {
+     "path": "scripts/sheets/v2/character-like-sheet.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      2825,
+      2845,
+      3616,
+      5332
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/SettingsSurfaceController.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      92,
+      141,
+      238,
+      239
+     ]
+    },
+    {
+     "path": "scripts/utils/hardening.js",
+     "domain": "infrastructure",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      131,
+      147,
+      148,
+      149
+     ]
+    },
+    {
+     "path": "scripts/combat/rolls/damage.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      20,
+      248,
+      253
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/SWSEInitiative.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      142,
+      175,
+      325
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/threshold-engine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      53,
+      598,
+      762
+     ]
+    },
+    {
+     "path": "scripts/engine/crafting/lightsaber-construction-engine.js",
+     "domain": "customization",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      652,
+      653,
+      654
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/condition-track-feat-actions.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      57,
+      193,
+      310
+     ]
+    },
+    {
+     "path": "scripts/engine/import/npc-template-importer-engine.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      203,
+      364,
+      373
+     ]
+    },
+    {
+     "path": "scripts/engine/inventory/ammo-system.js",
+     "domain": "equipment",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      212,
+      277,
+      434
+     ]
+    },
+    {
+     "path": "scripts/engine/mentor/mentor-dialogues.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      368,
+      394,
+      448
+     ]
+    },
+    {
+     "path": "scripts/engine/mentor/mentor-memory.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      107,
+      297,
+      332
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionExplainer.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      308,
+      326,
+      334
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionReasonEngine.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      49,
+      257,
+      630
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/jedi-prestige-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      371,
+      392,
+      468
+     ]
+    },
+    {
+     "path": "scripts/engine/upgrades/UpgradeService.js",
+     "domain": "customization",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      705,
+      761,
+      775
+     ]
+    },
+    {
+     "path": "scripts/registries/feat-pack-seeder.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      193,
+      203,
+      316
+     ]
+    },
+    {
+     "path": "scripts/apps/gear-templates-engine.js",
+     "domain": "equipment",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      137,
+      156
+     ]
+    },
+    {
+     "path": "scripts/apps/minion-creator.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      408,
+      419
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/chargen-persistence.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      118,
+      195
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/progression-actor-persistence.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      51,
+      66
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      1138,
+      3068
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/force-power-step.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      367,
+      403
+     ]
+    },
+    {
+     "path": "scripts/apps/store/store-main.js",
+     "domain": "store-economy",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      1040,
+      1437
+     ]
+    },
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      125,
+      127
+     ]
+    },
+    {
+     "path": "scripts/engine/abilities/active/duration-engine.js",
+     "domain": "abilities-effects",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      85,
+      102
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/action/action-economy-persistence.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      152,
+      180
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/encounter-use-tracker.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      71,
+      133
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/force-point-feat-actions.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      186,
+      227
+     ]
+    },
+    {
+     "path": "scripts/engine/poison/poison-engine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      126,
+      273
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/AnchorRepository.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      136,
+      239
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/WishlistEngine.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      44,
+      71
+     ]
+    },
+    {
+     "path": "scripts/species/species-reroll-handler.js",
+     "domain": "species",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      219,
+      237
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/gm/utils/gm-contact-actorizer-service.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      179,
+      215
+     ]
+    },
+    {
+     "path": "scripts/utils/actor-utils.js",
+     "domain": "actor-core",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      281,
+      319
+     ]
+    },
+    {
+     "path": "scripts/utils/flags/swse-flags.js",
+     "domain": "infrastructure",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      103,
+      114
+     ]
+    },
+    {
+     "path": "scripts/actors/base/swse-actor-base.js",
+     "domain": "actor-core",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      145
+     ]
+    },
+    {
+     "path": "scripts/apps/allies/ally-assignment-modal.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      463
+     ]
+    },
+    {
+     "path": "scripts/apps/choices/feat-choice-dialog.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      317
+     ]
+    },
+    {
+     "path": "scripts/apps/combat-action-browser.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      274
+     ]
+    },
+    {
+     "path": "scripts/apps/follower-creator.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      1307
+     ]
+    },
+    {
+     "path": "scripts/apps/force-alchemy/force-alchemy-state-service.js",
+     "domain": "force",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      209
+     ]
+    },
+    {
+     "path": "scripts/apps/npc-template-importer.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      156
+     ]
+    },
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-content-approval-service.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      305
+     ]
+    },
+    {
+     "path": "scripts/combat/active-effects-manager.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      61
+     ]
+    },
+    {
+     "path": "scripts/combat/combat-status.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      115
+     ]
+    },
+    {
+     "path": "scripts/combat/rolls/attacks.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      1402
+     ]
+    },
+    {
+     "path": "scripts/core/world-data-loader.js",
+     "domain": "infrastructure",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      473
+     ]
+    },
+    {
+     "path": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "domain": "abilities-effects",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      991
+     ]
+    },
+    {
+     "path": "scripts/dialogs/entity-dialog/entity-create-browser.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      289
+     ]
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-phase4d-scratch-import.js",
+     "domain": "vehicles",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      75
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/fire-state-store.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      292
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/combat-feat-damage-rule-resolver.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      146
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/feat-action-listeners.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      122
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/meta-resource-feat-resolver.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      1073
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/skill-feat-runtime-patches.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      116
+     ]
+    },
+    {
+     "path": "scripts/engine/import/npc-damage-hydration-hooks.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      152
+     ]
+    },
+    {
+     "path": "scripts/engine/progression/engine/attribute-increase-handler.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      260
+     ]
+    },
+    {
+     "path": "scripts/engine/progression/utils/enforcer-resources-transaction-guard.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      24
+     ]
+    },
+    {
+     "path": "scripts/engine/skills/skill-attempt-registry.js",
+     "domain": "skills",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      95
+     ]
+    },
+    {
+     "path": "scripts/engine/store/store-droid-construction.js",
+     "domain": "store-economy",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      45
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/ClassDomainReasonEngine.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      295
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/SelectionRecorder.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      40
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionService.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      621
+     ]
+    },
+    {
+     "path": "scripts/engine/suggestion/attribute-planner.js",
+     "domain": "mentor-suggestion",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      158
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/armor-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      121
+     ]
+    },
+    {
+     "path": "scripts/holonet/subsystems/holonet-intel-service.js",
+     "domain": "holonet",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      1010
+     ]
+    },
+    {
+     "path": "scripts/holonet/subsystems/holonet-messenger-service.js",
+     "domain": "holonet",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      1675
+     ]
+    },
+    {
+     "path": "scripts/houserules/houserule-status-effects.js",
+     "domain": "houserules",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      298
+     ]
+    },
+    {
+     "path": "scripts/infrastructure/hooks/actor-sidebar-controls.js",
+     "domain": "actor-core",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      125
+     ]
+    },
+    {
+     "path": "scripts/infrastructure/hooks/combat-hooks.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      344
+     ]
+    },
+    {
+     "path": "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+     "domain": "compat-patches",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      170
+     ]
+    },
+    {
+     "path": "scripts/patches/progression-ledger-reconciliation-hotfix.js",
+     "domain": "compat-patches",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      212
+     ]
+    },
+    {
+     "path": "scripts/sheets/v2/HelpModeManager.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      75
+     ]
+    },
+    {
+     "path": "scripts/sheets/v2/character-sheet/chargen-onboarding.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      92
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      665
+     ]
+    }
+   ]
+  },
+  {
+   "id": "P-A03-derived-writes-outside-actor-classes",
+   "invariant": "A-03",
+   "description": "Assignments to *.system.derived.* in live runtime modules outside scripts/actors/** (the documented derived-state writers).",
+   "hits": 4,
+   "insideScriptsActors": 145,
+   "files": 2,
+   "sites": [
+    {
+     "path": "scripts/engine/progression/xp-engine.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      106,
+      123
+     ]
+    },
+    {
+     "path": "scripts/governance/actor-engine/actor-engine.js",
+     "domain": "actor-core",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      157,
+      165
+     ]
+    }
+   ]
+  },
+  {
+   "id": "P-A04-presentation-direct-writes",
+   "invariant": "A-04",
+   "description": "Direct document writes inside live presentation modules (scripts/sheets|ui|apps|dialogs|components|applications).",
+   "hits": 54,
+   "files": 26,
+   "sites": [
+    {
+     "path": "scripts/apps/minion-manager.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 8,
+     "lines": [
+      86,
+      96,
+      100,
+      116,
+      120,
+      123,
+      131,
+      142
+     ]
+    },
+    {
+     "path": "scripts/applications/lightsaber/lightsaber-router.js",
+     "domain": "customization",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      75,
+      76,
+      84,
+      85
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/session-storage.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      285,
+      329,
+      516,
+      518
+     ]
+    },
+    {
+     "path": "scripts/sheets/v2/character-like-sheet.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      2825,
+      2845,
+      3616,
+      5332
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/SettingsSurfaceController.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      92,
+      141,
+      238,
+      239
+     ]
+    },
+    {
+     "path": "scripts/apps/gear-templates-engine.js",
+     "domain": "equipment",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      137,
+      156
+     ]
+    },
+    {
+     "path": "scripts/apps/minion-creator.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      408,
+      419
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/chargen-persistence.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      118,
+      195
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/progression-actor-persistence.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      51,
+      66
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      1138,
+      3068
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/force-power-step.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      367,
+      403
+     ]
+    },
+    {
+     "path": "scripts/apps/store/store-main.js",
+     "domain": "store-economy",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      1040,
+      1437
+     ]
+    },
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      125,
+      127
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/gm/utils/gm-contact-actorizer-service.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      179,
+      215
+     ]
+    },
+    {
+     "path": "scripts/apps/allies/ally-assignment-modal.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      463
+     ]
+    },
+    {
+     "path": "scripts/apps/choices/feat-choice-dialog.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      317
+     ]
+    },
+    {
+     "path": "scripts/apps/combat-action-browser.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      274
+     ]
+    },
+    {
+     "path": "scripts/apps/follower-creator.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      1307
+     ]
+    },
+    {
+     "path": "scripts/apps/force-alchemy/force-alchemy-state-service.js",
+     "domain": "force",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      209
+     ]
+    },
+    {
+     "path": "scripts/apps/npc-template-importer.js",
+     "domain": "npc-followers",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      156
+     ]
+    },
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-content-approval-service.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      305
+     ]
+    },
+    {
+     "path": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "domain": "abilities-effects",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      991
+     ]
+    },
+    {
+     "path": "scripts/dialogs/entity-dialog/entity-create-browser.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      289
+     ]
+    },
+    {
+     "path": "scripts/sheets/v2/HelpModeManager.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      75
+     ]
+    },
+    {
+     "path": "scripts/sheets/v2/character-sheet/chargen-onboarding.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      92
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      665
+     ]
+    }
+   ]
+  },
+  {
+   "id": "P-A05-chat-outside-swse-chat",
+   "invariant": "A-05",
+   "description": "ChatMessage.create in live runtime modules other than scripts/chat/swse-chat.js.",
+   "hits": 43,
+   "files": 23,
+   "sites": [
+    {
+     "path": "scripts/engine/species/species-activated-ability-engine.js",
+     "domain": "species",
+     "reach": "reachable-static",
+     "count": 12,
+     "lines": [
+      93,
+      142,
+      183,
+      223,
+      253,
+      270,
+      289,
+      344,
+      383,
+      415,
+      433,
+      455
+     ]
+    },
+    {
+     "path": "scripts/core/document-api-v13.js",
+     "domain": "infrastructure",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      8,
+      8,
+      252
+     ]
+    },
+    {
+     "path": "scripts/sheets/v2/character-like-sheet.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      7055,
+      7093,
+      7832
+     ]
+    },
+    {
+     "path": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+     "domain": "force",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      1201,
+      1418
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/reactions/reaction-registry.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      8,
+      1024
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/starship/subsystem-engine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      208,
+      342
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/starship/vehicle-turn-controller.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      150,
+      190
+     ]
+    },
+    {
+     "path": "scripts/engine/poison/poison-engine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      783,
+      812
+     ]
+    },
+    {
+     "path": "scripts/engine/progression/utils/level-diff-inspector.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      202,
+      214
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/attribute-step.js",
+     "domain": "progression",
+     "reach": "reachable-dynamic",
+     "count": 1,
+     "lines": [
+      417
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/CombatEngine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      358
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/full-attack-executor.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      197
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/recurring-damage-engine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      307
+     ]
+    },
+    {
+     "path": "scripts/engine/feats/grapple-runtime-patches.js",
+     "domain": "feats",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      334
+     ]
+    },
+    {
+     "path": "scripts/engine/abilities/progression/progression-event-processor.js",
+     "domain": "abilities-effects",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      422
+     ]
+    },
+    {
+     "path": "scripts/engine/customization/tech-specialist-modification-service.js",
+     "domain": "customization",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      427
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/guardian-spirit-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      283
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/minion-actions-mechanics.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      45
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/squad-actions-mechanics.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      67
+     ]
+    },
+    {
+     "path": "scripts/sheets/v2/droid-actor-sheet.js",
+     "domain": "droids",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      127
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/AlliesSurfaceService.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      2096
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/AtlasSurfaceController.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      167
+     ]
+    }
+   ]
+  },
+  {
+   "id": "P-A06-settings-get-in-engines",
+   "invariant": "A-06",
+   "description": "game.settings.get(...) inside scripts/engine/** other than HouseRuleService (ENGINE-ARCHITECTURE §3). Non-engine reads listed separately for context.",
+   "hits": 8,
+   "hitsIncludingUnreachable": 13,
+   "files": 6,
+   "sites": [
+    {
+     "path": "scripts/engine/combat/ConditionEngine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      13,
+      17
+     ]
+    },
+    {
+     "path": "scripts/engine/progression/ProgressionEngineV2.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      14,
+      18
+     ]
+    },
+    {
+     "path": "scripts/engine/combat/SecondWindEngine.js",
+     "domain": "combat",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      8
+     ]
+    },
+    {
+     "path": "scripts/engine/skill-challenges/SkillChallengeStore.js",
+     "domain": "skills",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      62
+     ]
+    },
+    {
+     "path": "scripts/engine/progression/prerequisites/legacy-prereq-registry.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      89
+     ]
+    },
+    {
+     "path": "scripts/engine/progression/skills/skill-registry.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      85
+     ]
+    }
+   ],
+   "nonEngineReadFiles": 25,
+   "nonEngineReads": 45
+  },
+  {
+   "id": "P-A07-engine-imports-ui",
+   "invariant": "A-07",
+   "description": "Live scripts/engine/** modules importing presentation modules (ENGINE-ARCHITECTURE §5 \"Engine imports UI files\").",
+   "hits": 45,
+   "files": 36,
+   "edges": [
+    {
+     "path": "scripts/engine/combat/canonical-special-effects.js",
+     "target": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "kind": "dynamic"
+    },
+    {
+     "path": "scripts/engine/combat/class-target-observation.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "dynamic"
+    },
+    {
+     "path": "scripts/engine/combat/features/combat-feature-panel-renderer.js",
+     "target": "scripts/sheets/v2/character-sheet/combat-feature-sheet-adapter.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/combat/sith-lord-temptation-service.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/combat/ui/CombatUIAdapter.js",
+     "target": "scripts/ui/chat/chat-interaction-bridge.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/combat/weapon-control-effects.js",
+     "target": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "kind": "dynamic"
+    },
+    {
+     "path": "scripts/engine/crew/ally-assignment-service.js",
+     "target": "scripts/apps/progression-framework/adapters/follower-mutation-transaction.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/crew/ally-assignment-service.js",
+     "target": "scripts/apps/follower-creator.js",
+     "kind": "dynamic"
+    },
+    {
+     "path": "scripts/engine/crew/vehicle-crew-assignment-service.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/crew/vehicle-crew-assignment-service.js",
+     "target": "scripts/sheets/v2/vehicle-sheet/crew-resolver.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/crew/vehicle-weapon-station-service.js",
+     "target": "scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/effects/adapters/active-effect-adapter.js",
+     "target": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+     "target": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/force/force-executor.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/force/force-suite-runtime-repairs.js",
+     "target": "scripts/sheets/v2/character-sheet/force-roll-dialog.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/mentor/aurebesh-translator.js",
+     "target": "scripts/ui/dialogue/aurebesh-translator.js",
+     "kind": "reexport"
+    },
+    {
+     "path": "scripts/engine/progression/engine/starship-maneuver-engine.js",
+     "target": "scripts/apps/progression-framework/progression-suite-launcher.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/engine/suite-reselection-engine.js",
+     "target": "scripts/apps/progression-framework/progression-suite-launcher.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+     "target": "scripts/apps/progression-framework/steps/force-power-step.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+     "target": "scripts/apps/progression-framework/steps/talent-step.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js",
+     "target": "scripts/apps/progression-framework/steps/feat-step.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js",
+     "target": "scripts/apps/progression-framework/steps/talent-step.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js",
+     "target": "scripts/apps/progression-framework/shell/progression-reconciler.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/helpers/build-pending-species-context.js",
+     "target": "scripts/apps/progression-framework/shared/species-patch.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/hooks/system-init-hooks.js",
+     "target": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/profile/galactic-profile-compiler.js",
+     "target": "scripts/apps/progression-framework/steps/step-normalizers.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/profile/galactic-profile-service.js",
+     "target": "scripts/apps/progression-framework/adapters/progression-subtype-adapter-registry.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/profile/galactic-profile-service.js",
+     "target": "scripts/apps/progression-framework/shell/progression-session.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/profile/galactic-profile-service.js",
+     "target": "scripts/apps/progression-framework/shell/active-step-computer.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/utils/acquisition-authority.js",
+     "target": "scripts/apps/progression-framework/shell/progression-reconciler.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/utils/force-suite-resolution.js",
+     "target": "scripts/apps/progression-framework/services/pending-entitlement-service.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/suggestion/BackgroundSuggestionEngine.js",
+     "target": "scripts/apps/progression-framework/utils/skill-display.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionService.js",
+     "target": "scripts/ui/shell/ShellMutationGuard.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/armor-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/consular-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/force-adept-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/force-adept-talent-actions.js",
+     "target": "scripts/apps/force-alchemy/force-alchemy-workbench-app.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/guardian-spirit-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/jedi-prestige-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/lightsaber-form-engine.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/lightsaber-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/sentinel-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/sith-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/sith-talent-actions.js",
+     "target": "scripts/apps/force-alchemy/force-alchemy-workbench-app.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/vehicles/vehicle-interdiction-service.js",
+     "target": "scripts/dialogs/entity-dialog/effect-intent-engine.js",
+     "kind": "static"
+    }
+   ]
+  },
+  {
+   "id": "P-A07-static-cycles",
+   "invariant": "A-07",
+   "description": "Static import strongly connected components (runtime).",
+   "hits": 9,
+   "files": 52,
+   "cycles": [
+    [
+     "scripts/actors/derived/defense-calculator.js",
+     "scripts/actors/derived/derived-calculator.js",
+     "scripts/actors/derived/hp-calculator.js",
+     "scripts/actors/derived/level-split.js",
+     "scripts/engine/combat/combat-roll-math.js",
+     "scripts/engine/combat/combat-stat-rules.js",
+     "scripts/engine/combat/weapons-engine.js",
+     "scripts/engine/effects/modifiers/ModifierEngine.js",
+     "scripts/engine/force/ability-option-contracts.js",
+     "scripts/engine/force/force-points-service.js",
+     "scripts/engine/progression/skills/skill-state.js",
+     "scripts/engine/skills/ranked-skills-engine.js",
+     "scripts/engine/skills/skill-resolution-layer.js",
+     "scripts/engine/species/rage-engine.js",
+     "scripts/governance/actor-engine/actor-engine.js",
+     "scripts/governance/integrity/missing-prereqs-tracker.js",
+     "scripts/governance/integrity/prerequisite-integrity-checker.js",
+     "scripts/utils/hardening.js"
+    ],
+    [
+     "scripts/engine/mentor/mentor-dialogues.js",
+     "scripts/engine/progression.js",
+     "scripts/engine/progression/engine/progression-engine-instance.js",
+     "scripts/engine/progression/engine/progression-engine.js",
+     "scripts/engine/progression/engine/template-engine.js",
+     "scripts/engine/suggestion/OpportunityCostAnalyzer.js",
+     "scripts/engine/suggestion/PathPreview.js",
+     "scripts/engine/suggestion/SuggestionEngine.js",
+     "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+     "scripts/engine/suggestion/SuggestionScorer.js",
+     "scripts/engine/suggestion/SuggestionService.js"
+    ],
+    [
+     "scripts/chat/swse-chat.js",
+     "scripts/engine/combat/damage-packet-builder.js",
+     "scripts/engine/feats/skill-feat-runtime-patches.js",
+     "scripts/engine/roll-engine.js",
+     "scripts/engine/rolls/swse-roll-engine.js",
+     "scripts/engine/skills/skill-feat-resolver.js"
+    ],
+    [
+     "scripts/items/weapon-runtime/ability-selector.js",
+     "scripts/items/weapon-runtime/attack-consumer.js",
+     "scripts/items/weapon-runtime/proficiency-resolver.js",
+     "scripts/items/weapon-runtime/talent-identity.js",
+     "scripts/items/weapon-runtime/weapon-runtime-resolver.js"
+    ],
+    [
+     "scripts/engine/combat/fire-state-store.js",
+     "scripts/engine/equipment/combat-readiness.js",
+     "scripts/engine/equipment/equipment-state-reader.js"
+    ],
+    [
+     "scripts/domain/vehicles/vehicle-installation-ledger.js",
+     "scripts/domain/vehicles/vehicle-modification-effects.js",
+     "scripts/domain/vehicles/vehicle-runtime-contract.js"
+    ],
+    [
+     "scripts/governance/mutation/MutationInterceptor.js",
+     "scripts/governance/sentinel/governance-diagnostics.js"
+    ],
+    [
+     "scripts/engine/suggestion/BuildIntent.js",
+     "scripts/engine/suggestion/BuildThemeProjection.js"
+    ],
+    [
+     "scripts/generation/npc-concept.js",
+     "scripts/generation/npc/npc-competence.js"
+    ]
+   ],
+   "domainCycleSize": 31
+  },
+  {
+   "id": "P-A08-writes-in-render-or-prepare",
+   "invariant": "A-08",
+   "description": "Document writes lexically inside render/prepare lifecycle methods of live modules (no mutation during render; no side effects in read-only phases).",
+   "hits": 1,
+   "files": 1,
+   "sites": [
+    {
+     "path": "scripts/apps/store/store-main.js",
+     "line": 1437,
+     "method": "_onRender",
+     "call": "this.actor.setFlag"
+    }
+   ]
+  },
+  {
+   "id": "P-A09-compat-and-monkeypatch",
+   "invariant": "A-09",
+   "description": "Live compatibility/hotfix modules, prototype monkey-patches, and live modules carrying deprecation markers.",
+   "hits": 37,
+   "patchModules": [
+    {
+     "path": "scripts/apps/progression-framework/shared/species-patch.js",
+     "reach": "reachable-static",
+     "sloc": 31
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js",
+     "reach": "reachable-static",
+     "sloc": 138
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js",
+     "reach": "reachable-static",
+     "sloc": 126
+    },
+    {
+     "path": "scripts/engine/progression/engine/apply-progression-patch.js",
+     "reach": "orphan-unreferenced",
+     "sloc": 36
+    },
+    {
+     "path": "scripts/engine/progression/engine/progression-patch.js",
+     "reach": "reachable-static",
+     "sloc": 27
+    },
+    {
+     "path": "scripts/governance/snapshot/deletion-aware-patch.js",
+     "reach": "reachable-dynamic",
+     "sloc": 88
+    },
+    {
+     "path": "scripts/patches/armor-hydration-defense-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 134
+    },
+    {
+     "path": "scripts/patches/attack-dialog-combat-corrections-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 253
+    },
+    {
+     "path": "scripts/patches/canonical-ability-prerequisite-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 152
+    },
+    {
+     "path": "scripts/patches/combat-ui-behavior-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 606
+    },
+    {
+     "path": "scripts/patches/follower-npc-sheet-parity-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 467
+    },
+    {
+     "path": "scripts/patches/follower-orphan-transfer-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 403
+    },
+    {
+     "path": "scripts/patches/follower-progression-live-state-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 316
+    },
+    {
+     "path": "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 246
+    },
+    {
+     "path": "scripts/patches/follower-species-materialization-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 244
+    },
+    {
+     "path": "scripts/patches/follower-species-repair-hook.js",
+     "reach": "reachable-static",
+     "sloc": 90
+    },
+    {
+     "path": "scripts/patches/force-suite-render-guard-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 36
+    },
+    {
+     "path": "scripts/patches/progression-choice-language-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 290
+    },
+    {
+     "path": "scripts/patches/progression-feat-chain-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 75
+    },
+    {
+     "path": "scripts/patches/progression-ledger-reconciliation-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 215
+    },
+    {
+     "path": "scripts/patches/runtime-bugfix-hotfixes-init.js",
+     "reach": "reachable-static",
+     "sloc": 38
+    },
+    {
+     "path": "scripts/patches/runtime-bugfix-hotfixes.js",
+     "reach": "reachable-static",
+     "sloc": 337
+    },
+    {
+     "path": "scripts/patches/weapon-branch-coherence-hotfix.js",
+     "reach": "reachable-static",
+     "sloc": 37
+    },
+    {
+     "path": "scripts/utils/dom-query-shim.js",
+     "reach": "reachable-static",
+     "sloc": 65
+    }
+   ],
+   "prototypePatches": [
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js",
+     "line": 100,
+     "target": "GMDatapad.prototype._getHomeBadgeCounts"
+    },
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js",
+     "line": 199,
+     "target": "SWSEItemSheet.prototype._onRender"
+    },
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js",
+     "line": 301,
+     "target": "TalentStep.prototype.onStepEnter"
+    },
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js",
+     "line": 308,
+     "target": "TalentStep.prototype._getAvailableTrees"
+    },
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js",
+     "line": 317,
+     "target": "TalentStep.prototype._getTree"
+    },
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js",
+     "line": 325,
+     "target": "TalentStep.prototype._getTalentsForTree"
+    },
+    {
+     "path": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+     "line": 102,
+     "target": "TalentStep.prototype._getTalent"
+    },
+    {
+     "path": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+     "line": 109,
+     "target": "TalentStep.prototype._getTalentDescription"
+    },
+    {
+     "path": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+     "line": 117,
+     "target": "TalentStep.prototype._getTalentBenefit"
+    },
+    {
+     "path": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+     "line": 125,
+     "target": "TalentStep.prototype._getTalentPrerequisiteText"
+    },
+    {
+     "path": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+     "line": 133,
+     "target": "TalentStep.prototype._buildCanonicalTalentSelection"
+    },
+    {
+     "path": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+     "line": 137,
+     "target": "TalentStep.prototype.__swseTelekineticTalentTextPatched"
+    },
+    {
+     "path": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+     "line": 150,
+     "target": "ForcePowerStep.prototype._getTelekineticProdigyResolution"
+    },
+    {
+     "path": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+     "line": 155,
+     "target": "ForcePowerStep.prototype.__swseTelekineticProdigyRuntimePatched"
+    }
+   ],
+   "liveDeprecatedModules": 39,
+   "deprecated": [
+    {
+     "path": "scripts/apps/combat-action-browser.js",
+     "deprecatedMarkers": 2
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/build-intent.js",
+     "deprecatedMarkers": 3
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+     "deprecatedMarkers": 3
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/intro-step.js",
+     "deprecatedMarkers": 2
+    },
+    {
+     "path": "scripts/engine/combat/CombatEngine.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/engine/combat/action/action-engine.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/engine/combat/damage-engine.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+     "deprecatedMarkers": 2
+    },
+    {
+     "path": "scripts/engine/force/force-points-service.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/engine/mentor/mentor-reason-selector.js",
+     "deprecatedMarkers": 4
+    },
+    {
+     "path": "scripts/engine/vehicles/vehicle-installation-service.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/engine/progression/engine/progression-actor-updater.js",
+     "deprecatedMarkers": 2
+    },
+    {
+     "path": "scripts/engine/suggestion/AttributeIncreaseSuggestionEngine.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/engine/suggestion/BuildIntent.js",
+     "deprecatedMarkers": 4
+    },
+    {
+     "path": "scripts/engine/suggestion/ClassSuggestionEngine.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/engine/suggestion/ForceOptionSuggestionEngine.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionEngine.js",
+     "deprecatedMarkers": 8
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionService.js",
+     "deprecatedMarkers": 3
+    },
+    {
+     "path": "scripts/engine/suggestion/domain-registry.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/governance/actor-engine/actor-engine.js",
+     "deprecatedMarkers": 3
+    },
+    {
+     "path": "scripts/governance/mutation/MutationInterceptor.js",
+     "deprecatedMarkers": 15
+    },
+    {
+     "path": "scripts/governance/mutation/mutation-normalization-service.js",
+     "deprecatedMarkers": 2
+    },
+    {
+     "path": "scripts/holonet/subsystems/holonet-entity-directory-service.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/actors/v2/character-actor.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/combat/damage-system.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/combat/utils/combat-utils.js",
+     "deprecatedMarkers": 2
+    },
+    {
+     "path": "scripts/core/document-api-v13.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/data/force-points.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/data/talent-normalizer.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/items/swse-item-sheet.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/items/weapon-branch-resolver.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/rolls/roll-config.js",
+     "deprecatedMarkers": 4
+    },
+    {
+     "path": "scripts/utils/actor-utils.js",
+     "deprecatedMarkers": 2
+    },
+    {
+     "path": "scripts/utils/schema-adapters.js",
+     "deprecatedMarkers": 6
+    },
+    {
+     "path": "scripts/sheets/v2/character-like-sheet.js",
+     "deprecatedMarkers": 5
+    },
+    {
+     "path": "scripts/sheets/v2/character-sheet/form.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/ui/shell/StoreSurfaceService.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/ui/theme/ThemeManager.js",
+     "deprecatedMarkers": 1
+    },
+    {
+     "path": "scripts/ui/weapon-tooltip.js",
+     "deprecatedMarkers": 2
+    }
+   ]
+  },
+  {
+   "id": "P-A10-credit-writes-outside-transaction-engine",
+   "invariant": "A-10",
+   "description": "Live modules (other than TransactionEngine) that build \"system.credits\" update payloads, assign system.credits, or compute credits: x +/- y in a payload. Text heuristic.",
+   "hits": 15,
+   "files": 11,
+   "sites": [
+    {
+     "path": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+     "line": 462,
+     "text": "credits: applied.credits ? before.credits - creditCost : bef"
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/summary-step.js",
+     "line": 740,
+     "text": "'system.credits': 'Credits',"
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/summary-step.js",
+     "line": 1786,
+     "text": "'system.credits': nextCredits,"
+    },
+    {
+     "path": "scripts/domain/vehicles/vehicle-modification-rules.js",
+     "line": 121,
+     "text": "credits: Math.round(credits0 * (1 + SHORTFALL_PER_POINT.cost"
+    },
+    {
+     "path": "scripts/engine/abilities/progression/progression-event-processor.js",
+     "line": 409,
+     "text": "\"system.credits\": newCredits"
+    },
+    {
+     "path": "scripts/engine/store/ledger-service.js",
+     "line": 149,
+     "text": "'system.credits': newCredits"
+    },
+    {
+     "path": "scripts/engine/store/ledger-service.js",
+     "line": 211,
+     "text": "'system.credits': newCredits"
+    },
+    {
+     "path": "scripts/engine/vehicles/vehicle-logistics-service.js",
+     "line": 9,
+     "text": "credits: ONE TransactionEngine transaction (credits + resour"
+    },
+    {
+     "path": "scripts/engine/vehicles/vehicle-logistics-service.js",
+     "line": 120,
+     "text": "credits: credits + resource in ONE transaction; a failed wri"
+    },
+    {
+     "path": "scripts/engine/progression/engine/equipment-engine.js",
+     "line": 68,
+     "text": "'system.credits': amount"
+    },
+    {
+     "path": "scripts/utils/actor-utils.js",
+     "line": 397,
+     "text": "'system.credits': 1000 },"
+    },
+    {
+     "path": "scripts/sheets/v2/actor-sheet-base.js",
+     "line": 1958,
+     "text": "'system.credits': 0,"
+    },
+    {
+     "path": "scripts/sheets/v2/character-like-sheet.js",
+     "line": 656,
+     "text": "'system.credits': 'number',"
+    },
+    {
+     "path": "scripts/sheets/v2/character-like-sheet.js",
+     "line": 6087,
+     "text": "'system.credits': next,"
+    },
+    {
+     "path": "scripts/sheets/v2/character-sheet/form.js",
+     "line": 111,
+     "text": "'system.credits': 'number',"
+    }
+   ]
+  },
+  {
+   "id": "P-A14-actor-sheet-registrations",
+   "invariant": "A-14",
+   "description": "Actor sheet classes registered at runtime. Owner direction: character/droid/npc/vehicle -> SWSEV2CharacterSheet (unified shell).",
+   "hits": 3,
+   "registrations": [
+    {
+     "path": "index.js",
+     "registrar": "Actors",
+     "args": "\"swse\", SWSEV2CharacterSheet, { types: [\"character\"], label: \"SWSE Ch...",
+     "line": 175
+    },
+    {
+     "path": "index.js",
+     "registrar": "Actors",
+     "args": "\"swse\", SWSEV2NpcSheet, { types: [\"npc\"], label: \"SWSE NPC Actor Shee...",
+     "line": 181
+    },
+    {
+     "path": "index.js",
+     "registrar": "Actors",
+     "args": "\"swse\", SWSEV2DroidSheet, { types: [\"droid\"], label: \"SWSE Droid Acto...",
+     "line": 187
+    },
+    {
+     "path": "index.js",
+     "registrar": "Actors",
+     "args": "\"swse\", SWSEV2VehicleSheet, { types: [\"vehicle\"], label: \"SWSE Vehicl...",
+     "line": 193
+    },
+    {
+     "path": "index.js",
+     "registrar": "Items",
+     "args": "\"swse\", SWSEItemSheet, { types: SWSE.itemTypes, label: \"SWSE Item She...",
+     "line": 199
+    }
+   ]
+  },
+  {
+   "id": "P-A16-module-caches",
+   "invariant": "A-16",
+   "description": "Live modules that hold Map/WeakMap caches (>=3 \"cache\" mentions). hasInvalidate=false is a lead for unbounded or never-invalidated caches.",
+   "hits": 2,
+   "files": 19,
+   "sites": [
+    {
+     "path": "scripts/apps/chargen/chargen-shared.js",
+     "maps": 1,
+     "cacheMentions": 51,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/core/cache-manager.js",
+     "maps": 5,
+     "cacheMentions": 28,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/engine/progression/utils/class-data-loader.js",
+     "maps": 1,
+     "cacheMentions": 26,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+     "maps": 7,
+     "cacheMentions": 12,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/sheets/v2/actor-sheet-base.js",
+     "maps": 2,
+     "cacheMentions": 12,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionService.js",
+     "maps": 3,
+     "cacheMentions": 11,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/engine/suggestion/SuggestionEngineCoordinator.js",
+     "maps": 1,
+     "cacheMentions": 7,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/registries/feat-registry.js",
+     "maps": 6,
+     "cacheMentions": 7,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/rolls/roll-config.js",
+     "maps": 1,
+     "cacheMentions": 7,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/actors/derived/derived-calculator.js",
+     "maps": 2,
+     "cacheMentions": 6,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+     "maps": 4,
+     "cacheMentions": 5,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/engine/progression/feats/class-feat-registry.js",
+     "maps": 4,
+     "cacheMentions": 5,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/engine/suggestion/CandidatePoolBuilder.js",
+     "maps": 1,
+     "cacheMentions": 5,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/talent-step.js",
+     "maps": 13,
+     "cacheMentions": 4,
+     "hasInvalidate": false
+    },
+    {
+     "path": "scripts/utils/actor-perf-diagnostics.js",
+     "maps": 2,
+     "cacheMentions": 4,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/utils/performance-utils.js",
+     "maps": 2,
+     "cacheMentions": 4,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/engine/suggestion/SnapshotBuilder.js",
+     "maps": 2,
+     "cacheMentions": 3,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/governance/sentinel/sentinel-source-mapper.js",
+     "maps": 1,
+     "cacheMentions": 3,
+     "hasInvalidate": false
+    },
+    {
+     "path": "scripts/actors/derived/defense-calculator.js",
+     "maps": 3,
+     "cacheMentions": 3,
+     "hasInvalidate": true
+    }
+   ]
+  },
+  {
+   "id": "P-A15-A17-named-authorities",
+   "invariant": "A-15/A-17",
+   "description": "Presence and reachability of owner-named authorities.",
+   "hits": 0,
+   "authorities": [
+    {
+     "authority": "ActorEngine",
+     "path": "scripts/governance/actor-engine/actor-engine.js",
+     "exists": true,
+     "reach": "reachable-static",
+     "consumers": 399
+    },
+    {
+     "authority": "TransactionEngine",
+     "path": "scripts/engine/store/transaction-engine.js",
+     "exists": true,
+     "reach": "reachable-static",
+     "consumers": 36
+    },
+    {
+     "authority": "ProgressionShell",
+     "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+     "exists": true,
+     "reach": "reachable-static",
+     "consumers": 8
+    },
+    {
+     "authority": "ProgressionFinalizer",
+     "path": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+     "exists": true,
+     "reach": "reachable-static",
+     "consumers": 21
+    },
+    {
+     "authority": "AbilityEngine",
+     "path": "scripts/engine/abilities/AbilityEngine.js",
+     "exists": true,
+     "reach": "reachable-static",
+     "consumers": 45
+    },
+    {
+     "authority": "ModifierEngine",
+     "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+     "exists": true,
+     "reach": "reachable-static",
+     "consumers": 31
+    },
+    {
+     "authority": "InventoryEngine",
+     "path": "scripts/engine/inventory/InventoryEngine.js",
+     "exists": true,
+     "reach": "reachable-static",
+     "consumers": 23
+    },
+    {
+     "authority": "HouseRuleService",
+     "path": "scripts/engine/system/HouseRuleService.js",
+     "exists": true,
+     "reach": "reachable-static",
+     "consumers": 76
+    },
+    {
+     "authority": "ItemCustomizationWorkbench",
+     "path": "scripts/apps/customization/item-customization-workbench.js",
+     "exists": true,
+     "reach": "reachable-static",
+     "consumers": 4
+    },
+    {
+     "authority": "CustomizationWorkflow",
+     "path": "scripts/engine/customization/customization-workflow.js",
+     "exists": true,
+     "reach": "reachable-static",
+     "consumers": 3
+    },
+    {
+     "authority": "UpgradeSlotEngine",
+     "path": "scripts/engine/customization/upgrade-slot-engine.js",
+     "exists": true,
+     "reach": "reachable-static",
+     "consumers": 3
+    },
+    {
+     "authority": "UpgradeService",
+     "path": "scripts/engine/upgrades/UpgradeService.js",
+     "exists": true,
+     "reach": "reachable-static",
+     "consumers": 11
+    },
+    {
+     "authority": "CustomizationBayApp",
+     "path": "scripts/apps/customization/customization-bay-app.js",
+     "exists": true,
+     "reach": "reachable-dynamic",
+     "consumers": 1
+    },
+    {
+     "authority": "ChargenShell",
+     "path": "scripts/apps/progression-framework/chargen-shell.js",
+     "exists": true,
+     "reach": "reachable-dynamic",
+     "consumers": 3
+    },
+    {
+     "authority": "LevelupShell",
+     "path": "scripts/apps/progression-framework/levelup-shell.js",
+     "exists": true,
+     "reach": "reachable-dynamic",
+     "consumers": 2
+    }
+   ]
+  }
+ ]
+}

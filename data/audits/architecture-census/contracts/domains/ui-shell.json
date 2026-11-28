@@ -1,0 +1,915 @@
+{
+  "schema": "swse.v2-contract.domain/1",
+  "contractId": "B-UIS",
+  "domain": "ui-shell",
+  "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+  "summary": "The four actor sheets are a unified shell at base+template level: all extend SWSEV2ActorSheetBase (ShellHost mixin, one PARTS template that branches by actor mode); character/npc/droid share SWSEV2CharacterLikeSheet, vehicle is a base sibling with three verbatim helper clones. Real problems: sheet credit edits bypass TransactionEngine; UI preferences persisted as actor flags from two writers; presentation computes Second Wind, defense subtotals and a second prerequisite evaluator; 5 raw gameplay chat sites; character-like-sheet.js is 8,737 lines; global render listeners use V1 hook names (suspected no-op on V2) plus post-render DOM repair listeners; legacy floating apps (gm-store-dashboard, combat-action-browser) remain live alongside Holopad/GM Datapad surfaces.",
+  "responsibilities": [
+    {
+      "id": "R-UIS-01",
+      "responsibility": "Actor sheet registration per actor type",
+      "owner": {
+        "path": "index.js",
+        "symbol": "Actors.registerSheet"
+      },
+      "status": [
+        "OBSERVED",
+        "APPROVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "index.js:175",
+        "index.js:181",
+        "index.js:187",
+        "index.js:193"
+      ],
+      "tests": [],
+      "notes": "A-14 direction"
+    },
+    {
+      "id": "R-UIS-02",
+      "responsibility": "Universal actor shell base",
+      "owner": {
+        "path": "scripts/sheets/v2/actor-sheet-base.js",
+        "symbol": "SWSEV2ActorSheetBase"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/sheets/v2/actor-sheet-base.js:136",
+        "scripts/sheets/v2/actor-sheet-base.js:167",
+        "scripts/sheets/v2/actor-sheet-base.js:1704",
+        "scripts/sheets/v2/actor-sheet-base.js:1922"
+      ],
+      "tests": [
+        "tests/phase4-sheet-architecture-contract.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-UIS-03",
+      "responsibility": "Character-like shared behavior for character/npc/droid",
+      "owner": {
+        "path": "scripts/sheets/v2/character-like-sheet.js",
+        "symbol": "SWSEV2CharacterLikeSheet"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/sheets/v2/character-like-sheet.js:786",
+        "scripts/sheets/v2/character-sheet.js:31",
+        "scripts/sheets/v2/npc-actor-sheet.js:30",
+        "scripts/sheets/v2/droid-actor-sheet.js:145"
+      ],
+      "tests": [],
+      "notes": "oversized F-UIS-008"
+    },
+    {
+      "id": "R-UIS-04",
+      "responsibility": "Single shell template branching by actor mode",
+      "owner": {
+        "path": "templates/actors/character/v2-concept/character-sheet.hbs",
+        "symbol": "(template)"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "templates/actors/character/v2-concept/character-sheet.hbs:19",
+        "templates/actors/character/v2-concept/character-sheet.hbs:22"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-UIS-05",
+      "responsibility": "Holopad Shell Host surface/overlay/drawer state",
+      "owner": {
+        "path": "scripts/ui/shell/ShellHost.js",
+        "symbol": "ShellHostMixin"
+      },
+      "status": [
+        "OBSERVED",
+        "APPROVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/ui/shell/ShellHost.js:35"
+      ],
+      "tests": [],
+      "notes": "OSI Holopad-first"
+    },
+    {
+      "id": "R-UIS-06",
+      "responsibility": "Shell mutation queue and repaint",
+      "owner": {
+        "path": "scripts/ui/shell/mutate-and-repaint.js",
+        "symbol": "mutateAndRepaint"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/ui/shell/mutate-and-repaint.js:1"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-UIS-07",
+      "responsibility": "GM Datapad shell",
+      "owner": {
+        "path": "scripts/apps/gm-datapad.js",
+        "symbol": "GMDatapad"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/apps/gm-datapad.js:76"
+      ],
+      "tests": [
+        "tests/gm-datapad-wizard-contract.test.mjs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "R-UIS-08",
+      "responsibility": "Dialog base",
+      "owner": {
+        "path": "scripts/apps/dialogs/swse-dialog-v2.js",
+        "symbol": "SWSEDialogV2"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "dependency-traced",
+      "evidence": [
+        "scripts/apps/dialogs/swse-dialog-v2.js:18"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-UIS-09",
+      "responsibility": "Panel view models",
+      "owner": {
+        "path": "scripts/sheets/v2/context/PanelContextBuilder.js",
+        "symbol": "PanelContextBuilder"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/sheets/v2/context/PanelContextBuilder.js:881"
+      ],
+      "tests": [
+        "tests/v2-derived-panel-cache-coherency.test.mjs"
+      ],
+      "notes": "computes Second Wind F-UIS-005"
+    },
+    {
+      "id": "R-UIS-10",
+      "responsibility": "Tooltip/discovery binding",
+      "owner": {
+        "path": "scripts/ui/discovery/index.js",
+        "symbol": "onDiscoveryReady"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/ui/discovery/index.js:39",
+        "scripts/ui/defense-tooltip.js:226"
+      ],
+      "tests": [],
+      "notes": ""
+    },
+    {
+      "id": "R-UIS-11",
+      "responsibility": "Sheet mode UI-only state in localStorage",
+      "owner": {
+        "path": "scripts/sheets/v2/actor-sheet-base.js",
+        "symbol": "setStoredSheetMode"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/sheets/v2/actor-sheet-base.js:82"
+      ],
+      "tests": [],
+      "notes": "conforms to OSI"
+    },
+    {
+      "id": "R-UIS-12",
+      "responsibility": "Theme/motion/help preference",
+      "owner": {
+        "path": "scripts/ui/shell/SettingsSurfaceController.js",
+        "symbol": "SettingsSurfaceController"
+      },
+      "status": [
+        "OBSERVED",
+        "CONFLICT"
+      ],
+      "verification": "behavior-code-verified",
+      "evidence": [
+        "scripts/sheets/v2/character-like-sheet.js:2825",
+        "scripts/ui/shell/SettingsSurfaceController.js:92",
+        "scripts/sheets/v2/HelpModeManager.js:75"
+      ],
+      "tests": [],
+      "notes": "F-UIS-003"
+    },
+    {
+      "id": "R-UIS-13",
+      "responsibility": "Template preload registry",
+      "owner": {
+        "path": "scripts/load-templates.js",
+        "symbol": "SWSE_TEMPLATES"
+      },
+      "status": [
+        "OBSERVED"
+      ],
+      "verification": "source-inspected",
+      "evidence": [
+        "scripts/load-templates.js:520"
+      ],
+      "tests": [],
+      "notes": ""
+    }
+  ],
+  "publicInterfaces": [
+    {
+      "symbol": "SWSEDialogV2",
+      "path": "scripts/apps/dialogs/swse-dialog-v2.js",
+      "line": 18,
+      "consumers": 79,
+      "contract": "dialog base"
+    },
+    {
+      "symbol": "BaseSWSEAppV2",
+      "path": "scripts/apps/base/base-swse-appv2.js",
+      "line": 1,
+      "consumers": 30,
+      "contract": "AppV2 base"
+    },
+    {
+      "symbol": "requestShellRender",
+      "path": "scripts/ui/shell/request-shell-render.js",
+      "line": 11,
+      "consumers": 23,
+      "contract": "debounced shell repaint"
+    },
+    {
+      "symbol": "ShellRouter",
+      "path": "scripts/ui/shell/ShellRouter.js",
+      "line": 1,
+      "consumers": 15,
+      "contract": "actor id -> host"
+    },
+    {
+      "symbol": "PanelContextBuilder",
+      "path": "scripts/sheets/v2/context/PanelContextBuilder.js",
+      "line": 1,
+      "consumers": 13,
+      "contract": "panel view models"
+    },
+    {
+      "symbol": "mutateAndRepaint",
+      "path": "scripts/ui/shell/mutate-and-repaint.js",
+      "line": 1,
+      "consumers": 12,
+      "contract": "serialised mutation + repaint"
+    },
+    {
+      "symbol": "SWSEV2CharacterLikeSheet",
+      "path": "scripts/sheets/v2/character-like-sheet.js",
+      "line": 786,
+      "consumers": 6,
+      "contract": "shared shell for character/npc/droid"
+    },
+    {
+      "symbol": "SWSEV2ActorSheetBase",
+      "path": "scripts/sheets/v2/actor-sheet-base.js",
+      "line": 136,
+      "consumers": 4,
+      "contract": "universal base; abstract per-type hooks"
+    }
+  ],
+  "dependencies": {
+    "allowed": [
+      "any lower layer (engines, registries, infrastructure) through public APIs"
+    ],
+    "prohibited": [
+      "direct writes to actor-owned documents (A-02/A-04)",
+      "rule computation in presentation (A-04)",
+      "credit writes (A-10)",
+      "raw ChatMessage for gameplay cards (A-05)"
+    ],
+    "observedViolations": [
+      {
+        "from": "scripts/sheets/v2/character-like-sheet.js",
+        "to": "actor.system.credits via ActorEngine (bypass TransactionEngine)",
+        "evidence": "scripts/sheets/v2/character-like-sheet.js:6087"
+      },
+      {
+        "from": "scripts/ui/shell/SettingsSurfaceController.js",
+        "to": "actor.setFlag",
+        "evidence": "scripts/ui/shell/SettingsSurfaceController.js:92"
+      },
+      {
+        "from": "scripts/sheets/v2/context/PanelContextBuilder.js",
+        "to": "Second Wind rule computation (SecondWindRules owner)",
+        "evidence": "scripts/sheets/v2/context/PanelContextBuilder.js:906"
+      }
+    ]
+  },
+  "subsystemContracts": [
+    {
+      "id": "C-UIS-1",
+      "boundary": "Actor shell base <-> per-type subclass",
+      "interface": "_onRenderActorSheet(root, signal) / _prepareContextForActorSheet(bag); one PARTS template branching on actorSheetMode",
+      "status": [
+        "OBSERVED"
+      ]
+    },
+    {
+      "id": "C-UIS-2",
+      "boundary": "Shell surface service (pure view model) <-> surface controller (DOM, intents)",
+      "interface": "ShellSurfaceRegistry; *SurfaceService.build*; *SurfaceController.bind",
+      "status": [
+        "OBSERVED"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "CR-UIS-01",
+      "existingSource": "docs/architecture/v2-contracts/contradiction-register.md CR-10",
+      "claim": "four separately registered sheets may violate A-14",
+      "observed": "All four share SWSEV2ActorSheetBase and one template; vehicle is a base sibling with verbatim clones",
+      "evidence": [
+        "index.js:175",
+        "scripts/sheets/v2/actor-sheet-base.js:136",
+        "scripts/sheets/v2/vehicle-actor-sheet.js:281",
+        "templates/actors/character/v2-concept/character-sheet.hbs:19"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-UIS-02",
+      "existingSource": "scripts/sheets/v2/vehicle-actor-sheet.js:44 comment",
+      "claim": "helpers duplicated from character-sheet.js; import would create Vehicle->Character dependency",
+      "observed": "source is character-like-sheet.js; a neutral shared module avoids the dependency",
+      "evidence": [
+        "scripts/sheets/v2/vehicle-actor-sheet.js:46",
+        "scripts/sheets/v2/character-like-sheet.js:156"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-UIS-03",
+      "existingSource": "docs/audits/droid-vehicle-ui-convergence.md §cleanup",
+      "claim": "36 of 38 templates/actors/droid/** unreferenced",
+      "observed": "35 tracked; census marks 11 unreferenced because it counts preload entries as references",
+      "evidence": [
+        "docs/audits/droid-vehicle-ui-convergence.md:72",
+        "scripts/load-templates.js:520"
+      ],
+      "status": "CONFLICT"
+    },
+    {
+      "id": "CR-UIS-04",
+      "existingSource": "OSI Action Palette retirement candidate",
+      "claim": "Action Palette still to be retired",
+      "observed": "module already removed; CSS selector and audit path remnants",
+      "evidence": [
+        "styles/system/scene-controls.css:34",
+        "scripts/governance/sentinel/v2-comprehensive-audit.js:242"
+      ],
+      "status": "CONFLICT"
+    }
+  ],
+  "unimplemented": [
+    {
+      "id": "U-UIS-01",
+      "item": "Shared pure sheet-context helper module (sanitize/documentToTemplateData/action-economy VM)",
+      "source": "F-UIS-002",
+      "status": "UNIMPLEMENTED"
+    }
+  ],
+  "deferredRules": [],
+  "foundryAcceptance": [
+    {
+      "item": "All four actor types render through the shared template and Holopad frame",
+      "source": "templates/actors/character/v2-concept/character-sheet.hbs:19"
+    },
+    {
+      "item": "Tooltips/responsive observer bind on V2 sheets (renderApplication hook name)",
+      "source": "scripts/ui/discovery/index.js:39"
+    },
+    {
+      "item": "Credit adjustment through TransactionEngine after F-UIS-001",
+      "source": "scripts/sheets/v2/character-like-sheet.js:6074"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-UIS-001",
+      "category": "bypass-engine",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Sheet credit edits bypass TransactionEngine",
+      "affectedFiles": [
+        "scripts/sheets/v2/character-like-sheet.js",
+        "scripts/sheets/v2/character-sheet/form.js",
+        "templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs",
+        "templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs",
+        "templates/actors/character/v2-concept/partials/panels/resources-panel.hbs",
+        "templates/actors/npc/v2/partials/npc-concept-content.hbs"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/character-like-sheet.js:6074",
+        "scripts/sheets/v2/character-like-sheet.js:6087",
+        "scripts/sheets/v2/character-sheet/form.js:111",
+        "templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs:70",
+        "templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs:76",
+        "templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs:22",
+        "scripts/engine/store/transaction-engine.js:557"
+      ],
+      "observed": "The Add Credits button computes next=max(0,current+amount) and writes system.credits with ActorEngine.updateActor; several templates expose name=system.credits inputs submitted through the sheet form path. TransactionEngine.executeCreditAdjustment exists but is not used. No ledger entry; status feed only.",
+      "intendedOwnership": "A-10: TransactionEngine is the single credit authority; sheet emits a credit-adjustment intent.",
+      "contractRef": "A-10 | A-04",
+      "proposedSolution": "Route the button and form credit field through TransactionEngine.executeCreditAdjustment (source 'sheet-manual-adjustment'); make the field read-only or intercept it in the form coercion path. Owner decides who may adjust (GM-only vs owner).",
+      "alternatives": "Keep manual edit as a documented GM-only exception.",
+      "dependencies": [
+        "B-STO store-economy"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Test that sheet adjustments create a TransactionEngine ledger record and that form submit of system.credits is refused or rerouted.",
+      "foundryAcceptance": "Live V13: player and GM adjust credits from summary/gear tab.",
+      "scope": "M",
+      "simplificationBenefit": "One credit writer.",
+      "risk": "Credit movement runtime-risk area.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-UIS-002",
+      "category": "consolidation",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Vehicle sheet duplicates three shell helpers verbatim",
+      "affectedFiles": [
+        "scripts/sheets/v2/vehicle-actor-sheet.js",
+        "scripts/sheets/v2/character-like-sheet.js"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/vehicle-actor-sheet.js:44",
+        "scripts/sheets/v2/vehicle-actor-sheet.js:73",
+        "scripts/sheets/v2/vehicle-actor-sheet.js:170",
+        "scripts/sheets/v2/vehicle-actor-sheet.js:211",
+        "scripts/sheets/v2/character-like-sheet.js:156",
+        "scripts/sheets/v2/character-like-sheet.js:467",
+        "scripts/sheets/v2/character-like-sheet.js:508"
+      ],
+      "observed": "buildSheetActionEconomyContext (696 tokens), sanitizeSheetRenderContext (559+520), documentToTemplateData (302) and helpers are exact clones; the disclosure comment names a stale file.",
+      "intendedOwnership": "One pure module shared by all actor sheets.",
+      "contractRef": "A-01 | C-UIS-1",
+      "proposedSolution": "Move the pure functions to scripts/sheets/v2/shared/sheet-render-context.js and import from both sheets (no Vehicle->Character dependency).",
+      "alternatives": "Hoist onto SWSEV2ActorSheetBase as static helpers.",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Unit test of the shared module; tests/phase4-sheet-architecture-contract.test.mjs.",
+      "foundryAcceptance": "Render vehicle and character sheets.",
+      "scope": "S",
+      "simplificationBenefit": "~1,500 duplicate tokens removed; one sanitizer to fix.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-UIS-003",
+      "category": "unauthorized-persistence",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "UI preferences persisted as actor flags by direct setFlag from two writers",
+      "affectedFiles": [
+        "scripts/sheets/v2/character-like-sheet.js",
+        "scripts/ui/shell/SettingsSurfaceController.js",
+        "scripts/sheets/v2/HelpModeManager.js"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/character-like-sheet.js:2825",
+        "scripts/sheets/v2/character-like-sheet.js:2845",
+        "scripts/ui/shell/SettingsSurfaceController.js:92",
+        "scripts/ui/shell/SettingsSurfaceController.js:141",
+        "scripts/ui/shell/SettingsSurfaceController.js:238",
+        "scripts/ui/shell/SettingsSurfaceController.js:239",
+        "scripts/sheets/v2/HelpModeManager.js:75"
+      ],
+      "observed": "sheetTheme / sheetMotionStyle are written by both the sheet theme control and the Settings surface; help level by HelpModeManager; all direct actor.setFlag/unsetFlag outside ActorEngine. Each write triggers updateActor and a full sheet rerender for UI-only state.",
+      "intendedOwnership": "OSI: UI-only state must not require actor updates; A-02 for any actor write.",
+      "contractRef": "A-02 | A-04 | OSI performance",
+      "proposedSolution": "Owner decides storage: client setting/user flag (preferred, no actor rerender) or keep per-actor flag via one ActorEngine.updateActorFlags helper used by both writers.",
+      "alternatives": "localStorage keyed by actor id (as setStoredSheetMode).",
+      "dependencies": [],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Test: changing theme does not call actor.update and re-applies on next render.",
+      "foundryAcceptance": "Live V13: theme change on owned and observer-permission actors.",
+      "scope": "S",
+      "simplificationBenefit": "One preference writer; fewer full rerenders.",
+      "risk": "Low; observers without update permission currently fail.",
+      "perfImpact": "low"
+    },
+    {
+      "id": "F-UIS-004",
+      "category": "presentation-rules",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Gameplay chat cards via raw ChatMessage.create in sheet/shell",
+      "affectedFiles": [
+        "scripts/sheets/v2/character-like-sheet.js",
+        "scripts/ui/shell/AlliesSurfaceService.js",
+        "scripts/ui/shell/AtlasSurfaceController.js"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/character-like-sheet.js:7055",
+        "scripts/sheets/v2/character-like-sheet.js:7093",
+        "scripts/sheets/v2/character-like-sheet.js:7832",
+        "scripts/ui/shell/AlliesSurfaceService.js:2096",
+        "scripts/ui/shell/AtlasSurfaceController.js:167"
+      ],
+      "observed": "Reload notices, a sheet card helper, beast level-up request and Atlas GM notice post directly. SWSEChat is already imported by character-like-sheet.",
+      "intendedOwnership": "A-05: SWSEChat.",
+      "contractRef": "A-05",
+      "proposedSolution": "Replace with SWSEChat.postMessage (or equivalent) preserving speaker/whisper.",
+      "alternatives": "none",
+      "dependencies": [
+        "B-CHT chat"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Probe P-A05 shows 0 hits in ui-shell.",
+      "foundryAcceptance": "Chat card rendering of reload and Atlas notices.",
+      "scope": "S",
+      "simplificationBenefit": "One chat entry point.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-UIS-005",
+      "category": "duplicate-authority",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Presentation recomputes Second Wind and defense values",
+      "affectedFiles": [
+        "scripts/sheets/v2/context/PanelContextBuilder.js",
+        "scripts/ui/defense-tooltip.js"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/context/PanelContextBuilder.js:881",
+        "scripts/sheets/v2/context/PanelContextBuilder.js:906",
+        "scripts/sheets/v2/context/PanelContextBuilder.js:910",
+        "scripts/engine/combat/SecondWindRules.js:98",
+        "scripts/engine/combat/SecondWindRules.js:116",
+        "scripts/ui/defense-tooltip.js:226",
+        "scripts/ui/defense-tooltip.js:256",
+        "scripts/ui/defense-tooltip.js:261"
+      ],
+      "observed": "buildSecondWindPanel computes max(floor(HP/4), CON) with its own CON fallback and max uses default 1, ignoring SecondWindRules healing modes, multipliers, feat rules and house-rule use counts. The defense tooltip rebuilds a subtotal and uses it as the total when derived total is falsy, and selects Fort ability by actor type.",
+      "intendedOwnership": "SecondWindRules / DefenseCalculator compute; panels display derived values.",
+      "contractRef": "A-04 | A-01",
+      "proposedSolution": "Expose SecondWindRules.calculateHealingAmount/calculateMaxUses results in derived data (or call them from the builder); tooltip shows derived total and breakdown terms only, with 'unavailable' when absent.",
+      "alternatives": "none",
+      "dependencies": [
+        "B-CMB combat",
+        "B-ACT actor-core"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Test with secondWindWebEnhancement house rule: panel shows engine values.",
+      "foundryAcceptance": "Second Wind panel with house rules toggled.",
+      "scope": "S",
+      "simplificationBenefit": "Display matches applied mechanics.",
+      "risk": "Low (display only).",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-UIS-006",
+      "category": "duplicate-authority",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Second prerequisite evaluator in the item dialog",
+      "affectedFiles": [
+        "scripts/dialogs/entity-dialog/prereq-engine.js",
+        "scripts/engine/progression/prerequisites/prerequisite-evaluator.js"
+      ],
+      "evidence": [
+        "scripts/dialogs/entity-dialog/prereq-engine.js:244",
+        "scripts/dialogs/entity-dialog/context-builder.js:17",
+        "scripts/items/item-defaults.js:11"
+      ],
+      "observed": "The entity dialog evaluates ability/BAB/level/class/feat/talent clauses with its own evaluator; progression uses prerequisite-evaluator.js. Both live; results can disagree.",
+      "intendedOwnership": "Progression prerequisite authority evaluates; dialog displays.",
+      "contractRef": "A-01 | A-04",
+      "proposedSolution": "Have the dialog call the progression evaluator (adapter for its clause shape); keep normalizePrereqClauses as the editor normalizer only.",
+      "alternatives": "none",
+      "dependencies": [
+        "B-PRG progression"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Parity test: same clauses/actor give the same met/unmet in both.",
+      "foundryAcceptance": "none",
+      "scope": "M",
+      "simplificationBenefit": "One prerequisite truth.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-UIS-007",
+      "category": "legacy-compat",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Legacy floating apps beside Holopad/GM Datapad",
+      "affectedFiles": [
+        "scripts/apps/gm-store-dashboard.js",
+        "scripts/apps/combat-action-browser.js",
+        "scripts/core/settings.js",
+        "scripts/infrastructure/hooks/init-hooks.js",
+        "styles/system/scene-controls.css",
+        "scripts/governance/sentinel/v2-comprehensive-audit.js"
+      ],
+      "evidence": [
+        "scripts/core/settings.js:487",
+        "scripts/apps/gm-store-dashboard.js:86",
+        "scripts/ui/shell/gm/GMApprovalOperationsService.js:184",
+        "scripts/apps/gm-datapad.js:76",
+        "scripts/infrastructure/hooks/init-hooks.js:116",
+        "scripts/apps/combat-action-browser.js:99",
+        "styles/system/scene-controls.css:34",
+        "scripts/governance/sentinel/v2-comprehensive-audit.js:242"
+      ],
+      "observed": "gm-store-dashboard is registered as a GM settings menu while GM Datapad has a Store governance surface and shares cloned approval logic (class B: deprecated but referenced). combat-action-browser adds a Token HUD button opening a separate window (class B, F: runtime risk on roll integration); its sidebar button is commented out. The Action Palette module is gone; CSS selector and an audit path remain (class C).",
+      "intendedOwnership": "OSI: Holopad/Shell Host and GM Datapad replace older floating UIs.",
+      "contractRef": "A-14 | A-09",
+      "proposedSolution": "Reroute the settings menu to open GMDatapad on the store surface, then retire gm-store-dashboard (+css/hbs, update ti4c0-g21/g24 tests). Owner decides whether the Token HUD combat browser stays; if retired, point HUD to the sheet combat tab. Delete Action Palette remnants.",
+      "alternatives": "Keep gm-store-dashboard as a GM fallback until Datapad parity is accepted live.",
+      "dependencies": [
+        "B-STO store-economy",
+        "B-CMB combat"
+      ],
+      "ownerDecisionRequired": true,
+      "rulesQuestion": false,
+      "regressionTests": "Tests asserting no registerMenu for GMStoreDashboard and no renderTokenHUD browser button after retirement.",
+      "foundryAcceptance": "Live V13: GM store governance via Datapad; Token HUD actions.",
+      "scope": "M",
+      "simplificationBenefit": "Two parallel UIs retired.",
+      "risk": "Store governance runtime-risk.",
+      "perfImpact": "low"
+    },
+    {
+      "id": "F-UIS-008",
+      "category": "oversized-module",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "character-like-sheet.js mixes ~123 listeners, context assembly and rule dispatch",
+      "affectedFiles": [
+        "scripts/sheets/v2/character-like-sheet.js"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/character-like-sheet.js:1",
+        "scripts/sheets/v2/character-like-sheet.js:786",
+        "scripts/sheets/v2/character-like-sheet.js:5208",
+        "scripts/sheets/v2/character-like-sheet.js:6074"
+      ],
+      "observed": "8,737 lines / 6,764 SLOC, 81+ imports spanning combat, force, talents, store, progression, mentor; 4 transitive CI tests.",
+      "intendedOwnership": "Per-tab controllers (character-sheet/*-ui.js already exist for some tabs) bound by the shell; class keeps lifecycle only.",
+      "contractRef": "A-04 | C-UIS-1",
+      "proposedSolution": "Extract seams already implied by data-action groups: force-suite actions, starship-suite actions, credits/resources, item add/create, reconciliation; each a controller module with bind(sheet, root, signal). No behavior change; move with tests per seam.",
+      "alternatives": "none",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Listener inventory test (dev/sheet-action-registry.mjs) unchanged before/after each extraction.",
+      "foundryAcceptance": "Smoke each tab live.",
+      "scope": "L",
+      "simplificationBenefit": "Smaller review surface; testable controllers.",
+      "risk": "Medium (listener ordering).",
+      "perfImpact": "low"
+    },
+    {
+      "id": "F-UIS-009",
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Unreferenced templates and stylesheets; two live apps' CSS never loaded",
+      "affectedFiles": [
+        "templates/components/accordion.hbs",
+        "templates/shell/partials/master-bezel-chrome.hbs",
+        "templates/actors/vehicle/v2/partials/vehicle-subsystem-panel.hbs",
+        "styles/apps/combat-action-browser.css",
+        "styles/apps/gm-store-dashboard.css",
+        "styles/shell/home-surface.css"
+      ],
+      "evidence": [
+        "templates/components/accordion.hbs:1",
+        "templates/shell/partials/master-bezel-chrome.hbs:1",
+        "templates/actors/character/v2/partials/summary/hp-shield-wrapper.hbs:1",
+        "templates/apps/gm-debug-panel.hbs:1",
+        "styles/apps/combat-action-browser.css:1",
+        "styles/apps/gm-store-dashboard.css:1",
+        "system.json:61"
+      ],
+      "observed": "reachability.json: 43 unreferenced .hbs, 67 unreferenced .css. Sample of 14 templates verified by partial-name search across scripts/templates/system.json: no inbound reference (hits were class names or sibling files). combat-action-browser.css and gm-store-dashboard.css are not in system.json nor imported, so their live apps render without them. styles/shell/home-surface.css differs from loaded styles/system/home-surface.css.",
+      "intendedOwnership": "Every template/stylesheet referenced or deleted.",
+      "contractRef": "A-09",
+      "proposedSolution": "Class F batch: verify dynamically composed partial names (grep `{{> (concat` / template string builders) then delete unreferenced files with their CSS; decide per F-UIS-007 whether the two app CSS files are added to system.json or deleted with the apps.",
+      "alternatives": "Move to an archive folder.",
+      "dependencies": [
+        "F-UIS-007"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "A template-reference test that fails on new unreferenced .hbs.",
+      "foundryAcceptance": "Visual check of combat browser and store dashboard.",
+      "scope": "M",
+      "simplificationBenefit": "~110 dead presentation files.",
+      "risk": "Low; dynamic partial names are the risk.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-UIS-010",
+      "category": "performance",
+      "severity": "medium",
+      "status": "suspected",
+      "title": "Global render listeners: V1 hook names on V2 apps and post-render DOM repair",
+      "affectedFiles": [
+        "scripts/ui/discovery/index.js",
+        "scripts/ui/shell/shell-responsive-observer.js",
+        "scripts/engine/force/force-suite-runtime-repairs.js",
+        "scripts/patches/combat-ui-behavior-hotfix.js",
+        "scripts/patches/force-suite-render-guard-hotfix.js",
+        "scripts/patches/follower-orphan-transfer-hotfix.js",
+        "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+        "scripts/patches/follower-progression-live-state-hotfix.js",
+        "scripts/apps/force-tradition/force-tradition-picker.js"
+      ],
+      "evidence": [
+        "scripts/ui/discovery/index.js:39",
+        "scripts/ui/discovery/index.js:40",
+        "scripts/ui/shell/shell-responsive-observer.js:335",
+        "scripts/ui/shell/shell-responsive-observer.js:339",
+        "scripts/engine/force/force-suite-runtime-repairs.js:618",
+        "scripts/engine/force/force-suite-runtime-repairs.js:619",
+        "scripts/patches/combat-ui-behavior-hotfix.js:674",
+        "scripts/patches/combat-ui-behavior-hotfix.js:675",
+        "scripts/patches/force-suite-render-guard-hotfix.js:37",
+        "scripts/patches/follower-orphan-transfer-hotfix.js:427",
+        "scripts/patches/follower-repeatable-entitlement-hotfix.js:260",
+        "scripts/patches/follower-progression-live-state-hotfix.js:344",
+        "scripts/apps/force-tradition/force-tradition-picker.js:400"
+      ],
+      "observed": "Discovery and the responsive observer listen to renderApplication/renderActorSheet/renderItemSheet; Foundry V13 ApplicationV2 fires render<ClassName> hooks for its own inheritance chain (renderActorSheetV2, renderApplicationV2), so these probably never fire for SWSE V2 sheets (suspected; unverified live). Eight live renderApplicationV2 listeners in force/patch modules run DOM repair on every app render of any kind.",
+      "intendedOwnership": "Sheets bind their own tooltip/observer in _onRender; no post-render global repairs (A-09).",
+      "contractRef": "A-09 | A-08 | OSI performance",
+      "proposedSolution": "Instrument: count hook invocations per render in a live world. Replace V1 hook names with renderApplicationV2 or direct calls from SWSEV2ActorSheetBase._onRender; fold repair logic into the owning sheet render (B-CPT compat-patches owns hotfix retirement).",
+      "alternatives": "none",
+      "dependencies": [
+        "compat-patches domain",
+        "B-FRC force"
+      ],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Hook-name contract test listing allowed global render hooks.",
+      "foundryAcceptance": "Live V13: confirm whether discovery tooltips bind on V2 sheets; measure render time with listeners disabled.",
+      "scope": "M",
+      "simplificationBenefit": "Fewer global render listeners.",
+      "risk": "Medium; hidden reliance on repairs.",
+      "perfImpact": "medium"
+    },
+    {
+      "id": "F-UIS-011",
+      "category": "dead-code",
+      "severity": "low",
+      "status": "confirmed",
+      "title": "Unreachable UI modules",
+      "affectedFiles": [
+        "scripts/ui/framework/BaseAppV2.js",
+        "scripts/apps/base/swse-form-application.js",
+        "scripts/sheets/v2/acceptance-verification.js",
+        "scripts/sheets/v2/character-sheet-integration-audit.js",
+        "scripts/sheets/v2/runtime-verifier.js",
+        "scripts/sheets/v2/sheet-diagnostics.js",
+        "scripts/sheets/v2/sheet-diagnostics-p0.js",
+        "scripts/sheets/v2/shared/SentinelIntegration.js",
+        "scripts/ui/components/PerformanceOptimizer.js",
+        "scripts/drag-drop/drop-handler.js",
+        "scripts/sheets/v2/character-sheet/drop-ui.js",
+        "scripts/sheets/v2/character-sheet/modal-ui.js",
+        "scripts/sheets/v2/character-sheet/mobile-ui.js",
+        "scripts/ui/shell/ShellDrawerManager.js"
+      ],
+      "evidence": [
+        "scripts/ui/framework/BaseAppV2.js:9",
+        "scripts/sheets/v2/acceptance-verification.js:382",
+        "scripts/sheets/v2/contract-enforcer.js:465"
+      ],
+      "observed": "44 orphan/importers-only modules (~6.5k SLOC). Basename grep across scripts, templates, index.js, system.json and packs/*.db found no runtime reference (hits were word collisions or other unreachable modules). Clusters: dev diagnostics harnesses (class C or move to tools/), V1 bases (BaseAppV2 extends Application, CR-09; class C), UI components never wired (C), duplicate drop/modal/mobile helpers superseded by live ones (C).",
+      "intendedOwnership": "Live presentation only.",
+      "contractRef": "A-09",
+      "proposedSolution": "Delete class C clusters in one change per cluster; move any wanted diagnostics into tools/ or tests/.",
+      "alternatives": "Keep diagnostics behind a dev flag with an importer.",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Census --check shows the files absent and no new orphans.",
+      "foundryAcceptance": "none",
+      "scope": "M",
+      "simplificationBenefit": "~6.5k SLOC removed.",
+      "risk": "Low.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-UIS-012",
+      "category": "ownership-violation",
+      "severity": "info",
+      "status": "confirmed",
+      "title": "World-document creates in UI (legitimate exceptions lacking comments)",
+      "affectedFiles": [
+        "scripts/sheets/v2/character-like-sheet.js",
+        "scripts/ui/shell/gm/utils/gm-contact-actorizer-service.js",
+        "scripts/dialogs/entity-dialog/entity-create-browser.js",
+        "scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/character-like-sheet.js:3616",
+        "scripts/ui/shell/gm/utils/gm-contact-actorizer-service.js:179",
+        "scripts/ui/shell/gm/utils/gm-contact-actorizer-service.js:215",
+        "scripts/dialogs/entity-dialog/entity-create-browser.js:289",
+        "scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js:665",
+        "scripts/sheets/v2/character-like-sheet.js:5330"
+      ],
+      "observed": "Actor.createDocuments / Actor.create / Item.create / actor.delete of world documents (new ally actor, GM contact actor + orphan cleanup, world item, compendium import). Not actor-owned: A-02 exception applies but no exception comment. Probe line character-like-sheet:5332 is a false positive (Set.delete).",
+      "intendedOwnership": "A-02 world-document exception with code comment.",
+      "contractRef": "A-02",
+      "proposedSolution": "Add the exception comment at each site; consider one WorldDocumentFactory for actor creation from UI.",
+      "alternatives": "none",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "none",
+      "foundryAcceptance": "none",
+      "scope": "S",
+      "simplificationBenefit": "Clears 6 probe hits.",
+      "risk": "None.",
+      "perfImpact": "none"
+    },
+    {
+      "id": "F-UIS-013",
+      "category": "performance",
+      "severity": "low",
+      "status": "suspected",
+      "title": "Explicit full render after actor mutations (double render hypothesis)",
+      "affectedFiles": [
+        "scripts/sheets/v2/character-like-sheet.js",
+        "scripts/sheets/v2/vehicle-actor-sheet.js"
+      ],
+      "evidence": [
+        "scripts/sheets/v2/character-like-sheet.js:4756",
+        "scripts/sheets/v2/character-like-sheet.js:4854",
+        "scripts/sheets/v2/character-like-sheet.js:5269",
+        "scripts/sheets/v2/vehicle-actor-sheet.js:687"
+      ],
+      "observed": "11 handlers call this.render(false|true) right after an ActorEngine write that already re-renders the sheet via updateActor.",
+      "intendedOwnership": "mutateAndRepaint single repaint.",
+      "contractRef": "OSI performance | A-16",
+      "proposedSolution": "Instrument render counts per click; replace with mutateAndRepaint or drop the explicit render.",
+      "alternatives": "none",
+      "dependencies": [],
+      "ownerDecisionRequired": false,
+      "rulesQuestion": false,
+      "regressionTests": "Render-count test with a stub actor.",
+      "foundryAcceptance": "Measure in a live world.",
+      "scope": "S",
+      "simplificationBenefit": "Halves renders on those actions if confirmed.",
+      "risk": "Low.",
+      "perfImpact": "low"
+    }
+  ]
+}

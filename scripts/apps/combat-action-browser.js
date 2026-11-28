@@ -14,6 +14,7 @@ import { CombatActionsMapper } from "/systems/foundryvtt-swse/scripts/combat/uti
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { SWSECombat } from "/systems/foundryvtt-swse/scripts/combat/systems/enhanced-combat-system.js";
 import SWSEApplication from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class SWSECombatActionBrowser extends SWSEApplication {
 
@@ -271,7 +272,7 @@ export class SWSECombatActionBrowser extends SWSEApplication {
       favs.push(key);
     }
 
-    await actor.setFlag('foundryvtt-swse', 'pinnedActions', favs);
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'pinnedActions', favs, { recalc: false });
   }
 
   /* ------------------------------- */

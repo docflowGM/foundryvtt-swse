@@ -1,0 +1,604 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "rolls",
+ "name": "Dice and roll execution",
+ "kind": "mechanical",
+ "files": 36,
+ "runtimeSloc": 5218,
+ "runtimeFiles": 24,
+ "counts": {
+  "files": 36,
+  "runtimeModules": 24,
+  "runtimeSloc": 5218,
+  "reachability": {
+   "reachable-static": 14,
+   "test-only-import": 2,
+   "orphan-unreferenced": 3,
+   "string-referenced-only": 1,
+   "unreachable-importers-only": 4
+  },
+  "nonRuntimeByRole": {
+   "evidence-or-doc": 1,
+   "presentation-style": 3,
+   "presentation-template": 2,
+   "test": 5,
+   "tool": 1
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/engine/roll-engine.js",
+   "consumers": 76,
+   "sloc": 89,
+   "role": "engine-or-service",
+   "exports": [
+    "RollEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/rolls/roll-config.js",
+   "consumers": 27,
+   "sloc": 1558,
+   "role": "module",
+   "exports": [
+    "ROLL_HOOKS",
+    "callPreRollHook",
+    "callPostRollHook",
+    "RollHistory",
+    "ROLL_MODIFIERS",
+    "canonicalRangeBands",
+    "rangeChipsHtml",
+    "getSkillTotal",
+    "deriveAttackModalState",
+    "contextControlsHtml",
+    "applyAmmoStatus",
+    "applyAttackModalState"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/roll/roll-core.js",
+   "consumers": 22,
+   "sloc": 316,
+   "role": "module",
+   "exports": [
+    "RollCore",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 2,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/rolls/skills.js",
+   "consumers": 18,
+   "sloc": 393,
+   "role": "module",
+   "exports": [
+    "rollSkill",
+    "rollSkillCheck",
+    "calculateSkillModifier",
+    "rollSkillWithConfig",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/roll/expression/roll-contribution-types.js",
+   "consumers": 4,
+   "sloc": 70,
+   "role": "module",
+   "exports": [
+    "ROLL_CONTRIBUTION_KIND",
+    "FORMULA_SURFACE_CLASSIFICATION",
+    "ROLL_TRANSFORM_OPERATION",
+    "makeRollContribution",
+    "makeLedgerEntry",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/engine/roll/expression/roll-formula-validator.js",
+   "consumers": 3,
+   "sloc": 23,
+   "role": "module",
+   "exports": [
+    "validateRollFormula",
+    "isValidRollFormula",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/engine/roll/expression/roll-formula-term-resolver.js",
+   "consumers": 2,
+   "sloc": 33,
+   "role": "normalizer",
+   "exports": [
+    "resolveFormulaTerm",
+    "resolveFormulaContributions",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/engine/roll/expression/roll-transform-resolver.js",
+   "consumers": 2,
+   "sloc": 129,
+   "role": "normalizer",
+   "exports": [
+    "resolveRollTransforms",
+    "applyRollTransforms",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/engine/rolls/swse-roll-engine.js",
+   "consumers": 2,
+   "sloc": 972,
+   "role": "engine-or-service",
+   "exports": [
+    "SWSERollEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/ui/shell/roll-companion.js",
+   "consumers": 2,
+   "sloc": 427,
+   "role": "presentation",
+   "exports": [
+    "showHolopadRollCompanion"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/apps/custom-roll/custom-roll-dialog.js",
+   "consumers": 1,
+   "sloc": 112,
+   "role": "presentation",
+   "exports": [
+    "CustomRollDialog",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/roll/custom-roll-engine.js",
+   "consumers": 1,
+   "sloc": 163,
+   "role": "engine-or-service",
+   "exports": [
+    "CUSTOM_ROLL_DICE",
+    "CUSTOM_ROLL_MODES",
+    "CustomRollEngine",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/infrastructure/hooks/custom-roll-sidebar-control.js",
+   "consumers": 1,
+   "sloc": 30,
+   "role": "module",
+   "exports": [
+    "registerCustomRollSidebarControl",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/rolls/custom-skill-roller.js",
+   "consumers": 1,
+   "sloc": 76,
+   "role": "module",
+   "exports": [
+    "rollCustomSkill",
+    "calculateCustomSkillBonus"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/rolls/roll-config.js",
+   "sloc": 1558,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/rolls/swse-roll-engine.js",
+   "sloc": 972,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/ui/shell/roll-companion.js",
+   "sloc": 427,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/rolls/skills.js",
+   "sloc": 393,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/rolls/skills-reference.js",
+   "sloc": 334,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/engine/roll/roll-core.js",
+   "sloc": 316,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/roll/custom-roll-engine.js",
+   "sloc": 163,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/rolls/force-powers.js",
+   "sloc": 153,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/engine/roll/expression/roll-transform-resolver.js",
+   "sloc": 129,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/custom-roll/custom-roll-dialog.js",
+   "sloc": 112,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/rolls/skills-reference.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 334,
+   "tests": 0
+  },
+  {
+   "path": "scripts/rolls/force-powers.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 153,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/dice-utils.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 72,
+   "tests": 0
+  },
+  {
+   "path": "scripts/rolls/defenses.js",
+   "reach": "string-referenced-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 66,
+   "tests": 0
+  },
+  {
+   "path": "scripts/rolls/saves.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 49,
+   "tests": 0
+  },
+  {
+   "path": "scripts/rolls/dice.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 48,
+   "tests": 0
+  },
+  {
+   "path": "scripts/rolls/roll-manager.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 32,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/roll/expression/legacy-keyword-adapter.js",
+   "reach": "test-only-import",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 28,
+   "tests": 1
+  },
+  {
+   "path": "scripts/engine/roll/expression/compose-roll.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 23,
+   "tests": 1
+  },
+  {
+   "path": "scripts/core/rolls-init.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 22,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "combat": 20,
+  "infrastructure": 17,
+  "chat": 12,
+  "equipment": 9,
+  "actor-core": 6,
+  "abilities-effects": 5,
+  "skills": 4,
+  "feats": 4,
+  "ui-shell": 2,
+  "force": 2,
+  "progression": 2,
+  "species": 2,
+  "customization": 1
+ },
+ "dependedOnByDomains": {
+  "combat": 21,
+  "talents": 12,
+  "vehicles": 7,
+  "force": 6,
+  "skills": 4,
+  "infrastructure": 3,
+  "customization": 3,
+  "feats": 3,
+  "ui-shell": 3,
+  "chat": 2,
+  "compat-patches": 2,
+  "progression": 1,
+  "houserules": 1,
+  "actor-core": 1,
+  "npc-followers": 1,
+  "species": 1,
+  "abilities-effects": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A16-module-caches",
+   "invariant": "A-16",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/rolls/roll-config.js",
+     "maps": 1,
+     "cacheMentions": 7,
+     "hasInvalidate": true
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "skill-total",
+   "otherDomains": [
+    "combat",
+    "infrastructure",
+    "mentor-suggestion",
+    "progression",
+    "skills"
+   ],
+   "sites": [
+    "scripts/rolls/custom-skill-roller.js:27 calculateCustomSkillBonus",
+    "scripts/rolls/roll-config.js:746 getSkillTotal",
+    "scripts/rolls/skills.js:423 calculateSkillModifier"
+   ]
+  },
+  {
+   "responsibility": "ability-modifier",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "feats",
+    "force",
+    "infrastructure",
+    "mentor-suggestion",
+    "npc-followers",
+    "progression",
+    "species",
+    "talents",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/rolls/roll-config.js:672 getAbilityModifier"
+   ]
+  },
+  {
+   "responsibility": "attack-bonus",
+   "otherDomains": [
+    "combat",
+    "data-registries",
+    "equipment",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/rolls/roll-config.js:778 getWeaponAttackBonus"
+   ]
+  },
+  {
+   "responsibility": "modifier-aggregation",
+   "otherDomains": [
+    "abilities-effects",
+    "combat",
+    "equipment",
+    "feats",
+    "skills",
+    "species"
+   ],
+   "sites": [
+    "scripts/rolls/skills.js:139 resolveEquipmentSkillModifiers"
+   ]
+  },
+  {
+   "responsibility": "skill-roll",
+   "otherDomains": [
+    "combat",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/rolls/custom-skill-roller.js:61 rollCustomSkill",
+    "scripts/rolls/skills.js:191 rollSkill"
+   ]
+  }
+ ],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "calculateAbilityModifier",
+   "files": [
+    "scripts/engine/suggestion/shared-suggestion-utilities.js",
+    "scripts/rolls/skills-reference.js",
+    "scripts/utils/math-utils.js"
+   ]
+  },
+  {
+   "name": "rollDamage",
+   "files": [
+    "scripts/combat/rolls/attacks.js",
+    "scripts/combat/rolls/damage.js",
+    "scripts/utils/dice-utils.js"
+   ]
+  },
+  {
+   "name": "calculateDamageThreshold",
+   "files": [
+    "scripts/rolls/defenses.js",
+    "scripts/utils/math-utils.js"
+   ]
+  },
+  {
+   "name": "calculateDefense",
+   "files": [
+    "scripts/rolls/defenses.js",
+    "scripts/utils/math-utils.js"
+   ]
+  },
+  {
+   "name": "getSkillModifier",
+   "files": [
+    "scripts/engine/suggestion/shared-suggestion-utilities.js",
+    "scripts/rolls/skills-reference.js"
+   ]
+  },
+  {
+   "name": "ROLL_HOOKS",
+   "files": [
+    "scripts/combat/rolls/enhanced-rolls.js",
+    "scripts/rolls/roll-config.js"
+   ]
+  },
+  {
+   "name": "rollAttack",
+   "files": [
+    "scripts/combat/rolls/attacks.js",
+    "scripts/utils/dice-utils.js"
+   ]
+  },
+  {
+   "name": "rollDice",
+   "files": [
+    "scripts/rolls/dice.js",
+    "scripts/utils/dice-utils.js"
+   ]
+  },
+  {
+   "name": "RollHistory",
+   "files": [
+    "scripts/combat/rolls/enhanced-rolls.js",
+    "scripts/rolls/roll-config.js"
+   ]
+  },
+  {
+   "name": "rollSkillCheck",
+   "files": [
+    "scripts/rolls/skills.js",
+    "scripts/utils/dice-utils.js"
+   ]
+  },
+  {
+   "name": "rollWithAdvantage",
+   "files": [
+    "scripts/rolls/dice.js",
+    "scripts/utils/dice-utils.js"
+   ]
+  },
+  {
+   "name": "rollWithDisadvantage",
+   "files": [
+    "scripts/rolls/dice.js",
+    "scripts/utils/dice-utils.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "createItem",
+   "sites": [
+    "scripts/rolls/roll-config.js:2090"
+   ]
+  },
+  {
+   "name": "updateItem",
+   "sites": [
+    "scripts/rolls/roll-config.js:2096"
+   ]
+  },
+  {
+   "name": "updateActor",
+   "sites": [
+    "scripts/rolls/roll-config.js:2099"
+   ]
+  },
+  {
+   "name": "deleteItem",
+   "sites": [
+    "scripts/rolls/roll-config.js:2093"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "docs/audits/v2-roll-expression-transform-authority.md"
+ ],
+ "tests": [
+  "tests/ability-modifier-authority.test.mjs",
+  "tests/class-force-v2-serenity-takex-denial.test.mjs",
+  "tests/helpers/foundry-shim/fakes/test-roll.fake.mjs",
+  "tests/roll-expression-transform-authority.test.mjs",
+  "tests/skill-roll-dialog-base-authority.test.mjs"
+ ]
+}

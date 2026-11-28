@@ -466,8 +466,8 @@ async function normalizeDroidCombatFeat(item, options = {}) {
 }
 
 export function registerDroidCombatFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeDroidCombatFeat(item, options));
-  Hooks.on('updateItem', async (item, data, options) => normalizeDroidCombatFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeDroidCombatFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeDroidCombatFeat(item, options) : false);
   SWSELogger.log('[DroidCombatFeatNormalization] Hooks registered');
 }
 

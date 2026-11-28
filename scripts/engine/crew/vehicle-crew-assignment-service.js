@@ -1,11 +1,10 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-resolver.js";
+import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/actors/vehicle/crew-resolver.js";
+import { countGunnerRoleWeapons } from "/systems/foundryvtt-swse/scripts/actors/vehicle/gunner-positions.js";
 import { recordAssignmentEvent, recordMutationReceipt } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-diagnostics-log.js";
 
 const CREW_ACTOR_TYPES = new Set(['character', 'npc', 'droid']);
-const VEHICLE_WEAPON_ITEM_TYPES = new Set(['weapon', 'vehicle-weapon', 'vehicleWeapon', 'vehicleWeaponRange']);
 
 // Legacy word aliases only — NOT a fallback table. An unrecognized station
 // key (including a mistyped one) must fail clearly rather than silently
@@ -25,20 +24,6 @@ const LEGACY_STATION_ALIASES = {
   command: 'commander',
   captain: 'commander'
 };
-
-function htmlEscape(value) {
-  const div = document.createElement('div');
-  div.textContent = value == null ? '' : String(value);
-  return div.innerHTML;
-}
-
-function countCrewWeapons(vehicle) {
-  const items = Array.isArray(vehicle?.items?.contents) ? vehicle.items.contents
-    : Array.isArray(vehicle?.items) ? vehicle.items
-    : (vehicle?.items && typeof vehicle.items[Symbol.iterator] === 'function') ? Array.from(vehicle.items)
-    : [];
-  return items.filter((item) => VEHICLE_WEAPON_ITEM_TYPES.has(item?.type)).length;
-}
 
 function toCrewRef(actor) {
   return {
@@ -93,6 +78,15 @@ function structuredResult({ ok, station = null, crewActorUuid = null, mutationRe
   return { ok, station, crewActorUuid, mutationReceipt, warnings, error };
 }
 
+// A legacy mirror entry is replaced when it is this actor's entry for the SAME station (re-assignment), or any entry of the
+// actor when moving; the actor's entries for other stations survive so multi-role occupancy is preserved.
+function mirrorEntryReplaced(entry, crewActor, targetStation, options = {}) {
+  if (!crewRefMatches(entry, crewActor)) return false;
+  if (options.move === true) return true;
+  const position = entry?.position ?? entry?.role ?? null;
+  return position === targetStation || position == null;
+}
+
 export class VehicleCrewAssignmentService {
   /**
    * The dynamic, per-vehicle station descriptor set — the SAME resolver
@@ -102,7 +96,7 @@ export class VehicleCrewAssignmentService {
    */
   static resolveStations(vehicle) {
     const system = vehicle?.system ?? {};
-    return resolveVehicleCrewStations({ system, weapons: { count: countCrewWeapons(vehicle) } });
+    return resolveVehicleCrewStations({ system, weapons: { count: countGunnerRoleWeapons(vehicle) } });
   }
 
   static get stationKeys() {
@@ -239,7 +233,12 @@ export class VehicleCrewAssignmentService {
       }));
   }
 
-  static buildAssignmentUpdate(vehicle, station, crewActor) {
+  /**
+   * `options.move === true` is the explicit "Move to Role" intent (clears the actor's other stations). The default is RAW (Core p.169):
+   * one character may fill several crew roles at once; uniqueness is per ROLE (a station holds one occupant), not per actor, and
+   * occupying several roles grants no extra actions (the action budget stays the actor's own).
+   */
+  static buildAssignmentUpdate(vehicle, station, crewActor, options = {}) {
     if (!vehicle || vehicle.type !== 'vehicle') return null;
     crewActor = unwrapCrewActor(crewActor);
     if (!this.canBeCrew(crewActor)) return null;
@@ -255,25 +254,25 @@ export class VehicleCrewAssignmentService {
 
     for (const key of stationKeys) {
       const current = vehicle.system?.crewPositions?.[key];
-      if (key !== targetStation && crewRefMatches(current, crewActor)) update[`system.crewPositions.${key}`] = null;
+      if (options.move === true && key !== targetStation && crewRefMatches(current, crewActor)) update[`system.crewPositions.${key}`] = null;
     }
 
     return {
       ...update,
       [`system.crewPositions.${targetStation}`]: toCrewRef(crewActor),
       'system.ownedActors': [
-        ...ownedActors.filter((entry) => !crewRefMatches(entry, crewActor)),
+        ...ownedActors.filter((entry) => !mirrorEntryReplaced(entry, crewActor, targetStation, options)),
         legacyRef
       ],
       'system.relationships': [
-        ...relationships.filter((entry) => !crewRefMatches(entry, crewActor)),
+        ...relationships.filter((entry) => !mirrorEntryReplaced(entry, crewActor, targetStation, options)),
         { ...legacyRef }
       ]
     };
   }
 
-  static buildAssignmentMutationPlan(vehicle, station, crewActor) {
-    const update = this.buildAssignmentUpdate(vehicle, station, crewActor);
+  static buildAssignmentMutationPlan(vehicle, station, crewActor, options = {}) {
+    const update = this.buildAssignmentUpdate(vehicle, station, crewActor, options);
     if (!update) return null;
     return {
       mutationPlan: { update },
@@ -418,60 +417,7 @@ export class VehicleCrewAssignmentService {
     }
   }
 
-  static async openCrewPicker(vehicle, station, options = {}) {
-    if (!this.canEdit(vehicle)) {
-      ui?.notifications?.warn?.(`You do not have permission to modify ${vehicle?.name || 'this vehicle'}'s crew.`);
-      return null;
-    }
-
-    const targetStation = this.canonicalStationKey(vehicle, station);
-    if (!targetStation) {
-      ui?.notifications?.error?.(`"${station}" is not a valid crew station on ${vehicle?.name || 'this vehicle'}.`);
-      return null;
-    }
-
-    const actors = this.listEligibleCrewActors(vehicle);
-    if (!actors.length) {
-      ui?.notifications?.warn?.('No character, NPC, or droid actors are available to assign as crew.');
-      return null;
-    }
-
-    const current = vehicle?.system?.crewPositions?.[targetStation];
-    const currentUuid = typeof current === 'string' ? current : current?.uuid;
-    const optionsHtml = actors.map((actor) => {
-      const selected = actor.uuid === currentUuid ? ' selected' : '';
-      return `<option value="${htmlEscape(actor.uuid)}"${selected}>${htmlEscape(actor.name)} (${htmlEscape(actor.type)})</option>`;
-    }).join('');
-
-    const content = `
-      <form class="swse-vehicle-crew-picker">
-        <p>Assign a character, NPC, or droid to <strong>${htmlEscape(this.labelForStation(vehicle, targetStation))}</strong> aboard <strong>${htmlEscape(vehicle?.name || 'this vehicle')}</strong>.</p>
-        <label class="swse-vehicle-crew-picker-row">
-          <span>Crew actor</span>
-          <select name="crewUuid">${optionsHtml}</select>
-        </label>
-      </form>
-    `;
-
-    const chosenUuid = await SWSEDialogV2.prompt({
-      title: `Assign ${this.labelForStation(vehicle, targetStation)}`,
-      content,
-      label: 'Assign Crew',
-      callback: (html) => html?.find?.('[name="crewUuid"]')?.val?.() || html?.[0]?.querySelector?.('[name="crewUuid"]')?.value || null,
-      options: { width: options.width || 420 }
-    });
-
-    if (!chosenUuid) return null;
-    const crewActor = await fromUuid(chosenUuid);
-    if (!this.canBeCrew(crewActor)) {
-      ui?.notifications?.warn?.('Selected document is not a valid crew actor.');
-      return null;
-    }
-    const result = await this.assignCrew(vehicle, targetStation, crewActor, { source: 'vehicle-crew-picker' });
-    return result.ok ? crewActor : null;
-  }
-
-  static async openCrewSheet(vehicle, station) {
+    static async openCrewSheet(vehicle, station) {
     const targetStation = this.canonicalStationKey(vehicle, station);
     if (!targetStation) {
       ui?.notifications?.error?.(`"${station}" is not a valid crew station on ${vehicle?.name || 'this vehicle'}.`);

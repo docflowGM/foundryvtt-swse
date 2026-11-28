@@ -24,6 +24,36 @@
 import { ConditionEvaluator } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/condition-evaluator.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+
+/**
+ * 3N-DC P0: resolve where a derived value actually lives in the update bundle. DerivedCalculator writes defenses/hp/initiative as FULL objects
+ * (`system.derived.defenses` = { reflex: { total } }, ...), while overrides address them by dotted key (`system.derived.defenses.reflex.total`).
+ * Reading only the dotted key found nothing, started from a default (10/1/0), and wrote a second, conflicting dotted key beside the real value
+ * (base 18 + 2 produced a stray 12 instead of 20). The override is applied to the value that exists, wherever it lives; the dotted key and its
+ * default remain the fallback when only the dotted form is present.
+ */
+function resolveDerivedSlot(updates, key) {
+  if (Object.prototype.hasOwnProperty.call(updates, key)) {
+    return { get: () => updates[key], set: (v) => { updates[key] = v; } };
+  }
+  const parts = key.split('.');
+  for (let i = parts.length - 1; i >= 1; i -= 1) {
+    const root = updates[parts.slice(0, i).join('.')];
+    if (!root || typeof root !== 'object') continue;
+    const rest = parts.slice(i);
+    let holder = root;
+    for (let j = 0; j < rest.length - 1; j += 1) {
+      holder = holder?.[rest[j]];
+      if (!holder || typeof holder !== 'object') { holder = null; break; }
+    }
+    const last = rest[rest.length - 1];
+    if (holder && typeof holder[last] === 'number') {
+      return { get: () => holder[last], set: (v) => { holder[last] = v; } };
+    }
+  }
+  return { get: () => undefined, set: (v) => { updates[key] = v; } };
+}
+
 export class DerivedOverrideEngine {
   /**
    * Whitelist of valid derived override targets.
@@ -214,40 +244,40 @@ export class DerivedOverrideEngine {
     if (target.startsWith('defense.')) {
       const defenseType = target.replace('defense.', '');
       const updateKey = `system.derived.defenses.${defenseType}.total`;
-      const current = updates[updateKey] ?? 10;
-      updates[updateKey] = current + value;
+      const slot = resolveDerivedSlot(updates, updateKey);
+      slot.set((slot.get() ?? 10) + value);
       return;
     }
 
     // HP target: hp.max, hp.total
     if (target === 'hp.max' || target === 'hp.total') {
       const updateKey = 'system.derived.hp.total';
-      const current = updates[updateKey] ?? 1;
-      updates[updateKey] = Math.max(1, current + value);
+      const slot = resolveDerivedSlot(updates, updateKey);
+      slot.set(Math.max(1, (slot.get() ?? 1) + value));
       return;
     }
 
     // BAB target: bab.total, bab
     if (target === 'bab.total' || target === 'bab') {
       const updateKey = 'system.derived.bab';
-      const current = updates[updateKey] ?? 0;
-      updates[updateKey] = current + value;
+      const slot = resolveDerivedSlot(updates, updateKey);
+      slot.set((slot.get() ?? 0) + value);
       return;
     }
 
     // Initiative target: initiative.total, initiative
     if (target === 'initiative.total' || target === 'initiative') {
       const updateKey = 'system.derived.initiative.total';
-      const current = updates[updateKey] ?? 0;
-      updates[updateKey] = current + value;
+      const slot = resolveDerivedSlot(updates, updateKey);
+      slot.set((slot.get() ?? 0) + value);
       return;
     }
 
     // Speed target: speed.base, speed, speed.total
     if (target === 'speed.base' || target === 'speed' || target === 'speed.total') {
       const updateKey = 'system.derived.speed.total';
-      const current = updates[updateKey] ?? 0;
-      updates[updateKey] = Math.max(0, current + value);
+      const slot = resolveDerivedSlot(updates, updateKey);
+      slot.set(Math.max(0, (slot.get() ?? 0) + value));
       return;
     }
 

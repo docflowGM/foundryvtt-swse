@@ -18,7 +18,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
 import { LanguageEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/engine/language-engine.js';
-import { normalizeLanguages } from './step-normalizers.js';
+import { normalizeLanguages } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/step-normalizers.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
@@ -28,7 +28,12 @@ import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/en
 import { getPendingBackgroundLanguages } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { CustomLanguageDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-language-dialog.js';
-import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
+import { PendingEntitlementService } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/pending-entitlement-service.js';
+
+// Token used for language de-duplication (formerly in scripts/patches/progression-choice-language-hotfix.js).
+function normalizeLanguageToken(value) {
+  return String(value || '').trim().toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '');
+}
 
 export class LanguageStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -229,7 +234,17 @@ export class LanguageStep extends ProgressionStepPlugin {
     return true;
   }
 
+    /** Restore the session's bonus languages, minus any language the character already knows from a grant. */
   _restoreSelectedBonusLanguagesFromSession(shell) {
+    this._restoreSelectedBonusLanguagesFromSessionBase(shell);
+    const granted = new Set((this._knownLanguageGrants || [])
+      .map(grant => normalizeLanguageToken(grant?.name || grant))
+      .filter(Boolean));
+    this._selectedBonusLanguages = (this._selectedBonusLanguages || [])
+      .filter(name => !granted.has(normalizeLanguageToken(name)));
+  }
+
+  _restoreSelectedBonusLanguagesFromSessionBase(shell) {
     const saved = shell?.progressionSession?.draftSelections?.languages;
     if (!Array.isArray(saved) || saved.length === 0) return;
     const names = saved
@@ -828,14 +843,15 @@ export class LanguageStep extends ProgressionStepPlugin {
    * (all languages minus known/granted minus already selected)
    */
   _getAvailableLanguages() {
-    const knownSet = new Set(this._knownLanguageGrants
-      .filter(grant => grant.isFull)
-      .map(grant => this._normalizeLanguageToken(grant.name)));
-    const selectedSet = new Set(this._selectedBonusLanguages.map(name => this._normalizeLanguageToken(name)));
-
-    return this._allLanguages.filter(lang =>
-      !knownSet.has(this._normalizeLanguageToken(lang.name)) && !selectedSet.has(this._normalizeLanguageToken(lang.name))
-    );
+    // Every known grant (including understand-only/partial ones) and every already-selected bonus language is excluded.
+    const knownSet = new Set((this._knownLanguageGrants || [])
+      .map(grant => normalizeLanguageToken(grant?.name || grant))
+      .filter(Boolean));
+    const selectedSet = new Set((this._selectedBonusLanguages || []).map(normalizeLanguageToken));
+    return (this._allLanguages || []).filter(language => {
+      const token = normalizeLanguageToken(language?.name || language?.label || language?.id);
+      return token && !knownSet.has(token) && !selectedSet.has(token);
+    });
   }
 
   /**

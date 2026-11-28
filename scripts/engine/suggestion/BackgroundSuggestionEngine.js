@@ -11,7 +11,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
 import { resolveClassModel, getClassSkills } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
-import { buildClassSkillKeySet } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/utils/skill-display.js";
+import { buildClassSkillKeySet } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-display.js";
 import { getSkillAbility, buildAttributePlanningProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/attribute-planner.js";
 import { getPrestigeTargets, getSkillPrestigeTags } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-path-signals.js";
 

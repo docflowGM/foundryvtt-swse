@@ -1,0 +1,5148 @@
+{
+ "schema": "swse.architecture-census.registry/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "shard": "scripts-governance",
+ "count": 80,
+ "files": [
+  {
+   "id": "F-3a040085b8",
+   "path": "scripts/governance/PHASE-4-IMPLEMENTATION-GUIDE.md",
+   "top": "scripts",
+   "ext": "md",
+   "bytes": 14007,
+   "lines": 419,
+   "sloc": null,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "evidence-or-doc",
+   "runtimeReachability": "unreferenced",
+   "referencedBy": [],
+   "referencedByCount": 0,
+   "runtimeReferrerCount": 0,
+   "uncheckedItems": 12,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-ff0ff21e0d",
+   "path": "scripts/governance/PHASE-5A-SUGGESTION-MENTOR-AUDIT.md",
+   "top": "scripts",
+   "ext": "md",
+   "bytes": 26370,
+   "lines": 606,
+   "sloc": null,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "evidence-or-doc",
+   "runtimeReachability": "unreferenced",
+   "referencedBy": [],
+   "referencedByCount": 0,
+   "runtimeReferrerCount": 0,
+   "markers": {
+    "legacy": 3,
+    "fallback": 2
+   },
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-03f1e8257e",
+   "path": "scripts/governance/actor-engine/actor-engine.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 214192,
+   "lines": 4891,
+   "sloc": 3090,
+   "primarySystem": "actor-core",
+   "domainBasis": "path-rule",
+   "role": "authority-or-orchestrator",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 1,
+   "imports": [
+    "scripts/species/species-grant-reconciliation.js",
+    "scripts/domain/vehicles/vehicle-published-derived.js",
+    "scripts/core/logger.js",
+    "scripts/engine/force/force-point-trigger-registry.js",
+    "scripts/utils/actor-utils.js",
+    "scripts/governance/mutation/MutationInterceptor.js",
+    "scripts/engine/shared/xp-system.js",
+    "scripts/actors/derived/derived-calculator.js",
+    "scripts/actors/derived/derived-generation.js",
+    "scripts/governance/mutation/mutation-errors.js",
+    "scripts/governance/integrity/prerequisite-integrity-checker.js",
+    "scripts/governance/enforcement/preflight-validator.js",
+    "scripts/governance/integrity/missing-prereqs-tracker.js",
+    "scripts/utils/schema-adapters.js",
+    "scripts/engine/system/HouseRuleService.js",
+    "scripts/utils/mutation-trace.js",
+    "scripts/utils/hydration-diagnostics.js",
+    "scripts/governance/sentinel/sentinel-core.js",
+    "scripts/engine/feats/meta-resource-feat-resolver.js",
+    "scripts/engine/HP/hp-accounting.js",
+    "scripts/engine/force/force-points-service.js",
+    "scripts/engine/combat/ConditionTrackRules.js",
+    "scripts/engine/combat/SecondWindRules.js",
+    "scripts/governance/mutation/mutation-normalization-service.js",
+    "scripts/governance/mutation/mutation-boundary-service.js",
+    "scripts/governance/actor-engine/plan-builders.js",
+    "scripts/utils/active-effect-change-utils.js",
+    "scripts/ui/shell/request-shell-render.js [dynamic]",
+    "scripts/engine/progression/utils/force-class-effect-ingress.js [dynamic]",
+    "scripts/engine/combat/damage-resolution-engine.js [dynamic]",
+    "scripts/engine/combat/canonical-damage-packet.js [dynamic]",
+    "scripts/engine/force/force-points-service.js [dynamic]",
+    "scripts/apps/dialogs/swse-dialog-v2.js [dynamic]",
+    "scripts/governance/snapshot/snapshot-service.js [dynamic]",
+    "scripts/governance/mutation/mutation-errors.js [dynamic]",
+    "scripts/governance/snapshot/snapshot-service.js [dynamic]",
+    "scripts/governance/mutation/mutation-errors.js [dynamic]",
+    "scripts/governance/mutation/mutation-errors.js [dynamic]",
+    "scripts/governance/mutation/mutation-errors.js [dynamic]",
+    "scripts/governance/mutation/mutation-errors.js [dynamic]",
+    "scripts/governance/mutation/mutation-errors.js [dynamic]",
+    "scripts/engine/progression/utils/force-class-effect-ingress.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ActorEngine"
+   ],
+   "classes": [],
+   "consumers": [
+    "docs/audits/transaction-integrity/repro/_boot.mjs",
+    "docs/audits/transaction-integrity/repro/repro-tx01-upgrade-order.mjs",
+    "docs/audits/transaction-integrity/repro/repro-tx08-store-snapshot.mjs",
+    "index.js",
+    "scripts/actors/base/swse-actor-base.js",
+    "scripts/actors/v2/base-actor.js",
+    "scripts/apps/choices/feat-choice-dialog.js",
+    "scripts/apps/custom-item-dialog.js",
+    "scripts/apps/damage-app.js",
+    "scripts/apps/follower-creator.js",
+    "scripts/apps/follower-manager.js",
+    "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+    "scripts/apps/force-disciple-prophet-review-dialog.js",
+    "scripts/apps/force-tradition/custom-force-tradition-wizard.js",
+    "scripts/apps/force-tradition/force-tradition-picker.js",
+    "scripts/apps/gear-templates-engine.js",
+    "scripts/apps/gm-store-dashboard.js",
+    "scripts/apps/levelup/levelup-shared.js",
+    "scripts/apps/minion-creator.js",
+    "scripts/apps/modifier-inspector-app.js",
+    "scripts/apps/proficiency-selection-dialog.js",
+    "scripts/apps/progression-framework/adapters/follower-advancer.js",
+    "scripts/apps/progression-framework/shell/progression-finalizer.js",
+    "scripts/apps/progression-framework/steps/summary-step.js",
+    "scripts/apps/skill-modifier-breakdown-app.js",
+    "scripts/apps/talent-tree-workbench/custom-content-approval-service.js",
+    "scripts/apps/talent-tree-workbench/custom-talent-tree-model.js",
+    "scripts/combat/active-effects-manager.js",
+    "scripts/combat/combat-automation.js",
+    "scripts/combat/combat-integration.js",
+    "scripts/combat/damage-system.js",
+    "scripts/combat/rolls/enhanced-rolls.js",
+    "scripts/combat/rolls/force-point-transaction.js",
+    "scripts/combat/swse-combat.js",
+    "scripts/combat/swse-combatant.js",
+    "scripts/combat/systems/grappling-system.js",
+    "scripts/components/combat-action-bar.js",
+    "scripts/components/condition-track.js",
+    "scripts/components/force-suite.js",
+    "scripts/core/document-api-v13.js",
+    "scripts/core/mutation-safety.js",
+    "scripts/core/runtime-safety.js",
+    "scripts/debug/condition-penalty-regression-test.js",
+    "scripts/domain/droids/droid-converted-system-reconciliation-service.js",
+    "scripts/domain/droids/droid-installation-reconciler.js",
+    "scripts/domain/droids/droid-statblock-conversion-service.js",
+    "scripts/drag-drop/drop-handler.js",
+    "scripts/engine/StarshipManeuversEngine.js",
+    "scripts/engine/abilities/AbilityExecutionRouter.js",
+    "scripts/engine/abilities/active/active-adapter.js",
+    "scripts/engine/abilities/active/effect-resolver.js",
+    "scripts/engine/abilities/active/species-ability-handlers.js",
+    "scripts/engine/abilities/force-power/force-power-ability-meta.js",
+    "scripts/engine/abilities/progression/progression-event-processor.js",
+    "scripts/engine/assets/AssetGrantService.js",
+    "scripts/engine/chargen/CharacterGenerationEngine.js",
+    "scripts/engine/combat/CombatEngine.js",
+    "scripts/engine/combat/ConditionEngine.js",
+    "scripts/engine/combat/SecondWindEngine.js",
+    "scripts/engine/combat/canonical-special-effects.js",
+    "scripts/engine/combat/class-target-observation.js",
+    "scripts/engine/combat/combat-executor.js",
+    "scripts/engine/combat/combat-target-effect-adapter.js",
+    "scripts/engine/combat/damage-engine-test.js",
+    "scripts/engine/combat/damage-engine.js",
+    "scripts/engine/combat/damage-timing-rider-adapter.js",
+    "scripts/engine/combat/features/combat-feature-active-state-service.js",
+    "scripts/engine/combat/features/combat-feature-handlers.js",
+    "scripts/engine/combat/features/combat-feature-preferences-service.js",
+    "scripts/engine/combat/fire-state-store.js",
+    "scripts/engine/combat/grapple-state-engine.js",
+    "scripts/engine/combat/jedi-master-serenity-service.js",
+    "scripts/engine/combat/massive-damage-engine.js",
+    "scripts/engine/combat/officer-share-talent-service.js",
+    "scripts/engine/combat/reactions/attack-event-authority.js",
+    "scripts/engine/combat/reactions/reaction-engine.js",
+    "scripts/engine/combat/reactions/reaction-registry.js",
+    "scripts/engine/combat/recurring-damage-engine.js",
+    "scripts/engine/combat/sith-lord-temptation-service.js",
+    "scripts/engine/combat/starship/enhanced-commander.js",
+    "scripts/engine/combat/starship/enhanced-engineer.js",
+    "scripts/engine/combat/starship/enhanced-pilot.js",
+    "scripts/engine/combat/starship/enhanced-shields.js",
+    "scripts/engine/combat/starship/subsystem-engine.js",
+    "scripts/engine/combat/starship/vehicle-turn-controller.js",
+    "scripts/engine/combat/subsystems/vehicle/vehicle-collisions.js",
+    "scripts/engine/combat/subsystems/vehicle/vehicle-dogfighting.js",
+    "scripts/engine/combat/threshold-engine.js",
+    "scripts/engine/combat/weapon-control-effects.js",
+    "scripts/engine/combat/weapons-engine.js",
+    "scripts/engine/crafting/blaster-customization-engine.js",
+    "scripts/engine/crafting/lightsaber-construction-engine.js",
+    "scripts/engine/crafting/modification-intent-builder.js",
+    "scripts/engine/crew/ally-assignment-service.js",
+    "scripts/engine/crew/crew-interaction-engine.js",
+    "scripts/engine/crew/follower-slot-service.js",
+    "scripts/engine/crew/vehicle-crew-assignment-service.js",
+    "scripts/engine/crew/vehicle-custom-station-service.js",
+    "scripts/engine/crew/vehicle-weapon-station-service.js",
+    "scripts/engine/customization/install-remove-engine.js",
+    "scripts/engine/customization/modification-v2-runtime/modification-install-service.js",
+    "scripts/engine/customization/structural-change-engine.js",
+    "scripts/engine/customization/tech-specialist-modification-service.js",
+    "scripts/engine/customization/template-engine.js",
+    "scripts/engine/effects/active-effects-engine.js",
+    "scripts/engine/equipment/equipment-skill-hook-resolver.js",
+    "scripts/engine/equipment/equipment-state-coordinator.js",
+    "scripts/engine/feats/ability-meta-schema-default-hooks.js",
+    "scripts/engine/feats/area-explosives-feat-normalization-hooks.js",
+    "scripts/engine/feats/attack-negation-feat-normalization-hooks.js",
+    "scripts/engine/feats/attack-options-feat-normalization-hooks.js",
+    "scripts/engine/feats/combat-feat-damage-rule-resolver.js",
+    "scripts/engine/feats/combat-mobility-power-feat-normalization-hooks.js",
+    "scripts/engine/feats/condition-track-feat-actions.js",
+    "scripts/engine/feats/condition-track-feat-normalization-hooks.js",
+    "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+    "scripts/engine/feats/core-combat-reaction-normalization-hooks.js",
+    "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js",
+    "scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js",
+    "scripts/engine/feats/droid-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/dual-weapon-mastery-normalization-hooks.js",
+    "scripts/engine/feats/feat-action-listeners.js",
+    "scripts/engine/feats/force-point-feat-actions.js",
+    "scripts/engine/feats/force-point-feat-normalization-hooks.js",
+    "scripts/engine/feats/force-scoundrel-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/galaxy-intrigue-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/grapple-expanded-runtime-patches.js",
+    "scripts/engine/feats/grapple-feat-actions.js",
+    "scripts/engine/feats/grapple-feat-normalization-hooks.js",
+    "scripts/engine/feats/grapple-runtime-patches.js",
+    "scripts/engine/feats/legacy-clone-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/martial-arts-feat-normalization-hooks.js",
+    "scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/meta-resource-feat-resolver.js",
+    "scripts/engine/feats/mobility-positioning-feat-normalization-hooks.js",
+    "scripts/engine/feats/pistoleer-normalization-hooks.js",
+    "scripts/engine/feats/rage-feat-normalization-hooks.js",
+    "scripts/engine/feats/ranged-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/rebellion-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/rebellion-species-skill-feat-normalization-hooks.js",
+    "scripts/engine/feats/remaining-weapon-armor-feat-normalization-hooks.js",
+    "scripts/engine/feats/return-fire-feat-normalization-hooks.js",
+    "scripts/engine/feats/riflemaster-normalization-hooks.js",
+    "scripts/engine/feats/second-wind-feat-normalization-hooks.js",
+    "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+    "scripts/engine/feats/skill-feat-expanded-addendum-normalization-hooks.js",
+    "scripts/engine/feats/skill-feat-expanded-normalization-hooks.js",
+    "scripts/engine/feats/skill-feat-normalization-hooks.js",
+    "scripts/engine/feats/sniper-normalization-hooks.js",
+    "scripts/engine/feats/species-origin-feat-normalization-hooks.js",
+    "scripts/engine/feats/sport-hunter-normalization-hooks.js",
+    "scripts/engine/feats/starship-vehicle-feat-normalization-hooks.js",
+    "scripts/engine/feats/team-feat-normalization-hooks.js",
+    "scripts/engine/feats/unarmed-style-feat-normalization-hooks.js",
+    "scripts/engine/feats/unknown-regions-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/unknown-regions-weapon-feat-normalization-hooks.js",
+    "scripts/engine/feats/weapon-armor-rider-normalization-hooks.js",
+    "scripts/engine/feats/weapon-autofire-feat-normalization-hooks.js",
+    "scripts/engine/feats/weapon-critical-feat-normalization-hooks.js",
+    "scripts/engine/feats/weapon-foundation-feat-normalization-hooks.js",
+    "scripts/engine/feats/weapon-leftover-feat-normalization-hooks.js",
+    "scripts/engine/features/feat-effect-applier.js",
+    "scripts/engine/force/contracted-force-point.js",
+    "scripts/engine/force/force-engine.js",
+    "scripts/engine/force/force-executor.js",
+    "scripts/engine/force/force-point-settlement.js",
+    "scripts/engine/force/force-point-spend-coordinator.js",
+    "scripts/engine/force/force-power-effects-engine.js",
+    "scripts/engine/force/force-power-final-integration.js",
+    "scripts/engine/force/force-power-maintenance.js",
+    "scripts/engine/force/force-power-outcome-service.js",
+    "scripts/engine/force/force-regimen-executor.js",
+    "scripts/engine/force/force-suite-runtime-repairs.js",
+    "scripts/engine/force/phase6-force-direct-damage.js",
+    "scripts/engine/force/starship-maneuver-suite.js",
+    "scripts/engine/force/suite-instance-recovery.js",
+    "scripts/engine/force/temptation-of-the-dark-side.js",
+    "scripts/engine/import/npc-template-importer-engine.js",
+    "scripts/engine/import/vehicle-import-engine.js",
+    "scripts/engine/import/vehicle-weapon-import-normalizer.js",
+    "scripts/engine/inventory/InventoryEngine.js",
+    "scripts/engine/inventory/ammo-system.js",
+    "scripts/engine/items/safe-item-factory.js",
+    "scripts/engine/npc-legal-review/NpcReviewRepairEngine.js",
+    "scripts/engine/poison/poison-engine.js",
+    "scripts/engine/progression/ProgressionEngineV2.js",
+    "scripts/engine/progression/engine/attribute-increase-handler.js",
+    "scripts/engine/progression/engine/autocalc/derived-stats.js",
+    "scripts/engine/progression/engine/engine-helpers.js",
+    "scripts/engine/progression/engine/equipment-engine.js",
+    "scripts/engine/progression/engine/force-power-engine.js",
+    "scripts/engine/progression/engine/force-progression.js",
+    "scripts/engine/progression/engine/force-provenance-engine.js",
+    "scripts/engine/progression/engine/force-provenance-migrator.js",
+    "scripts/engine/progression/engine/force-secret-engine.js",
+    "scripts/engine/progression/engine/force-technique-engine.js",
+    "scripts/engine/progression/engine/language-engine.js",
+    "scripts/engine/progression/engine/progression-actor-updater.js",
+    "scripts/engine/progression/engine/starship-maneuver-engine.js",
+    "scripts/engine/progression/engine/template-engine.js",
+    "scripts/engine/progression/engine/tools/rollback-store.js",
+    "scripts/engine/progression/feats/feat-engine.js",
+    "scripts/engine/progression/feats/feat-state.js",
+    "scripts/engine/progression/hooks/system-init-hooks.js",
+    "scripts/engine/progression/integration/finalize-integration.js",
+    "scripts/engine/progression/modules/language-module.js",
+    "scripts/engine/progression/skills/skill-engine.js",
+    "scripts/engine/progression/skills/skill-state.js",
+    "scripts/engine/progression/talents/tree-unlock-manager.js",
+    "scripts/engine/progression/utils/apply-handlers.js",
+    "scripts/engine/progression/utils/enforcer-equipment-delivery.js",
+    "scripts/engine/progression/utils/snapshot-manager.js",
+    "scripts/engine/progression/xp-engine.js",
+    "scripts/engine/roll/roll-core.js",
+    "scripts/engine/species/rage-engine.js",
+    "scripts/engine/species/species-activated-ability-engine.js",
+    "scripts/engine/store/transaction-engine.js",
+    "scripts/engine/suggestion/ArchetypeAffinityEngine.js",
+    "scripts/engine/suggestion/SuggestionStateService.js",
+    "scripts/engine/talent/armor-talent-actions.js",
+    "scripts/engine/talent/consular-talent-actions.js",
+    "scripts/engine/talent/force-adept-talent-actions.js",
+    "scripts/engine/talent/guardian-spirit-actions.js",
+    "scripts/engine/talent/jedi-prestige-talent-actions.js",
+    "scripts/engine/talent/lightsaber-form-engine.js",
+    "scripts/engine/talent/lightsaber-talent-actions.js",
+    "scripts/engine/talent/sentinel-talent-actions.js",
+    "scripts/engine/talent/sith-talent-actions.js",
+    "scripts/engine/upgrades/UpgradeService.js",
+    "scripts/engine/vehicles/vehicle-ammunition-purchase-service.js",
+    "scripts/engine/vehicles/vehicle-ammunition-service.js",
+    "scripts/engine/vehicles/vehicle-battery-aid-service.js",
+    "scripts/engine/vehicles/vehicle-errata-migration-service.js",
+    "scripts/engine/vehicles/vehicle-fire-mode-service.js",
+    "scripts/engine/vehicles/vehicle-installation-service.js",
+    "scripts/engine/vehicles/vehicle-interdiction-service.js",
+    "scripts/engine/vehicles/vehicle-ion-bomb-service.js",
+    "scripts/engine/vehicles/vehicle-logistics-service.js",
+    "scripts/engine/vehicles/vehicle-mine-service.js",
+    "scripts/engine/vehicles/vehicle-operating-context-service.js",
+    "scripts/engine/vehicles/vehicle-projectile-service.js",
+    "scripts/engine/vehicles/vehicle-stock-ammo-config-service.js",
+    "scripts/governance/actor-engine/hp-recompute-hooks.js",
+    "scripts/governance/integrity/missing-prereqs-tracker.js",
+    "scripts/governance/mutation-adapter.js",
+    "scripts/governance/mutation/batch-1-validation.js",
+    "scripts/governance/sentinel/transaction-verification.js",
+    "scripts/governance/snapshot/snapshot-service.js",
+    "scripts/governance/ui/rebuild-orchestrator.js",
+    "scripts/governance/ui/slot-resolution-flow.js",
+    "scripts/holonet/subsystems/gm-combat-recovery-service.js",
+    "scripts/holonet/subsystems/gm-healing-trigger.js",
+    "scripts/holonet/subsystems/holonet-intel-service.js",
+    "scripts/holonet/subsystems/holonet-messenger-service.js",
+    "scripts/houserules/houserule-feat-grants.js",
+    "scripts/houserules/houserule-healing.js",
+    "scripts/houserules/houserule-recovery.js",
+    "scripts/houserules/houserule-skill-training.js",
+    "scripts/houserules/houserule-status-effects.js",
+    "scripts/infrastructure/hooks/actor-hooks.js",
+    "scripts/infrastructure/hooks/follower-hooks.js",
+    "scripts/infrastructure/hooks/force-domain-lifecycle.js",
+    "scripts/infrastructure/hooks/force-power-hooks.js",
+    "scripts/infrastructure/hooks/starship-domain-lifecycle.js",
+    "scripts/infrastructure/hooks/starship-maneuver-hooks.js",
+    "scripts/infrastructure/hooks/talent-effects-hooks.js",
+    "scripts/items/swse-item-sheet.js",
+    "scripts/maintenance/world-repair.js",
+    "scripts/migration/armor-system-migration-v4.js",
+    "scripts/migration/dark-side-points-migration.js",
+    "scripts/migration/weapon-properties-migration.js",
+    "scripts/migration/weapon-talents-migration.js",
+    "scripts/migrations/json-backed-ids-migration.js",
+    "scripts/patches/follower-npc-sheet-parity-hotfix.js",
+    "scripts/patches/follower-orphan-transfer-hotfix.js",
+    "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+    "scripts/patches/follower-species-materialization-hotfix.js",
+    "scripts/patches/progression-choice-language-hotfix.js",
+    "scripts/patches/progression-ledger-reconciliation-hotfix.js",
+    "scripts/services/drop-service.js",
+    "scripts/sheets/v2/actor-sheet-base.js",
+    "scripts/sheets/v2/character-like-sheet.js",
+    "scripts/sheets/v2/character-sheet-integration-audit.js",
+    "scripts/sheets/v2/character-sheet/custom-skills-ui.js",
+    "scripts/sheets/v2/character-sheet/drop-ui.js",
+    "scripts/sheets/v2/character-sheet/dsp-click-handler.js",
+    "scripts/sheets/v2/character-sheet/form.js",
+    "scripts/sheets/v2/character-sheet/resource-editor.js",
+    "scripts/sheets/v2/droid-actor-sheet.js",
+    "scripts/sheets/v2/npc-actor-sheet.js",
+    "scripts/sheets/v2/shared/PortraitUploadController.js",
+    "scripts/sheets/v2/vehicle-actor-sheet.js",
+    "scripts/sheets/v2/vehicle-sheet/vehicle-crew-assignment-controls.js",
+    "scripts/species/species-reroll-handler.js",
+    "scripts/ui/repair/repair-panel.js",
+    "scripts/ui/shell/AlliesSurfaceService.js",
+    "scripts/ui/shell/ProgressionSurfaceAdapter.js",
+    "scripts/ui/shell/gm/GMApprovalOperationsService.js",
+    "scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js",
+    "scripts/ui/shell/gm/utils/gm-party-roster-service.js",
+    "scripts/utils/destiny-effects.js",
+    "scripts/utils/droid-appendage-utils.js",
+    "scripts/utils/feat-actions-mapper.js",
+    "scripts/utils/force-power-manager.js",
+    "scripts/utils/hardening.js",
+    "scripts/utils/hp-utils.js",
+    "scripts/utils/skill-use-filter.js",
+    "scripts/utils/starship-maneuver-manager.js",
+    "tests/architecture-combat-authority.test.mjs",
+    "tests/class-force-v2-direct-fp-cutover.test.mjs",
+    "tests/class-force-v2-watchcircle-exemption.test.mjs",
+    "tests/class-phase-6z-reaction-execution-admission.test.mjs",
+    "tests/combat-feature-stance-authority.test.mjs",
+    "tests/customization-bay-foundation-contract.test.mjs",
+    "tests/droid-customization-postcondition.test.mjs",
+    "tests/droid-installation-drift-repair-intent-boundary.test.mjs",
+    "tests/droid-phase4-foundry-shim.test.mjs",
+    "tests/droid-reconciliation-intent-boundary.test.mjs",
+    "tests/dsp-migration-behavior.test.mjs",
+    "tests/energy-shield-defense-and-activation-authority.test.mjs",
+    "tests/equipment-actor-parity.test.mjs",
+    "tests/equipment-droid-draw-authority.test.mjs",
+    "tests/equipment-e4c1-wp4-writer-convergence.test.mjs",
+    "tests/equipment-e4c1-wp5-c1-attack-gate-and-firestate.test.mjs",
+    "tests/equipment-e4c1-wp5-c2-attack-integrity.test.mjs",
+    "tests/equipment-e4c1-wp5-c3-trust-boundaries.test.mjs",
+    "tests/equipment-e4c1-wp5-c3b-force-point-lifecycle.test.mjs",
+    "tests/equipment-e4c1-wp5-combat-readiness.test.mjs",
+    "tests/equipment-follower-capability-parity.test.mjs",
+    "tests/equipment-g18-request-identity.test.mjs",
+    "tests/equipment-g36-gm-control.test.mjs",
+    "tests/equipment-g36-reconciliation.test.mjs",
+    "tests/equipment-lifecycle-slice.test.mjs",
+    "tests/equipment-skill-hook-roll-regression.test.mjs",
+    "tests/equipment-vertical-slice-draw-choice.test.mjs",
+    "tests/equipment-workspace.test.mjs",
+    "tests/follower-conversion-reservation-race.test.mjs",
+    "tests/force-v2-03b-consumer-cutover.test.mjs",
+    "tests/force-v2-03d-maintained-effects.test.mjs",
+    "tests/force-v2-03e-duplicates-temptation.test.mjs",
+    "tests/force-v2-release-gate.test.mjs",
+    "tests/gm-existing-npc-allies-assignment.test.mjs",
+    "tests/helpers/real-force-point-engine.mjs",
+    "tests/helpers/vehicle-weapon-world.mjs",
+    "tests/hp-preservation-authority.test.mjs",
+    "tests/modification-v2-convergence.test.mjs",
+    "tests/reconciliation-async-lifecycle-paths.test.mjs",
+    "tests/reconciliation-house-rules.test.mjs",
+    "tests/shield-recharge-skill-dispatch-authority.test.mjs",
+    "tests/snapshot-service-restoration.test.mjs",
+    "tests/store-v2-s9-resale-authority.test.mjs",
+    "tests/ti2-commerce-integrity.test.mjs",
+    "tests/ti3-progression-followers-approvals.test.mjs",
+    "tests/ti4c0-g06-rollback-verification.test.mjs",
+    "tests/ti4c0-g06s1-exact-snapshot.test.mjs",
+    "tests/ti4c0-g11-follower-rollback.test.mjs",
+    "tests/ti4c0-g20-rollback-replay.test.mjs",
+    "tests/ti4c0-g21-legacy-dashboard-reversal.test.mjs",
+    "tests/ti4c0-g34-progression-ledger-sync-authority.test.mjs",
+    "tests/ti4c0-g35-droid-rejection-post-commit.test.mjs",
+    "tests/ti4c0-te-credit-adjustment-safety.test.mjs",
+    "tests/vehicle-postcondition.test.mjs",
+    "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs",
+    "tests/vehicle-universal-phase4e-p18-p6b1-effects.test.mjs",
+    "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+    "tests/vehicle-universal-phase4e-p23-weapon-integrity.test.mjs",
+    "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+    "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+    "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs",
+    "tests/vehicle-universal-phase4e-p29-starship-scale-area.test.mjs",
+    "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+    "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+    "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+    "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+    "tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs",
+    "tests/vehicle-universal-phase4e-p5-installation-transaction.test.mjs",
+    "tests/vehicle-universal-phase4e-p50-initial-ammunition-policy.test.mjs",
+    "tests/vehicle-universal-phase4e-p51-party-fund-ammunition.test.mjs",
+    "tests/vehicle-universal-phase4e-p52-ammunition-shortcuts.test.mjs",
+    "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs",
+    "tests/vehicle-universal-phase4e-p9-installation-jobs.test.mjs",
+    "tests/weapon-3gate-math-matrix.test.mjs",
+    "tests/weapon-phase-5d-e-special-effects.test.mjs",
+    "tests/weapon-phase-5d-g-fire-state-area-selectors.test.mjs",
+    "tests/weapon-phase-5d-h-executable-field-closure.test.mjs",
+    "tests/weapon-phase-5d-i-a-core-attack-residuals.test.mjs",
+    "tests/weapon-phase-5d-i-b-wielding-activation-threat.test.mjs",
+    "tests/weapon-phase-5d-i-c-a-outcome-persistent-effects.test.mjs",
+    "tests/weapon-phase-5d-i-c-b-grapple-control.test.mjs",
+    "tests/weapon-phase-5d-i-c-c-reaction-defense.test.mjs",
+    "tests/weapon-phase-5d-i-d-b1-mounting.test.mjs",
+    "tests/weapon-phase-5d-i-d-b2-wielding-size.test.mjs",
+    "tests/weapon-phase-5d-i-d-b3-upgrades.test.mjs",
+    "tests/weapon-phase-5d-i-d-b5-stock.test.mjs",
+    "tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs",
+    "tests/weapon-production-mixed-resource-ammunition.test.mjs",
+    "tests/weapon-readiness-production-path.test.mjs",
+    "tests/weapon-readiness-ui-contract.test.mjs"
+   ],
+   "consumerCount": 399,
+   "secondarySystems": [
+    "abilities-effects",
+    "combat",
+    "feats",
+    "force",
+    "governance",
+    "houserules",
+    "infrastructure",
+    "progression",
+    "species",
+    "ui-shell",
+    "vehicles"
+   ],
+   "hooks": [
+    "call:swseProgressionLevelUp",
+    "call:swseProgressionApplied"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 41,
+    "byClass": {
+     "actor-like": 19,
+     "self": 20,
+     "Actor(class)": 2
+    }
+   },
+   "derivedWrites": 2,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/architecture-combat-authority.test.mjs",
+     "tests/class-force-v2-direct-fp-cutover.test.mjs",
+     "tests/class-force-v2-watchcircle-exemption.test.mjs",
+     "tests/class-phase-6z-reaction-execution-admission.test.mjs",
+     "tests/combat-feature-stance-authority.test.mjs",
+     "tests/customization-bay-foundation-contract.test.mjs",
+     "tests/droid-customization-postcondition.test.mjs",
+     "tests/droid-installation-drift-repair-intent-boundary.test.mjs",
+     "tests/droid-phase4-foundry-shim.test.mjs",
+     "tests/droid-reconciliation-intent-boundary.test.mjs",
+     "tests/dsp-migration-behavior.test.mjs",
+     "tests/energy-shield-defense-and-activation-authority.test.mjs",
+     "tests/equipment-actor-parity.test.mjs",
+     "tests/equipment-droid-draw-authority.test.mjs",
+     "tests/equipment-e4c1-wp4-writer-convergence.test.mjs",
+     "tests/equipment-e4c1-wp5-c1-attack-gate-and-firestate.test.mjs",
+     "tests/equipment-e4c1-wp5-c2-attack-integrity.test.mjs",
+     "tests/equipment-e4c1-wp5-c3-trust-boundaries.test.mjs",
+     "tests/equipment-e4c1-wp5-c3b-force-point-lifecycle.test.mjs",
+     "tests/equipment-e4c1-wp5-combat-readiness.test.mjs",
+     "tests/equipment-follower-capability-parity.test.mjs",
+     "tests/equipment-g18-request-identity.test.mjs",
+     "tests/equipment-g36-gm-control.test.mjs",
+     "tests/equipment-g36-reconciliation.test.mjs",
+     "tests/equipment-lifecycle-slice.test.mjs",
+     "tests/equipment-skill-hook-roll-regression.test.mjs",
+     "tests/equipment-vertical-slice-draw-choice.test.mjs",
+     "tests/equipment-workspace.test.mjs",
+     "tests/follower-conversion-reservation-race.test.mjs",
+     "tests/force-v2-03b-consumer-cutover.test.mjs",
+     "tests/force-v2-03d-maintained-effects.test.mjs",
+     "tests/force-v2-03e-duplicates-temptation.test.mjs",
+     "tests/force-v2-release-gate.test.mjs",
+     "tests/gm-existing-npc-allies-assignment.test.mjs",
+     "tests/helpers/real-force-point-engine.mjs",
+     "tests/helpers/vehicle-weapon-world.mjs",
+     "tests/hp-preservation-authority.test.mjs",
+     "tests/modification-v2-convergence.test.mjs",
+     "tests/reconciliation-async-lifecycle-paths.test.mjs",
+     "tests/reconciliation-house-rules.test.mjs",
+     "tests/shield-recharge-skill-dispatch-authority.test.mjs",
+     "tests/snapshot-service-restoration.test.mjs",
+     "tests/store-v2-s9-resale-authority.test.mjs",
+     "tests/ti2-commerce-integrity.test.mjs",
+     "tests/ti3-progression-followers-approvals.test.mjs",
+     "tests/ti4c0-g06-rollback-verification.test.mjs",
+     "tests/ti4c0-g06s1-exact-snapshot.test.mjs",
+     "tests/ti4c0-g11-follower-rollback.test.mjs",
+     "tests/ti4c0-g20-rollback-replay.test.mjs",
+     "tests/ti4c0-g21-legacy-dashboard-reversal.test.mjs",
+     "tests/ti4c0-g34-progression-ledger-sync-authority.test.mjs",
+     "tests/ti4c0-g35-droid-rejection-post-commit.test.mjs",
+     "tests/ti4c0-te-credit-adjustment-safety.test.mjs",
+     "tests/vehicle-postcondition.test.mjs",
+     "tests/vehicle-universal-phase4e-p16-errata-migration.test.mjs",
+     "tests/vehicle-universal-phase4e-p18-p6b1-effects.test.mjs",
+     "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+     "tests/vehicle-universal-phase4e-p23-weapon-integrity.test.mjs",
+     "tests/vehicle-universal-phase4e-p25-stock-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+     "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+     "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs",
+     "tests/vehicle-universal-phase4e-p29-starship-scale-area.test.mjs",
+     "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+     "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+     "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+     "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+     "tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs",
+     "tests/vehicle-universal-phase4e-p5-installation-transaction.test.mjs",
+     "tests/vehicle-universal-phase4e-p50-initial-ammunition-policy.test.mjs",
+     "tests/vehicle-universal-phase4e-p51-party-fund-ammunition.test.mjs",
+     "tests/vehicle-universal-phase4e-p52-ammunition-shortcuts.test.mjs",
+     "tests/vehicle-universal-phase4e-p54-ship-logistics.test.mjs",
+     "tests/vehicle-universal-phase4e-p9-installation-jobs.test.mjs",
+     "tests/weapon-3gate-math-matrix.test.mjs",
+     "tests/weapon-phase-5d-e-special-effects.test.mjs",
+     "tests/weapon-phase-5d-g-fire-state-area-selectors.test.mjs",
+     "tests/weapon-phase-5d-h-executable-field-closure.test.mjs",
+     "tests/weapon-phase-5d-i-a-core-attack-residuals.test.mjs",
+     "tests/weapon-phase-5d-i-b-wielding-activation-threat.test.mjs",
+     "tests/weapon-phase-5d-i-c-a-outcome-persistent-effects.test.mjs",
+     "tests/weapon-phase-5d-i-c-b-grapple-control.test.mjs",
+     "tests/weapon-phase-5d-i-c-c-reaction-defense.test.mjs",
+     "tests/weapon-phase-5d-i-d-b1-mounting.test.mjs",
+     "tests/weapon-phase-5d-i-d-b2-wielding-size.test.mjs",
+     "tests/weapon-phase-5d-i-d-b3-upgrades.test.mjs",
+     "tests/weapon-phase-5d-i-d-b5-stock.test.mjs",
+     "tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs",
+     "tests/weapon-production-mixed-resource-ammunition.test.mjs",
+     "tests/weapon-readiness-production-path.test.mjs",
+     "tests/weapon-readiness-ui-contract.test.mjs"
+    ],
+    "transitiveCount": 270,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "deprecated": 3,
+    "legacy": 11,
+    "compat": 6,
+    "fallback": 6
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d164068302",
+   "path": "scripts/governance/actor-engine/hp-recompute-hooks.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 16228,
+   "lines": 338,
+   "sloc": 263,
+   "primarySystem": "actor-core",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "test-only-import",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js",
+    "scripts/utils/mutation-trace.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "featureRuleNormalizationPatch",
+    "HPRecomputeHooks"
+   ],
+   "classes": [
+    "HPRecomputeHooks"
+   ],
+   "consumers": [
+    "scripts/governance/governance-integration.js",
+    "tests/grab-back-bare-item-normalization.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:updateActor",
+    "on:createItem",
+    "on:updateItem",
+    "on:deleteItem"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 5,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/grab-back-bare-item-normalization.test.mjs"
+    ],
+    "transitiveCount": 0,
+    "ciTestCount": 1
+   },
+   "markers": {
+    "legacy": 2,
+    "fallback": 1
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2adeddb8b6",
+   "path": "scripts/governance/actor-engine/plan-builders.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7001,
+   "lines": 272,
+   "sloc": 190,
+   "primarySystem": "actor-core",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "buildEmbeddedCreatePlan",
+    "buildEmbeddedDeletePlan",
+    "buildEmbeddedReplacePlan",
+    "buildCloneActorPlan"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/actor-engine/actor-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6b42886461",
+   "path": "scripts/governance/audit/audit-trail.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7621,
+   "lines": 302,
+   "sloc": 180,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/governance/governance-system.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "AuditTrail"
+   ],
+   "classes": [
+    "AuditTrail"
+   ],
+   "consumers": [
+    "scripts/engine/integrity/drift-detector.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.AuditTrail"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-747300fba5",
+   "path": "scripts/governance/enforcement/actor-engine-enforcement-gates.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5126,
+   "lines": 181,
+   "sloc": 88,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/governance/governance-system.js",
+    "scripts/governance/integrity/missing-prereqs-tracker.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ActorEngineEnforcementGates"
+   ],
+   "classes": [
+    "ActorEngineEnforcementGates"
+   ],
+   "consumers": [
+    "scripts/governance/governance-integration.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.ActorEngineEnforcementGates"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-c1e06a020c",
+   "path": "scripts/governance/enforcement/enforcement-policy.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7805,
+   "lines": 254,
+   "sloc": 120,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/governance-system.js",
+    "scripts/engine/system/HouseRuleService.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "EnforcementPolicy"
+   ],
+   "classes": [
+    "EnforcementPolicy"
+   ],
+   "consumers": [
+    "scripts/governance/enforcement/preflight-validator.js",
+    "scripts/governance/governance-integration.js",
+    "scripts/governance/integrity/severity-classifier.js",
+    "scripts/governance/ui/integrity-dashboard.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [
+    "houserules"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.EnforcementPolicy"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e054aff2e2",
+   "path": "scripts/governance/enforcement/levelup-preflight-gate.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4162,
+   "lines": 156,
+   "sloc": 96,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/governance/governance-system.js",
+    "scripts/governance/integrity/missing-prereqs-tracker.js",
+    "scripts/governance/ui/rebuild-orchestrator.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "LevelUpPreflightGate",
+    "LEVELUP_GATE_STYLES"
+   ],
+   "classes": [
+    "LevelUpPreflightGate"
+   ],
+   "consumers": [
+    "scripts/governance/governance-integration.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a51b2c3671",
+   "path": "scripts/governance/enforcement/preflight-validator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11392,
+   "lines": 392,
+   "sloc": 236,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/governance/enforcement/enforcement-policy.js",
+    "scripts/engine/abilities/AbilityEngine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PreflightValidator"
+   ],
+   "classes": [
+    "PreflightValidator"
+   ],
+   "consumers": [
+    "scripts/governance/actor-engine/actor-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "abilities-effects",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.PreflightValidator"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ba6fe54759",
+   "path": "scripts/governance/export/export-marking.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4350,
+   "lines": 165,
+   "sloc": 91,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/governance/governance-system.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ExportMarking"
+   ],
+   "classes": [
+    "ExportMarking"
+   ],
+   "consumers": [
+    "scripts/governance/governance-integration.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.ExportMarking"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-00ef11dbc3",
+   "path": "scripts/governance/governance-integration.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10133,
+   "lines": 347,
+   "sloc": 180,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/governance-system.js",
+    "scripts/governance/enforcement/enforcement-policy.js",
+    "scripts/governance/ui/integrity-banner.js",
+    "scripts/governance/enforcement/levelup-preflight-gate.js",
+    "scripts/governance/ui/slot-resolution-flow.js",
+    "scripts/governance/export/export-marking.js",
+    "scripts/governance/enforcement/actor-engine-enforcement-gates.js",
+    "scripts/governance/actor-engine/hp-recompute-hooks.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "GovernanceIntegration"
+   ],
+   "classes": [
+    "GovernanceIntegration"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:ready",
+    "on:createActor",
+    "on:deleteActor",
+    "on:exportActor",
+    "on:importActor",
+    "on:swse.prerequisiteViolation",
+    "on:swse.governanceMode"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.EnforcementPolicy",
+    "window.GovernanceIntegration"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 5,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-648eadd23b",
+   "path": "scripts/governance/governance-system.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6953,
+   "lines": 242,
+   "sloc": 140,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 4,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/engine/system/HouseRuleService.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "GovernanceSystem"
+   ],
+   "classes": [
+    "GovernanceSystem"
+   ],
+   "consumers": [
+    "scripts/governance/audit/audit-trail.js",
+    "scripts/governance/enforcement/actor-engine-enforcement-gates.js",
+    "scripts/governance/enforcement/enforcement-policy.js",
+    "scripts/governance/enforcement/levelup-preflight-gate.js",
+    "scripts/governance/export/export-marking.js",
+    "scripts/governance/governance-integration.js",
+    "scripts/governance/ui/integrity-banner.js",
+    "scripts/governance/ui/integrity-dashboard.js",
+    "scripts/ui/repair/repair-panel.js"
+   ],
+   "consumerCount": 9,
+   "secondarySystems": [
+    "houserules",
+    "infrastructure"
+   ],
+   "hooks": [
+    "callAll:swse.governanceMode"
+   ],
+   "settingsRegistered": [
+    "foundryvtt-swse.governanceVisibilityMode",
+    "foundryvtt-swse.strictEnforcementEnabled"
+   ],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.GovernanceSystem"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5268bbee39",
+   "path": "scripts/governance/integrity/missing-prereqs-tracker.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4969,
+   "lines": 179,
+   "sloc": 93,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/governance/actor-engine/actor-engine.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MissingPrereqsTracker"
+   ],
+   "classes": [
+    "MissingPrereqsTracker"
+   ],
+   "consumers": [
+    "scripts/engine/integrity/world-integrity-sweep.js",
+    "scripts/engine/repair/actor-repair-engine.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/governance/enforcement/actor-engine-enforcement-gates.js",
+    "scripts/governance/enforcement/levelup-preflight-gate.js",
+    "scripts/governance/integrity/prerequisite-integrity-checker.js",
+    "scripts/governance/integrity/prerequisite-integrity-tests.js",
+    "scripts/governance/ui/integrity-banner.js",
+    "scripts/governance/ui/integrity-dashboard.js",
+    "scripts/governance/ui/rebuild-orchestrator.js"
+   ],
+   "consumerCount": 10,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 2,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d4c0993bfc",
+   "path": "scripts/governance/integrity/prerequisite-integrity-checker.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11525,
+   "lines": 363,
+   "sloc": 195,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/data/prerequisite-checker.js",
+    "scripts/engine/abilities/AbilityEngine.js",
+    "scripts/utils/logger.js",
+    "scripts/governance/integrity/missing-prereqs-tracker.js",
+    "scripts/governance/integrity/severity-classifier.js",
+    "scripts/engine/combat/officer-share-talent-grant-plan.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PrerequisiteIntegrityChecker"
+   ],
+   "classes": [
+    "PrerequisiteIntegrityChecker"
+   ],
+   "consumers": [
+    "scripts/engine/integrity/world-integrity-sweep.js",
+    "scripts/engine/repair/actor-repair-engine.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/governance/integrity/prerequisite-integrity-tests.js",
+    "scripts/governance/ui/integrity-dashboard.js",
+    "scripts/governance/ui/rebuild-orchestrator.js"
+   ],
+   "consumerCount": 6,
+   "secondarySystems": [
+    "abilities-effects",
+    "combat",
+    "data-registries",
+    "infrastructure"
+   ],
+   "hooks": [
+    "callAll:swse.prerequisiteViolation"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-14b10d7cdf",
+   "path": "scripts/governance/integrity/prerequisite-integrity-tests.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6947,
+   "lines": 218,
+   "sloc": 151,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/integrity/prerequisite-integrity-checker.js",
+    "scripts/governance/integrity/missing-prereqs-tracker.js",
+    "scripts/engine/abilities/AbilityEngine.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PrerequisiteIntegrityTests"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "abilities-effects"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.PrerequisiteIntegrityTests"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-1f23ace1d1",
+   "path": "scripts/governance/integrity/severity-classifier.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6695,
+   "lines": 233,
+   "sloc": 115,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/enforcement/enforcement-policy.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SeverityClassifier"
+   ],
+   "classes": [
+    "SeverityClassifier"
+   ],
+   "consumers": [
+    "scripts/engine/integrity/world-integrity-sweep.js",
+    "scripts/governance/integrity/prerequisite-integrity-checker.js",
+    "scripts/governance/ui/integrity-dashboard.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.SeverityClassifier"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f1e2bf67a5",
+   "path": "scripts/governance/mutation-adapter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 19254,
+   "lines": 632,
+   "sloc": 295,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "adapter",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MutationAdapter"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 3,
+    "byClass": {
+     "ActorEngine": 3
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 9,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b05e346e29",
+   "path": "scripts/governance/mutation/MutationInterceptor.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11577,
+   "lines": 324,
+   "sloc": 131,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 1,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/governance/sentinel/governance-diagnostics.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MutationInterceptor"
+   ],
+   "classes": [
+    "MutationInterceptor"
+   ],
+   "consumers": [
+    "index.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/governance/mutation/batch-1-validation.js",
+    "scripts/governance/sentinel/governance-diagnostics.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "deprecated": 15,
+    "fallback": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-67474096ca",
+   "path": "scripts/governance/mutation/batch-1-validation.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12871,
+   "lines": 385,
+   "sloc": 234,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/governance/actor-engine/actor-engine.js [dynamic]",
+    "scripts/actors/derived/derived-calculator.js [dynamic]",
+    "scripts/governance/actor-engine/actor-engine.js [dynamic]",
+    "scripts/governance/mutation/MutationInterceptor.js [dynamic]",
+    "scripts/governance/actor-engine/actor-engine.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "Batch1Validation"
+   ],
+   "classes": [
+    "Batch1Validation"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.onerror",
+    "window.Batch1Validation"
+   ],
+   "stateWrites": {
+    "total": 2,
+    "byClass": {
+     "item-or-doc-like": 1,
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 3,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5441e8b259",
+   "path": "scripts/governance/mutation/merge-mutations.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12551,
+   "lines": 360,
+   "sloc": 270,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/mutation/mutation-errors.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "mergeMutationPlans",
+    "validateMutationPlan",
+    "simulateMerge"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/engine/store/transaction-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "compat": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-95799c2d60",
+   "path": "scripts/governance/mutation/mutation-boundary-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 15775,
+   "lines": 350,
+   "sloc": 159,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "engine-or-service",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/core/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MutationBoundaryService"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/actor-engine/actor-engine.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "compat": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6ce7f0927c",
+   "path": "scripts/governance/mutation/mutation-errors.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4314,
+   "lines": 183,
+   "sloc": 97,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MutationError",
+    "ProgressionValidationError",
+    "DeltaConflictError",
+    "MutationApplicationError",
+    "isMutationError",
+    "isFromLayer",
+    "categorizeError",
+    "getErrorMessage"
+   ],
+   "classes": [
+    "MutationError",
+    "ProgressionValidationError",
+    "DeltaConflictError",
+    "MutationApplicationError"
+   ],
+   "consumers": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/governance/mutation/merge-mutations.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6ac5c794fc",
+   "path": "scripts/governance/mutation/mutation-normalization-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9894,
+   "lines": 289,
+   "sloc": 162,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/core/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MutationNormalizationService"
+   ],
+   "classes": [
+    "MutationNormalizationService"
+   ],
+   "consumers": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "tests/dsp-migration-mutation-pipeline.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/dsp-migration-mutation-pipeline.test.mjs"
+    ],
+    "transitiveCount": 360,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "deprecated": 2,
+    "legacy": 6,
+    "fallback": 3
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-e61fd57b77",
+   "path": "scripts/governance/sentinel/SENTINEL_CATEGORIZATION_GUIDE.md",
+   "top": "scripts",
+   "ext": "md",
+   "bytes": 11260,
+   "lines": 475,
+   "sloc": null,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "evidence-or-doc",
+   "runtimeReachability": "unreferenced",
+   "referencedBy": [],
+   "referencedByCount": 0,
+   "runtimeReferrerCount": 0,
+   "uncheckedItems": 8,
+   "verification": "reference-traced"
+  },
+  {
+   "id": "F-e63607d1f3",
+   "path": "scripts/governance/sentinel/appv2-audit-runner.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3520,
+   "lines": 114,
+   "sloc": 77,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/appv2-interaction-auditor.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "AppV2AuditRunner"
+   ],
+   "classes": [
+    "AppV2AuditRunner"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.SWSE_AppV2_Audit"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-87b019aab8",
+   "path": "scripts/governance/sentinel/appv2-auditor.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 19003,
+   "lines": 558,
+   "sloc": 385,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/core/structured-logger.js",
+    "scripts/governance/sentinel/sentinel-core.js",
+    "scripts/governance/sentinel/tab-diagnostics.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelAppV2Auditor",
+    "initAppV2Auditor",
+    "AppV2AuditorLayer"
+   ],
+   "classes": [
+    "SentinelAppV2Auditor"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-auditors.js",
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SentinelAppV2Auditor"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "legacy": 5
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ad3df77ca9",
+   "path": "scripts/governance/sentinel/appv2-interaction-auditor.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11663,
+   "lines": 405,
+   "sloc": 288,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "string-referenced-only",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "AppV2InteractionAuditor"
+   ],
+   "classes": [
+    "AppV2InteractionAuditor"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/appv2-audit-runner.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": true,
+   "unreachableConfidence": "unverified-name-mentioned-at-runtime",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3ee8c90cbf",
+   "path": "scripts/governance/sentinel/css-auditor.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9711,
+   "lines": 313,
+   "sloc": 199,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "auditOverflow",
+    "auditZeroSize",
+    "auditStackingContext",
+    "auditForbiddenStyles",
+    "auditIcons",
+    "auditCSSVariable",
+    "auditHidden",
+    "auditCSSHealth",
+    "runFullCSSAudit"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/sentinel/enforcement-core.js",
+    "scripts/governance/sentinel/sentinel-auditors.js",
+    "scripts/governance/sentinel/sentinel-reporter.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 3
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-964fad829b",
+   "path": "scripts/governance/sentinel/enforcement-core.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 23785,
+   "lines": 731,
+   "sloc": 531,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js",
+    "scripts/governance/sentinel/sentinel-reporter.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelEnforcement"
+   ],
+   "classes": [
+    "SentinelEnforcement"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [
+    "on:renderApplicationV2",
+    "once:ready",
+    "on:renderApplicationV2",
+    "once:ready",
+    "on:*",
+    "on:renderApplicationV2",
+    "on:renderSidebar"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window._SWSE_Enforcement"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-486f6a9d3f",
+   "path": "scripts/governance/sentinel/enforcement/import-graph-validator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4273,
+   "lines": 144,
+   "sloc": 99,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "ImportGraphValidator"
+   ],
+   "classes": [
+    "ImportGraphValidator"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-8fe8c63a9a",
+   "path": "scripts/governance/sentinel/enforcement/integrity-wiring-validator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8106,
+   "lines": 272,
+   "sloc": 206,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "IntegrityWiringValidator"
+   ],
+   "classes": [
+    "IntegrityWiringValidator"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2af233b1a6",
+   "path": "scripts/governance/sentinel/enforcement/mutation-path-validator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6009,
+   "lines": 193,
+   "sloc": 141,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MutationPathValidator"
+   ],
+   "classes": [
+    "MutationPathValidator"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f2ffad9ca8",
+   "path": "scripts/governance/sentinel/governance-diagnostics.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 11626,
+   "lines": 382,
+   "sloc": 172,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/core/logger.js",
+    "scripts/governance/mutation/MutationInterceptor.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "GovernanceDiagnostics",
+    "assertGovernanceCompliance",
+    "default"
+   ],
+   "classes": [
+    "GovernanceDiagnostics"
+   ],
+   "consumers": [
+    "scripts/governance/mutation/MutationInterceptor.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "fallback": 9
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-dec3f44e84",
+   "path": "scripts/governance/sentinel/hook-investigator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1027,
+   "lines": 46,
+   "sloc": 30,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HookInvestigator"
+   ],
+   "classes": [
+    "HookInvestigator"
+   ],
+   "consumers": [
+    "scripts/core/init.js",
+    "scripts/holonet/scripts/core/init.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-5ac757d2ab",
+   "path": "scripts/governance/sentinel/investigator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7882,
+   "lines": 276,
+   "sloc": 177,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "Investigator"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [
+    "once:swseDataReady",
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "deprecated": 1,
+    "legacy": 10,
+    "fallback": 1
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": true,
+   "unreachableConfidence": "unverified-name-mentioned-at-runtime",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d90bfb0ed3",
+   "path": "scripts/governance/sentinel/layers/combat-layer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 12108,
+   "lines": 413,
+   "sloc": 282,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CombatLayer"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.__SWSE_COMBAT_SENTINEL__"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-bba28ec02e",
+   "path": "scripts/governance/sentinel/layers/css-layer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4162,
+   "lines": 139,
+   "sloc": 101,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "CSSLayer"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-4511b49da7",
+   "path": "scripts/governance/sentinel/layers/data-layer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3164,
+   "lines": 111,
+   "sloc": 75,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "DataLayer"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "once:swseDataReady",
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": true,
+   "unreachableConfidence": "unverified-name-mentioned-at-runtime",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-733f9eebfa",
+   "path": "scripts/governance/sentinel/layers/hooks-layer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2243,
+   "lines": 86,
+   "sloc": 49,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HooksLayer"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b3f0afb421",
+   "path": "scripts/governance/sentinel/layers/hooks-mutation-layer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3130,
+   "lines": 107,
+   "sloc": 53,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "HooksMutationLayer"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "deprecated": 1
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-009a16595e",
+   "path": "scripts/governance/sentinel/layers/promises-layer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 1994,
+   "lines": 83,
+   "sloc": 50,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "PromisesLayer"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.onerror"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-1fe9fc202a",
+   "path": "scripts/governance/sentinel/layers/sheet-integration-layer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4363,
+   "lines": 149,
+   "sloc": 94,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "presentation",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SheetIntegrationLayer"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/sheets/v2/character-sheet-integration-audit.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a6348daa90",
+   "path": "scripts/governance/sentinel/layers/utility-layer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6876,
+   "lines": 236,
+   "sloc": 147,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "UtilityLayer"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-83f1c46891",
+   "path": "scripts/governance/sentinel/migration-auditor.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 15825,
+   "lines": 567,
+   "sloc": 365,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "migration",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "initMigrationAuditor",
+    "v2Assert",
+    "logRenderLifecycle",
+    "validateContextShape",
+    "logAsyncOrderViolation",
+    "CompendiumAccessAuditor",
+    "validateDOMOwnership",
+    "validateLayoutState",
+    "validateStateDrift",
+    "generateMigrationReport",
+    "enableStrictV2",
+    "disableStrictV2",
+    "getSessionId",
+    "logPhase",
+    "validateCompendiumIntegrity",
+    "validateContextComplete",
+    "validateTemplateDependencies",
+    "classifyRenderOutcome",
+    "validateSurfaceTransition",
+    "setupNoWindowSentinel",
+    "generateUIFailureReport"
+   ],
+   "classes": [
+    "CompendiumAccessAuditor"
+   ],
+   "consumers": [
+    "scripts/core/swse-api.js",
+    "scripts/governance/sentinel/sentinel-auditors.js",
+    "scripts/governance/sentinel/sentinel-reporter.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [
+    "on:renderApplication"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.SWSE.strictV2",
+    "window.SWSE"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [
+    "templates/apps/chargen.hbs"
+   ],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3ea9951224",
+   "path": "scripts/governance/sentinel/mutation-integrity-layer.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6826,
+   "lines": 255,
+   "sloc": 198,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MutationIntegrityLayer"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/actors/derived/derived-calculator.js",
+    "scripts/engine/combat/damage-engine-test.js",
+    "scripts/governance/sentinel/sentinel-registry.js",
+    "scripts/governance/sentinel/transaction-verification.js"
+   ],
+   "consumerCount": 4,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [
+    "on:swse.mutationAuthorized",
+    "on:swse.mutationViolation",
+    "call:swse.mutationAuthorized",
+    "call:swse.mutationViolation"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 361,
+    "ciTestCount": 353
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6fa1f50215",
+   "path": "scripts/governance/sentinel/mutation-path-guard.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6453,
+   "lines": 212,
+   "sloc": 127,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "MutationPathGuard"
+   ],
+   "classes": [
+    "MutationPathGuard"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9185db59fb",
+   "path": "scripts/governance/sentinel/sentinel-auditors.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2013,
+   "lines": 67,
+   "sloc": 50,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/migration-auditor.js",
+    "scripts/governance/sentinel/tab-diagnostics.js",
+    "scripts/governance/sentinel/appv2-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js [reexport]",
+    "scripts/governance/sentinel/migration-auditor.js [reexport]",
+    "scripts/governance/sentinel/sentinel-reporter.js [reexport]",
+    "scripts/governance/sentinel/tab-diagnostics.js [reexport]",
+    "scripts/governance/sentinel/appv2-auditor.js [reexport]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "initializeSentinelAuditors"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ad97d1a725",
+   "path": "scripts/governance/sentinel/sentinel-categories.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6132,
+   "lines": 200,
+   "sloc": 137,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SENTINEL_CATEGORIES",
+    "getCategoryConfig",
+    "getAllCategories",
+    "validateCategoryAndSubcode"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-debug-api.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6160d3c7b5",
+   "path": "scripts/governance/sentinel/sentinel-compendium-forensics.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 24604,
+   "lines": 568,
+   "sloc": 386,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 1,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js",
+    "scripts/apps/base/swse-application-v2.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "getTraceId",
+    "observeFallback",
+    "registerCompendiumInteractionDiagnostic",
+    "CompendiumInteractionDiagnostic",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [
+    "index.js",
+    "scripts/core/compendium-directory-click-repair.js",
+    "scripts/governance/sentinel/sentinel-debug-api.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [
+    "ui-shell"
+   ],
+   "hooks": [
+    "on:renderCompendiumDirectory",
+    "on:renderSidebar",
+    "on:renderSidebar",
+    "on:renderCompendiumDirectory",
+    "on:renderCompendiumDirectory",
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SWSE_DEBUG_COMPENDIUM_NATIVE_ONLY"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "compat": 1,
+    "fallback": 18
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f763e830e5",
+   "path": "scripts/governance/sentinel/sentinel-core.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 25925,
+   "lines": 881,
+   "sloc": 587,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/debug/sentinel-config.js",
+    "scripts/utils/settings-helper.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelEngine",
+    "Sentinel"
+   ],
+   "classes": [
+    "SentinelEngine"
+   ],
+   "consumers": [
+    "scripts/data/talent-tree-normalizer.js",
+    "scripts/debug/sentinel-reports.js",
+    "scripts/engine/progression/hooks/system-init-hooks.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/governance/sentinel/appv2-auditor.js",
+    "scripts/governance/sentinel/enforcement-core.js",
+    "scripts/governance/sentinel/investigator.js",
+    "scripts/governance/sentinel/layers/combat-layer.js",
+    "scripts/governance/sentinel/layers/css-layer.js",
+    "scripts/governance/sentinel/layers/data-layer.js",
+    "scripts/governance/sentinel/layers/hooks-layer.js",
+    "scripts/governance/sentinel/layers/hooks-mutation-layer.js",
+    "scripts/governance/sentinel/layers/promises-layer.js",
+    "scripts/governance/sentinel/layers/sheet-integration-layer.js",
+    "scripts/governance/sentinel/layers/utility-layer.js",
+    "scripts/governance/sentinel/sentinel-compendium-forensics.js",
+    "scripts/governance/sentinel/sentinel-css-contract.js",
+    "scripts/governance/sentinel/sentinel-debug-api.js",
+    "scripts/governance/sentinel/sentinel-init.js",
+    "scripts/governance/sentinel/sentinel-layout-debugger.js",
+    "scripts/governance/sentinel/sentinel-layout-evaluator.js",
+    "scripts/governance/sentinel/sentinel-mall-cop.js",
+    "scripts/governance/sentinel/sentinel-registry.js",
+    "scripts/governance/sentinel/sentinel-reporter.js",
+    "scripts/governance/sentinel/sentinel-roll-pipeline.js",
+    "scripts/governance/sentinel/sentinel-sheet-guardrails.js",
+    "scripts/governance/sentinel/sentinel-sheet-hydration.js",
+    "scripts/governance/sentinel/sentinel-template-integrity.js",
+    "scripts/governance/sentinel/sentinel-update-atomicity.js",
+    "scripts/governance/sentinel/sentry.js",
+    "scripts/governance/sentinel/v2-comprehensive-audit.js",
+    "scripts/sentinel/sentinel-engine.js",
+    "scripts/sheets/v2/contract-enforcer.js"
+   ],
+   "consumerCount": 33,
+   "secondarySystems": [
+    "dev-tooling",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 378,
+    "ciTestCount": 370
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-2247d56cd0",
+   "path": "scripts/governance/sentinel/sentinel-css-contract.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5731,
+   "lines": 209,
+   "sloc": 163,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelCSSContract"
+   ],
+   "classes": [
+    "SentinelCSSContract"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "on:renderApplicationV2",
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a8086c1044",
+   "path": "scripts/governance/sentinel/sentinel-dashboard.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4638,
+   "lines": 155,
+   "sloc": 114,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/apps/base/base-swse-appv2.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelDashboard"
+   ],
+   "classes": [
+    "SentinelDashboard"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "ui-shell"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [
+    "templates/apps/sentinel-dashboard.hbs"
+   ],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-4ddfed0e69",
+   "path": "scripts/governance/sentinel/sentinel-debug-api.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 8550,
+   "lines": 255,
+   "sloc": 179,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js",
+    "scripts/governance/sentinel/sentinel-categories.js",
+    "scripts/governance/sentinel/sentinel-source-mapper.js",
+    "scripts/governance/sentinel/sentinel-compendium-forensics.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelDebugAPI",
+    "installSentinelDebugAPI"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-init.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SWSE",
+    "globalThis.SWSE.debug"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ce25748e15",
+   "path": "scripts/governance/sentinel/sentinel-init.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 2123,
+   "lines": 63,
+   "sloc": 31,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "composition-wiring",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 1,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js",
+    "scripts/governance/sentinel/sentinel-debug-api.js",
+    "scripts/governance/sentinel/sentinel-mall-cop.js [dynamic]"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "initializeSentinelGovernance",
+    "installSentinelAPI"
+   ],
+   "classes": [],
+   "consumers": [
+    "index.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SWSE",
+    "globalThis.SWSE.sentinel"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-0302c63efc",
+   "path": "scripts/governance/sentinel/sentinel-layout-contract.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9588,
+   "lines": 411,
+   "sloc": 326,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelLayoutContract",
+    "SEVERITY_LEVELS",
+    "getAllRules",
+    "getRuleById",
+    "getRulesForSelector",
+    "getRulesBySeverity",
+    "getRulesByCategory",
+    "getBaseCSS"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-layout-evaluator.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-85aaead726",
+   "path": "scripts/governance/sentinel/sentinel-layout-debugger.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10112,
+   "lines": 396,
+   "sloc": 312,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelLayoutDebugger"
+   ],
+   "classes": [
+    "SentinelLayoutDebugger"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "once:ready",
+    "on:renderApplicationV2"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 2
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-d744b7fcf6",
+   "path": "scripts/governance/sentinel/sentinel-layout-evaluator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10360,
+   "lines": 386,
+   "sloc": 312,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js",
+    "scripts/governance/sentinel/sentinel-layout-contract.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "evaluateElement",
+    "evaluateApp",
+    "reportViolations",
+    "SentinelLayoutEvaluator"
+   ],
+   "classes": [
+    "SentinelLayoutEvaluator"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "on:renderApplicationV2",
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-ba5905a9bc",
+   "path": "scripts/governance/sentinel/sentinel-mall-cop.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 14455,
+   "lines": 461,
+   "sloc": 332,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-dynamic",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelMallCop"
+   ],
+   "classes": [
+    "SentinelMallCop"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-init.js",
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [
+    "on:swse-store-inventory-loaded",
+    "on:swse-store-rendered",
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-633e0010bb",
+   "path": "scripts/governance/sentinel/sentinel-registry.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5223,
+   "lines": 98,
+   "sloc": 39,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "registry",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js",
+    "scripts/governance/sentinel/layers/css-layer.js",
+    "scripts/governance/sentinel/layers/data-layer.js",
+    "scripts/governance/sentinel/layers/hooks-layer.js",
+    "scripts/governance/sentinel/layers/promises-layer.js",
+    "scripts/governance/sentinel/layers/combat-layer.js",
+    "scripts/governance/sentinel/layers/utility-layer.js",
+    "scripts/governance/sentinel/mutation-integrity-layer.js",
+    "scripts/governance/sentinel/layers/hooks-mutation-layer.js",
+    "scripts/governance/mutation/batch-1-validation.js",
+    "scripts/governance/sentinel/appv2-auditor.js",
+    "scripts/governance/sentinel/sentinel-mall-cop.js",
+    "scripts/governance/sentinel/sentinel-sheet-hydration.js",
+    "scripts/governance/sentinel/sentinel-sheet-guardrails.js",
+    "scripts/governance/sentinel/sentinel-layout-debugger.js",
+    "scripts/governance/sentinel/sentinel-css-contract.js",
+    "scripts/governance/sentinel/sentinel-layout-evaluator.js",
+    "scripts/governance/sentinel/sentinel-roll-pipeline.js",
+    "scripts/governance/sentinel/sentinel-update-atomicity.js",
+    "scripts/governance/sentinel/sentinel-template-integrity.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "initializeSentinelLayers",
+    "bootstrapSentinel"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.Batch1Validation"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-bc5b448699",
+   "path": "scripts/governance/sentinel/sentinel-reporter.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9486,
+   "lines": 269,
+   "sloc": 204,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js",
+    "scripts/governance/sentinel/css-auditor.js",
+    "scripts/governance/sentinel/migration-auditor.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelReporter"
+   ],
+   "classes": [
+    "SentinelReporter"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/enforcement-core.js",
+    "scripts/governance/sentinel/sentinel-auditors.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-97a9e69110",
+   "path": "scripts/governance/sentinel/sentinel-roll-pipeline.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4587,
+   "lines": 156,
+   "sloc": 107,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelRollPipeline"
+   ],
+   "classes": [
+    "SentinelRollPipeline"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "on:createChatMessage",
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-a1cea151a8",
+   "path": "scripts/governance/sentinel/sentinel-sheet-guardrails.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5080,
+   "lines": 167,
+   "sloc": 104,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "presentation",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelSheetGuardrails"
+   ],
+   "classes": [
+    "SentinelSheetGuardrails"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js",
+    "scripts/sheets/v2/actor-sheet-base.js",
+    "scripts/sheets/v2/character-like-sheet.js"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 4,
+    "ciTestCount": 4
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-10d69e97b8",
+   "path": "scripts/governance/sentinel/sentinel-sheet-hydration.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5184,
+   "lines": 176,
+   "sloc": 122,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "presentation",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelSheetHydration"
+   ],
+   "classes": [
+    "SentinelSheetHydration"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "on:renderApplicationV2",
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9ae2aca093",
+   "path": "scripts/governance/sentinel/sentinel-source-mapper.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 3355,
+   "lines": 126,
+   "sloc": 77,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "normalizer",
+   "runtimeReachability": "reachable-static",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelSourceMapper"
+   ],
+   "classes": [
+    "SentinelSourceMapper"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-debug-api.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "fallback": 1
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-6be6461610",
+   "path": "scripts/governance/sentinel/sentinel-template-integrity.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 6930,
+   "lines": 239,
+   "sloc": 168,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelTemplateIntegrity"
+   ],
+   "classes": [
+    "SentinelTemplateIntegrity"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "on:renderApplicationV2",
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-f6db02d88a",
+   "path": "scripts/governance/sentinel/sentinel-update-atomicity.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5117,
+   "lines": 176,
+   "sloc": 118,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelUpdateAtomicity"
+   ],
+   "classes": [
+    "SentinelUpdateAtomicity"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/sentinel-registry.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [
+    "on:preUpdateActor",
+    "once:ready"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-0b33277ec2",
+   "path": "scripts/governance/sentinel/sentry.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9235,
+   "lines": 318,
+   "sloc": 216,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "Sentry"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [
+    "on:renderApplicationV2",
+    "on:renderDocumentSheetV2"
+   ],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.onerror"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": true,
+   "unreachableConfidence": "unverified-name-mentioned-at-runtime",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-597e3a6f04",
+   "path": "scripts/governance/sentinel/sovereignty-enforcement.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10769,
+   "lines": 349,
+   "sloc": 219,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelSovereigntyEnforcement"
+   ],
+   "classes": [
+    "SentinelSovereigntyEnforcement"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.SentinelSovereigntyEnforcement"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-97c8379602",
+   "path": "scripts/governance/sentinel/tab-diagnostics.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 15705,
+   "lines": 514,
+   "sloc": 341,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/core/structured-logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SentinelTabDiagnostics",
+    "initTabDiagnostics"
+   ],
+   "classes": [
+    "SentinelTabDiagnostics"
+   ],
+   "consumers": [
+    "scripts/governance/sentinel/appv2-auditor.js",
+    "scripts/governance/sentinel/sentinel-auditors.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "globalThis.SentinelTabDiagnostics"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-62dac54e52",
+   "path": "scripts/governance/sentinel/transaction-verification.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 4912,
+   "lines": 174,
+   "sloc": 122,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/governance/sentinel/mutation-integrity-layer.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "TransactionVerification",
+    "default"
+   ],
+   "classes": [],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [
+    "actor-core"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 2,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-307cf2ac99",
+   "path": "scripts/governance/sentinel/v2-comprehensive-audit.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 20248,
+   "lines": 565,
+   "sloc": 404,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "orphan-unreferenced",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/sentinel/sentinel-core.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "V2ComprehensiveAudit"
+   ],
+   "classes": [
+    "V2ComprehensiveAudit"
+   ],
+   "consumers": [],
+   "consumerCount": 0,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "deprecated": 3,
+    "legacy": 1
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3ebf5f9995",
+   "path": "scripts/governance/snapshot/deletion-aware-patch.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 7885,
+   "lines": 199,
+   "sloc": 88,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "compat-patch",
+   "runtimeReachability": "reachable-dynamic",
+   "importDepthFromIndex": 3,
+   "imports": [],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "flattenWithPaths",
+    "buildDeletionAwarePatch",
+    "applyFlatPatch"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/snapshot/snapshot-restoration-plan.js",
+    "scripts/governance/snapshot/snapshot-service.js",
+    "tests/snapshot-restoration-plan.test.mjs"
+   ],
+   "consumerCount": 3,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/snapshot-restoration-plan.test.mjs"
+    ],
+    "transitiveCount": 361,
+    "ciTestCount": 354
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-32c7f620a2",
+   "path": "scripts/governance/snapshot/snapshot-restoration-plan.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10436,
+   "lines": 262,
+   "sloc": 125,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "reachable-dynamic",
+   "importDepthFromIndex": 3,
+   "imports": [
+    "scripts/governance/snapshot/deletion-aware-patch.js",
+    "scripts/domain/followers/follower-slot-occupancy.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SNAPSHOT_RESTORATION_SCOPE",
+    "SUPPORTED_SNAPSHOT_SCOPES",
+    "scopeIncludesItems",
+    "scopeIncludesEffects",
+    "scopeIncludesRootFields",
+    "scopeIncludesSystemAndFlags",
+    "buildActorRootRestorationPatch",
+    "deepEqualPlain",
+    "EXCLUDED_DOCUMENT_VERIFICATION_FIELDS",
+    "documentsMatch",
+    "buildEmbeddedDocumentRestorePlan"
+   ],
+   "classes": [],
+   "consumers": [
+    "scripts/governance/snapshot/snapshot-service.js",
+    "tests/snapshot-restoration-plan.test.mjs"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "npc-followers"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/snapshot-restoration-plan.test.mjs"
+    ],
+    "transitiveCount": 361,
+    "ciTestCount": 354
+   },
+   "markers": {},
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-9213ca3451",
+   "path": "scripts/governance/snapshot/snapshot-service.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 27361,
+   "lines": 564,
+   "sloc": 313,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "authority-or-orchestrator",
+   "runtimeReachability": "reachable-dynamic",
+   "importDepthFromIndex": 2,
+   "imports": [
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/core/logger.js",
+    "scripts/governance/snapshot/snapshot-restoration-plan.js",
+    "scripts/governance/snapshot/deletion-aware-patch.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SnapshotService"
+   ],
+   "classes": [
+    "SnapshotService"
+   ],
+   "consumers": [
+    "scripts/engine/progression/utils/snapshot-manager.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "tests/snapshot-service-restoration.test.mjs",
+    "tests/ti4c0-g06s1-exact-snapshot.test.mjs",
+    "tests/ti4c0-g11-follower-rollback.test.mjs"
+   ],
+   "consumerCount": 5,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 6,
+    "byClass": {
+     "ActorEngine": 6
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 7,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [
+     "tests/snapshot-service-restoration.test.mjs",
+     "tests/ti4c0-g06s1-exact-snapshot.test.mjs",
+     "tests/ti4c0-g11-follower-rollback.test.mjs"
+    ],
+    "transitiveCount": 358,
+    "ciTestCount": 353
+   },
+   "markers": {
+    "legacy": 21
+   },
+   "parseError": null,
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3ee0a1515b",
+   "path": "scripts/governance/ui/integrity-banner.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 5072,
+   "lines": 195,
+   "sloc": 126,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/governance-system.js",
+    "scripts/governance/integrity/missing-prereqs-tracker.js",
+    "scripts/governance/ui/rebuild-orchestrator.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "IntegrityBanner",
+    "INTEGRITY_BANNER_STYLES"
+   ],
+   "classes": [
+    "IntegrityBanner"
+   ],
+   "consumers": [
+    "scripts/governance/governance-integration.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-b8a12fabc2",
+   "path": "scripts/governance/ui/integrity-dashboard.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9143,
+   "lines": 315,
+   "sloc": 206,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/governance/integrity/missing-prereqs-tracker.js",
+    "scripts/governance/integrity/prerequisite-integrity-checker.js",
+    "scripts/governance/integrity/severity-classifier.js",
+    "scripts/governance/governance-system.js",
+    "scripts/governance/enforcement/enforcement-policy.js",
+    "scripts/utils/logger.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "IntegrityDashboard"
+   ],
+   "classes": [
+    "IntegrityDashboard"
+   ],
+   "consumers": [
+    "scripts/ui/repair/repair-panel.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [
+    "window.IntegrityDashboard"
+   ],
+   "stateWrites": {
+    "total": 0,
+    "byClass": {}
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 0,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "unverified-self-registering",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-cef44d3e81",
+   "path": "scripts/governance/ui/rebuild-orchestrator.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 9218,
+   "lines": 391,
+   "sloc": 280,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/governance/integrity/missing-prereqs-tracker.js",
+    "scripts/governance/integrity/prerequisite-integrity-checker.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "RebuildOrchestrator",
+    "REBUILD_ORCHESTRATOR_STYLES"
+   ],
+   "classes": [
+    "RebuildOrchestrator",
+    "RebuildOrchestratorModal"
+   ],
+   "consumers": [
+    "scripts/governance/enforcement/levelup-preflight-gate.js",
+    "scripts/governance/ui/integrity-banner.js"
+   ],
+   "consumerCount": 2,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {},
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-3384a3165a",
+   "path": "scripts/governance/ui/slot-resolution-flow.js",
+   "top": "scripts",
+   "ext": "js",
+   "bytes": 10703,
+   "lines": 412,
+   "sloc": 286,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "module-with-writes",
+   "runtimeReachability": "unreachable-importers-only",
+   "importDepthFromIndex": null,
+   "imports": [
+    "scripts/utils/logger.js",
+    "scripts/governance/actor-engine/actor-engine.js"
+   ],
+   "unresolvedImports": [],
+   "dynamicImportPatterns": [],
+   "exports": [
+    "SlotResolutionFlow",
+    "SLOT_RESOLUTION_STYLES"
+   ],
+   "classes": [
+    "SlotResolutionFlow",
+    "SlotResolutionModal"
+   ],
+   "consumers": [
+    "scripts/governance/governance-integration.js"
+   ],
+   "consumerCount": 1,
+   "secondarySystems": [
+    "actor-core",
+    "infrastructure"
+   ],
+   "hooks": [],
+   "settingsRegistered": [],
+   "sheetRegistrations": 0,
+   "handlebarsHelpers": 0,
+   "sockets": [],
+   "globalsAssigned": [],
+   "stateWrites": {
+    "total": 1,
+    "byClass": {
+     "ActorEngine": 1
+    }
+   },
+   "derivedWrites": 0,
+   "actorEngineCalls": 1,
+   "chatMessageCreates": 0,
+   "templatesReferenced": [],
+   "tests": {
+    "direct": [],
+    "transitiveCount": 0,
+    "ciTestCount": 0
+   },
+   "markers": {
+    "legacy": 9
+   },
+   "parseError": null,
+   "stemMentionedInRuntimeText": false,
+   "unreachableConfidence": "static-proof-no-runtime-path",
+   "verification": "dependency-traced"
+  },
+  {
+   "id": "F-fca6bab333",
+   "path": "scripts/governance/v2-app-handler-patterns.md",
+   "top": "scripts",
+   "ext": "md",
+   "bytes": 6013,
+   "lines": 218,
+   "sloc": null,
+   "primarySystem": "governance",
+   "domainBasis": "path-rule",
+   "role": "evidence-or-doc",
+   "runtimeReachability": "unreferenced",
+   "referencedBy": [],
+   "referencedByCount": 0,
+   "runtimeReferrerCount": 0,
+   "verification": "reference-traced"
+  }
+ ]
+}

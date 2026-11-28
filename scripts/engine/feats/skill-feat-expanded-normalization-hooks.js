@@ -731,8 +731,8 @@ async function normalizeExpandedSkillFeat(item, options = {}) {
 }
 
 export function registerExpandedSkillFeatNormalizationHooks() {
-  Hooks.on('createItem', async (item, options) => normalizeExpandedSkillFeat(item, options));
-  Hooks.on('updateItem', async (item, _data, options) => normalizeExpandedSkillFeat(item, options));
+  Hooks.on('createItem', async (item, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeExpandedSkillFeat(item, options) : false);
+  Hooks.on('updateItem', async (item, _data, options, userId) => (userId === undefined || userId === game.user?.id) ? normalizeExpandedSkillFeat(item, options) : false);
   SWSELogger.log('[ExpandedSkillFeats] Normalization hooks registered');
 }
 

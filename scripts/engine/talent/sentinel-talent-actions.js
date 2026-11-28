@@ -3,7 +3,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { resolveForceDiscipleIndomitable } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-features.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { DialogPort } from "/systems/foundryvtt-swse/scripts/utils/ui-ports.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
@@ -140,7 +140,7 @@ async function promptToken(actor, title, { relation = 'any', maxSquares = null, 
     ${requireDarkSide ? '<label class="checkbox"><input type="checkbox" name="confirmDarkSide" /> Target has a Dark Side Score of 1 or higher</label>' : ''}
     <p class="notes">Line of sight, concealment, exact range, and special target traits remain GM/player adjudicated when the scene cannot prove them.</p>
   </form>`;
-  return SWSEDialogV2.prompt({
+  return DialogPort.prompt({
     title,
     content,
     label: 'Continue',
@@ -293,7 +293,7 @@ export class SentinelTalentActions {
     const currentDss = getDarkSideScore(actor);
     const active = actor.getFlag?.(NS, 'darkDeception.active') === true;
     const nextActive = !active;
-    await actor.setFlag(NS, 'darkDeception', { active: nextActive, effectiveDarkSideScore: wisdomScore, actualDarkSideScore: currentDss, updatedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'darkDeception', { active: nextActive, effectiveDarkSideScore: wisdomScore, actualDarkSideScore: currentDss, updatedAt: Date.now() }, { recalc: false });
     await postCard(actor, 'Dark Deception', `<p>${nextActive ? 'Activated' : 'Deactivated'} Dark Deception.</p><p>When another character attempts to sense ${esc(actor.name)} through the Force in any way, ${esc(actor.name)} may choose to act as though their Dark Side Score equals their Wisdom score.</p><p><strong>Current actual DSS:</strong> ${currentDss}. <strong>Masked DSS while chosen:</strong> ${wisdomScore}.</p><p>Deception is a class skill for this character.</p>`, { talentName: 'Dark Deception', active: nextActive, effectiveDarkSideScore: wisdomScore });
     return { success: true, active: nextActive, effectiveDarkSideScore: wisdomScore };
   }
@@ -329,7 +329,7 @@ export class SentinelTalentActions {
       <label class="checkbox"><input type="checkbox" name="vehicle" /> Hide one vehicle instead while on board (GM confirms size restriction)</label>
       <p class="notes">If an opponent moves into line of sight of a hidden creature, compare this UTF result to that opponent's Will Defense. On success, hidden creatures have Total Concealment against that opponent.</p>
     </form>`;
-    const choice = await SWSEDialogV2.prompt({
+    const choice = await DialogPort.prompt({
       title: 'Force Haze',
       content,
       label: 'Create Haze',
@@ -354,7 +354,7 @@ export class SentinelTalentActions {
       const hidden = chosenTokens.map(token => ({ tokenId: token.id, actorId: token.actor?.id ?? null, name: token.name ?? token.actor?.name ?? 'Hidden ally' }));
       const persistent = hasTalent(actor, 'Persistent Haze');
       const unseenEyes = hasTalent(actor, 'Unseen Eyes');
-      await actor.setFlag(NS, 'forceHaze', {
+      await ActorEngine.updateActorFlags(actor, NS, 'forceHaze', {
         active: true,
         rollTotal: total,
         hidden,
@@ -365,7 +365,7 @@ export class SentinelTalentActions {
         createdAt: Date.now(),
         expiresAt: Date.now() + 60_000,
         dismissedWhenHiddenCreatureAttacks: !persistent
-      });
+      }, { recalc: false });
       for (const token of chosenTokens) {
         if (!token.actor) continue;
         await createEffectOnActor(token.actor, {
@@ -429,7 +429,7 @@ export class SentinelTalentActions {
     const powers = forcePowerOptions(actor);
     const powerOptions = powers.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
     const content = `<form class="swse-dialog"><p>Spend 1 Force Point to activate a ready Force Power as a Reaction after being targeted by a Force Power with the [Dark Side] descriptor.</p><div class="form-group"><label>Force Power to activate</label><select name="powerId">${powerOptions}<option value="manual">Manual / not tracked</option></select></div></form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Dark Retaliation', content, label: 'Retaliate', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Dark Retaliation', content, label: 'Retaliate', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       return { powerId: String(new FormData(form).get('powerId') || 'manual') };
@@ -443,7 +443,7 @@ export class SentinelTalentActions {
         const power = await spendReadyForcePower(actor, choice.powerId, 'dark-retaliation');
         powerName = power.name;
       }
-      await actor.setFlag(NS, 'encounterUses.darkRetaliation', { encounterId: this._encounterId(), used: true, powerName, usedAt: Date.now() });
+      await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.darkRetaliation', { encounterId: this._encounterId(), used: true, powerName, usedAt: Date.now() }, { recalc: false });
       await postCard(actor, 'Dark Retaliation', `<p>${esc(actor.name)} spends a Force Point and activates <strong>${esc(powerName)}</strong> as a Reaction to being targeted by a [Dark Side] Force Power.</p><p>Resolve the selected Force Power normally against eligible targets.</p>`, { talentName: 'Dark Retaliation', powerName });
       return { success: true, powerName };
     });
@@ -455,7 +455,7 @@ export class SentinelTalentActions {
       return null;
     }
     const content = `<form class="swse-dialog"><p>After you take damage from a Force Power, identify that power. You gain +2 Force bonus to all Defenses against that Force Power until the end of the encounter.</p><div class="form-group"><label>Force Power</label><input name="powerName" type="text" placeholder="Move Object, Force Lightning, etc." /></div></form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Gradual Resistance', content, label: 'Record Resistance', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Gradual Resistance', content, label: 'Record Resistance', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       return { powerName: String(new FormData(form).get('powerName') || '').trim() || 'the triggering Force Power' };
@@ -502,7 +502,7 @@ export class SentinelTalentActions {
       await createEffectOnActor(target.actor, { name: `Sentinel's Gambit (${actor.name})`, icon: 'icons/svg/eye.svg', changes: [], disabled: false, duration: { rounds: 1, turns: 1 }, flags: { swse: { talentName: "Sentinel's Gambit", sourceActorId: actor.id, sourceActorName: actor.name, deniedDexToReflexAgainstSource: true, expiresEndOfSourceNextTurn: true } } }, { source: 'sentinels-gambit' });
     }
     const nextUsedCount = usedCount + 1;
-    await actor.setFlag(NS, 'encounterUses.sentinelsGambit', { encounterId: this._encounterId(), used: nextUsedCount >= maxUses, usedCount: nextUsedCount, maxUses, targetName: target.name, targetActorId: target.actor?.id ?? null, usedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'encounterUses.sentinelsGambit', { encounterId: this._encounterId(), used: nextUsedCount >= maxUses, usedCount: nextUsedCount, maxUses, targetName: target.name, targetActorId: target.actor?.id ?? null, usedAt: Date.now() }, { recalc: false });
     await postCard(actor, "Sentinel's Gambit", `<p><strong>${esc(target.name)}</strong> loses its Dexterity bonus to Reflex Defense against ${esc(actor.name)}'s attacks until the end of ${esc(actor.name)}'s next turn.</p><p><strong>Encounter uses:</strong> ${nextUsedCount}/${maxUses}${improvedExtraUses ? ` (includes +${improvedExtraUses} from Improved Sentinel's Gambit)` : ''}.</p>`, { talentName: "Sentinel's Gambit", targetActorId: target.actor?.id ?? null, usedCount: nextUsedCount, maxUses });
     return { success: true, targetName: target.name };
   }
@@ -515,7 +515,7 @@ export class SentinelTalentActions {
     const bab = getBab(actor);
     const maxPenalty = Math.max(1, Math.min(5, bab || 5));
     const content = `<form class="swse-dialog"><p>When you use a Standard Action to make a melee attack, take an attack penalty and gain twice that value as an insight bonus to Will Defense until the start of your next turn. The bonus cannot exceed your Base Attack Bonus.</p><div class="form-group"><label>Attack penalty</label><input name="penalty" type="range" min="1" max="${maxPenalty}" value="1" step="1" oninput="this.nextElementSibling.value=this.value" /><output>1</output></div><p class="notes">Current detected BAB cap: ${bab}. If BAB could not be detected, GM confirms the cap.</p></form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Steel Resolve', content, label: 'Apply Steel Resolve', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Steel Resolve', content, label: 'Apply Steel Resolve', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       return { penalty: Math.max(1, Math.min(maxPenalty, Number(new FormData(form).get('penalty') || 1) || 1)) };
@@ -574,7 +574,7 @@ export class SentinelTalentActions {
     }
     const rows = options.map(row => `<option value="${esc(row.id)}" ${current?.powerName === row.name ? 'selected' : ''}>${esc(row.name)} — ${esc(row.source)}</option>`).join('');
     const content = `<form class="swse-dialog"><p>Choose one Force Power with the [Dark Side] descriptor to add to your Force Power Suite. Once per encounter, you can use that chosen power without increasing your Dark Side Score unless you spend a Force Point or Destiny Point to modify it.</p><div class="form-group"><label>Dark Side Force Power</label><select name="powerRef">${rows}</select></div><p class="notes">If the selected power is from the compendium and not already owned, it will be added to the actor's Force Power Suite.</p></form>`;
-    const choice = await SWSEDialogV2.prompt({ title: 'Taint of the Dark Side', content, label: 'Choose Power', callback: (html) => {
+    const choice = await DialogPort.prompt({ title: 'Taint of the Dark Side', content, label: 'Choose Power', callback: (html) => {
       const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
       const form = root?.querySelector?.('form') ?? root;
       return { powerRef: String(new FormData(form).get('powerRef') || '') };
@@ -590,7 +590,7 @@ export class SentinelTalentActions {
       const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [data], { source: 'taint-of-the-dark-side', render: false });
       ownedItem = Array.isArray(created) ? created[0] : created;
     }
-    await actor.setFlag(NS, 'taintOfTheDarkSide', { powerId: ownedItem?.id ?? null, powerName: selected.name, selectedAt: Date.now() });
+    await ActorEngine.updateActorFlags(actor, NS, 'taintOfTheDarkSide', { powerId: ownedItem?.id ?? null, powerName: selected.name, selectedAt: Date.now() }, { recalc: false });
     await postCard(actor, 'Taint of the Dark Side', `<p><strong>${esc(selected.name)}</strong> is recorded as ${esc(actor.name)}'s Taint of the Dark Side power.</p><p>Once per encounter, using this specific [Dark Side] Force Power does not increase Dark Side Score unless it is modified by a Force Point or Destiny Point.</p>`, { talentName: 'Taint of the Dark Side', powerId: ownedItem?.id ?? null, powerName: selected.name });
     return { success: true, powerId: ownedItem?.id ?? null, powerName: selected.name };
   }

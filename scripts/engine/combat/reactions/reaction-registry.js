@@ -1021,11 +1021,8 @@ async function swsePostReactionFallback(result = {}) {
       ${result.details ? `<div>${result.details}</div>` : ""}
     </div>
   `;
-  return ChatMessage.create({
-    user: game.user.id,
-    speaker: ChatMessage.getSpeaker(),
-    content
-  });
+  const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js'); // lazy: keeps this engine out of the swse-chat static cycle
+  return SWSEChat.postHTML({ content });
 }
 
 const SWSE_FIRST_WAVE_REACTION_FALLBACKS = {
