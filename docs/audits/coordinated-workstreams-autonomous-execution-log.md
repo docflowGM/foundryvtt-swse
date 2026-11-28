@@ -50,3 +50,7 @@ Resume rule: read this file, take the first `QUEUED` row in the queue below, do 
 - Sabacc raise input bounded by credits - toCall (engine cost toCall + raiseBy): tests/sabacc-raise-bound.test.mjs.
 - UI-10 vehicle tabs: tablist/tab/tabpanel roles, aria-selected/controls/labelledby with per-sheet unique ids, roving tabindex, Arrow/Home/End/Enter/Space: `vehicle-tab-navigation.js`, tests/vehicle-tab-navigation.test.mjs (pure logic + fake-DOM glue; real focus behaviour needs Foundry).
 - UI-13 (partial): subsystem detail lines in a real <ul>; arrow-glyph buttons named; resource bars have progressbar semantics: tests/vehicle-sheet-accessibility.test.mjs. Not done: contrast/zoom checks, inline tiny text, focus rings.
+
+### Batch 8 (suite 902/902, ratchet OK)
+- UI-17: the systems-browser catch is no longer silent: structured warning with the vehicle id, `vehicleSystemsBrowserUnavailable` flag, short status notice (no stack): tests/vehicle-systems-browser-error-visibility.test.mjs.
+- UI-03: crew summary shows 'Stations staffed' and 'Crew complement' as separate facts (no filled/total fraction); header strip 'N staffed · M crew' without a ratio bar: tests/vehicle-crew-summary-concepts.test.mjs. View-model field names unchanged (existing pinned tests pass).
