@@ -33,6 +33,7 @@
 // Does NOT replace public checker APIs or rewrite progression steps.
 // ============================================
 
+import { resolvePrerequisiteAbilityScore } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/prerequisite-ability-score.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import {
   namesMatchLoosely,
@@ -540,11 +541,8 @@ function evalAbility(snapshot, req, opts) {
     };
   }
 
-  const ability =
-    actor.system?.attributes?.[abilityKey]?.total
-    ?? actor.system?.attributes?.[abilityKey]?.value
-    ?? actor.system?.abilities?.[abilityKey]?.value
-    ?? 10;
+  // Canonical ability-score read (shared with the PrerequisiteChecker facade); `attributes.<k>.total/.value` do not exist on the real schema.
+  const ability = resolvePrerequisiteAbilityScore(actor, abilityKey, snapshot.pending);
 
   const passed = Number(ability) >= required;
   return {

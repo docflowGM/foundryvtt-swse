@@ -56,3 +56,22 @@ export function compiledPrerequisiteEntryFor(domain, item) {
   if (!entry.structure || !Array.isArray(entry.structure.conditions) || entry.structure.conditions.length === 0) return null;
   return { uuid, ...entry };
 }
+
+/**
+ * Map one COMPILED index leaf to a PrerequisiteEvaluator requirement (PRQ: the evaluator is the interpreter; the index says WHAT is required). `skillKeyOf`
+ * resolves the index's skill id to the runtime skill key. Returns null for a leaf type the grammar does not define (the caller then fails closed).
+ */
+export function compiledLeafToRequirement(leaf, skillKeyOf = (id) => id) {
+  switch (leaf?.type) {
+    case 'skillTrained': { const key = skillKeyOf(leaf.skill); return key ? { type: 'skill', key, name: key, trained: true } : null; }
+    case 'attribute': return { type: 'ability', ability: leaf.ability, min: leaf.min };
+    case 'bab': return { type: 'bab', min: leaf.min };
+    case 'species': {
+      const names = Array.isArray(leaf.species) ? leaf.species : [leaf.species];
+      return names.length === 1 ? { type: 'species', name: names[0] } : { type: 'or', conditions: names.map((name) => ({ type: 'species', name })) };
+    }
+    case 'feat': return { type: 'feat', name: leaf.name, uuid: leaf.uuid };
+    case 'talent': return { type: 'talent', name: leaf.name, uuid: leaf.uuid };
+    default: return null;
+  }
+}

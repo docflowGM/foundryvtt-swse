@@ -3,7 +3,10 @@
 // UNIFIED Prerequisite Validator (v3)
 // ============================================
 
-import { compiledPrerequisiteEntryFor } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/canonical-prerequisite-index.js';
+import { resolvePrerequisiteAbilityScore } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/prerequisite-ability-score.js';
+import { ActorPrerequisiteSnapshot } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/actor-prerequisite-snapshot.js';
+import { PrerequisiteEvaluator } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/prerequisite-evaluator.js';
+import { compiledLeafToRequirement, compiledPrerequisiteEntryFor } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/canonical-prerequisite-index.js';
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
@@ -318,30 +321,8 @@ export class PrerequisiteChecker {
             };
         }
 
-        const activeShell = globalThis.game?.__swseActiveProgressionShell;
-        const draftAttributes = pending?.attributes
-            || pending?.abilityIncreases
-            || (activeShell?.actor?.id === actor?.id
-                ? activeShell?.progressionSession?.draftSelections?.attributes
-                : null);
-        const draftFinal = draftAttributes?.finalValues?.[abilityKey];
-        const draftComputed = Number.isFinite(Number(draftAttributes?.values?.[abilityKey]))
-            ? Number(draftAttributes.values[abilityKey]) + (Number(draftAttributes?.speciesMods?.[abilityKey]) || 0)
-            : null;
-
-        // The previous fallback chain (system.attributes.<key>.total/.value,
-        // system.abilities.<key>.value) checked fields that don't exist
-        // anywhere on the real schema (system.attributes only ever has
-        // .base/.racial/.enhancement/.temp), so it silently evaluated every
-        // ability-score prerequisite against the hardcoded default of 10
-        // whenever no active progression-shell draft applied.
-        // SchemaAdapters.getAbilityScore() is the canonical authority
-        // (docs/systems/ABILITY_SCHEMA_AUTHORITY.md): derived data, then
-        // system.attributes reconstruction, then system.abilities only as a
-        // last-resort compatibility fallback.
-        const ability = draftFinal
-            ?? draftComputed
-            ?? SchemaAdapters.getAbilityScore(actor, abilityKey);
+        // One ability-score read for every prerequisite interpreter (draft attributes, then SchemaAdapters.getAbilityScore).
+        const ability = resolvePrerequisiteAbilityScore(actor, abilityKey, pending);
         const met = Number(ability) >= required;
         return {
             met,
@@ -1138,8 +1119,18 @@ export class PrerequisiteChecker {
      * tell compiled evaluation from the compatibility path.
      */
     static _evaluateCompiledEntry(entry, actor, pending, nameForError) {
-        const result = this._evaluateStructuredPrerequisites(entry.structure.conditions, actor, pending, nameForError);
-        return { ...result, details: { ...result.details, canonicalIndex: { uuid: entry.uuid, state: entry.state } } };
+        // The canonical PrerequisiteEvaluator interprets the compiled leaves against an ActorPrerequisiteSnapshot. Fail closed: a leaf the grammar does not
+        // define, or an evaluator result that is unresolved/advisory, is NOT a satisfied prerequisite.
+        const requirements = entry.structure.conditions.map((leaf) => compiledLeafToRequirement(leaf, (id) => this._resolveSkillKeyOrId(id)));
+        const index = { uuid: entry.uuid, state: entry.state, interpreter: 'PrerequisiteEvaluator' };
+        if (requirements.some((r) => r === null)) {
+            return { met: false, missing: ['Prerequisite could not be verified (unsupported compiled condition)'], details: { canonicalIndex: index, unresolved: true } };
+        }
+        const snapshot = ActorPrerequisiteSnapshot.from(actor, pending || {});
+        const result = PrerequisiteEvaluator.evaluate(snapshot, requirements, { houseruleFeats: this.getHouseruleGrantedFeats() });
+        const unresolved = Array.isArray(result.unresolved) ? result.unresolved : [];
+        const missing = [...(result.missing || []), ...unresolved];
+        return { met: result.passed === true && unresolved.length === 0, missing, details: { canonicalIndex: index, ...(unresolved.length ? { unresolved } : {}) } };
     }
 
     static _evaluateStructuredPrerequisites(parsed, actor, pending, nameForError) {

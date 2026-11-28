@@ -6,7 +6,7 @@
   "staticImportCycles": 1,
   "filesInStaticCycles": 17,
   "unreachableRuntimeModules": 319,
-  "testOnlyRuntimeModules": 181,
+  "testOnlyRuntimeModules": 180,
   "exactFunctionCloneGroupsRuntime": 26,
   "compatPatchModules": 19,
   "chatMessageCreateOutsideSwseChat": 3,
