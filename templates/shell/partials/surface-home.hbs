@@ -261,8 +261,10 @@
             <div class="swse-home-side-head">
               <span>{{localize "SWSE.ShellUI.CommFeed"}}</span>
               <span class="swse-home-side-hint">
-                {{#if vm.commFeed.length}}
-                {{vm.commFeed.length}} unread
+                {{#if vm.commFeedUnreadCount}}
+                {{vm.commFeedUnreadCount}} unread
+                {{else if vm.commFeed.length}}
+                {{vm.commFeed.length}} items
                 {{else}}
                 none
                 {{/if}}
