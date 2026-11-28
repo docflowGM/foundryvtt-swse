@@ -175,10 +175,12 @@
    "rulesQuestion": true,
    "requiredDecision": null,
    "dependencies": [],
-   "commits": [],
+   "commits": [
+    "7444d1c47"
+   ],
    "tests": [],
    "foundryAcceptance": "NOT_RUN",
-   "notes": "All 31 audit-surfaced rules questions recorded in the rules register as AUD-RQ-01..31 (DEFERRED_RULES_REVIEW; the two Damage Threshold items marked RESOLVED by F-CMB-003). Recording only; no ruling made."
+   "notes": "All 31 audit-surfaced rules questions recorded in the rules register as AUD-RQ-01..31 (DEFERRED_RULES_REVIEW; the two Damage Threshold items marked RESOLVED by F-CMB-003). Recording only; no ruling made. | All 31 audit-surfaced rules questions recorded in the register as AUD-RQ-01..31 (DEFERRED_RULES_REVIEW; the two Damage Threshold items marked RESOLVED by F-CMB-003). Recording only; no ruling made."
   },
   {
    "id": "F-ACT-004",
