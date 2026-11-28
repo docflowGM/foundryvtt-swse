@@ -6,6 +6,7 @@
  * Templates receive pre-shaped objects rather than raw actor/system data.
  */
 
+import { describeCrewAction } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-action-catalog.js";
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { getEffectiveVehicleDerived } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { getVehicleRuntimeProjection, classifyVehicleActorRuntime } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
@@ -792,6 +793,7 @@ export function buildVehicleCrewAssignmentPanel(actor) {
       .filter((action) => action.key !== 'attack')
       .map((action) => ({
         ...action,
+        ...describeCrewAction(station.role, action.use),
         stationKey: station.key,
         disabled: false
       }));

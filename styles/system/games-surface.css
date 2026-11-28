@@ -3832,3 +3832,6 @@
     overflow: auto;
   }
 }
+
+/* Composer: visible reason when a rules mode is unavailable (shared by all games; additive). */
+.swse-games-mode-reason { display: block; margin-top: 4px; font-size: 0.78rem; opacity: 0.85; }

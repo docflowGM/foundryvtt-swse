@@ -11,6 +11,9 @@ Grouped by decision type. A blocker never stops other workstreams. Nothing here 
 | PZ-08 | Games | Pazaak duplicate-card + variant rules | unique-card rule kept | duplicates with instance ids | owner ruling |
 | REG | Realignment | TPS-RD-001, WEALTH-Q1, DC-A02/A03/A05, PRG-RD-001, PRQ-SRC-001..005, AUD-RQ-01..31 | see register | | owner rulings |
 
+| VC-05 | Vehicle | System Operator role: Core p.169 makes shields, sensors and communications ONE role, but the sheet exposes `shields` as the base station and `sensor` / `communications` only as organizational custom stations | crew-resolver BASE_STATIONS, custom-station-service roles | (a) rename/alias base `shields` to System Operator and map sensor/comms to it; (b) keep labels but forbid a second concurrent holder per vehicle | architecture/UX ruling, then implement (stored data uses `shields` keys) |
+| VC-RECHARGE | Vehicle | Recharge Shields and Reroute Power are 3 swift actions over one or consecutive turns (Core p.172); no cross-turn swift-progress store exists | ActionEconomyConsumption is per turn | add a per-actor progress record on the action-economy authority | design decision on where the progress lives; until then the actions are labelled and not charged |
+
 ## Foundry runtime dependencies
 Everything marked OFFLINE_TESTED. Layout/CSS tasks additionally need computed-style measurement in a live Foundry window.
 

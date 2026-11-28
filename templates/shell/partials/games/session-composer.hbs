@@ -24,11 +24,13 @@
               class="{{#if this.selected}}on{{/if}} {{#unless this.enabled}}is-disabled{{/unless}}"
               data-games-action="select-rules-mode"
               data-rules-mode="{{this.id}}"
+              {{#if this.disabledReason}}title="{{this.disabledReason}}" aria-describedby="swse-rules-mode-reason-{{this.id}}"{{/if}}
               {{#unless this.enabled}}disabled{{/unless}}>
         {{this.shortTitle}}
       </button>
       {{/each}}
     </div>
+    {{#each vm.modeCards}}{{#if this.disabledReason}}<small class="swse-games-mode-reason" id="swse-rules-mode-reason-{{this.id}}">{{this.shortTitle}} unavailable: {{this.disabledReason}}</small>{{/if}}{{/each}}
   </section>
 
   {{#if vm.showCreditWagerControls}}
