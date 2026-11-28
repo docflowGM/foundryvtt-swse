@@ -60,8 +60,19 @@ export class HolonetDeliveryRouter {
       .filter(r => r.userId) ?? [];
   }
 
+  /**
+   * Resolve player recipients from audience ids. Accepts raw Foundry user ids
+   * and stable recipient ids ('player:<userId>'); callers such as the Home feed
+   * emitter and HolonetManager.notify() pass stable ids. GM/persona stable ids
+   * are not player audience members and are ignored here (use explicit
+   * recipients or the GM audience types for those).
+   */
   static getPlayersByIds(userIds) {
     return (userIds ?? [])
+      .map(id => {
+        const raw = String(id ?? '');
+        return raw.startsWith('player:') ? raw.slice('player:'.length) : raw;
+      })
       .map(userId => game.users?.get(userId))
       .filter(u => u && !u.isGM)
       .map(u => HolonetRecipient.player(u.id, u.character?.id, u.character?.name))

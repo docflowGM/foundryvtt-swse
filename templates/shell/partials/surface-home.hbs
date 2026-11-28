@@ -261,13 +261,33 @@
             <div class="swse-home-side-head">
               <span>{{localize "SWSE.ShellUI.CommFeed"}}</span>
               <span class="swse-home-side-hint">
-                {{#if vm.commFeed.length}}
-                {{vm.commFeed.length}} unread
+                {{#if vm.commFeedUnreadCount}}
+                {{vm.commFeedUnreadCount}} unread
+                {{else if vm.commFeed.length}}
+                {{vm.commFeed.length}} items
+                {{else if vm.activeTasks.length}}
+                tasks pending
                 {{else}}
                 none
                 {{/if}}
               </span>
             </div>
+            {{#if vm.activeTasks.length}}
+            <div class="swse-home-feed swse-home-tasks">
+              {{#each vm.activeTasks}}
+              <button class="swse-home-feed-row swse-home-task-row TASK is-urgent" type="button" data-route-id="{{this.routeId}}" data-home-task-key="{{this.key}}">
+                <span class="swse-home-feed-ico TASK">{{this.icon}}</span>
+                <span class="swse-home-feed-main">
+                  <span class="swse-home-feed-meta">
+                    <span class="swse-home-feed-source">DATAPAD</span>
+                    <span class="swse-home-feed-title">{{this.title}}</span>
+                  </span>
+                  <span class="swse-home-feed-preview">{{this.action}}</span>
+                </span>
+              </button>
+              {{/each}}
+            </div>
+            {{/if}}
             <div class="swse-home-feed">
               {{#each vm.commFeed}}
               <button class="swse-home-feed-row {{this.category}} {{#if this.isUnread}}is-unread{{/if}} {{#if this.isUrgent}}is-urgent{{/if}} {{#if this.isBreakingNews}}is-breaking-news{{/if}} {{#if this.imageUrl}}has-image{{/if}}" type="button" {{#if this.recordId}}data-holonet-record-id="{{this.recordId}}"{{/if}} {{#if this.threadId}}data-holonet-thread-id="{{this.threadId}}"{{/if}} {{#if this.routeId}}data-route-id="{{this.routeId}}"{{/if}} {{#if this.workbenchCategory}}data-workbench-category="{{this.workbenchCategory}}"{{/if}} {{#if this.initialCategory}}data-initial-category="{{this.initialCategory}}"{{/if}} {{#if this.mode}}data-mode="{{this.mode}}"{{/if}} {{#if this.routeIntent}}data-route-intent="{{this.routeIntent}}"{{/if}} {{#if this.entryPoint}}data-entry-point="{{this.entryPoint}}"{{/if}} {{#if this.tab}}data-tab-target="{{this.tab}}"{{/if}} {{#if this.sheetAnchor}}data-sheet-anchor="{{this.sheetAnchor}}"{{/if}}>
@@ -290,7 +310,7 @@
                 </span>
               </button>
               {{else}}
-              <p class="swse-home-feed-empty">{{localize "SWSE.ShellUI.NoHolonetTrafficYet"}}</p>
+              {{#unless vm.activeTasks.length}}<p class="swse-home-feed-empty">{{localize "SWSE.ShellUI.NoHolonetTrafficYet"}}</p>{{/unless}}
               {{/each}}
             </div>
           </div>
