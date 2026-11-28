@@ -34,4 +34,6 @@ for (const sel of css.replace(/\/\*[\s\S]*?\*\//g, '').split('{').map((p) => p.s
 }
 assert.match(css, /grid-template-rows: repeat\(2, minmax\(0, 1fr\)\)/, 'gallery rows grow with the window');
 assert.match(css, /@media \(max-width: 900px\)/); assert.match(css, /prefers-reduced-motion/);
+// GC-LIB-06: a capped shelf says so, so the header count and the shelf can never silently disagree
+for (const k of ['active', 'invites', 'recent']) assert(rail.includes(`vm.shelfOverflow.${k}`), `${k} overflow is shown`);
 console.log('games library launcher contract: ok');
