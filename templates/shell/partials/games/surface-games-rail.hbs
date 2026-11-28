@@ -1,7 +1,7 @@
 {{!-- Library right rail: active tables, pending invites, recent results, and system notes. --}}
-<aside class="swse-games-lib-col swse-games-lib-col--rail">
+<aside class="swse-games-lib-col swse-games-lib-col--rail swse-games-shelf" aria-label="Your tables">
   <section class="swse-games-rail-card">
-    <div class="swse-games-rail-head"><span class="swse-games-kicker">{{localize "SWSE.ShellUI.ActiveTables"}}</span><span class="swse-games-rail-hint">{{vm.activeSessions.length}} live</span></div>
+    <div class="swse-games-rail-head"><span class="swse-games-kicker">{{localize "SWSE.ShellUI.ActiveTables"}}</span><span class="swse-games-rail-hint">{{vm.activeSessions.length}} live{{#if vm.shelfOverflow.active}} (+{{vm.shelfOverflow.active}} more){{/if}}</span></div>
     {{#if vm.hasActiveSessions}}
       {{#each vm.activeSessions}}
       <article class="swse-games-table-row">
@@ -20,7 +20,7 @@
   </section>
 
   <section class="swse-games-rail-card">
-    <div class="swse-games-rail-head"><span class="swse-games-kicker">{{localize "SWSE.ShellUI.PendingInvites"}}</span><span class="swse-games-rail-hint">{{vm.inviteSessions.length}}</span></div>
+    <div class="swse-games-rail-head"><span class="swse-games-kicker">{{localize "SWSE.ShellUI.PendingInvites"}}</span><span class="swse-games-rail-hint">{{vm.inviteSessions.length}}{{#if vm.shelfOverflow.invites}} (+{{vm.shelfOverflow.invites}} more){{/if}}</span></div>
     {{#if vm.hasInviteSessions}}
       {{#each vm.inviteSessions}}
       <article class="swse-games-table-row invite">
@@ -45,7 +45,7 @@
   </section>
 
   <section class="swse-games-rail-card">
-    <div class="swse-games-rail-head"><span class="swse-games-kicker">{{localize "SWSE.ShellUI.RecentResults"}}</span><span class="swse-games-rail-hint">{{localize "SWSE.ShellUI.Ledger"}}</span></div>
+    <div class="swse-games-rail-head"><span class="swse-games-kicker">{{localize "SWSE.ShellUI.RecentResults"}}</span><span class="swse-games-rail-hint">{{localize "SWSE.ShellUI.Ledger"}}{{#if vm.shelfOverflow.recent}} (+{{vm.shelfOverflow.recent}} more){{/if}}</span></div>
     {{#if vm.hasRecentSessions}}
       {{#each vm.recentSessions}}
       <button type="button" class="swse-games-feed-row" data-games-action="open-session" data-session-id="{{this.id}}">
@@ -59,12 +59,4 @@
     {{/if}}
   </section>
 
-  <section class="swse-games-rail-card swse-games-rail-card--notes">
-    <div class="swse-games-rail-head"><span class="swse-games-kicker">{{localize "SWSE.ShellUI.RulesGuardrails"}}</span><span class="swse-games-rail-hint">{{localize "SWSE.ShellUI.SSOT"}}</span></div>
-    <div class="swse-games-note-stack">
-      {{#each vm.infrastructureNotes}}
-      <p>{{this}}</p>
-      {{/each}}
-    </div>
-  </section>
 </aside>

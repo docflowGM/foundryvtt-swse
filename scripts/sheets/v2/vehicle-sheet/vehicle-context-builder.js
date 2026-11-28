@@ -6,6 +6,7 @@
  * Templates receive pre-shaped objects rather than raw actor/system data.
  */
 
+import { describeCrewAction } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-action-catalog.js";
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { getEffectiveVehicleDerived } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { getVehicleRuntimeProjection, classifyVehicleActorRuntime } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
@@ -357,7 +358,7 @@ function buildVehicleResourceStrip(actor, panels, typeFlags, parsedCargo) {
       { key: 'hull', label: 'Hull', value: `${hp.value ?? 0} / ${hp.max ?? 0}`, bar: hpPercent, tone: hpPercent <= 25 ? 'critical' : hpPercent <= 50 ? 'warning' : 'normal' },
       { key: 'sr', label: 'SR', value: unknownPublishedSR ? 'Unknown' : canonicalSR?.state === 'explicit-zero' ? '0 (printed)' : (canonicalSR ? `${canonicalSR.current} / ${canonicalSR.max}` : srMax ? `${srValue} / ${srMax}` : shieldState.hasShield ? 'Source Needed' : '0'), bar: unknownPublishedSR ? 0 : srMax ? Math.round((srValue / srMax) * 100) : 0, tone: unknownPublishedSR ? 'warning' : srMax ? (srValue <= 0 ? 'neutral' : 'normal') : shieldState.hasShield ? 'warning' : 'neutral' },
       { key: 'ep', label: 'Power', value: ep ? `${ep.available} / ${ep.budget}` : 'Not active', bar: ep ? Math.min(100, Math.max(0, 100 - safeNumber(ep.percentAllocated, 0))) : 0, tone: ep?.overAllocated ? 'critical' : ep ? 'normal' : 'neutral', badge: ep?.enabled === false ? 'RULE OFF' : null },
-      { key: 'crew', label: 'Crew', value: `${crew.filledSlots ?? 0} / ${crew.totalSlots ?? '?'}`, bar: crew.totalSlots ? Math.round(((crew.filledSlots ?? 0) / crew.totalSlots) * 100) : 0, tone: crew.filledSlots ? 'normal' : 'warning' },
+      { key: 'crew', label: 'Crew', value: `${crew.filledSlots ?? 0} staffed · ${crew.totalSlots ?? '?'} crew`, bar: null, tone: crew.filledSlots ? 'normal' : 'warning' },
       { key: 'cargo', label: typeFlags.labels.cargo, value: parsedCargo?.known ? parsedCargo.display : (parsedCargo?.raw ? parsedCargo.display : SOURCE_UNKNOWN), bar: Math.max(0, Math.min(100, safeNumber(cargo.percentUsed, 0))), tone: cargo.state === 'over' ? 'critical' : cargo.state === 'near' ? 'warning' : 'normal' },
       { key: 'condition', label: 'Condition', value: condition.label || 'Operational', bar: null, tone: condition.severity || 'normal' }
     ].map((entry) => {
@@ -792,6 +793,7 @@ export function buildVehicleCrewAssignmentPanel(actor) {
       .filter((action) => action.key !== 'attack')
       .map((action) => ({
         ...action,
+        ...describeCrewAction(station.role, action.use),
         stationKey: station.key,
         disabled: false
       }));
@@ -1339,7 +1341,13 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const vehicleAnnotation = buildVehicleAnnotationBar(vehicleTypeFlags);
   const schemaView = buildVehicleSchemaViewModel(actor, { epTable: options.epTable ?? null, catalog: options.catalog ?? null, isGM: globalThis.game?.user?.isGM === true });
   let vehicleSystemsBrowser = null;
-  try { vehicleSystemsBrowser = buildVehicleSystemsBrowser({ actor, schema: schemaView, publication: publicationView, mountPanel: weaponMountPanel, canAct: actor?.isOwner === true || globalThis.game?.user?.isGM === true }); } catch (_err) { vehicleSystemsBrowser = null; }
+  let vehicleSystemsBrowserError = null;
+  try { vehicleSystemsBrowser = buildVehicleSystemsBrowser({ actor, schema: schemaView, publication: publicationView, mountPanel: weaponMountPanel, canAct: actor?.isOwner === true || globalThis.game?.user?.isGM === true }); } catch (err) {
+    // UI-17: a failed optional panel is distinguishable from an absent one. Logged with the vehicle id; players see a short notice, never a stack.
+    vehicleSystemsBrowser = null;
+    vehicleSystemsBrowserError = { code: 'VEHICLE_SYSTEMS_BROWSER_FAILED', message: String(err?.message ?? err) };
+    try { console.warn(`SWSE | Vehicle sheet | systems browser failed for ${actor?.id ?? 'unknown'}: ${vehicleSystemsBrowserError.message}`); } catch (_e) { /* logging must never break the sheet */ }
+  }
 
   return {
     vehicleTypeFlags,
@@ -1349,6 +1357,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
     schemaView,
     // weapons + installed systems as one browse/inspect surface (classified by the existing weapon authority and the sealed installation ledger)
     vehicleSystemsBrowser,
+    vehicleSystemsBrowserUnavailable: Boolean(vehicleSystemsBrowserError),
     vehicleResourceStrip,
     vehicleConceptTabs,
     vehicleAnnotation,

@@ -102,7 +102,7 @@ function stubRollSkillUseApplication(rollTotal) {
 {
   const controllerSrc = readFileSync(new URL('../scripts/sheets/v2/vehicle-sheet/vehicle-crew-assignment-controls.js', import.meta.url), 'utf8');
   assert.match(controllerSrc, /button\.dataset\.skillUseId/, 'the crew-skill button handler must read data-skill-use-id');
-  assert.match(controllerSrc, /rollVehicleCrewSkill\(vehicle, station, skill, \{ weaponId, skillUseId \}\)/);
+  assert.match(controllerSrc, /rollVehicleCrewSkill\(vehicle, station, skill, \{ weaponId, skillUseId(?:, actionUse: button\.dataset\.use \|\| null)? \}\)/);
 
   const templateSrc = readFileSync(new URL('../templates/actors/vehicle/v2/partials/vehicle-crew-assignment-panel.hbs', import.meta.url), 'utf8');
   assert.match(templateSrc, /data-skill-use-id="\{\{action\.skillUseId\}\}"/, 'the button template must render the explicit skill-use identity');

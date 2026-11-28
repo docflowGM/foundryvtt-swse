@@ -72,6 +72,7 @@
                         data-label="{{action.label}}"
                         data-skill-use-id="{{action.skillUseId}}">
                   {{action.use}}
+                  <small class="swse-vehicle-action-tag swse-vehicle-action-tag--{{action.category}}" title="{{action.effectSummary}}">{{action.categoryLabel}}{{#if action.costLabel}} · {{action.costLabel}}{{/if}}</small>
                 </button>
               {{/each}}
             </div>

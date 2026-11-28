@@ -143,6 +143,7 @@
           {{!-- Printed armament lives on the always-present Stats tab: Operations is absent for some categories. --}}
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-attack-reference-panel.hbs" view=publicationView}}
         {{/if}}
+        {{#if vehicleSystemsBrowserUnavailable}}<p class="swse-vehicle-panel-unavailable" role="status">Installed-systems browser is unavailable. The rest of the sheet is unaffected; check the console for details.</p>{{/if}}
         {{#if vehicleSystemsBrowser}}
           {{!-- weapons + installed systems: certified / blocked / printed-reference / installed, with a collapsible inspector (shared browse/inspect surface) --}}
           {{> "systems/foundryvtt-swse/templates/actors/shared/partials/browse-inspect.hbs" browser=vehicleSystemsBrowser}}

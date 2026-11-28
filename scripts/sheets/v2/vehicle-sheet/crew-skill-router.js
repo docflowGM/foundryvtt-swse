@@ -4,6 +4,8 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { CREW_QUALITY_BONUS } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
+import { catalogEntryFor, chargeCrewAction } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-action-catalog.js";
+import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
 import { recordFireResult } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-diagnostics-log.js";
 
 const STATION_SKILLS = {
@@ -107,15 +109,25 @@ function numericBonus(value, fallback = 0) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+/** Crew Quality actually recorded on the vehicle, or null when missing/unrecognised (never defaulted to 'normal': VC-09). */
+export function recordedCrewQuality(vehicle) {
+  const q = String(vehicle?.system?.crewQuality ?? '').trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(CREW_QUALITY_BONUS, q) ? q : null;
+}
+
 function buildFallbackFormula(vehicle, skillKey, options = {}) {
-  const quality = String(vehicle?.system?.crewQuality || 'normal').toLowerCase();
-  const qualityBonus = CREW_QUALITY_BONUS[quality] ?? CREW_QUALITY_BONUS.normal;
+  const quality = recordedCrewQuality(vehicle);
+  const qualityBonus = CREW_QUALITY_BONUS[quality];
   const vehicleBonus = numericBonus(options.attackBonus ?? vehicle?.system?.[skillKey] ?? vehicle?.system?.attackBonus, 0);
   const totalBonus = skillKey === 'attack' ? vehicleBonus + qualityBonus : qualityBonus;
   return { formula: `1d20 + ${totalBonus}`, quality, totalBonus };
 }
 
 async function rollFallback(vehicle, stationKey, skillKey, options = {}) {
+  if (!recordedCrewQuality(vehicle)) {
+    ui?.notifications?.warn?.(`${vehicle.name}: Crew Quality is not recorded, so abstract crew cannot roll. Assign a crew actor or set the vehicle's Crew Quality.`);
+    return { roll: null, actor: null, fallback: false, unknownCrewQuality: true, stationKey, skillKey };
+  }
   const { formula, quality, totalBonus } = buildFallbackFormula(vehicle, skillKey, options);
   const roll = await globalThis.SWSE?.RollEngine?.safeRoll?.(formula) ?? await new Roll(formula).evaluate();
   const stationLabel = stationKey.charAt(0).toUpperCase() + stationKey.slice(1);
@@ -196,6 +208,14 @@ export async function rollVehicleCrewSkill(vehicle, stationKey, skillKey, option
   }
 
   if (actor) {
+    // VC-07: a printed Core action is paid from the crew ACTOR's own budget (one budget however many roles they hold);
+    // roll-helper buttons are never charged. Refused spends stop before the roll; a failed roll gives the action back.
+    const catalogEntry = catalogEntryFor(stationKey, options.actionUse);
+    const charge = await chargeCrewAction(catalogEntry, actor, (a, type, meta) => ActionEconomyConsumption.spend(a, type, meta), { vehicle: vehicle.name });
+    if (charge.refused) {
+      ui?.notifications?.warn?.(`${actor.name} has no action left for ${catalogEntry.use} this turn.`);
+      return { actor, fallback: false, refused: true, reason: charge.reason, stationKey, skillKey: normalizedSkill };
+    }
     const result = await rollSkillCheck(actor, normalizedSkill, {
       ...options,
       sourceType: 'vehicle',
@@ -204,10 +224,11 @@ export async function rollVehicleCrewSkill(vehicle, stationKey, skillKey, option
       vehicleName: vehicle.name,
       crewPosition: stationKey
     });
+    if (!result?.roll && charge.charged) await charge.handle?.rollback?.();
     if (result?.roll) {
       ui?.notifications?.info?.(`${actor.name} acts as ${stationLabel} for ${vehicle.name}.`);
     }
-    return { ...(result ?? {}), actor, fallback: false, stationKey, skillKey: normalizedSkill };
+    return { ...(result ?? {}), actor, fallback: false, stationKey, skillKey: normalizedSkill, actionCharged: charge.charged };
   }
 
   return rollFallback(vehicle, stationKey, normalizedSkill, options);

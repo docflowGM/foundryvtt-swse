@@ -130,26 +130,37 @@ function phaseLabel(phase = 'ready') {
   return labels[phase] || String(phase || 'Ready').toUpperCase();
 }
 
-function buildBettingVm(state, viewerSeatId, viewerCredits = 0) {
+/**
+ * Betting limits for the viewer. Engine costs (hintaro-engine applyBettingAction): bet = amount (>= minBet); call = toCall;
+ * raise = toCall + raiseBy (raiseBy >= minRaise). Flags are affordability-aware so the UI never offers an action the engine would
+ * refuse for lack of credits (HIN-12); the engine stays the final authority.
+ */
+export function buildBettingVm(state, viewerSeatId, viewerCredits = 0) {
   const betting = state.betting || {};
+  const credits = safeAmount(viewerCredits);
   const currentBet = safeAmount(betting.currentBet);
   const paid = safeAmount(betting.contributions?.[viewerSeatId]);
   const toCall = Math.max(0, currentBet - paid);
   const minBet = safeAmount(betting.minBet) || safeAmount(state.ante) || 1;
   const minRaise = safeAmount(betting.minRaise) || minBet;
-  const maxBet = Math.max(minBet, viewerCredits || minBet);
+  const maxBet = credits;                              // a bet costs its amount
+  const maxRaise = Math.max(0, credits - toCall);      // a raise costs toCall + raiseBy
+  const canBet = currentBet <= 0 && credits >= minBet;
+  const canRaise = currentBet > 0 && maxRaise >= minRaise;
   return {
     currentBet,
     minBet,
     minRaise,
     maxBet,
-    suggestedBet: Math.min(maxBet, Math.max(minBet, currentBet || minBet)),
-    suggestedRaise: Math.min(maxBet, Math.max(minRaise, toCall + minRaise)),
+    maxRaise,
+    suggestedBet: Math.min(Math.max(maxBet, 0), Math.max(minBet, currentBet || minBet)),
+    suggestedRaise: Math.min(maxRaise, Math.max(minRaise, minRaise)),
     toCall,
     canCheck: toCall <= 0,
-    canBet: currentBet <= 0,
-    canCall: toCall > 0,
-    canRaise: currentBet > 0
+    canBet,
+    canCall: toCall > 0 && credits >= toCall,
+    canRaise,
+    cannotAffordMessage: (currentBet <= 0 && !canBet) || (toCall > 0 && credits < toCall) ? `You have ${credits} table credits: not enough to ${toCall > 0 ? 'call' : 'bet'}. You can still drop.` : ''
   };
 }
 

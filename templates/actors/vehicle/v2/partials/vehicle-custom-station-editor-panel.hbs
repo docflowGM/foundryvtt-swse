@@ -47,13 +47,13 @@
                       data-action="vehicle-custom-station-move-up"
                       data-station-id="{{station.id}}"
                       {{#if station.isFirst}}disabled{{/if}}
-                      title="Move up">↑</button>
+                      title="Move up" aria-label="Move {{station.label}} up">↑</button>
               <button type="button"
                       class="swse-vehicle-action-btn swse-vehicle-action-btn--icon"
                       data-action="vehicle-custom-station-move-down"
                       data-station-id="{{station.id}}"
                       {{#if station.isLast}}disabled{{/if}}
-                      title="Move down">↓</button>
+                      title="Move down" aria-label="Move {{station.label}} down">↓</button>
               <button type="button"
                       class="swse-vehicle-action-btn swse-vehicle-action-btn--remove"
                       data-action="vehicle-custom-station-remove"

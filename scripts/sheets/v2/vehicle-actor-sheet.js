@@ -39,6 +39,7 @@ import { EnhancedCommander } from "/systems/foundryvtt-swse/scripts/engine/comba
 import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
 import { SWSEV2ActorSheetBase } from "/systems/foundryvtt-swse/scripts/sheets/v2/actor-sheet-base.js";
 import { activateBrowseInspect } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/browse-inspect-ui.js";
+import { applyVehicleTabSemantics, tabKeyAfter } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-tab-navigation.js";
 import { isVehicleFieldWritable, coerceVehicleFieldValue } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-edit-form-contract.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 
@@ -580,6 +581,8 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
     root.querySelectorAll('.sheet-content .tab').forEach(tab => {
       tab.classList.toggle('active', tab.dataset?.tab === target);
     });
+    this._vehicleTabUid ??= Math.random().toString(36).slice(2, 8);
+    applyVehicleTabSemantics(root, target, this._vehicleTabUid);
   }
 
   _wireVehicleActorModeEvents(root, signal) {
@@ -600,6 +603,14 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
         const tabName = ev.currentTarget?.dataset?.tab;
         if (!tabName) return;
         this._activateVehicleTab(root, tabName);
+      }, { signal });
+      tabBtn.addEventListener('keydown', (ev) => {
+        const keys = [...root.querySelectorAll('.sheet-tabs .item')].map(el => el.dataset?.tab);
+        const key = ev.key === 'Enter' || ev.key === ' ' ? ev.currentTarget?.dataset?.tab : tabKeyAfter(keys, ev.currentTarget?.dataset?.tab, ev.key);
+        if (!key) return;
+        ev.preventDefault();
+        this._activateVehicleTab(root, key);
+        root.querySelector(`.sheet-tabs .item[data-tab="${key}"]`)?.focus();
       }, { signal });
     });
 

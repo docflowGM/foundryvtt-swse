@@ -1,4 +1,6 @@
 import { GameCenterRegistry } from '/systems/foundryvtt-swse/scripts/games/game-center-registry.js';
+import { buildRulesModeCards, economyLine } from '/systems/foundryvtt-swse/scripts/games/game-rules-modes.js';
+import { partitionSessionShelf } from '/systems/foundryvtt-swse/scripts/games/game-session-shelf.js';
 import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-session-store.js';
 import { getGameSettingsSnapshot } from '/systems/foundryvtt-swse/scripts/games/game-settings.js';
 import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
@@ -193,6 +195,7 @@ function buildTableFrameMeta(session, gameVm = {}, gameDef = {}) {
         { key: 'Sabacc Pot', value: amountLabel(gameVm?.sabaccPot), tone: 'cyan' }
       ],
       secondaryLines: [
+        economyLine('sabacc', GameCreditEscrowService.describe(session)),
         gameVm?.showBetting ? `Betting: ${gameVm?.activeSeatLabel || '—'} acts · live bet ${amountLabel(gameVm?.betting?.currentBet)}` : '',
         gameVm?.showDrawing ? `Card round ${gameVm?.cardRound || 0} · active turn: ${gameVm?.activeSeatLabel || '—'}` : '',
         gameVm?.shiftRollLabel ? `Shift dice: ${gameVm.shiftRollLabel}${gameVm.shiftMatched ? ' · forced shift triggered' : ''}` : '',
@@ -213,6 +216,7 @@ function buildTableFrameMeta(session, gameVm = {}, gameDef = {}) {
         { key: 'Carryover', value: amountLabel(gameVm?.carriedPot), tone: 'cyan' }
       ],
       secondaryLines: [
+        economyLine('hintaro', GameCreditEscrowService.describe(session)),
         gameVm?.showBetting ? `Betting: ${gameVm?.activeSeatLabel || '—'} acts · live bet ${amountLabel(gameVm?.betting?.currentBet)}` : '',
         gameVm?.showReroll ? `Reroll choice: ${gameVm?.activeSeatLabel || '—'}` : '',
         gameVm?.hintaroDie?.label ? `Hintaro die: ${gameVm.hintaroDie.label}` : ''
@@ -371,10 +375,10 @@ export class GamesSurfaceService {
     const inviteTargets = await buildInviteTargets(actor, settings, selectedGame);
     const selectedSession = options.sessionId ? GameSessionStore.getSession(options.sessionId) : null;
     const activeTable = buildActiveTableVm(selectedSession, actor, participantId, options);
-    const mappedSessions = summary.sessions.slice(0, 12).map(session => mapSession(session, participantId));
-    const activeSessions = mappedSessions.filter(session => session.isActive).slice(0, 4);
-    const inviteSessions = mappedSessions.filter(session => session.isInvite).slice(0, 4);
-    const recentSessions = mappedSessions.filter(session => session.isComplete).slice(0, 4);
+    // Terminal-inclusive listing so finished matches can appear under Recent Results (summary.sessions excludes them); counts above keep
+    // their existing active-only semantics. Filter first, then cap each shelf.
+    const mappedSessions = GameSessionStore.listForActor(actor, { includeTerminal: true }).map(session => mapSession(session, participantId));
+    const { activeSessions, inviteSessions, recentSessions, overflow: shelfOverflow } = partitionSessionShelf(mappedSessions);
     const actorCredits = readActorCredits(actor);
 
     return {
@@ -420,30 +424,14 @@ export class GamesSurfaceService {
       hasInviteSessions: inviteSessions.length > 0,
       recentSessions,
       hasRecentSessions: recentSessions.length > 0,
+      shelfOverflow,
       canCreateTables: settings.enabled && (settings.allowPlayerCreatedTables || game.user?.isGM),
       canUseWagers: settings.enabled && settings.allowWagers,
       canUseCreditWagers: settings.enabled && settings.allowWagers && settings.allowCreditWagers && Boolean(selectedGame?.supportsCreditWagers),
       showCreditWagerControls: Boolean(settings.enabled && settings.allowWagers && settings.allowCreditWagers && selectedGame?.supportsCreditWagers && selectedRulesMode === 'wagered'),
       selectedCreditBuyIn,
       maxCreditWager: settings.maxCreditWager,
-      modeCards: [
-        {
-          id: 'republic-senate',
-          title: 'Republic Senate Rules',
-          shortTitle: 'Republic Senate',
-          description: 'No betting. No credit, item, or asset movement. Best for downtime while waiting for a turn.',
-          enabled: settings.enabled,
-          selected: selectedRulesMode === 'republic-senate'
-        },
-        {
-          id: 'wagered',
-          title: 'Wagered Table',
-          shortTitle: 'Credit Buy-In',
-          description: 'Credit buy-ins escrow and pay out through TransactionEngine. Item and asset wagers come in later phases.',
-          enabled: settings.enabled && settings.allowWagers && settings.allowCreditWagers && Boolean(selectedGame?.supportsCreditWagers),
-          selected: selectedRulesMode === 'wagered'
-        }
-      ],
+      modeCards: buildRulesModeCards({ settings, selectedGame, selectedRulesMode }),
       infrastructureNotes: [
         'Game metadata comes from GameCenterRegistry; per-game engines remain the source of truth for rules and table state.',
         'Credit buy-ins and payouts remain routed through GameCreditEscrowService and TransactionEngine.',

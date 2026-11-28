@@ -42,7 +42,7 @@ assert.match(controls, /querySelectorAll\('\[data-action="vehicle-crew-skill"\]'
 // Recharge Shields action can be routed by stable identity instead of
 // label-sniffing -- see resolveShieldRechargeTarget() in
 // skill-use-filter.js and docs/audits/v2-remaining-work.md.
-assert.match(controls, /rollVehicleCrewSkill\(vehicle, station, skill, \{ weaponId, skillUseId \}\)/);
+assert.match(controls, /rollVehicleCrewSkill\(vehicle, station, skill, \{ weaponId, skillUseId(?:, actionUse: button\.dataset\.use \|\| null)? \}\)/);
 assert.match(characterSheet, /bindVehicleCrewAssignmentControls\(this, root, \{ signal \}\)/);
 assert.match(characterSheet, /_wireVehicleActorModeEvents\(root, signal\)/);
 
