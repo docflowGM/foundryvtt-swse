@@ -1,4 +1,5 @@
 import { GameCenterRegistry } from '/systems/foundryvtt-swse/scripts/games/game-center-registry.js';
+import { partitionSessionShelf } from '/systems/foundryvtt-swse/scripts/games/game-session-shelf.js';
 import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-session-store.js';
 import { getGameSettingsSnapshot } from '/systems/foundryvtt-swse/scripts/games/game-settings.js';
 import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
@@ -371,10 +372,10 @@ export class GamesSurfaceService {
     const inviteTargets = await buildInviteTargets(actor, settings, selectedGame);
     const selectedSession = options.sessionId ? GameSessionStore.getSession(options.sessionId) : null;
     const activeTable = buildActiveTableVm(selectedSession, actor, participantId, options);
-    const mappedSessions = summary.sessions.slice(0, 12).map(session => mapSession(session, participantId));
-    const activeSessions = mappedSessions.filter(session => session.isActive).slice(0, 4);
-    const inviteSessions = mappedSessions.filter(session => session.isInvite).slice(0, 4);
-    const recentSessions = mappedSessions.filter(session => session.isComplete).slice(0, 4);
+    // Terminal-inclusive listing so finished matches can appear under Recent Results (summary.sessions excludes them); counts above keep
+    // their existing active-only semantics. Filter first, then cap each shelf.
+    const mappedSessions = GameSessionStore.listForActor(actor, { includeTerminal: true }).map(session => mapSession(session, participantId));
+    const { activeSessions, inviteSessions, recentSessions, overflow: shelfOverflow } = partitionSessionShelf(mappedSessions);
     const actorCredits = readActorCredits(actor);
 
     return {
@@ -420,6 +421,7 @@ export class GamesSurfaceService {
       hasInviteSessions: inviteSessions.length > 0,
       recentSessions,
       hasRecentSessions: recentSessions.length > 0,
+      shelfOverflow,
       canCreateTables: settings.enabled && (settings.allowPlayerCreatedTables || game.user?.isGM),
       canUseWagers: settings.enabled && settings.allowWagers,
       canUseCreditWagers: settings.enabled && settings.allowWagers && settings.allowCreditWagers && Boolean(selectedGame?.supportsCreditWagers),

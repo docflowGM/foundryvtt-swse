@@ -7,6 +7,8 @@ installFoundryShimGlobals();
 globalThis.game.user = { id: 'gm', isGM: true, name: 'GM' };
 globalThis.ui = { notifications: { info() {}, warn() {}, error() {} } };
 globalThis.Hooks = globalThis.Hooks ?? { callAll: () => {}, on: () => {} };
+// The solo AI waits a real 'thinking' delay (up to 5 s); collapse it so the loop is deterministic and fast.
+const realSetTimeout = globalThis.setTimeout; globalThis.setTimeout = (fn, _ms, ...a) => realSetTimeout(fn, 0, ...a); // AI thinking delay
 const { PazaakEngine } = await import('../scripts/games/games/pazaak/pazaak-engine.js');
 const { GameSessionStore } = await import('../scripts/games/game-session-store.js');
 const { GameNotificationService } = await import('../scripts/games/game-notification-service.js');

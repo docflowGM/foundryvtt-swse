@@ -36,7 +36,7 @@
       <article class="swse-hintaro-seat {{this.cssClass}}" style="{{this.seatStyle}}">
         <div class="swse-hintaro-seat-card">
           <header>
-            {{#if this.hasAvatar}}<img src="{{this.avatar}}" alt="{{this.displayName}}">{{else}}<span class="swse-hintaro-avatar-glyph">{{this.avatarGlyph}}</span>{{/if}}
+            {{#if this.hasAvatar}}<img class="swse-hintaro-seat-avatar" src="{{this.avatar}}" alt="{{this.displayName}}">{{else}}<span class="swse-hintaro-avatar-glyph">{{this.avatarGlyph}}</span>{{/if}}
             <div>
               <strong>{{this.displayName}}</strong>
               <small>{{#if this.isAi}}{{this.aiProfileLabel}}{{else}}Seat {{this.seatNumber}}{{/if}}</small>
@@ -68,6 +68,8 @@
       {{/each}}
     {{/if}}
 
+    <details class="swse-hintaro-help">
+      <summary class="swse-games-kicker">Rules &amp; ranks</summary>
     <aside class="swse-hintaro-ranks-panel">
       <span class="swse-games-kicker">{{localize "SWSE.ShellUI.Ranks"}}</span>
       <div class="swse-hintaro-rank-list">
@@ -97,6 +99,8 @@
         {{/each}}
       </ol>
     </aside>
+
+    </details>
 
     {{#if vm.activeTable.hintaro.message}}
     <div class="swse-hintaro-table-message">
