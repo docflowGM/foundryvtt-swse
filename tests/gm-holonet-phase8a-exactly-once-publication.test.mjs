@@ -278,7 +278,14 @@ console.log('M5 (legitimate republish is two distinct occurrences, never recordI
   socket.emitted.length = 0;
 
   try {
+    // A player-originated request must be a legitimate one: HolonetPublishPolicy
+    // (GM-side authorization) only accepts a real non-GM requester notifying
+    // themself (or co-owners of an actor they own). The transport assertions
+    // below are unchanged.
+    const playerUsers = [{ id: 'player-7', isGM: false, name: 'Player Seven' }];
+    globalThis.game.users = Object.assign(playerUsers, { get: id => playerUsers.find(u => u.id === id) });
     const record = fixtureRecord('m6-record');
+    record.recipients = [{ id: 'player:player-7', recipientType: 'player', userId: 'player-7' }];
     await socket.deliver({
       event: 'holonet', kind: 'request', action: 'publish-record',
       data: { record: record.toJSON(), requestId: 'req-42' },
@@ -446,7 +453,10 @@ console.log('M9/M10 (Intel->Bulletin transport migration + publication-signal in
 
   const GM_A = { isGM: true, id: 'gm-a', active: true };
   const GM_B = { isGM: true, id: 'gm-b', active: true };
-  const activeGmUsers = [GM_A, GM_B];
+  // Includes the (non-GM) requester: HolonetPublishPolicy only accepts a real
+  // non-GM requester notifying themself. GM-authority logic ignores non-GMs.
+  const PLAYER_9 = { isGM: false, id: 'player-9', active: true };
+  const activeGmUsers = Object.assign([GM_A, GM_B, PLAYER_9], { get: id => [GM_A, GM_B, PLAYER_9].find(u => u.id === id) });
 
   function installMultiGmShim(currentUser) {
     installFoundryShimGlobals({
@@ -465,6 +475,7 @@ console.log('M9/M10 (Intel->Bulletin transport migration + publication-signal in
 
   try {
     const record = fixtureRecord('c1-record');
+    record.recipients = [{ id: 'player:player-9', recipientType: 'player', userId: 'player-9' }];
     const requestPayload = {
       event: 'holonet', kind: 'request', action: 'publish-record',
       data: { record: record.toJSON(), requestId: 'req-c1' },

@@ -24,9 +24,13 @@ function toRecipient(id) {
   return HolonetRecipient.fromStableId?.(id) || { id, label: id };
 }
 
+// Task identity is the key alone (actor + task kind + epoch). Counts, titles and
+// body copy may change while a task is pending without minting a new record.
 function actorTaskFingerprint(actor, task) {
-  return [actor?.id ?? 'no-actor', task.key, task.badge ?? '', task.title ?? '', task.body ?? ''].join('|');
+  return [actor?.id ?? 'no-actor', task.key].join('|');
 }
+
+const progressionTaskPrefix = (actorId) => `home-task:${actorId}:progression`;
 
 export class HomeFeedTaskEmitter {
   static _inFlightFingerprints = new Set();
@@ -79,11 +83,17 @@ export class HomeFeedTaskEmitter {
 
     if (progressionSummary.visible && progressionSummary.enabled && (progressionSummary.badge || progressionSummary.routeId === 'chargen')) {
       const isSetup = progressionSummary.routeId === 'chargen';
+      // Epoch = the level the actor is at when the opportunity appears, so a
+      // genuinely new level-up later is a new task, while a growing XP total at
+      // the same level is the same task.
+      const levelEpoch = progressionSummary.currentLevel ?? 'x';
       entries.push({
-        key: `home-task:${actorId}:progression:${isSetup ? 'setup' : String(progressionSummary.badge || 'available')}`,
+        key: `${progressionTaskPrefix(actorId)}:${isSetup ? 'setup' : `levelup:L${levelEpoch}`}`,
         routeId: progressionSummary.routeId || 'progression',
         title: isSetup ? 'Character setup available' : 'Training available',
-        body: progressionSummary.description || (isSetup ? 'Complete character creation.' : 'A level-up or training step is available.'),
+        body: isSetup
+          ? (progressionSummary.description || 'Complete character creation.')
+          : 'A level-up or training step is available.',
         badge: progressionSummary.badge ?? null,
         intent: isSetup ? INTENT_TYPE.SYSTEM_HOME_TASK : INTENT_TYPE.TRAINING_AVAILABLE,
         sourceFamily: SOURCE_FAMILY.TRAINING,
@@ -203,7 +213,7 @@ export class HomeFeedTaskEmitter {
       ? `${classificationCount} existing item${classificationCount === 1 ? '' : 's'} waiting for classification`
       : parts.join(', ');
     return {
-      key: `home-task:${actor.id}:progression-reconciliation:${countKey}`,
+      key: `${progressionTaskPrefix(actor.id)}-reconciliation:${countKey}`,
       routeId: 'sheet',
       route: {
         surface: 'sheet',
@@ -241,6 +251,79 @@ export class HomeFeedTaskEmitter {
     } catch (_err) {
       return resolveMentorData('Scoundrel') || { name: 'Mentor' };
     }
+  }
+
+  /**
+   * Lifecycle: archive published progression Home tasks for this actor whose
+   * requirement no longer exists in canonical state. GM-only (storage writes are
+   * GM-authoritative). Records are archived, never deleted.
+   *
+   * Legacy-format training records (`progression:<badge>`, from before stable
+   * level-keyed identities) are never archived while that requirement is still
+   * pending unless a current-format replacement is already published for every
+   * recipient of the legacy record; an active task is never dropped just
+   * because its identifier format differs.
+   *
+   * @returns {Promise<string[]>} archived record ids
+   */
+  static async resolveProgressionTasks({ actor, recipientIds = [], progressionSummary = {}, progressionAudit = {} } = {}) {
+    if (!game.user?.isGM || !actor) return [];
+    const prefix = progressionTaskPrefix(actor.id);
+    const levelupPrefix = `${prefix}:levelup:`;
+    const legacyLevelup = new RegExp(`^${prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}:(\\d+|available)$`);
+    const pending = new Set(this._buildTasks(actor, progressionSummary, progressionAudit).map(task => task.key));
+    const levelupPending = [...pending].some(key => key.startsWith(levelupPrefix));
+
+    // Published emitter records for this actor, with the recipients that hold a current-format levelup task.
+    const candidates = new Map();
+    const currentLevelupHolders = new Set();
+    for (const recipientId of uniqueStrings(recipientIds)) {
+      const records = await HolonetEngine.storage.getRecordsByRecipient(recipientId, [DELIVERY_STATE.PUBLISHED]).catch(() => []);
+      for (const record of records) {
+        const key = record?.metadata?.homeTaskKey;
+        if (record?.metadata?.generatedBy !== 'HomeFeedTaskEmitter') continue;
+        if (record?.metadata?.actorId !== actor.id) continue;
+        if (typeof key !== 'string' || !key.startsWith(prefix)) continue;
+        if (pending.has(key) && key.startsWith(levelupPrefix)) currentLevelupHolders.add(recipientId);
+        candidates.set(record.id, record);
+      }
+    }
+
+    const stale = [];
+    for (const record of candidates.values()) {
+      const key = record.metadata.homeTaskKey;
+      if (pending.has(key)) continue;
+      if (legacyLevelup.test(key) && levelupPending) {
+        const replaced = (record.recipients ?? []).length > 0
+          && record.recipients.every(recipient => currentLevelupHolders.has(recipient.id));
+        if (!replaced) continue;
+      }
+      stale.push(record.id);
+    }
+    if (!stale.length) return [];
+    const ok = await HolonetEngine.storage.archiveRecords(stale, { archivedBy: 'HomeFeedTaskEmitter', reason: 'home-task-resolved' });
+    if (!ok) return [];
+    for (const key of this._recentFingerprints.keys()) {
+      if (key.startsWith(`${actor.id}|${prefix}`)) this._recentFingerprints.delete(key);
+    }
+    return stale;
+  }
+
+  /**
+   * Read-only audit of Home task records that were saved without recipients
+   * (undeliverable). Never mutates storage. GM console:
+   *   await game.swse?.HomeFeedTaskEmitter?.auditOrphanedHomeTasks()
+   */
+  static async auditOrphanedHomeTasks() {
+    const all = await HolonetEngine.storage.getAllRecords();
+    const homeTasks = all.filter(record => record?.metadata?.generatedBy === 'HomeFeedTaskEmitter');
+    const orphaned = homeTasks.filter(record => !(record.recipients?.length));
+    return {
+      totalHomeTaskRecords: homeTasks.length,
+      orphanedCount: orphaned.length,
+      orphanedByState: orphaned.reduce((acc, record) => ({ ...acc, [record.state]: (acc[record.state] || 0) + 1 }), {}),
+      orphaned: orphaned.map(record => ({ id: record.id, key: record.metadata?.homeTaskKey ?? null, actorId: record.metadata?.actorId ?? null, state: record.state, createdAt: record.createdAt }))
+    };
   }
 
   static async _hasMatchingRecord({ actor, task, recipients, fingerprint } = {}) {

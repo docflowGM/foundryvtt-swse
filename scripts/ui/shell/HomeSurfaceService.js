@@ -16,6 +16,7 @@ import { HolonetFeedService } from '/systems/foundryvtt-swse/scripts/holonet/sub
 import { HolonetStateService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js';
 import { HolonetMarkupService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js';
 import { HolonetNoticeCenterService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-notice-center-service.js';
+import { HolonetBus } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-bus.js';
 import { HomeFeedTaskEmitter } from '/systems/foundryvtt-swse/scripts/holonet/emitters/home-feed-task-emitter.js';
 import { ProgressionReconciler } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
 import { SOURCE_FAMILY, SURFACE_TYPE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
@@ -238,7 +239,9 @@ export class HomeSurfaceService {
     const progressionAudit = this._getProgressionAudit(actor);
 
     await this._publishHomeTasks(actor, progressionSummary, upgradeSummary, alliesSummary, progressionAudit);
+    await this._resolveHomeTasks(actor, progressionSummary, progressionAudit);
     const holonetSummary = await this._getHolonetSummary(actor);
+    const activeTasks = this._buildActiveTasks(actor, progressionSummary, holonetSummary.commFeed);
 
     const apps = this._buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary);
     const actorData = this._buildActorData(actor);
@@ -264,6 +267,7 @@ export class HomeSurfaceService {
       badges: holonetSummary.badges,
       quickGlance: this._enhanceQuickGlance(holonetSummary.quickGlance, actor),
       currentState: holonetSummary.currentState,
+      activeTasks,
       commFeed,
       commFeedUnreadCount: (commFeed ?? []).filter(item => item?.isUnread).length,
       lastSession: holonetSummary.lastSession,
@@ -310,6 +314,7 @@ export class HomeSurfaceService {
           visible: true,
           enabled: true,
           routeId: 'chargen',
+          currentLevel,
           badge: 'SETUP',
           description: 'Complete character creation'
         };
@@ -329,6 +334,7 @@ export class HomeSurfaceService {
         visible: true,
         enabled: true,
         routeId: 'progression',
+        currentLevel,
         badge: levelsAvailable > 0 ? String(levelsAvailable) : null,
         description: levelsAvailable > 0
           ? `Training available (${levelsAvailable})`
@@ -471,10 +477,21 @@ export class HomeSurfaceService {
   }
 
 
+  /**
+   * Home task persistence is GM-authoritative AND GM-computed. A player client
+   * never authors a task record: it only asks the GM to sync tasks for an actor
+   * (actor id only). The GM derives tasks from canonical actor state and picks
+   * the recipients itself, so there is no client-supplied content to trust.
+   */
   static async _publishHomeTasks(actor, progressionSummary = {}, upgradeSummary = {}, alliesSummary = {}, progressionAudit = {}) {
     try {
+      if (!actor) return;
+      if (!game.user?.isGM) {
+        this._requestGmTaskSync(actor);
+        return;
+      }
       const recipientIds = this._homeRecipientIds(actor);
-      if (!actor || !recipientIds.length) return;
+      if (!recipientIds.length) return;
       await HomeFeedTaskEmitter.emitHomeTasks({
         actor,
         recipientIds,
@@ -488,6 +505,65 @@ export class HomeSurfaceService {
     }
   }
 
+  static _syncRequestedAt = new Map();
+
+  static _requestGmTaskSync(actor) {
+    if (!supportedTypesForMentor(actor)) return;
+    const now = Date.now();
+    if (now - (this._syncRequestedAt.get(actor.id) ?? 0) < 10_000) return;
+    this._syncRequestedAt.set(actor.id, now);
+    HolonetBus.request('sync-home-tasks', { actorId: actor.id });
+  }
+
+  /** GM local path: archive resolved progression tasks for the viewed actor. */
+  static async _resolveHomeTasks(actor, progressionSummary = {}, progressionAudit = null) {
+    try {
+      if (!game.user?.isGM || !actor || !supportedTypesForMentor(actor)) return;
+      await this._archiveResolvedTasks(actor, progressionSummary, progressionAudit, this._homeRecipientIds(actor));
+    } catch (err) {
+      SWSELogger.warn('[HomeSurfaceService] Home task resolution failed:', err);
+    }
+  }
+
+  /**
+   * GM-side entry for the `sync-home-tasks` socket action. Everything is derived
+   * from canonical state; the claimed requester is only used to ignore requests
+   * for actors that user does not own (abuse reduction, not authorization: the
+   * outcome cannot be influenced by the requester).
+   */
+  static async syncHomeTasksForActorId(actorId, requesterId = null) {
+    if (!game.user?.isGM || !actorId) return;
+    const actor = game.actors?.get(actorId);
+    if (!actor || !supportedTypesForMentor(actor)) return;
+    const requester = requesterId ? game.users?.get(requesterId) : null;
+    const ownerIds = actorOwnerRecipientIds(actor);
+    if (!requester || requester.isGM || !ownerIds.includes(playerRecipientIdForUser(requester))) return;
+
+    const [progressionSummary, upgradeSummary, alliesSummary] = await Promise.all([
+      this._getProgressionSummary(actor),
+      this._getUpgradeSummary(actor),
+      this._getAlliesSummary(actor)
+    ]);
+    const progressionAudit = this._getProgressionAudit(actor);
+    await HomeFeedTaskEmitter.emitHomeTasks({
+      actor, recipientIds: ownerIds, progressionSummary, upgradeSummary, alliesSummary, progressionAudit
+    });
+    await this._archiveResolvedTasks(actor, progressionSummary, progressionAudit, ownerIds);
+  }
+
+  static async _archiveResolvedTasks(actor, progressionSummary, progressionAudit, recipientIds = []) {
+    const archived = await HomeFeedTaskEmitter.resolveProgressionTasks({
+      actor,
+      recipientIds,
+      progressionSummary,
+      progressionAudit: progressionAudit ?? {}
+    });
+    if (!archived.length) return archived;
+    const payload = { type: 'records-archived', recordIds: archived, actorId: actor.id };
+    HolonetBus.sync(payload);
+    Hooks.callAll('swseHolonetUpdated', payload);
+    return archived;
+  }
 
   static _getProgressionAudit(actor) {
     try {
@@ -605,6 +681,7 @@ export class HomeSurfaceService {
       imageUrl: metadata.imageUrl || record.sender?.avatar || '',
       priority: record.priority || metadata.priority || 'normal',
       routeId: metadata.routeId || route.surface || route.routeId || null,
+      homeTaskKey: metadata.homeTaskKey || null,
       workbenchCategory: metadata.workbenchCategory || route.category || null,
       initialCategory: metadata.initialCategory || route.initialCategory || null,
       mode: metadata.mode || route.mode || null,
@@ -616,6 +693,35 @@ export class HomeSurfaceService {
       isUrgent: metadata.breakingNews === true || metadata.urgent === true || record.priority === 'critical',
       isUnread: uniqueStrings(Array.isArray(recipientIds) ? recipientIds : [recipientIds]).some(id => Boolean(record.isUnreadBy?.(id)))
     };
+  }
+
+  /**
+   * Transient "current obligations" projection. Derived on every render from the
+   * canonical progression summary: no persistence, no read state, no GM needed.
+   * Hidden when the same task is already shown as a persisted feed row (matched
+   * by the shared task key) so the player never sees the same task twice.
+   */
+  static _buildActiveTasks(actor, progressionSummary = {}, commFeed = []) {
+    try {
+      const shown = new Set((commFeed ?? []).map(row => row?.homeTaskKey).filter(Boolean));
+      return HomeFeedTaskEmitter._buildTasks(actor, progressionSummary)
+        .filter(task => task.key.includes(':progression:setup') || task.key.includes(':progression:levelup:'))
+        .filter(task => !shown.has(task.key))
+        .map(task => {
+          const isSetup = task.key.endsWith(':progression:setup');
+          return {
+            key: task.key,
+            kind: isSetup ? 'setup' : 'levelup',
+            title: isSetup ? 'Character Creation Incomplete' : 'Training Available',
+            action: isSetup ? 'Continue Setup' : 'Open Training',
+            routeId: task.routeId,
+            icon: task.icon ?? '▲'
+          };
+        });
+    } catch (err) {
+      SWSELogger.warn('[HomeSurfaceService] Active task projection failed:', err);
+      return [];
+    }
   }
 
   static _progressionHidden() {
