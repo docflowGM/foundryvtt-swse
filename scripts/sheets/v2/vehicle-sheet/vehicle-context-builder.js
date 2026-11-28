@@ -15,39 +15,10 @@ import { buildVehicleSystemsBrowser } from "/systems/foundryvtt-swse/scripts/she
 import { buildVehiclePublicationViewModel, buildPublishedCrewSummary, describeShield, SOURCE_UNKNOWN } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-publication-view-model.js";
 import { getStationSkillActions } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
 import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/actors/vehicle/crew-resolver.js";
+import { countGunnerRoleWeapons } from "/systems/foundryvtt-swse/scripts/actors/vehicle/gunner-positions.js";
 import { resolveWeaponOperatorStation } from "/systems/foundryvtt-swse/scripts/actors/vehicle/weapon-station-mapping.js";
 
-const VEHICLE_WEAPON_ITEM_TYPES = new Set(['weapon', 'vehicle-weapon', 'vehicleWeapon', 'vehicleWeaponRange']);
 
-/**
- * Count only the GUNNER-role vehicle weapons — the number crew-resolver.js's
- * weaponStations() uses to decide how many gunner stations (gunner,
- * gunner-2, gunner-3, ...) a vehicle has. Both the crew-assignment panel and
- * the weapon-mount panel must derive this the same way, or the two panels
- * could disagree on how many gunner stations exist (e.g. a vehicle with one
- * pilot-operated weapon and two gunner-operated weapons has 2 gunner
- * stations, not 3 — counting ALL vehicle weapon items regardless of role
- * would be wrong).
- *
- * @param {Actor} actor
- * @returns {number}
- */
-function countGunnerRoleWeapons(actor) {
-  const items = safeArray(actor?.items);
-  let count = 0;
-  for (const item of items) {
-    if (!VEHICLE_WEAPON_ITEM_TYPES.has(item?.type)) continue;
-    const role = item?.system?.vehicleMount?.crewRole || 'gunner';
-    if (role === 'gunner') count += 1;
-  }
-  const systemWeapons = safeArray(actor?.system?.weapons);
-  for (const weapon of systemWeapons) {
-    if (!weapon?.name) continue;
-    const role = weapon.crewRole || 'gunner';
-    if (role === 'gunner') count += 1;
-  }
-  return count;
-}
 
 /**
  * Safe numeric coercion.

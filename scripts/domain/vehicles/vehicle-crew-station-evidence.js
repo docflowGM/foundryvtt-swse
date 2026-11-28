@@ -4,11 +4,16 @@
  * or hardcoding false. This does not grant canonical stock weapon authority.
  */
 import { resolveVehicleCrewActor } from '../../engine/crew/vehicle-crew-actor-authority.js';
+import { countGunnerRoleWeapons } from '../../actors/vehicle/gunner-positions.js';
 
 const fail = reason => ({crewStationResolved:false,reason});
 const same = (a,b) => typeof a==='string' && typeof b==='string' &&
   a.trim().toLowerCase()===b.trim().toLowerCase();
-const VALID_STATIONS = new Set(['pilot','copilot','gunner']);
+const BASE_STATIONS = new Set(['pilot','copilot','gunner']);
+// gunner-N (N>=2) is a real operating position only when this vehicle actually has it (same resolver as the sheet and the
+// assignment service); an unknown gunner-99 is refused, not coerced.
+const isValidStation = (vehicle, station) => BASE_STATIONS.has(station)
+  || (/^gunner-([2-9]|[1-9]\d*)$/.test(station) && Number(station.slice(7)) >= 2 && Number(station.slice(7)) <= countGunnerRoleWeapons(vehicle));
 
 export async function resolveVehicleCrewStationEvidence({
   vehicle, weapon, domainResolution, requestedCrewStation = null, certifiedStation = null, automatedOperator = false
@@ -29,7 +34,7 @@ export async function resolveVehicleCrewStationEvidence({
   // A certified installation's operator station comes from the sealed ledger mount, never
   // from editable Item fields.
   if(certifiedStation) station=String(certifiedStation).trim().toLowerCase();
-  if(!VALID_STATIONS.has(station))return fail('WEAPON_OPERATOR_STATION_UNRESOLVED');
+  if(!isValidStation(vehicle,station))return fail('WEAPON_OPERATOR_STATION_UNRESOLVED');
   if(requestedCrewStation && !same(requestedCrewStation,station))
     return fail('REQUESTED_CREW_STATION_CONTRADICTS_INSTALLED_MOUNT');
   // A printed droid / automated operator is run by no crew seat: valid only for an abstract-crew attack, and a named gunner cannot claim it.

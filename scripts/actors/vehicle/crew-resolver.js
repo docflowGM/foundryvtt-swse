@@ -210,6 +210,7 @@ function stationState(station, positions, facts, ownedActors) {
   };
 }
 
+
 export function resolveVehicleCrewStations({ system = {}, category = {}, weapons = {}, settings = {} } = {}) {
   const vehicle = object(system);
   const positions = object(vehicle.crewPositions);

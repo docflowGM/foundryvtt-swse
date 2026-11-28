@@ -146,16 +146,16 @@ assert.match(resolver, /array\(system\?\.stations\)/);
 // The live panel builder uses THIS resolver instead of its own hard-coded
 // six-station array — the actual fix for "multi-gunner and custom stations
 // are unreliable."
-assert.match(contextBuilder, /import \{ resolveVehicleCrewStations \} from "\/systems\/foundryvtt-swse\/scripts\/actors\/vehicle\/crew-resolver\.js"/);
+assert.match(contextBuilder, /import \{ resolveVehicleCrewStations(?:, countGunnerRoleWeapons)? \} from "\/systems\/foundryvtt-swse\/scripts\/actors\/vehicle\/crew-resolver\.js"/);
 assert.doesNotMatch(contextBuilder, /const stationKeys = \['pilot', 'copilot', 'gunner', 'engineer', 'shields', 'commander'\];/);
 assert.match(contextBuilder, /const resolved = resolveVehicleCrewStations\(\{ system, weapons: \{ count: weaponCount \} \}\);/);
 
 // VehicleCrewAssignmentService validates against the SAME dynamic resolver
 // rather than its own independent hard-coded station list — one
 // authoritative station model, not three.
-assert.match(service, /import \{ resolveVehicleCrewStations \} from "\/systems\/foundryvtt-swse\/scripts\/actors\/vehicle\/crew-resolver\.js"/);
+assert.match(service, /import \{ resolveVehicleCrewStations(?:, countGunnerRoleWeapons)? \} from "\/systems\/foundryvtt-swse\/scripts\/actors\/vehicle\/crew-resolver\.js"/);
 assert.match(service, /static resolveStations\(vehicle\) \{/);
-assert.match(service, /return resolveVehicleCrewStations\(\{ system, weapons: \{ count: countCrewWeapons\(vehicle\) \} \}\);/);
+assert.match(service, /return resolveVehicleCrewStations\(\{ system, weapons: \{ count: countGunnerRoleWeapons\(vehicle\) \} \}\);/);
 
 // 16/17. An unrecognized station key resolves to null — never coerced to
 // pilot, and never silently redirected to the first empty station.
@@ -176,10 +176,9 @@ const buildRemovalFn = service.slice(service.indexOf('static buildRemovalUpdate'
 assert.match(buildRemovalFn, /\[`system\.crewPositions\.\$\{targetStation\}`\]: null,/);
 assert.equal((buildRemovalFn.match(/system\.crewPositions\./g) || []).length, 1, 'buildRemovalUpdate must only ever write ONE crewPositions path');
 
-// Reassignment / moving an actor between stations clears only the actor's
-// PRIOR station(s) — it does not touch stations that actor does not occupy.
+// RAW (Core p.169, VC-01): assigning is additive; only an explicit Move-to-Role (options.move) clears the actor's prior station(s).
 const buildAssignmentFn = service.slice(service.indexOf('static buildAssignmentUpdate'), service.indexOf('static buildAssignmentMutationPlan'));
-assert.match(buildAssignmentFn, /if \(key !== targetStation && crewRefMatches\(current, crewActor\)\) update\[`system\.crewPositions\.\$\{key\}`\] = null;/);
+assert.match(buildAssignmentFn, /if \(options\.move === true && key !== targetStation && crewRefMatches\(current, crewActor\)\) update\[`system\.crewPositions\.\$\{key\}`\] = null;/);
 
 // --- ActorEngine-only mutation (spec section 7) -----------------------------
 

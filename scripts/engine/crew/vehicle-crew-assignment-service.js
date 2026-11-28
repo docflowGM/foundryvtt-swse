@@ -1,10 +1,10 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/actors/vehicle/crew-resolver.js";
+import { countGunnerRoleWeapons } from "/systems/foundryvtt-swse/scripts/actors/vehicle/gunner-positions.js";
 import { recordAssignmentEvent, recordMutationReceipt } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-diagnostics-log.js";
 
 const CREW_ACTOR_TYPES = new Set(['character', 'npc', 'droid']);
-const VEHICLE_WEAPON_ITEM_TYPES = new Set(['weapon', 'vehicle-weapon', 'vehicleWeapon', 'vehicleWeaponRange']);
 
 // Legacy word aliases only — NOT a fallback table. An unrecognized station
 // key (including a mistyped one) must fail clearly rather than silently
@@ -24,14 +24,6 @@ const LEGACY_STATION_ALIASES = {
   command: 'commander',
   captain: 'commander'
 };
-
-function countCrewWeapons(vehicle) {
-  const items = Array.isArray(vehicle?.items?.contents) ? vehicle.items.contents
-    : Array.isArray(vehicle?.items) ? vehicle.items
-    : (vehicle?.items && typeof vehicle.items[Symbol.iterator] === 'function') ? Array.from(vehicle.items)
-    : [];
-  return items.filter((item) => VEHICLE_WEAPON_ITEM_TYPES.has(item?.type)).length;
-}
 
 function toCrewRef(actor) {
   return {
@@ -86,6 +78,15 @@ function structuredResult({ ok, station = null, crewActorUuid = null, mutationRe
   return { ok, station, crewActorUuid, mutationReceipt, warnings, error };
 }
 
+// A legacy mirror entry is replaced when it is this actor's entry for the SAME station (re-assignment), or any entry of the
+// actor when moving; the actor's entries for other stations survive so multi-role occupancy is preserved.
+function mirrorEntryReplaced(entry, crewActor, targetStation, options = {}) {
+  if (!crewRefMatches(entry, crewActor)) return false;
+  if (options.move === true) return true;
+  const position = entry?.position ?? entry?.role ?? null;
+  return position === targetStation || position == null;
+}
+
 export class VehicleCrewAssignmentService {
   /**
    * The dynamic, per-vehicle station descriptor set — the SAME resolver
@@ -95,7 +96,7 @@ export class VehicleCrewAssignmentService {
    */
   static resolveStations(vehicle) {
     const system = vehicle?.system ?? {};
-    return resolveVehicleCrewStations({ system, weapons: { count: countCrewWeapons(vehicle) } });
+    return resolveVehicleCrewStations({ system, weapons: { count: countGunnerRoleWeapons(vehicle) } });
   }
 
   static get stationKeys() {
@@ -232,7 +233,12 @@ export class VehicleCrewAssignmentService {
       }));
   }
 
-  static buildAssignmentUpdate(vehicle, station, crewActor) {
+  /**
+   * `options.move === true` is the explicit "Move to Role" intent (clears the actor's other stations). The default is RAW (Core p.169):
+   * one character may fill several crew roles at once; uniqueness is per ROLE (a station holds one occupant), not per actor, and
+   * occupying several roles grants no extra actions (the action budget stays the actor's own).
+   */
+  static buildAssignmentUpdate(vehicle, station, crewActor, options = {}) {
     if (!vehicle || vehicle.type !== 'vehicle') return null;
     crewActor = unwrapCrewActor(crewActor);
     if (!this.canBeCrew(crewActor)) return null;
@@ -248,25 +254,25 @@ export class VehicleCrewAssignmentService {
 
     for (const key of stationKeys) {
       const current = vehicle.system?.crewPositions?.[key];
-      if (key !== targetStation && crewRefMatches(current, crewActor)) update[`system.crewPositions.${key}`] = null;
+      if (options.move === true && key !== targetStation && crewRefMatches(current, crewActor)) update[`system.crewPositions.${key}`] = null;
     }
 
     return {
       ...update,
       [`system.crewPositions.${targetStation}`]: toCrewRef(crewActor),
       'system.ownedActors': [
-        ...ownedActors.filter((entry) => !crewRefMatches(entry, crewActor)),
+        ...ownedActors.filter((entry) => !mirrorEntryReplaced(entry, crewActor, targetStation, options)),
         legacyRef
       ],
       'system.relationships': [
-        ...relationships.filter((entry) => !crewRefMatches(entry, crewActor)),
+        ...relationships.filter((entry) => !mirrorEntryReplaced(entry, crewActor, targetStation, options)),
         { ...legacyRef }
       ]
     };
   }
 
-  static buildAssignmentMutationPlan(vehicle, station, crewActor) {
-    const update = this.buildAssignmentUpdate(vehicle, station, crewActor);
+  static buildAssignmentMutationPlan(vehicle, station, crewActor, options = {}) {
+    const update = this.buildAssignmentUpdate(vehicle, station, crewActor, options);
     if (!update) return null;
     return {
       mutationPlan: { update },
