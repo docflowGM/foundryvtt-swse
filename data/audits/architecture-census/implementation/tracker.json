@@ -767,15 +767,19 @@
    "auditStatus": "confirmed",
    "wave": 2,
    "plannedPhase": "3D",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "B-GOV"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "3eda2d438"
+   ],
+   "tests": [
+    "tests/actor-engine-items-instrumentation-gated.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
    "notes": ""
   },
