@@ -265,6 +265,7 @@ export class HomeSurfaceService {
       quickGlance: this._enhanceQuickGlance(holonetSummary.quickGlance, actor),
       currentState: holonetSummary.currentState,
       commFeed,
+      commFeedUnreadCount: (commFeed ?? []).filter(item => item?.isUnread).length,
       lastSession: holonetSummary.lastSession,
       lastSeenAgo: this._formatLastSeen(),
       stardate: this._formatStardate(),
