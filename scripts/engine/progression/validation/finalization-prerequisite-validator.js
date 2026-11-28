@@ -213,7 +213,8 @@ function evaluateClassSelection(actor, classSelection, pending, details) {
     const assessment = AbilityEngine.evaluateAcquisition(actor, { name, type: 'class' }, pending) || {};
     const missing = humanReasons(assessment.missing || assessment.missingPrereqs);
     const unresolved = humanReasons(assessment.unresolved);
-    details.push({ domain: 'class', name, legal: assessment.legal === true, missing, unresolved });
+    const classOutcome = assessment.legal === false && missing.length ? 'VERIFIED_INELIGIBLE' : (unresolved.length ? 'UNRESOLVED' : 'VERIFIED_ELIGIBLE');
+    details.push({ domain: 'class', name, legal: assessment.legal === true, outcome: classOutcome, missing, unresolved });
     if (assessment.legal === false && missing.length) {
       return {
         error: `Progression finalization blocked: "${name}" is no longer legal. Missing prerequisite: ${missing.join('; ')}.`,
@@ -223,8 +224,10 @@ function evaluateClassSelection(actor, classSelection, pending, details) {
       return { warning: `"${name}" has unverified prerequisites: ${unresolved.join('; ')}.` };
     }
   } catch (err) {
-    swseLogger.debug('[FinalizationPrereqValidator] class evaluation threw (advisory)', { name, error: err?.message });
-    return { warning: `Could not verify prerequisites for class "${name}" (${err?.message || 'evaluation error'}).` };
+    // EVALUATION_ERROR: an evaluator exception is not permission (fail closed).
+    swseLogger.warn('[FinalizationPrereqValidator] class evaluation threw; blocking (fail closed)', { name, error: err?.message });
+    details.push({ domain: 'class', name, legal: false, outcome: 'EVALUATION_ERROR', missing: [], unresolved: [], error: err?.message || 'evaluation error' });
+    return { error: `Progression finalization blocked: prerequisites for class "${name}" could not be verified (${err?.message || 'evaluation error'}).` };
   }
   return null;
 }
@@ -271,11 +274,13 @@ export async function validateFinalProgressionPrerequisites({
     pending = buildPendingFromSession(actor, progressionSession);
   } catch (err) {
     // If we cannot build the pending context we cannot evaluate reliably; warn, do not block.
-    swseLogger.warn('[FinalizationPrereqValidator] pending context build failed; skipping prereq re-check', {
+    // EVALUATION_ERROR: without an evaluation context nothing can be verified, so finalization does not proceed on an unchecked build (fail closed).
+    swseLogger.warn('[FinalizationPrereqValidator] pending context build failed; blocking the prereq re-check (fail closed)', {
       error: err?.message,
     });
-    warnings.push('Prerequisite re-check skipped: could not build evaluation context.');
-    return { ok: true, errors, warnings, details };
+    details.push({ domain: 'context', name: '(pending context)', legal: false, outcome: 'EVALUATION_ERROR', missing: [], unresolved: [], error: err?.message || 'context build failed' });
+    errors.push(`Progression finalization blocked: the prerequisite re-check could not be performed (${err?.message || 'could not build the evaluation context'}).`);
+    return { ok: false, errors, warnings, details };
   }
 
   // Class / prestige-class prerequisites.
@@ -309,7 +314,8 @@ export async function validateFinalProgressionPrerequisites({
         const assessment = AbilityEngine.evaluateAcquisition(actor, candidate, pending) || {};
         const missing = humanReasons(assessment.missing || assessment.missingPrereqs);
         const unresolved = humanReasons(assessment.unresolved);
-        details.push({ domain: domain.key, name, legal: assessment.legal === true, resolved, missing, unresolved });
+        const itemOutcome = assessment.legal === false && missing.length ? (resolved ? 'VERIFIED_INELIGIBLE' : 'UNRESOLVED') : (unresolved.length ? 'UNRESOLVED' : 'VERIFIED_ELIGIBLE');
+        details.push({ domain: domain.key, name, legal: assessment.legal === true, resolved, outcome: itemOutcome, missing, unresolved });
 
         if (assessment.legal === false && missing.length) {
           if (resolved) {
@@ -323,10 +329,12 @@ export async function validateFinalProgressionPrerequisites({
           warnings.push(`${domain.label} "${name}" has unverified (advisory) prerequisites: ${unresolved.join('; ')}.`);
         }
       } catch (err) {
-        swseLogger.debug('[FinalizationPrereqValidator] item evaluation threw (advisory)', {
+        // EVALUATION_ERROR: an evaluator exception is not permission (fail closed).
+        swseLogger.warn('[FinalizationPrereqValidator] item evaluation threw; blocking (fail closed)', {
           domain: domain.key, name, error: err?.message,
         });
-        warnings.push(`Could not verify prerequisites for ${domain.label.toLowerCase()} "${name}" (${err?.message || 'evaluation error'}).`);
+        details.push({ domain: domain.key, name, legal: false, resolved, outcome: 'EVALUATION_ERROR', missing: [], unresolved: [], error: err?.message || 'evaluation error' });
+        errors.push(`Progression finalization blocked: prerequisites for ${domain.label.toLowerCase()} "${name}" could not be verified (${err?.message || 'evaluation error'}).`);
       }
     }
   }
