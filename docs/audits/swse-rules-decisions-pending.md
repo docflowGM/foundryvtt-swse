@@ -4141,3 +4141,164 @@ Evidence supplied by the project owner from the uploaded rulebooks (page numbers
 - **Domain:** BAB (data/engine consistency). **Evidence (code):** when a class has no exact `levelProgression` table, `BABCalculator._estimateBabFromProgression` treats `slow` as ×0.75, whereas `ActorPrerequisiteSnapshot`, `PrerequisiteChecker` (class-state BAB) and `class-suggestion-utilities` treat `slow`/`poor`/`low` as ×0.5 (and fall back to a Jedi/Soldier name table). **Impact today: none** — all 37 shipped classes carry an exact per-level BAB table and only the `medium`/`fast` rates occur (pinned by `tests/class-bab-table-completeness.test.mjs`).
 - **Unresolved question:** which multiplier (if any) is authoritative for a hypothetical rate-only `slow` class. This is a published-progression question, not decided here. **Options:** none source-supported (no shipped class uses it). **Recommended ruling:** none.
 - **Handling:** a class added without an exact table fails the completeness test; no estimate is blessed. Consolidating the four copies onto one synchronous `BABCalculator` read remains technical follow-up (PRG/PRQ debt). **Status:** informational; **Decision authority:** project owner; **Resolution:** (blank).
+
+---
+
+## Audit-surfaced rules questions entered in the register (appended 2026-11-28, closes F-X-005)
+
+Source: `docs/audits/architecture-census/rules-questions-for-register.md` (generated at `f734b4d`). **Recording only: nothing here is decided, no ruling is recommended.** Each stub is `DEFERRED_RULES_REVIEW` unless an owner ruling already in this register resolved it (marked). Decision authority: project owner. Resolution: (blank unless marked).
+
+### AUD-RQ-01 — abilities-effects: F-ABL-005
+- **Question (as recorded by the domain contract):** DerivedOverrideEngine computes HALF_LEVEL and ability mod independently of actor-core helpers — _getHalfLevel uses floor(system.level/2); level-split provides getHeroicHalfLevel/getEffectiveHalfLevel. _getAbilityMod recomputes from attributes as fallback. HALF_LEVEL is referenced only by orphan phase-3-feat-definitions.js and the contract, so no live feature uses it.
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-02 — combat: deferredRules (ref none found — new entry required (DEFERRED_RULES_REVIEW))
+- **Question (as recorded by the domain contract):** House-rule (enhanced massive damage) damage-threshold formula: DerivedCalculator adds size twice and keeps feat/Will-base/flat adjustments; ThresholdEngine uses fort+level+size only. Which is intended?
+- **Status:** `RESOLVED`. Resolution: owner ruling F-CMB-003 (2026-11-27): DerivedCalculator is the single DT authority; the optional enhanced rule adds the level term once.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-03 — combat: deferredRules (ref none (UNVERIFIED, report only))
+- **Question (as recorded by the domain contract):** Whether poison damage must be excluded from the half-heroic-level bonus (not in ELEMENTAL_HALF_LEVEL_EXCLUSION_KEYS); not traced
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-04 — combat: F-CMB-003
+- **Question (as recorded by the domain contract):** House-rule damage threshold computed independently by DerivedCalculator and ThresholdEngine with different formulas — RAW mode: ThresholdEngine reads system.derived.damageThreshold (single authority). With enableEnhancedMassiveDamage+modifyDamageThresholdFormula, DerivedCalculator stores base(incl. size, feat Will-base, flat/modifier adjustments)+level+size again, while ThresholdEngine.calculateDamageThreshold (used by evaluateThreshold on the live ActorEngine.applyDamage path) returns fort+leve
+- **Status:** `RESOLVED`. Resolution: owner ruling F-CMB-003 (2026-11-27): DerivedCalculator is the single DT authority; the optional enhanced rule adds the level term once.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-05 — customization: deferredRules (ref none found — candidate DEFERRED_RULES_REVIEW)
+- **Question (as recorded by the domain contract):** Whether removing an item upgrade refunds credits (droid removal refunds resale; item removal does not)
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-06 — customization: F-CUS-002
+- **Question (as recorded by the domain contract):** Two live installed-upgrade representations; inconsistent removal refunds — UpgradeService writes system.installedUpgrades (paid via TE; removal writes without refund); workbench writes flags.swse.*Upgrades/gearMods and flags.foundryvtt-swse.customization via TE. Readers of one do not see the other (TX-02, still open). Droid removal refunds resale through DroidCustomizationEngine.
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-07 — droids: deferredRules (ref none (new; to be registered by owner))
+- **Question (as recorded by the domain contract):** Whether a constructed droid requires an Armor component and at least one appendage for readiness (code paths disagree)
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-08 — droids: deferredRules (ref docs/audits/droids/droid-component-mechanical-certification-closeout.md)
+- **Question (as recorded by the domain contract):** 23 component source HOLDs
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-09 — droids: F-DRD-001
+- **Question (as recorded by the domain contract):** Two droid readiness validators disagree on armor — DroidValidationEngine (sheet readiness and issues list) requires locomotion, >=1 appendage, processor and armor; the chargen droid builder requires locomotion, processor, >=1 appendage and resolved quotes but not armor; reconciliation notes the Store path does not require armor. A droid built legally in chargen/store shows 'not ready' on its sheet.
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-10 — feats: deferredRules (ref NONE — new entry required (owner))
+- **Question (as recorded by the domain contract):** Confident Success (Rebellion Era Campaign Guide p.31): is "FP gained upon reaching current level" the same as the system FP maximum? Second cap not enforced.
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-11 — feats: deferredRules (ref NONE — owner decision; may not be a rules question)
+- **Question (as recorded by the domain contract):** Meaning of a feat "per day" limit in a VTT (campaign day vs real-world day) for skill-feat daily uses
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-12 — feats: F-FEA-007
+- **Question (as recorded by the domain contract):** Skill-feat daily uses keyed on real-world UTC date — todayKey() = new Date().toISOString().slice(0,10); Force Point receipts record game.time.worldTime for once-per-day contracts (actor-engine.js spendForcePoints). Two incompatible "day" clocks. Note the module register function is never called, so only directly imported helpers run.
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-13 — feats: F-FEA-008
+- **Question (as recorded by the domain contract):** Confident Success: second published cap not enforced; counter write not atomic — Canonical text: no more than 3 FP per level and cannot have more FP than gained upon reaching current level; canonical automation note says "Needs ... both Force Point caps". Code enforces maxPerLevel (default 3 when rule missing) and relies on ActorEngine.gainForcePoints max cap; capToLevelStartMax is written by the hook but never read.
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-14 — force: deferredRules (ref NONE — new entry required (owner))
+- **Question (as recorded by the domain contract):** Whether the base-6/7 Force Point base persists after a prestige class is removed
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-15 — force: F-FRC-009
+- **Question (as recorded by the domain contract):** scripts/data/force-points.js: write-in-calculation functions with no callers; stale header — The 6 A-02 probe hits are un-awaited actor.setFlag calls inside getForcePointBase / hasPrestigeForcePointBonus (mutation inside a calculation, A-08), reachable only from calculateMaxForcePoints, updateActorForcePoints, initializeActorForcePoints and debug helpers, none of which has a caller. The live export is calculateMaxForcePointsForBuildPlan (read-only). Consequently the persistent prestige markers t
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-16 — npc-followers: deferredRules (ref none (new; owner to register))
+- **Question (as recorded by the domain contract):** Ability modifier for follower Fortitude Defense (hotfix uses CON, NPC sheet display uses max(STR, CON))
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-17 — npc-followers: deferredRules (ref none (new; owner to register))
+- **Question (as recorded by the domain contract):** Fidelity of MinionManager.MINION_TALENTS paraphrases to printed talents (no source/page)
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-18 — npc-followers: F-NPC-002
+- **Question (as recorded by the domain contract):** Minion modules write owner/minion flags directly from a createItem hook; minion talent flags are write-only uncited rule text — MinionManager.applyTalent/removeTalent/_removeStaleFlags call owner.setFlag / minion.setFlag / unsetFlag directly (8 sites), triggered from the follower createItem/deleteItem hooks. The written flags (minionTacticalAbilities, minionTalentRegistry, minionTalentBenefits) have no reader outside the module. MINION_TALENTS holds hand-written rule paraphrases (e.g. Bodyguard
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-19 — npc-followers: F-NPC-003
+- **Question (as recorded by the domain contract):** Three follower defense computations disagree; one installed by monkey-patching DefenseCalculator — The hotfix wraps DefenseCalculator.calculate for followers and rebuilds Fortitude with CON; the NPC sheet helper independently computes Fortitude as 10 + level + max(STR, CON) for display; the deriver applies template bonuses. A follower with STR > CON can show a different Fortitude than the one used by derived/rolls.
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-20 — progression: deferredRules (ref none (new entry required))
+- **Question (as recorded by the domain contract):** Hard-coded fallback starting credits by class when content lacks a value
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-21 — progression: deferredRules (ref RECON-001..RECON-007)
+- **Question (as recorded by the domain contract):** Talent/feat/ability/skill entitlement cadence for multiclass, droid, Nonheroic, house rules
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-22 — progression: F-PRG-009
+- **Question (as recorded by the domain contract):** Telekinetic Savant/Prodigy text and slot rule hard-coded in a runtime patch, diverging from canonical reference text — The patch replaces picker description/benefit/prerequisite text for two talents with in-code strings and filters the ForcePowerStep Prodigy resolution (suppressProdigyOnlyRetroactiveSlot). The in-code Prodigy text says the extra power must have the [Telekinetic] descriptor and adds a Wisdom-increase clause; the canonical reference (FUCG p.88) says it must be one of the powers af
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-23 — progression: F-PRG-019
+- **Question (as recorded by the domain contract):** Hard-coded fallback starting credits by class — When neither content authority nor class/background records yield credits, a fixed table (soldier/scout/scoundrel 3000, jedi/force_adept 1200, noble 4800) is used - a default for missing published data (CLAUDE.md §3).
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-24 — rolls: deferredRules (ref none yet - to be registered by owner (DEFERRED_RULES_REVIEW))
+- **Question (as recorded by the domain contract):** Custom skill bonus uses half of system.level (custom-skill-roller.js:35) while derived skills use actor-core level-split helpers; aligning changes results for multiclass/nonheroic actors
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-25 — rolls: F-ROL-001
+- **Question (as recorded by the domain contract):** Local skill-total formulas in the rolls domain — getSkillTotal returns a locally rebuilt component total (ability + half level + trained + focus + misc) for useTheForce, and otherwise prefers derived totals with a component fallback. calculateCustomSkillBonus computes ability + 5 trained + 5 focus + floor(system.level/2) + misc. skills.calculateSkillModifier (exported, no importer) omits half level entirely. The derived skill pipeline (actor-core/ABL) is the authority for normal skills.
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-26 — talents: deferredRules (ref FP-RD-001..FP-RD-013)
+- **Question (as recorded by the domain contract):** Contracted Force Point talent uses
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-27 — vehicles: deferredRules (ref V-P6C-21)
+- **Question (as recorded by the domain contract):** Stock launcher printed Payload as canonical ammunition pool
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-28 — vehicles: deferredRules (ref V-P5-03)
+- **Question (as recorded by the domain contract):** Non-starship vehicles
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-29 — vehicles: deferredRules (ref V-P5-04)
+- **Question (as recorded by the domain contract):** Derived statistics depending on crew quality
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-30 — vehicles: deferredRules (ref none (new; owner to register if a rules question))
+- **Question (as recorded by the domain contract):** Whether a maneuver may be marked spent without the Pilot activation check (vehicle sheet path) — owner/rules question raised by F-VEH-003, not registered
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+### AUD-RQ-31 — vehicles: F-VEH-003
+- **Question (as recorded by the domain contract):** Two spend paths for starship maneuvers with different semantics — Vehicle sheet useManeuver writes system.discarded=true on the crew/vehicle item without a roll; the character sheet uses StarshipManeuverSuite.activateManeuver (Pilot activation check, then discarded). Regain on the vehicle sheet already delegates to the suite.
+- **Status:** `DEFERRED_RULES_REVIEW`.
+- **Options:** none source-supported in the audit. **Recommended ruling:** none.
