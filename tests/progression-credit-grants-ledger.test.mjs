@@ -35,3 +35,20 @@ for (const explicit of [0, 2400, 3000]) for (const base of [0, 3000]) for (const
   assert.deepEqual(includesWealth.grants.map((g) => g.id), ['chargen:starting-credits'], 'Wealth already in the resolved amount is not granted twice');
 }
 process.stdout.write(`progression-credit-grants-ledger: ok (${cases} combinations equal the historical arithmetic)\n`);
+
+// ---- level-up delta through the ledger: equals the historical inference for every combination; stable id per character level ----
+{
+  const legacyDelta = ({ explicit, wealth, includes }) => (includes ? Math.max(explicit, wealth) : (explicit || wealth));
+  let n = 0;
+  for (const explicit of [0, 2000, 20000]) for (const wealth of [0, 15000]) for (const includes of [false, true]) {
+    const r = B.compileLevelupCreditGrants({ explicitCreditDelta: explicit, canonicalWealthDelta: wealth, includesWealth: includes || wealth > 0, characterLevel: 4, wealthMode: 'noble-levels', wealthClassLevelBasis: 3 });
+    assert.equal(r.creditDelta, legacyDelta({ explicit, wealth, includes: includes || wealth > 0 }), JSON.stringify({ explicit, wealth, includes })); n += 1;
+  }
+  const w = B.compileLevelupCreditGrants({ explicitCreditDelta: 0, canonicalWealthDelta: 15000, includesWealth: true, characterLevel: 4, wealthMode: 'noble-levels', wealthClassLevelBasis: 3 });
+  assert.deepEqual(w.grants.map((g) => [g.id, g.source, g.amount, g.step, g.ruleRef]), [['levelup:wealth-talent:L4', 'wealth-talent', 15000, 'levelup', 'wealth-payout:noble-levels:levels=3']]);
+  const plain = B.compileLevelupCreditGrants({ explicitCreditDelta: 2000, canonicalWealthDelta: 0, includesWealth: false, characterLevel: 5 });
+  assert.equal(plain.grants[0].id, 'levelup:credits:L5');
+  assert.deepEqual(B.compileLevelupCreditGrants({ explicitCreditDelta: -300, characterLevel: 5 }), { creditDelta: -300, grants: [], settlement: null }, 'a non-positive delta passes through unchanged');
+  assert.deepEqual(B.compileLevelupCreditGrants({ explicitCreditDelta: 0, characterLevel: 5 }).grants, []);
+  process.stdout.write(`progression-credit-grants-ledger (level-up): ok (${n} combinations)\n`);
+}

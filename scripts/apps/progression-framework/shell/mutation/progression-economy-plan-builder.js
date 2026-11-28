@@ -356,6 +356,24 @@ export class ProgressionEconomyPlanBuilder {
     return { startingCredits: settlement.liquidCredits, grants: ledger.snapshot().grants, settlement };
   }
 
+  /**
+   * Level-up credit delta as a provisional-ledger grant (stable id per character level + provenance). A non-positive delta is passed through unchanged
+   * (the ledger holds grants, not debits).
+   * @returns {{creditDelta:number, grants:object[], settlement:object|null}}
+   */
+  static compileLevelupCreditGrants({ explicitCreditDelta = 0, canonicalWealthDelta = 0, includesWealth = false, characterLevel = 1, wealthMode = null, wealthClassLevelBasis = null } = {}) {
+    const explicit = Number(explicitCreditDelta) || 0;
+    const wealth = Number(canonicalWealthDelta) || 0;
+    const inferred = includesWealth ? Math.max(explicit, wealth) : (explicit || wealth);
+    if (!(inferred > 0)) return { creditDelta: inferred, grants: [], settlement: null };
+    const ledger = createProvisionalLedger();
+    ledger.registerGrant(includesWealth
+      ? { id: `levelup:wealth-talent:L${characterLevel}`, source: 'wealth-talent', amount: inferred, step: 'levelup', ruleRef: `wealth-payout:${wealthMode}:levels=${wealthClassLevelBasis ?? 'n/a'}`, eligibleCategories: '*', policy: 'persist' }
+      : { id: `levelup:credits:L${characterLevel}`, source: 'progression-credits', amount: inferred, step: 'levelup', eligibleCategories: '*', policy: 'persist' });
+    const settlement = ledger.finalize();
+    return { creditDelta: settlement.liquidCredits, grants: ledger.snapshot().grants, settlement };
+  }
+
   /** Wealth history with grant provenance for a creation (single payout at the starting level); pure, used by the plan compiler. */
   static withChargenWealthHistory(actor, selections = {}, sessionState = {}) {
     return withWealthProgressionHistory(actor, selections, sessionState);
@@ -499,7 +517,17 @@ export class ProgressionEconomyPlanBuilder {
     const explicitCreditDelta = Number(summary.creditDelta || 0) || 0;
     const canonicalWealthDelta = computeLevelupWealthCreditGrant(actor, selections, sessionState);
     const includesWealth = levelupCreditDeltaIncludesWealth(summary, selections, actor) || canonicalWealthDelta > 0;
-    const inferredCreditDelta = includesWealth ? Math.max(explicitCreditDelta, canonicalWealthDelta) : (explicitCreditDelta || canonicalWealthDelta);
+    const wealthMode = resolveWealthPayoutMode();
+    // The level-up delta (rule logic unchanged: Wealth-labelled amount is the larger of the explicit and canonical figures) is settled through the
+    // provisional ledger as one grant with a stable per-character-level id, so a replay cannot add it twice and the plan carries its provenance.
+    const { creditDelta: inferredCreditDelta } = ProgressionEconomyPlanBuilder.compileLevelupCreditGrants({
+      explicitCreditDelta,
+      canonicalWealthDelta,
+      includesWealth,
+      characterLevel: getLevelupCharacterLevelKey(actor, selections, sessionState),
+      wealthMode,
+      wealthClassLevelBasis: includesWealth ? getLineageEligibleClassLevelCountAfterLevelup(actor, selections, sessionState, wealthMode) : null,
+    });
     if (inferredCreditDelta !== 0) {
       const currentCredits = Math.max(0, Number(actor?.system?.credits ?? 0) || 0);
       set['system.credits'] = Math.max(0, currentCredits + inferredCreditDelta);
