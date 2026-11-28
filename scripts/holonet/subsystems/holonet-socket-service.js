@@ -6,6 +6,7 @@
 
 import { hydrateHolonetRecord } from '../contracts/record-factory.js';
 import { HolonetGmAuthority } from './holonet-gm-authority.js';
+import { HolonetPublishPolicy } from './holonet-publish-policy.js';
 
 const SOCKET_NAME = 'system.foundryvtt-swse';
 const HOLONET_EVENT = 'holonet';
@@ -154,8 +155,25 @@ export class HolonetSocketService {
         // still announce a successful publication to every client.
         const record = hydrateHolonetRecord(data?.record);
         if (record) {
+          // The socket relay does not authenticate the sender, so the claimed
+          // requester is validated against the record's content before the
+          // GM persists anything (see HolonetPublishPolicy).
+          const verdict = await HolonetPublishPolicy.authorizePlayerPublish(record, data.requesterId);
+          if (!verdict.ok) {
+            console.warn('[Holonet] Rejected player publish-record request:', verdict.reason, { requesterId: data.requesterId, recordId: record.id });
+            break;
+          }
+          HolonetPublishPolicy.sanitize(record);
           await HolonetEngine.publish(record, { skipSocket: false, requestId: data.requestId ?? null, requesterId: data.requesterId ?? null });
         }
+        break;
+      }
+      case 'sync-home-tasks': {
+        // Carries only an actor id. The GM derives tasks, recipients and
+        // resolution entirely from canonical actor state, so nothing the
+        // client sends can shape what is published or archived.
+        const { HomeSurfaceService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/HomeSurfaceService.js');
+        await HomeSurfaceService.syncHomeTasksForActorId(data?.actorId, data?.requesterId);
         break;
       }
       case 'mark-read': {
