@@ -4307,17 +4307,21 @@
    "auditStatus": "confirmed",
    "wave": 4,
    "plannedPhase": "3D",
-   "status": "OPEN",
+   "status": "OFFLINE_TESTED",
    "ownerDecisionRequired": false,
    "rulesQuestion": false,
    "requiredDecision": null,
    "dependencies": [
     "combat domain contract"
    ],
-   "commits": [],
-   "tests": [],
+   "commits": [
+    "c1fc03b88"
+   ],
+   "tests": [
+    "tests/condition-track-penalty-single-table.test.mjs"
+   ],
    "foundryAcceptance": "NOT_RUN",
-   "notes": ""
+   "notes": "single penalty table module; verified by the test and the ratchet"
   },
   {
    "id": "F-CMB-002",

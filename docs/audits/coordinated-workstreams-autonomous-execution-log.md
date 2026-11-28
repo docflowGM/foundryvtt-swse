@@ -13,9 +13,9 @@ Resume rule: read this file, take the first `QUEUED` row in the queue below, do 
 | Q5 | VC-05 System Operator role; VC-07 per-actor action budget; VC-09 unknown crew quality fail-closed | PARTIAL: VC-07 (per-actor spend for printed standard actions, shared across roles) + VC-09 (unknown quality fails closed) DONE; VC-05 System Operator role mapping BLOCKED (design decision, see blockers) | |
 | Q6 | VC-06 crew action catalog (VM), UI-04/06 | PARTIAL: catalog + honest button categories/costs/effects (UI-04) DONE; UI-06 weapon readiness projection not started | depends Q5 |
 | Q7 | Force V2 status matrix generator (212 definitions) | DONE (OFFLINE_TESTED): data/force-v2/coverage-matrix.json + docs/audits/force-v2/force-v2-mechanical-coverage-matrix.md (212 rows; generator tools/build-force-v2-status-matrix.mjs) | |
-| Q8 | Force V2 comparison-driven results (damage dice) | QUEUED | FP-RD-016 limits scope |
-| Q9 | Tracker OPEN findings reconciliation (evidence-supported only) | QUEUED | |
-| Q10 | Held PR reconciliation, doc convergence | QUEUED | |
+| Q8 | Force V2 comparison-driven results (damage dice) | BLOCKED (FV2-DMG): damage application from the comparison needs FP-RD-016 and per-power damage types | FP-RD-016 limits scope |
+| Q9 | Tracker OPEN findings reconciliation (evidence-supported only) | PARTIAL: F-ACT-006 set from existing evidence; remaining OPEN findings not individually re-verified in this pass | |
+| Q10 | Held PR reconciliation, doc convergence | NOT STARTED (#1184 needs census regeneration; other held PRs unverified) | |
 
 ## Log
 
@@ -30,3 +30,7 @@ Resume rule: read this file, take the first `QUEUED` row in the queue below, do 
 
 ### Batch 3 (suite 894/894)
 - Q7 coverage matrix: derived from engine evidence, excluding display-only name lists (summaries/categories), which had inflated a first pass (58 of 65 powers 'referenced'; true count 28 handler + 28 resolver-only + 7 maintained + 2 registry-only). Techniques 56/58, secrets 15/15, overlays 11/11, lightsaber forms 24/24, maneuvers 27/27 have NO per-definition runtime logic. These are the Force V2 implementation gap, not just a documentation gap.
+
+### Batch 4
+- Dejarik: art/engine geometry mismatch measured (blocker DJ-ART); Sabacc smoke test triaged (blocker SAB-SMOKE); Dejarik half preserved as tests/dejarik-board-rules-smoke.test.mjs.
+- Closeout written (PARTIAL CHECKPOINT). Next unfinished: Games landing page (GC-LIB-01..04), Pazaak drag/art, Sabacc dock, UI-06, tracker re-verification.

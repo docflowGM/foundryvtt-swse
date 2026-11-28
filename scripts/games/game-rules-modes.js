@@ -43,5 +43,5 @@ export function buildRulesModeCards({ settings = {}, selectedGame = null, select
 /** One line saying what in-game amounts mean for this table (null when the game has no in-game betting). */
 export function economyLine(gameId, wager = {}) {
   if (!GAMES_WITH_PRACTICE_BETTING.has(gameId)) return null;
-  return wager?.enabled ? 'Campaign credits: buy-in is escrowed and settled through the GM economy policy.' : 'Practice chips: table credits only, no campaign credits move.';
+  return wager?.enabled ? 'Campaign credits in play (buy-in is escrowed and settled through the GM economy policy).' : 'Practice chips: table credits only, no campaign credits move.';
 }
