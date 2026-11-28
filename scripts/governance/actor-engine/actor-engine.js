@@ -81,6 +81,9 @@ export const ActorEngine = {
    */
   _instrumentActorItemsForSSSTOT(actor) {
     if (!actor?.items) return;
+    // Diagnostic only (F-ACT-007): with Sentinel OFF the wrappers could only return immediately, so the collection is left untouched; a later
+    // update re-checks the mode, so enabling diagnostics instruments the actor from then on.
+    if (SentinelEngine.getMode() === SentinelEngine.MODES.OFF) return;
     if (_instrumentedActors.has(actor)) return;
 
     try {

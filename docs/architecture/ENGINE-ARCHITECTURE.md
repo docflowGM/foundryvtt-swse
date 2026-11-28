@@ -1,3 +1,5 @@
+> **2026-11-28 notice:** the verified end state of the V2 realignment is `docs/architecture/V2-REALIGNMENT-END-STATE.md`. Where this document disagrees with it for the listed authorities, that map describes the code.
+
 # Engine Architecture (Governance Doctrine)
 
 Authoritative reference for engine structure, authority boundaries, and invariants.
