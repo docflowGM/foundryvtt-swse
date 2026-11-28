@@ -45,7 +45,7 @@ import { LanguageStep } from './steps/language-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
 import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
 import { SummaryStep } from './steps/summary-step.js';
-import { ProfileClassStep, ProfileArchetypeStep, ProfileReviewStep } from './steps/galactic-profile-step.js';
+import { ProfileArchetypeStep, ProfileReviewStep } from './steps/galactic-profile-step.js';
 
 export class ChargenShell extends ProgressionShell {
   /**
@@ -221,9 +221,20 @@ export class ChargenShell extends ProgressionShell {
 
   _injectGalacticProfileDescriptors(descriptors) {
     const profileDescriptors = [
-      createStepDescriptor({ stepId: 'profile-class', label: 'Profile Class', icon: 'fa-id-card', type: StepType.IDENTITY, pluginClass: ProfileClassStep }),
-      createStepDescriptor({ stepId: 'profile-archetype', label: 'Archetype', icon: 'fa-user-astronaut', type: StepType.SELECTION, pluginClass: ProfileArchetypeStep }),
-      createStepDescriptor({ stepId: 'profile-review', label: 'Profile Review', icon: 'fa-clipboard-check', type: StepType.CONFIRM, pluginClass: ProfileReviewStep }),
+      createStepDescriptor({
+        stepId: 'profile-archetype',
+        label: 'Browse Profiles',
+        icon: 'fa-images',
+        type: StepType.SELECTION,
+        pluginClass: ProfileArchetypeStep,
+      }),
+      createStepDescriptor({
+        stepId: 'profile-review',
+        label: 'Review Profile',
+        icon: 'fa-clipboard-check',
+        type: StepType.CONFIRM,
+        pluginClass: ProfileReviewStep,
+      }),
     ];
 
     const filtered = (descriptors || []).filter(d => !['species', 'attribute', 'class', 'l1-survey', 'background', 'general-feat', 'class-feat', 'general-talent', 'class-talent'].includes(d.stepId));

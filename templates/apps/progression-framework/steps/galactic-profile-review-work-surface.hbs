@@ -1,110 +1,120 @@
-<div class="prog-galactic-profile prog-galactic-profile--review">
-  <header class="prog-profile-header">
+<div class="prog-galactic-profile prog-galactic-profile--review gpux gpux-review">
+  <header class="gpux-header">
     <div>
-      <div class="eyebrow">Galactic Profile</div>
-      <h2>Profile Manifest</h2>
-      <p>Review what the archetype handled, then jump directly to anything the normal progression rules still need from you.</p>
+      <div class="gpux-eyebrow">Galactic Profiles / Character Creation</div>
+      <h2>Review your starting character</h2>
+      <p>See what the preset proposes, and what the rules engine still needs you to choose.</p>
     </div>
-    <div class="prog-profile-flow">CLASS → ARCHETYPE → REVIEW</div>
+    <span class="gpux-stage" aria-label="Profile review, stage two of two">02 / 02</span>
   </header>
 
-  <nav class="prog-profile-substeps" aria-label="Galactic Profile route">
-    <div class="profile-substep is-done"><b>01</b><span>Class</span><em>{{#if template}}{{template.className}}{{else}}Done{{/if}}</em></div>
-    <div class="profile-substep is-done"><b>02</b><span>Archetype</span><em>{{#if template}}{{template.name}}{{else}}Done{{/if}}</em></div>
-    <div class="profile-substep is-active {{#if route.reviewDone}}is-done{{/if}}"><b>03</b><span>Review</span><em>{{#if template}}{{template.openCount}} Open{{else}}Missing{{/if}}</em></div>
-  </nav>
-
   {{#if template}}
-    <section class="prog-profile-review-layout">
-      <aside class="profile-review-identity">
-        <div class="holo-img holo-img--review"><img src="{{template.image}}" alt="{{template.name}}" /></div>
-        <label class="profile-name-field">
-          <span>Character Name</span>
-          <input type="text" value="{{characterName}}" placeholder="Enter name or resolve on final review" maxlength="64" data-profile-character-name />
-        </label>
-        <div class="profile-id-block">
-          <div><span>Class</span><b>{{template.className}}</b></div>
-          <div><span>Archetype</span><b>{{template.name}}</b></div>
-          <div><span>Species</span><b>{{template.species}}</b></div>
-          <div><span>Background</span><b>{{template.background}}</b></div>
-          <div><span>Credits</span><b>{{template.credits}}</b></div>
-        </div>
-      </aside>
-
-      <section class="profile-review-body">
-        <div class="review-copy">
-          <div class="eyebrow">{{template.className}} / {{template.species}}</div>
-          <h3>{{template.archetype}}</h3>
-          <p>{{template.description}}</p>
-          {{#if template.quote}}<blockquote>“{{template.quote}}”</blockquote>{{/if}}
+    <section class="gpux-review-layout">
+      <article class="gpux-review-primary">
+        <div class="gpux-identity-row">
+          <div class="gpux-review-photo holo-img"><img src="{{template.image}}" alt="{{template.name}}" /></div>
+          <div class="gpux-identity-copy">
+            <div class="gpux-eyebrow">{{template.className}} / {{template.species}}</div>
+            <h3>{{template.archetype}}</h3>
+            <p>{{template.description}}</p>
+            <label class="gpux-name-label" for="gpux-character-name">Character name</label>
+            <input id="gpux-character-name" type="text" data-profile-character-name maxlength="64"
+              value="{{characterName}}" placeholder="Enter character name" autocomplete="off" />
+          </div>
         </div>
 
         {{#if template.blocked.length}}
-          <div class="prog-profile-callout is-blocked" role="alert">
-            <i class="fas fa-triangle-exclamation"></i>
-            <div>
-              <strong>This profile cannot be applied yet</strong>
-              {{#each template.blocked}}<span>{{text}}{{#if detail}} <em>({{detail}})</em>{{/if}}</span>{{/each}}
-            </div>
-          </div>
+          <section class="gpux-validation is-blocked" role="alert" aria-label="Profile unavailable">
+            <h4><i class="fas fa-triangle-exclamation"></i> This preset needs correction</h4>
+            <p>This starting package contains unresolved rules or source data. You cannot apply it until the preset itself is corrected. You can return to the gallery and choose another character.</p>
+            <details>
+              <summary>Show technical validation reasons</summary>
+              <ul>{{#each template.blocked}}
+                <li>{{text}}{{#if detail}} <code>{{detail}}</code>{{/if}}</li>
+              {{/each}}</ul>
+            </details>
+          </section>
         {{/if}}
 
-        <div class="profile-apply-row">
-          <button type="button" class="btn primary" data-action="profile-apply" {{#unless template.canApply}}disabled{{/unless}} {{#if template.isApplied}}aria-pressed="true"{{/if}}>
-            <i class="fas {{#if template.isApplied}}fa-check{{else}}fa-id-card{{/if}}"></i> {{template.applyLabel}}
-          </button>
-          <span class="profile-apply-hint">{{#if template.isApplied}}Your draft is filled in. Resolve any open assignments, then continue.{{else}}Fills your character draft only. Nothing is created until you confirm at the end.{{/if}}</span>
-        </div>
-
-        <div class="profile-abilities profile-abilities--review">
-          {{#each template.abilities}}
-            <span class="profile-ability"><b class="swse-ability-label swse-ability-label--{{key}}">{{label}}</b> {{score}} <i class="mod-{{modClass}}">({{mod}})</i></span>
-          {{/each}}
-        </div>
-
-        {{#if template.reconciliationNotes}}
-          <div class="profile-reconciliation-notes">
-            <strong>Rules reconciliation</strong>
-            {{#each template.reconciliationNotes}}<span>{{this}}</span>{{/each}}
+        <section class="gpux-review-summary" aria-label="Authored profile preview">
+          <h4>Starting build preview</h4>
+          <p class="gpux-caption">These are the profile's authored choices, not a promise of unearned grants. The V2 compiler determines what can actually be applied.</p>
+          <div class="gpux-review-basics">
+            <span><small>Class</small><strong>{{template.className}}</strong></span>
+            <span><small>Species</small><strong>{{template.species}}</strong></span>
+            <span><small>Background</small><strong>{{template.background}}</strong></span>
+            <span><small>Credits</small><strong>{{template.credits}}</strong></span>
           </div>
-        {{/if}}
-
-        <div class="profile-review-lists">
-          <div class="pkg-card"><strong>Trained Skills <small>{{template.skills.length}}</small></strong><span>{{#each template.skills}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
-          <div class="pkg-card"><strong>Feats <small>{{template.feats.length}}</small></strong><span>{{#each template.feats}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
-          <div class="pkg-card"><strong>Talents <small>{{template.talents.length}}</small></strong><span>{{#each template.talents}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
-          <div class="pkg-card"><strong>Force Powers <small>{{template.forcePowers.length}}</small></strong><span>{{#if template.forcePowers}}{{#each template.forcePowers}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}Not a Force package{{/if}}</span></div>
-          <div class="pkg-card pkg-card--wide"><strong>Starting Equipment <small>{{template.equipment.length}}</small></strong><span>{{#each template.equipment}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
-        </div>
-      </section>
-
-      <aside class="profile-open-business {{#if template.isClean}}is-clean{{/if}}">
-        <div class="business-head">
-          <span>{{#if template.isClean}}Manifest Clean{{else}}Open Assignments{{/if}}</span>
-          <b>{{template.openCount}}</b>
-        </div>
-
-        <div class="business-list">
-          {{#if template.openBusiness}}
-            {{#each template.openBusiness}}
-              <button type="button" class="business-row {{#if blocking}}is-blocking{{/if}}" data-action="profile-resolve" data-profile-business-target="{{stepId}}" {{#unless ../template.isApplied}}disabled{{/unless}}>
-                <i class="fas {{icon}}"></i>
-                <span><strong>{{label}}</strong><em>{{detail}}</em></span>
-                <b>{{#if ../template.isApplied}}Resolve{{else}}After apply{{/if}}</b>
-              </button>
+          <div class="gpux-abilities gpux-review-abilities">
+            {{#each template.abilities}}
+              <span class="gpux-ability"><b>{{label}}</b><strong>{{score}}</strong><small class="mod-{{modClass}}">{{mod}}</small></span>
             {{/each}}
-          {{else}}
-            <div class="business-row is-resolved"><i class="fas fa-check"></i><span><strong>No open assignments</strong><em>This profile can move straight into final confirmation.</em></span><b>Clean</b></div>
-          {{/if}}
-        </div>
+          </div>
+          <details class="gpux-package-details">
+            <summary>View proposed skills, feats, talents and equipment</summary>
+            <div class="gpux-package-grid">
+              <div><h5>Trained skills ({{template.skills.length}})</h5><p>{{#each template.skills}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p></div>
+              <div><h5>Feats ({{template.feats.length}})</h5><p>{{#each template.feats}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p></div>
+              <div><h5>Talents ({{template.talents.length}})</h5><p>{{#each template.talents}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p></div>
+              <div><h5>Force powers ({{template.forcePowers.length}})</h5><p>{{#each template.forcePowers}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p></div>
+              <div class="gpux-wide"><h5>Equipment ({{template.equipment.length}})</h5><p>{{#each template.equipment}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p></div>
+            </div>
+          </details>
+        </section>
+
+        {{#if template.reconciliationNotes.length}}
+          <details class="gpux-reconciliation">
+            <summary>Rules reconciliation notes ({{template.reconciliationNotes.length}})</summary>
+            <ul>{{#each template.reconciliationNotes}}<li>{{this}}</li>{{/each}}</ul>
+          </details>
+        {{/if}}
+      </article>
+
+      <aside class="gpux-review-next" aria-label="Next steps">
+        <div class="gpux-eyebrow">What happens next?</div>
+        {{#if template.openCount}}
+          <h3>{{template.openCount}} {{#if template.isApplied}}remaining{{else}}expected{{/if}} choices</h3>
+          <p>The V2 progression engine will guide you to the choices this preset does not satisfy.</p>
+          <ol class="gpux-work-list">
+            {{#each template.openBusiness}}
+              <li>
+                {{#if ../template.isApplied}}
+                  <button type="button" data-action="profile-resolve" data-profile-business-target="{{stepId}}" class="gpux-work-link">
+                    <strong>{{label}}</strong><span>{{detail}}</span><em>Open</em>
+                  </button>
+                {{else}}
+                  <div class="gpux-work-static"><strong>{{label}}</strong><span>{{detail}}</span></div>
+                {{/if}}
+              </li>
+            {{/each}}
+          </ol>
+        {{else}}
+          <h3>No additional choices identified</h3>
+          <p>If the profile validates, it can proceed to the normal final confirmation.</p>
+        {{/if}}
 
         {{#if template.mentorLine}}
-          <div class="business-mentor-note"><strong>Mentor channel</strong><span>{{template.mentorLine}}</span></div>
+          <div class="gpux-mentor-line"><strong>Mentor</strong><blockquote>{{template.mentorLine}}</blockquote></div>
         {{/if}}
-        <div class="business-mentor-note business-mentor-note--system"><strong>System note</strong><span>Rows above are generated from the reconciled progression session, not from static profile copy. Clicking one applies the profile and opens the matching canonical step.</span></div>
+
+        {{#if template.canApply}}
+          <button type="button" class="gpux-apply" data-action="profile-apply"
+            {{#if template.isApplied}}aria-pressed="true"{{/if}}>
+            <i class="fas {{#if template.isApplied}}fa-check{{else}}fa-id-card{{/if}}"></i>
+            {{#if template.isApplied}}Profile applied{{else}}Apply profile and continue{{/if}}
+          </button>
+          <p class="gpux-caption">This fills a draft. Your actor is not created until final confirmation.</p>
+        {{else}}
+          <button type="button" class="gpux-apply" disabled aria-disabled="true">Profile unavailable</button>
+          <button type="button" class="gpux-back-to-gallery" data-action="previous-step">Choose another profile</button>
+        {{/if}}
       </aside>
     </section>
   {{else}}
-    <section class="prog-profile-callout"><i class="fas fa-triangle-exclamation"></i><div><strong>No archetype selected.</strong><span>Go back and choose a profile.</span></div></section>
+    <section class="gpux-validation is-blocked" role="alert">
+      <h3>No profile selected</h3>
+      <p>Choose a profile in the gallery before continuing.</p>
+      <button type="button" class="gpux-back-to-gallery" data-action="previous-step">Return to gallery</button>
+    </section>
   {{/if}}
 </div>

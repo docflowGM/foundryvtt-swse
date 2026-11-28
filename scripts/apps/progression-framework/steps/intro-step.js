@@ -809,7 +809,7 @@ export class IntroStep extends ProgressionStepPlugin {
         shell.progressionSession.profileStepsComplete = false;
         shell.progressionSession.profileSelection ??= {};
         shell.currentStepIndex = 0;
-        shell._targetStepId = 'profile-class';
+        shell._targetStepId = 'profile-archetype';
         await shell._initializeSteps?.();
         await shell._persistSessionSnapshot?.('intro-galactic-profile');
 
