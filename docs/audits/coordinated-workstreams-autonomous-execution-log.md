@@ -34,3 +34,9 @@ Resume rule: read this file, take the first `QUEUED` row in the queue below, do 
 ### Batch 4
 - Dejarik: art/engine geometry mismatch measured (blocker DJ-ART); Sabacc smoke test triaged (blocker SAB-SMOKE); Dejarik half preserved as tests/dejarik-board-rules-smoke.test.mjs.
 - Closeout written (PARTIAL CHECKPOINT). Next unfinished: Games landing page (GC-LIB-01..04), Pazaak drag/art, Sabacc dock, UI-06, tracker re-verification.
+
+### Batch 5 (resumed after #1190 CI green; suite 896/896, ratchet OK)
+- CI fix: pazaak-turn-loop-outcomes isolated per scenario (cb6b527ad).
+- Games landing page (GC-LIB-01/02/03/04/07/08/12): library recomposed as 2x2 gallery + featured panel + activity shelf (`styles/system/games-library-launcher.css`, templates library/detail/rail); developer phase/build/guardrail/status copy removed from the player view; player-facing `blurb` per game in the registry; primary action first in the featured panel; per-game CSS motif (no external assets). Evidence: tests/games-library-launcher-contract.test.mjs plus a headless Chromium render of the REAL templates' structure with the REAL stylesheets at 1200x760 (tiles 297x253, shelf ends at 748/760) and 800x600 (single scrolling column, no overlap). The render used a hand-built HTML copy of the template output, not Foundry.
+- NOT verified: Foundry's `.is-shell-compact` rules in app-responsive-games.css (many `!important`) and concept-parity styles may still override the launcher layout in a real shell window. Needs a Foundry check.
+- Next unfinished: Pazaak card art/drag-drop, Sabacc dock/layout, UI-06 weapon readiness, tracker re-verification, GC-LIB-06 (live active-count mismatch).

@@ -3,9 +3,9 @@
 <div class="swse-games-detail swse-games-detail--concept">
   <div class="swse-games-detail-hero">
     <div class="swse-games-detail-hero__glyph">{{vm.selectedGame.displayIcon}}</div>
-    <span class="swse-games-kicker">{{vm.selectedGame.implementationPhase}} · {{vm.selectedGame.status}}</span>
+    <span class="swse-games-kicker">{{vm.selectedGame.playerRange}} players</span>
     <h2>{{vm.selectedGame.title}}</h2>
-    <p class="swse-games-detail-sub">{{vm.selectedGame.description}}</p>
+    <p class="swse-games-detail-sub">{{#if vm.selectedGame.blurb}}{{vm.selectedGame.blurb}}{{else}}{{vm.selectedGame.description}}{{/if}}</p>
     <p class="swse-games-detail-line">{{vm.selectedGame.tableLine}}</p>
     <div class="swse-games-detail-tags">
       {{#each vm.selectedGame.tags}}
@@ -14,11 +14,17 @@
     </div>
   </div>
 
+  <section class="swse-games-config-card swse-games-config-card--cta">
+    <span class="swse-games-kicker">{{localize "SWSE.ShellUI.StartATable"}}</span>
+    <button type="button" class="swse-games-primary swse-games-configure-cta" data-games-action="open-games-composer" data-game-id="{{vm.selectedGame.id}}">
+      {{localize "SWSE.ShellUI.ConfigureTable"}}
+    </button>
+  </section>
+
   <div class="swse-games-spec-grid">
     <div class="swse-games-spec"><div class="k">{{localize "SWSE.ShellUI.Players"}}</div><div class="v cyan">{{vm.selectedGame.playerRange}}</div><div class="vs">{{localize "SWSE.ShellUI.AtTheTable"}}</div></div>
     <div class="swse-games-spec"><div class="k">{{vm.selectedGame.targetLabel}}</div><div class="v">{{vm.selectedGame.targetValue}}</div><div class="vs">{{vm.selectedGame.targetHint}}</div></div>
     <div class="swse-games-spec"><div class="k">{{localize "SWSE.ShellUI.Stakes"}}</div><div class="v gold">{{vm.selectedGame.stakesValue}}</div><div class="vs">{{vm.selectedGame.stakesHint}}</div></div>
-    <div class="swse-games-spec"><div class="k">{{localize "SWSE.ShellUI.Build"}}</div><div class="v pink">{{vm.selectedGame.phaseShort}}</div><div class="vs">{{vm.selectedGame.status}}</div></div>
   </div>
 
   <div class="swse-games-capset">
@@ -38,12 +44,6 @@
   </section>
   {{/if}}
 
-  <section class="swse-games-config-card swse-games-config-card--cta">
-    <span class="swse-games-kicker">{{localize "SWSE.ShellUI.StartATable"}}</span>
-    <button type="button" class="swse-games-primary swse-games-configure-cta" data-games-action="open-games-composer" data-game-id="{{vm.selectedGame.id}}">
-      {{localize "SWSE.ShellUI.ConfigureTable"}}
-    </button>
-  </section>
 </div>
 {{else}}
 <div class="swse-games-empty">{{localize "SWSE.ShellUI.NoGamesAreRegistered"}}</div>

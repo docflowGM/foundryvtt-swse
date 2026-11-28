@@ -21,6 +21,8 @@ Grouped by decision type. A blocker never stops other workstreams. Nothing here 
 ## Foundry runtime dependencies
 Everything marked OFFLINE_TESTED. Layout/CSS tasks additionally need computed-style measurement in a live Foundry window.
 
+- Games launcher (GC-LIB-10): app-responsive-games.css applies `.is-shell-compact` overrides with many `!important`; whether they defeat the new launcher grid in a real Foundry shell window could not be tested offline.
+
 ## Missing assets / external input
 (appended as encountered)
 
