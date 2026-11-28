@@ -113,6 +113,22 @@ export class SecondWindRules {
     return Math.max(minimum, Math.floor(base * multiplier));
   }
 
+  /**
+   * The ONE read of the actor facts Second Wind depends on (engine apply/reset and the progression mannequin all use it, so the three can never feed
+   * the calculators different inputs). `conModOf(actor)` is the caller's canonical Constitution modifier read.
+   * @returns {{isDroid:boolean, conScore:number, conMod:number, fortClassBonus:number, hasToughAsNails:boolean}}
+   */
+  static readInputs(actor, conModOf) {
+    const isDroid = actor?.type === 'droid' || actor?.system?.isDroid === true;
+    return {
+      isDroid,
+      conScore: isDroid ? 0 : Number(actor?.system?.derived?.attributes?.con?.total ?? actor?.system?.attributes?.con?.base ?? 10),
+      conMod: isDroid ? 0 : conModOf(actor),
+      fortClassBonus: Number(actor?.system?.defenses?.fortitude?.classBonus ?? 0),
+      hasToughAsNails: actor?.items?.some?.((i) => i.type === 'talent' && i.name === 'Tough as Nails') === true,
+    };
+  }
+
   static calculateMaxUses(conMod, fortClassBonus, featRules = {}, hasToughAsNails = false) {
     const baseDailyUses = Number.isFinite(Number(featRules.dailyBaseUses))
       ? Math.max(1, Number(featRules.dailyBaseUses))

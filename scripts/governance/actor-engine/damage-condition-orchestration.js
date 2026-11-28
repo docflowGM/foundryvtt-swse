@@ -347,7 +347,6 @@ export async function applySecondWindImpl(engine, actor, options = {}) {
       if (!actor) {throw new Error('applySecondWind() requires actor');}
 
       const secondWindFeatRules = MetaResourceFeatResolver.getSecondWindRules(actor);
-      const hasToughAsNails = actor.items?.some(i => i.type === 'talent' && i.name === 'Tough as Nails') === true;
 
       // Eligibility check (pure calculation delegated to SecondWindRules)
       const eligibility = SecondWindRules.canUseSecondWind(actor, options, secondWindFeatRules);
@@ -360,10 +359,7 @@ export async function applySecondWindImpl(engine, actor, options = {}) {
       const maxHP = SchemaAdapters.getMaxHP(actor);
       const activeCombatId = game.combat?.started ? game.combat.id : null;
 
-      const isDroidActor = actor.type === 'droid' || actor.system?.isDroid === true;
-      const conScore = isDroidActor ? 0 : Number(actor.system?.derived?.attributes?.con?.total ?? actor.system?.attributes?.con?.base ?? 10);
-      const conMod = isDroidActor ? 0 : engine._getCanonicalAbilityMod(actor, 'con');
-      const fortClassBonus = Number(actor.system?.defenses?.fortitude?.classBonus ?? 0);
+      const { conScore, conMod, fortClassBonus, hasToughAsNails } = SecondWindRules.readInputs(actor, (a) => engine._getCanonicalAbilityMod(a, 'con'));
 
       // Uses calculation delegated to SecondWindRules
       const computedMaxUses = SecondWindRules.calculateMaxUses(conMod, fortClassBonus, secondWindFeatRules, hasToughAsNails);
@@ -469,11 +465,8 @@ export async function resetSecondWindImpl(engine, actor) {
     try {
       if (!actor) {throw new Error('resetSecondWind() called with no actor');}
 
-      const isDroidActor = actor.type === 'droid' || actor.system?.isDroid === true;
-      const conMod = isDroidActor ? 0 : engine._getCanonicalAbilityMod(actor, 'con');
-      const fortClassBonus = Number(actor.system?.defenses?.fortitude?.classBonus ?? 0);
+      const { conMod, fortClassBonus, hasToughAsNails } = SecondWindRules.readInputs(actor, (a) => engine._getCanonicalAbilityMod(a, 'con'));
       const secondWindFeatRules = MetaResourceFeatResolver.getSecondWindRules(actor);
-      const hasToughAsNails = actor.items?.some(i => i.type === 'talent' && i.name === 'Tough as Nails') === true;
       // Max uses calculation delegated to SecondWindRules
       const maxUses = SecondWindRules.calculateMaxUses(conMod, fortClassBonus, secondWindFeatRules, hasToughAsNails);
 

@@ -344,12 +344,8 @@ function finiteOrNull(value) {
 /** Second Wind with the same inputs ActorEngine.applySecondWind (healing) and resetSecondWind (max uses) pass to SecondWindRules. */
 function projectSecondWind(mannequin, pending) {
   const featRules = MetaResourceFeatResolver.getSecondWindRules(mannequin);
-  const hasToughAsNails = mannequin.items?.some(i => i.type === 'talent' && i.name === 'Tough as Nails') === true;
-  const isDroidActor = mannequin.type === 'droid' || mannequin.system?.isDroid === true;
+  const { hasToughAsNails, conScore, conMod, fortClassBonus } = SecondWindRules.readInputs(mannequin, (a) => getCanonicalAbilityMod(a, 'con'));
   const maxHP = Number(mannequin.system?.hp?.max ?? 0) || 0;
-  const conScore = isDroidActor ? 0 : Number(mannequin.system?.derived?.attributes?.con?.total ?? mannequin.system?.attributes?.con?.base ?? 10);
-  const conMod = isDroidActor ? 0 : getCanonicalAbilityMod(mannequin, 'con');
-  const fortClassBonus = Number(mannequin.system?.defenses?.fortitude?.classBonus ?? 0);
   if (HouseRuleService.isEnabled('secondWindWebEnhancement')) {
     pending.push({ part: 'secondWind.maxUses', reason: 'the secondWindWebEnhancement house rule reads stored system.defenses.fortitude.classBonus, which no progression plan writes', affects: [], provisionalFor: ['secondWind'] });
   }
