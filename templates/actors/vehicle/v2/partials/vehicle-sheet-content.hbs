@@ -37,7 +37,7 @@
     <div class="swse-vehicle-concept-actions">
       <button type="button" class="swse-vehicle-action-btn swse-vehicle-action-btn--primary" data-action="customize-vehicle">{{localize "SWSE.ActorUI.Shipyard"}}</button>
       {{#if editable}}
-        <button type="button" class="swse-vehicle-action-btn" data-action="import-vehicle">{{localize "SWSE.ActorUI.ImportVehicle"}}</button>
+        <button type="button" class="swse-vehicle-action-btn" data-action="import-vehicle" disabled aria-disabled="true" title="Vehicle import is not available yet.">{{localize "SWSE.ActorUI.ImportVehicle"}}</button>
         <button type="submit" class="swse-vehicle-action-btn" data-action="save-vehicle">{{localize "SWSE.ActorUI.Save"}}</button>
       {{/if}}
     </div>
@@ -47,8 +47,8 @@
     {{#each vehicleResourceStrip.entries as |resource|}}
       <div class="swse-vehicle-resource swse-vehicle-resource--{{resource.tone}}">
         <div class="swse-vehicle-resource__label">{{resource.label}}</div>
-        {{#if resource.bar}}
-          <div class="swse-vehicle-resource__bar"><span style="width: {{resource.bar}}%"></span></div>
+        {{#if resource.hasBar}}
+          <div class="swse-vehicle-resource__bar" role="progressbar" aria-label="{{resource.label}}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{resource.bar}}"><span style="width: {{resource.bar}}%"></span></div>
         {{/if}}
         <div class="swse-vehicle-resource__value">{{resource.value}}</div>
         {{#if resource.badge}}<div class="swse-vehicle-mini-badge swse-vehicle-mini-badge--gap">{{resource.badge}}</div>{{/if}}

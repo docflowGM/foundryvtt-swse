@@ -360,7 +360,11 @@ function buildVehicleResourceStrip(actor, panels, typeFlags, parsedCargo) {
       { key: 'crew', label: 'Crew', value: `${crew.filledSlots ?? 0} / ${crew.totalSlots ?? '?'}`, bar: crew.totalSlots ? Math.round(((crew.filledSlots ?? 0) / crew.totalSlots) * 100) : 0, tone: crew.filledSlots ? 'normal' : 'warning' },
       { key: 'cargo', label: typeFlags.labels.cargo, value: parsedCargo?.known ? parsedCargo.display : (parsedCargo?.raw ? parsedCargo.display : SOURCE_UNKNOWN), bar: Math.max(0, Math.min(100, safeNumber(cargo.percentUsed, 0))), tone: cargo.state === 'over' ? 'critical' : cargo.state === 'near' ? 'warning' : 'normal' },
       { key: 'condition', label: 'Condition', value: condition.label || 'Operational', bar: null, tone: condition.severity || 'normal' }
-    ]
+    ].map((entry) => {
+      // A bar is present whenever the resource has one, independent of its value: 0% must render an empty track, not vanish.
+      const hasBar = entry.bar !== null && entry.bar !== undefined && Number.isFinite(Number(entry.bar));
+      return { ...entry, hasBar, bar: hasBar ? Math.max(0, Math.min(100, Number(entry.bar))) : null };
+    })
   };
 }
 
@@ -678,6 +682,15 @@ export function buildVehicleWeaponMountPanel(actor) {
     mount.operatorAmbiguous = resolution.source === 'ambiguous';
     mount.operatorBroken = resolution.source === 'broken';
     mount.operatorUnmapped = resolution.source === 'unmapped';
+    // Display-only operator status from the same crew authority the router uses (never stored on the weapon).
+    const occupant = resolution.stationKey ? system.crewPositions?.[resolution.stationKey] : null;
+    const occupantName = occupant ? safeString(occupant?.name ?? (typeof occupant === 'string' ? occupant : occupant?.uuid ?? occupant?.id), '') : '';
+    const stationLabel = stations.find((st) => st.storageKey === resolution.stationKey)?.label ?? null;
+    mount.operatorStationLabel = stationLabel;
+    mount.operatorOccupantName = occupantName || null;
+    mount.operatorStatus = mount.operatorBroken ? 'broken' : mount.operatorAmbiguous ? 'ambiguous' : mount.operatorUnmapped ? 'unmapped'
+      : occupantName ? 'assigned' : 'abstract-crew';
+    mount.gunner = occupantName || (stationLabel ? `${stationLabel} (abstract crew)` : null);
     // Precompute `selected` per option rather than relying on a template
     // `eq` helper (only conditionally registered elsewhere in this
     // codebase) to mark the current explicit mapping.
@@ -1269,7 +1282,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
         : shieldFact?.state === 'conflicting' ? 'Published SR conflicting'
         : shieldFact?.state === 'conditional' ? 'Published SR conditional'
         : 'Published SR ' + shieldFact?.value,
-    attackStatus: 'Printed attack groups are reference-only; no installed mounts are certified.',
+    attackStatus: 'Printed attack groups are reference-only; installed weapon certification is shown per weapon under Operations.',
     attackGroupCount: published.attackGroups.length
   } : null;
   if (source) vehicleTypeFlags.supportsShields =
