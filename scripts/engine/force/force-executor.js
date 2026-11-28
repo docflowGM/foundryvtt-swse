@@ -24,6 +24,8 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
 import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
 import { TemptationOfTheDarkSide } from "/systems/foundryvtt-swse/scripts/engine/force/temptation-of-the-dark-side.js";
 import { beginContractedForcePoint } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
+import { forceDefinitionForItem } from "/systems/foundryvtt-swse/scripts/engine/force/force-definition-registry.js";
+import { resolveForceCheck, readTargetDefense } from "/systems/foundryvtt-swse/scripts/engine/force/force-check-resolver.js";
 import { ForcePowerMaintenance, ENHANCEMENT_CONTRACT_REFS, conditionalDefenseBonuses } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-maintenance.js";
 import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 import { resolveFallenJediForcePowerAccess } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/apex-class-feature-access.js";
@@ -437,11 +439,30 @@ export class ForceExecutor {
 
       // Table-facing notice: conditional defense bonuses the target holds against THIS power (Resist Force / Valor).
       const targetActor = options.target ?? options.targetActor ?? null;
+      let defenseResolution = null;
       if (targetActor && targetActor !== actor) {
         const bonuses = conditionalDefenseBonuses(targetActor, { descriptors });
         if (bonuses.length) {
           const rows = bonuses.map(b => `<li>+${b.amount} ${b.defense} Defense (${b.label})</li>`).join('');
           await SWSEChat.postHTML({ actor, content: `<div class="swse-conditional-defense"><strong>${targetActor.name}</strong> adds against ${power.name}:<ul>${rows}</ul></div>` });
+        }
+        // Force V2: when the certified definition for this power is loaded, compare the check against the target's defense using
+        // the printed comparator and the conditional bonuses above. Reporting only: damage/effect application is unchanged.
+        const linked = forceDefinitionForItem(power);
+        const checkDefense = linked?.definition?.activation?.check?.defense;
+        if (linked && checkDefense) {
+          const matching = bonuses.filter(b => String(b.defense ?? '').toLowerCase() === checkDefense).map(b => b.amount);
+          defenseResolution = resolveForceCheck(linked.definition, {
+            total,
+            defenseValue: readTargetDefense(targetActor, checkDefense),
+            defenseBonuses: matching,
+            targetSize: targetActor.system?.size ?? null
+          });
+          const label = defenseResolution.comparator === 'strictly-greater-than' ? 'must exceed' : defenseResolution.comparator === 'at-least' ? 'must equal or exceed' : 'vs';
+          const verdict = { 'tier-and-defense-met': 'Hit', 'defense-met': 'Hit', 'tier-met-defense-failed': 'Missed the defense (DC tier met)', 'defense-failed': 'Missed', 'below-minimum-dc': 'Below the minimum DC', 'needs-target-defense': 'Target defense unknown: GM adjudicates', 'comparator-unspecified': 'Printed comparator not recorded: GM adjudicates' }[defenseResolution.outcome];
+          if (verdict) {
+            await SWSEChat.postHTML({ actor, content: `<div class="swse-force-defense-check"><strong>${power.name}</strong> vs ${targetActor.name}'s ${checkDefense[0].toUpperCase()}${checkDefense.slice(1)} Defense: check ${total} ${label} ${defenseResolution.effectiveDefense ?? '?'} - <em>${verdict}</em></div>` });
+          }
         }
       }
 
@@ -459,6 +480,7 @@ export class ForceExecutor {
         resolvedTier,
         resolvedEffect,
         appliedEffects,
+        defenseResolution,
         telekineticPowerRepeatAvailable: Boolean(telekineticRepeatAction)
       };
     } catch (err) {

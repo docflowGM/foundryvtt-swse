@@ -4302,3 +4302,25 @@ Source: `docs/audits/architecture-census/rules-questions-for-register.md` (gener
 - **Question (as recorded by the domain contract):** Two spend paths for starship maneuvers with different semantics — Vehicle sheet useManeuver writes system.discarded=true on the crew/vehicle item without a roll; the character sheet uses StarshipManeuverSuite.activateManeuver (Pilot activation check, then discarded). Regain on the vehicle sheet already delegates to the suite.
 - **Status:** `DEFERRED_RULES_REVIEW`.
 - **Options:** none source-supported in the audit. **Recommended ruling:** none.
+
+
+## FP-RD-016 — Force power defense comparator when the certified definition does not state one (appended 2026-11-28; Force V2 resolver)
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-016 |
+| Rules domain | Force powers (attack against Reflex / Fortitude / Will) |
+| Feature | `activation.check.defense` powers in the seven-book corpus (`data/force-v2/definitions.json`) |
+| Source | Per power (printed pages in each definition's `source`); corpus principles: `mechanicalPrinciples` in the Core definitions file |
+| Evidence | 28 Force powers are defense-gated. 9 carry an explicit printed comparator in `powerRules.defenseComparator`: Ballistakinesis [at-least], Combustion [at-least], Corruption [at-least], Force Blast [strictly-greater-than], Lightning Burst [at-least], Malacia [at-least], Morichro [at-least], Rend [at-least], Technometry [at-least]. Eight of those say "at-least" (check equals or exceeds the Defense); Force Blast (FUCG) says "strictly-greater-than". The remaining 19 state no comparator in the certified definition: Blind (Ref), Farseeing (Wil), Fear (Wil), Force Grip (For), Force Lightning (Ref), Force Scream (For), Force Slam (For), Force Whirlwind (For), Ionize (Ref), Memory Walk (Wil), Mind Shard (Wil), Mind Trick (Wil), Obscure (Wil), Plant Surge (For), Sever Force (Wil), Slow (For), Stagger (For), Thought Bomb (Wil), Wound (For). |
+| Confirmed behavior | Where a comparator is stated the resolver (`scripts/engine/force/force-check-resolver.js`) applies it exactly, with printed target-size adjustments and Resist Force / Valor conditional bonuses. Force Blast equal-to-Reflex misses. |
+| Unresolved question | Whether powers without a stated comparator use "equals or exceeds" or "exceeds". The corpus does not say, and the explicit entries disagree with each other (Force Blast is strict). |
+| Options | (a) at-least for every unstated power (matches 8 of the 9 explicit entries); (b) strictly-greater for every unstated power; (c) per-power ruling after re-reading each printed entry. Only (c) is fully source-driven. |
+| Recommended ruling | None. |
+| Implementation impact | For the unstated powers the resolver returns `comparator-unspecified`: the chat card shows the check and the effective defense and says the GM adjudicates; no hit/miss is claimed and no effect is applied by the resolver. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank) |
+
+### FP-RD-012 — progress (2026-11-28)
+The executor now supplies the attack source: when the target holds a Resist Force / Valor bonus matching the power's defense, it is added to the effective defense in the comparison (`tests/force-executor-defense-resolution.test.mjs`). Damage / effect application is still not driven by the comparison.

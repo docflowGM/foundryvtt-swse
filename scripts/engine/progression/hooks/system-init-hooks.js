@@ -5,6 +5,7 @@
  * Called once from system initialization (module/system.js or equivalent).
  * Ensures all game data is normalized and indexed for optimal progression engine performance.
  */
+import { loadForceDefinitions } from '/systems/foundryvtt-swse/scripts/engine/force/force-definition-registry.js';
 import { loadCanonicalPrerequisiteIndex } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/canonical-prerequisite-index.js';
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -183,6 +184,11 @@ export const SystemInitHooks = {
             SWSELogger.log('  - Loading canonical prerequisite index...');
             if (!(await loadCanonicalPrerequisiteIndex())) {
                 SWSELogger.warn('[System Init] Canonical prerequisite index unavailable; prerequisite checks use the compatibility path.');
+            }
+
+            // 3c. Load the Force V2 typed-definition corpus. Non-fatal: definitions are data only and nothing depends on them yet.
+            if (!(await loadForceDefinitions())) {
+                SWSELogger.warn('[System Init] Force V2 definition registry unavailable.');
             }
 
             // 4. Warm class prerequisite cache so UI and suggestion paths read the same legality layer.
