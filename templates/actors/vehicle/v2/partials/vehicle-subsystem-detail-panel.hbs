@@ -32,11 +32,11 @@
           {{/if}}
 
           {{#if subsystem.detailLines}}
-            <div class="swse-vehicle-subsystem-details">
+            <ul class="swse-vehicle-subsystem-details">
               {{#each subsystem.detailLines as |line|}}
                 <li>{{line}}</li>
               {{/each}}
-            </div>
+            </ul>
           {{/if}}
 
           {{#if subsystem.canRepair}}

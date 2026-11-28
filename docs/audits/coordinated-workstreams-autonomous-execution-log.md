@@ -45,3 +45,8 @@ Resume rule: read this file, take the first `QUEUED` row in the queue below, do 
 - GC-LIB-06: shelves show `(+N more)` when capped, so the header count and shelf can no longer silently disagree (live data check still needs Foundry).
 - S-05 / HIN-12: Sabacc and Hintaro bet/raise inputs carry aria-labels with min/max. Hintaro view model is now affordability-aware (`buildBettingVm` exported): bet needs credits >= min; raise cost is toCall + raiseBy so max raise = credits - toCall; call needs credits >= toCall; the old suggestedRaise (toCall + minRaise) over-suggested and the raise input used the bet maximum. Evidence: tests/hintaro-betting-affordability.test.mjs; engine costs read from hintaro-engine applyBettingAction.
 - Sabacc betting limits NOT reworked: engine cost rules for Sabacc not read in this pass.
+
+### Batch 7 (suite 900/900)
+- Sabacc raise input bounded by credits - toCall (engine cost toCall + raiseBy): tests/sabacc-raise-bound.test.mjs.
+- UI-10 vehicle tabs: tablist/tab/tabpanel roles, aria-selected/controls/labelledby with per-sheet unique ids, roving tabindex, Arrow/Home/End/Enter/Space: `vehicle-tab-navigation.js`, tests/vehicle-tab-navigation.test.mjs (pure logic + fake-DOM glue; real focus behaviour needs Foundry).
+- UI-13 (partial): subsystem detail lines in a real <ul>; arrow-glyph buttons named; resource bars have progressbar semantics: tests/vehicle-sheet-accessibility.test.mjs. Not done: contrast/zoom checks, inline tiny text, focus rings.

@@ -216,6 +216,8 @@ export class SabaccViewModel {
         canCall: Boolean(canAct && state.phase === 'betting' && Math.max(0, Number(state.betting?.currentBet || 0) - Number(state.betting?.contributions?.[viewerSeatId] ?? viewerPlayer?.roundContribution ?? 0)) > 0 && Number(viewerPlayer?.tableCredits || 0) >= Math.max(0, Number(state.betting?.currentBet || 0) - Number(state.betting?.contributions?.[viewerSeatId] ?? viewerPlayer?.roundContribution ?? 0))),
         canRaise: Boolean(canAct && state.phase === 'betting' && Number(state.betting?.currentBet || 0) > 0 && Number(viewerPlayer?.tableCredits || 0) >= Math.max(0, Number(state.betting?.currentBet || 0) - Number(state.betting?.contributions?.[viewerSeatId] ?? viewerPlayer?.roundContribution ?? 0)) + Number(state.betting?.minRaise || state.ante || 1)),
         maxBet: Math.max(0, Number(viewerPlayer?.tableCredits || 0)),
+        // A raise costs toCall + raiseBy (sabacc-engine applyBettingAction), so the largest raise BY is the credits left after calling.
+        maxRaise: Math.max(0, Number(viewerPlayer?.tableCredits || 0) - (viewerSeatId ? Math.max(0, Number(state.betting?.currentBet || 0) - Number(state.betting?.contributions?.[viewerSeatId] ?? viewerPlayer?.roundContribution ?? 0)) : 0)),
         suggestedBet: Math.max(Number(state.betting?.minBet || state.ante || 1), Math.min(Number(viewerPlayer?.tableCredits || 0), Number(state.betting?.minBet || state.ante || 1) * 2)),
         suggestedRaise: Math.max(Number(state.betting?.minRaise || state.ante || 1), Math.min(Number(viewerPlayer?.tableCredits || 0), Number(state.betting?.minRaise || state.ante || 1) * 2))
       },
